@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/app_url.dart';
 import 'package:flutter_cab/model/payment_details_model.dart';
-import 'package:flutter_cab/model/rentalbooking_model.dart';
+import 'package:flutter_cab/model/rental_booking_model.dart';
 import 'package:flutter_cab/view_model/services/http_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

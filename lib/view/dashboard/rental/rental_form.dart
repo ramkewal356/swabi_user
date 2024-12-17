@@ -7,7 +7,7 @@ import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view_model/user_profile_view_model.dart';
-import 'package:flutter_cab/model/rentalbooking_model.dart';
+import 'package:flutter_cab/model/rental_booking_model.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/custom_datePicker/common_textfield.dart';
 import 'package:flutter_cab/utils/color.dart';

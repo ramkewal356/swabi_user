@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
 import 'package:flutter_cab/model/payment_details_model.dart';
-import 'package:flutter_cab/model/rentalbooking_model.dart';
+import 'package:flutter_cab/model/rental_booking_model.dart';
 import 'package:flutter_cab/respository/rental_repository.dart';
 import 'package:flutter_cab/view_model/notification_view_model.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';

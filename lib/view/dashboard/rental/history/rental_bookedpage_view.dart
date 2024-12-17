@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/get_issue_by_booking_id_model.dart';
 import 'package:flutter_cab/model/payment_details_model.dart';
 import 'package:flutter_cab/model/payment_refund_model.dart';
-import 'package:flutter_cab/model/rentalbooking_model.dart';
+import 'package:flutter_cab/model/rental_booking_model.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_paymentdetails_container.dart';
