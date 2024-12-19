@@ -12,6 +12,7 @@ import 'package:flutter_cab/view/dashboard/account_Pages/raiseissue_details_scre
 import 'package:flutter_cab/view/dashboard/account_Pages/term_condition_screen.dart';
 import 'package:flutter_cab/view/dashboard/account_Pages/transaction.dart';
 import 'package:flutter_cab/view/dashboard/account_Pages/verify_password_screen.dart';
+import 'package:flutter_cab/view/dashboard/bottom_bar_screen.dart';
 import 'package:flutter_cab/view/dashboard/home_screen.dart';
 import 'package:flutter_cab/view/dashboard/account_screen.dart';
 import 'package:flutter_cab/view/dashboard/offers_pages/all_offers_screen.dart';
@@ -36,8 +37,9 @@ import 'package:flutter_cab/view/registration/forgot_screen.dart';
 import 'package:flutter_cab/view/registration/login_screen.dart';
 import 'package:flutter_cab/view/registration/otp_verification_screen.dart';
 import 'package:flutter_cab/view/registration/registration_screen.dart';
-import 'package:flutter_cab/view/registration/splash_screen.dart';
-import 'package:flutter_cab/view/reset_password_screen.dart';
+import 'package:flutter_cab/view/starting_screen/landing_screen.dart';
+import 'package:flutter_cab/view/starting_screen/splash_screen.dart';
+import 'package:flutter_cab/view/registration/reset_password_screen.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../view/dashboard/tourPackage/packageHistory/package_booking_details.dart';
@@ -50,11 +52,20 @@ final GoRouter myRouter = GoRouter(
   initialLocation: '/splash',
   navigatorKey: _rootNavigatorKey,
   routes: <RouteBase>[
-    
     GoRoute(
         path: '/splash',
         builder: (BuildContext context, GoRouterState state) {
           return const SplashSreen();
+        }),
+    GoRoute(
+        path: '/landing_screen',
+        builder: (BuildContext context, GoRouterState state) {
+          return const LandingScreen();
+        }),
+    GoRoute(
+        path: '/bottom_bar_screen',
+        builder: (BuildContext context, GoRouterState state) {
+          return const BottomBarScreen();
         }),
     GoRoute(
       path: '/login',
@@ -75,7 +86,6 @@ final GoRouter myRouter = GoRouter(
         return const home_screen();
       },
     ),
-  
     GoRoute(
       path: '/notification',
       builder: (BuildContext context, GoRouterState state) {
@@ -85,7 +95,6 @@ final GoRouter myRouter = GoRouter(
         );
       },
     ),
-    
     GoRoute(
         path: '/profilePage',
         builder: (BuildContext context, GoRouterState state) {
@@ -106,7 +115,6 @@ final GoRouter myRouter = GoRouter(
             },
           ),
         ]),
-  
     GoRoute(
       path: '/changePassword',
       // parentNavigatorKey: _rootNavigatorKey,
@@ -194,7 +202,6 @@ final GoRouter myRouter = GoRouter(
         return const Issueviewdetails();
       },
     ),
-   
     GoRoute(
       path: '/allOffer',
       parentNavigatorKey: _rootNavigatorKey,
@@ -264,12 +271,14 @@ final GoRouter myRouter = GoRouter(
         parentNavigatorKey: _rootNavigatorKey,
         builder: (BuildContext context, GoRouterState state) {
           final uid = state.extra as Map<String, dynamic>;
+        
+
           return Packages(
             ursID: uid['user'],
+         
           );
         },
         routes: [
-       
           GoRoute(
             path: 'packageDetails',
             parentNavigatorKey: _rootNavigatorKey,
@@ -305,7 +314,7 @@ final GoRouter myRouter = GoRouter(
               );
             },
           ),
-        
+
           ///History Pages
           GoRoute(
             path: 'packageHistoryManagement',
@@ -338,7 +347,6 @@ final GoRouter myRouter = GoRouter(
           return RentalForm(userId: data['userId']);
         },
         routes: [
-       
           GoRoute(
             path: 'carsDetails',
             parentNavigatorKey: _rootNavigatorKey,
@@ -373,7 +381,6 @@ final GoRouter myRouter = GoRouter(
               );
             },
           ),
-        
           GoRoute(
             path: 'rentalCarBooking',
             parentNavigatorKey: _rootNavigatorKey,
@@ -422,8 +429,5 @@ final GoRouter myRouter = GoRouter(
             },
           ),
         ]),
-
- 
   ],
 );
-

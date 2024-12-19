@@ -77,3 +77,21 @@ const String otherIssue = "assets/images/other_issue.png";
 const String privacyPolicy = "assets/images/privacy-policy.png";
 const String myWallet = "assets/images/my-wallet.png";
 const String addLocation = "assets/images/add-location3.png";
+const String filtericon = "assets/images/icons-filter.png";
+const String homeiamge = "assets/images/package-image.png";
+const String topiamge = "assets/images/top-image.png";
+const String landingTopiamge = "assets/images/landing-top-image.png";
+const String rectanglebgimage = "assets/images/rectangle-image.png";
+const String rentalBackimage = "assets/images/rental-back.png";
+const String rentalFrontimage = "assets/images/rental-front-img.png";
+const String explorebgimage = "assets/images/explore-bg-image.png";
+const String whychooseUsgimage = "assets/images/why-choose-us.png";
+const String bigValueIcon = "assets/images/big-value-icon.png";
+const String tourPackageIcon = "assets/images/tour-package-icon.png";
+const String insantBookingIcon = "assets/images/insant-booking-icon.png";
+const String easyPaymentIcon = "assets/images/easy-payment-icon.png";
+const String serviceAndSupportIcon = "assets/images/service-support-icon.png";
+const String advanceBookingIcon = "assets/images/advance-booking-icon.png";
+
+
+

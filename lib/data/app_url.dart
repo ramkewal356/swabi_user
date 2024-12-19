@@ -19,7 +19,7 @@ class AppUrl {
   static var userProfileUpdate = "$baseUrl/user/update_user";
   static var userProfileimg = "$baseUrl/user/upload_profile";
   static var rentalRangeList = "$baseUrl/rental/get_rental_metrics_list";
-  static var getPackageList = "$baseUrl/package/get_package_list";
+  static var getPackageList = "/package/get_package_list";
   static var getAllPackageListUrl = "/package/get_package_list_by_date";
   static var getPackageByIdUrl = '/package/get_package_by_id';
   static var getCalculatePriceUrl = '/package_booking/calculate_package_price';
@@ -72,5 +72,10 @@ class AppUrl {
   static var getCountryList = '/api/countries/';
   static var getStateList = '/api/states/';
   static var getAccessTokenUrl = '/api/getaccesstoken';
+  static var getActivityCategoryList =
+      '/activity_category/list_activity_categories';
+
+  static var getAllActivityList = '/activity/get_all_activity';
+  static var getStateWithImageList = '/state_image/get_list_state_with_image';
 
 }

@@ -10,7 +10,7 @@ class CustomViewmoreViewless extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ReadMoreText(
-      '$moreText. ',
+      '$moreText ',
       trimCollapsedText: 'view more',
       trimExpandedText: 'view less',
       trimLength: 150,

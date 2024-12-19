@@ -12,8 +12,11 @@ class SplashServices {
     userViewModel.getUser().then((value) async {
       if (value.token == null || value.token == '') {
         await Future.delayed(const Duration(seconds: 4));
-        print('Token ${value.token}');
-        context.push('/login');
+        debugPrint('Token ${value.token}');
+        // context.push('/login');
+        context.push('/landing_screen');
+        // context.push('/bottom_bar_screen');
+
       } else {
         await Future.delayed(const Duration(seconds: 4));
         // context.push('/');
@@ -26,6 +29,4 @@ class SplashServices {
       }
     });
   }
-
-
 }

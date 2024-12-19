@@ -50,6 +50,7 @@ TextStyle titleText = GoogleFonts.lato(
     color: blackColor, fontSize: 14, fontWeight: FontWeight.w600);
 TextStyle buttonText = GoogleFonts.lato(
     color: btnColor, fontSize: 17, fontWeight: FontWeight.w600);
+
 TextStyle offText = GoogleFonts.lato(
     color: greenColor, fontSize: 16, fontWeight: FontWeight.w600);
 //////////////////DEFAULT TEXT STYLE IN SWABI APPLICATION///////////////////////////////////////////
@@ -64,3 +65,19 @@ TextStyle subtitleText = GoogleFonts.lato(
     color: blackColor, fontSize: 14, fontWeight: FontWeight.w500);
 TextStyle valueText = GoogleFonts.lato(
     color: blackColor, fontSize: 14, fontWeight: FontWeight.w400);
+TextStyle landingText = GoogleFonts.roboto(
+    color: Color(0xFF81001E), fontSize: 20, fontWeight: FontWeight.w600);
+TextStyle exploreText = GoogleFonts.roboto(
+    color: Color(0xFF81001E), fontSize: 20, fontWeight: FontWeight.w800);
+TextStyle landingtitleStyle = GoogleFonts.roboto(
+    color: background, fontSize: 16, fontWeight: FontWeight.w600);
+TextStyle landingTextStyle = GoogleFonts.roboto(
+    color: background, fontSize: 14, fontWeight: FontWeight.w400);
+TextStyle topcityTextStyle = GoogleFonts.roboto(
+    color: background, fontSize: 32, fontWeight: FontWeight.w600);
+TextStyle rentalDescriptionStyle = GoogleFonts.roboto(
+    color: blackColor, fontSize: 12, fontWeight: FontWeight.w400);
+TextStyle chooseUsTextStyle = GoogleFonts.roboto(
+    color: Color(0xFF81001E), fontSize: 12, fontWeight: FontWeight.w500);
+TextStyle subtitleTextStyle = GoogleFonts.roboto(
+    color: background, fontSize: 14, fontWeight: FontWeight.w600);

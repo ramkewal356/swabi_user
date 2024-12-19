@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cab/utils/routes/route.dart';
 import 'package:flutter_cab/view_model/auth_view_model.dart';
+import 'package:flutter_cab/view_model/home_page_view_model.dart';
 import 'package:flutter_cab/view_model/notification_view_model.dart';
 import 'package:flutter_cab/view_model/offer_view_model.dart';
 import 'package:flutter_cab/view_model/package_view_model.dart';
@@ -78,6 +79,13 @@ Future<void> main() async {
             create: (context) => GetCalculatePackagePriceViewModel()),
         ChangeNotifierProvider(
             create: (context) => GetCountryStateListViewModel()),
+        ChangeNotifierProvider(
+            create: (context) => GetActivityCategoryListViewModel()),
+        ChangeNotifierProvider(
+            create: (context) => GetAllPackageListViewModel()),
+        ChangeNotifierProvider(create: (context) => GetAllActivityViewModel()),
+        ChangeNotifierProvider(
+            create: (context) => GetStateWithImageListViewModel()),
       ],
       child: const MyApp(),
     ));

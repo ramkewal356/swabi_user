@@ -1,9 +1,12 @@
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/package_models.dart';
 import 'package:flutter_cab/res/Common%20Widgets/common_offer_container.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
+import 'package:flutter_cab/res/Custom%20%20Button/customdropdown_button.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/multi_image_slider_container_widget.dart';
 import 'package:flutter_cab/res/custom_container.dart';
 import 'package:flutter_cab/res/custom_text_widget.dart';
@@ -13,6 +16,7 @@ import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view_model/offer_view_model.dart';
 import 'package:flutter_cab/view_model/package_view_model.dart';
+import 'package:flutter_cab/view_model/user_profile_view_model.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -21,7 +25,10 @@ import 'package:provider/provider.dart';
 class Packages extends StatefulWidget {
   final String ursID;
 
-  const Packages({super.key, required this.ursID});
+  const Packages({
+    super.key,
+    required this.ursID,
+  });
 
   @override
   State<Packages> createState() => _PackagesState();
@@ -29,6 +36,8 @@ class Packages extends StatefulWidget {
 
 class _PackagesState extends State<Packages> {
   TextEditingController controller = TextEditingController();
+  TextEditingController statecontroller = TextEditingController();
+
   late final ValueNotifier<DateTime> _selectedDateNotifier;
   DateTime tomorrow = DateTime.now().add(const Duration(days: 1));
   final DateFormat _dateFormat = DateFormat('dd-MM-yyyy');
@@ -38,14 +47,23 @@ class _PackagesState extends State<Packages> {
   bool isLastPage = false;
   bool isLoadingMore = false;
   List<Content> getPackageList = [];
+  String countryName = 'United Arab Emirates';
+  String stateName = 'Dubai';
+
   @override
   void initState() {
     super.initState();
     // TODO: implement initState
+    statecontroller = TextEditingController();
     _selectedDateNotifier =
         ValueNotifier(DateTime.now().add(const Duration(days: 1)));
+
     controller = TextEditingController(text: _dateFormat.format(tomorrow));
+    getCountry();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // getUser();
+      Provider.of<UserProfileViewModel>(context, listen: false)
+          .fetchUserProfileViewModelApi(context, {"userId": widget.ursID});
       fetchPackageList();
     });
     _scrollController.addListener(() {
@@ -57,6 +75,9 @@ class _PackagesState extends State<Packages> {
           fetchPackageList();
         }
       }
+    });
+    setState(() {
+      statecontroller.text = stateName;
     });
     // controller.text = _selectedDate.day.toString();
   }
@@ -76,7 +97,9 @@ class _PackagesState extends State<Packages> {
         "date": controller.text,
         "search": "",
         "days": "",
-        "price": ""
+        "price": "",
+        "country": countryName,
+        "state": statecontroller.text.isEmpty ? stateName : statecontroller.text
         // "packageStatus": "TRUE",
       });
       var data = resp?.data.content ?? [];
@@ -150,11 +173,34 @@ class _PackagesState extends State<Packages> {
     }
   }
 
+  Dio? dio;
+  String accessToken = '';
+  void getCountry() async {
+    try {
+      var countryProvider =
+          Provider.of<GetCountryStateListViewModel>(context, listen: false);
+      countryProvider.getAccessToken(context: context).then((onValue) {
+        debugPrint('token,.....c//.c.... $onValue');
+        setState(() {
+          accessToken = onValue['auth_token'].toString();
+        });
+        // countryProvider.getCountryList(context: context, token: accessToken);
+        Provider.of<GetCountryStateListViewModel>(context, listen: false)
+            .getStateList(
+                context: context, token: accessToken, country: countryName);
+      });
+    } catch (e) {
+      debugPrint('error $e');
+    }
+  }
+
   // List<Content> packageList = [];
   @override
   void dispose() {
     // TODO: implement dispose
+    statecontroller.dispose();
     _scrollController.dispose();
+
     super.dispose();
   }
 
@@ -164,6 +210,11 @@ class _PackagesState extends State<Packages> {
   // List<Content> imgList = [];
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      statecontroller.text =
+          context.watch<UserProfileViewModel>().DataList.data?.data.state ?? '';
+    });
+    print('vnxcbvncxnmvnmxcv..////xv//cv/c/vxc/vv/${statecontroller.text}');
     String status = context
         .watch<GetPackageListViewModel>()
         .getPackageList
@@ -174,71 +225,122 @@ class _PackagesState extends State<Packages> {
         .getPackageActivityById
         .status
         .toString();
-  
-    isLoadingData = context.watch<OfferViewModel>().isLoading1;
 
-   
+    isLoadingData = context.watch<OfferViewModel>().isLoading1;
+    List state =
+        context.watch<GetCountryStateListViewModel>().getStateListModel;
+    // bool isLoadingState =
+    //     context.watch<GetCountryStateListViewModel>().isLoading;
     return Stack(
       children: [
         Column(
           children: [
             const SizedBox(height: 10),
-            Container(
+            Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              color: bgGreyColor,
-              child: Material(
-                borderRadius: BorderRadius.circular(5),
-                elevation: 0,
-                child: Container(
-                  // width: AppDimension.getWidth(context) * .92,
-                  // height: 50,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: naturalGreyColor.withOpacity(0.3),
+              child: Customtextformfield(
+                  fillColor: background,
+                  readOnly: true,
+                  prefixIcon: Icon(Icons.location_on_outlined),
+                  controller: TextEditingController(text: countryName),
+                  hintText: 'Select country'),
+            ),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: CustomDropdownButton(
+                      controller: statecontroller,
+                      // focusNode: focusNode3,
+                      itemsList: state.map((state) {
+                        return state['state_name'].toString();
+                      }).toList(),
+
+                      // itemsList: [],
+                      onChanged: (value) {
+                        // setState(() {
+                        //   statecontroller.text = value;
+                        // });
+                      },
+                      hintText: 'Select State',
+
+                      // validator: (p0) {
+                      //   if (p0 == null || p0.isEmpty) {
+                      //     return 'Please select state';
+                      //   }
+                      //   return null;
+                      // },
                     ),
-                    color: background,
-                    borderRadius: BorderRadius.circular(5),
                   ),
-                  child: TextField(
-                    controller: controller,
-                    textAlignVertical: TextAlignVertical.center,
-                    readOnly: true,
-                    onTap: () async {
-                      await _selectDate(context);
-                    },
-                    style: titleTextStyle,
-                    decoration: InputDecoration(
-                        border: const UnderlineInputBorder(
-                            borderSide: BorderSide.none),
-                        prefixIcon: const Icon(
-                          Icons.calendar_month_outlined,
-                          color: naturalGreyColor,
-                        ),
-                        suffixIcon: Container(
-                            margin: const EdgeInsets.all(0.5),
-                            width: 50,
-                            decoration: const BoxDecoration(
-                                borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(5),
-                                    bottomRight: Radius.circular(5)),
-                                color: btnColor),
-                            child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  currentPage =
-                                      0; // Reset pagination when tab changes
-                                  getPackageList.clear(); // Clear the history
-                                  isLastPage = false;
-                                });
-                                fetchPackageList();
-                              },
-                              child: const Icon(
-                                Icons.search,
-                                color: background,
+                  const SizedBox(width: 10),
+                  Expanded(
+                    flex: 3,
+                    child: Container(
+                      // padding: const EdgeInsets.symmetric(horizontal: 10),
+                      color: bgGreyColor,
+                      child: Material(
+                        borderRadius: BorderRadius.circular(5),
+                        elevation: 0,
+                        child: Container(
+                          // width: AppDimension.getWidth(context) * .92,
+                          // height: 50,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: naturalGreyColor.withOpacity(0.3),
+                            ),
+                            color: background,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: TextField(
+                            controller: controller,
+                            textAlignVertical: TextAlignVertical.center,
+                            readOnly: true,
+                            onTap: () async {
+                              await _selectDate(context);
+                            },
+                            style: titleTextStyle,
+                            decoration: InputDecoration(
+                              border: const UnderlineInputBorder(
+                                  borderSide: BorderSide.none),
+                              prefixIcon: const Icon(
+                                Icons.calendar_month_outlined,
+                                color: naturalGreyColor,
                               ),
-                            ))),
+                              suffixIcon: Container(
+                                  height: 50,
+                                  margin: const EdgeInsets.all(0.5),
+                                  width: 50,
+                                  decoration: const BoxDecoration(
+                                      borderRadius: BorderRadius.only(
+                                          topRight: Radius.circular(5),
+                                          bottomRight: Radius.circular(5)),
+                                      color: btnColor),
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        currentPage =
+                                            0; // Reset pagination when tab changes
+                                        getPackageList
+                                            .clear(); // Clear the history
+                                        isLastPage = false;
+                                      });
+                                      fetchPackageList();
+                                    },
+                                    child: const Icon(
+                                      Icons.search,
+                                      color: background,
+                                    ),
+                                  )),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
             Expanded(
@@ -249,7 +351,6 @@ class _PackagesState extends State<Packages> {
                     const CommonOfferContainer(
                       bookingType: 'PACKAGE_BOOKING',
                     ),
-
                     status == "Status.completed"
                         ? getPackageList.isNotEmpty
                             ? ListView.builder(
@@ -338,7 +439,6 @@ class _PackagesState extends State<Packages> {
                                       style: TextStyle(color: redColor),
                                     )))
                         : Container()
-                   
                   ],
                 ),
               ),
@@ -354,7 +454,6 @@ class _PackagesState extends State<Packages> {
               )
       ],
     );
-
   }
 }
 
@@ -492,23 +591,22 @@ class _PackageContainerState extends State<PackageContainer> {
                         ],
                       ),
                       const Divider(),
-                
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              // crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  height: 15,
-                                  width: 15,
-                                  margin: const EdgeInsets.only(right: 5),
-                                  child: const Card(
-                                    shape: CircleBorder(),
-                                    elevation: 0,
-                                    color: greyColor1,
-                                  ),
-                                ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          // crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              height: 15,
+                              width: 15,
+                              margin: const EdgeInsets.only(right: 5),
+                              child: const Card(
+                                shape: CircleBorder(),
+                                elevation: 0,
+                                color: greyColor1,
+                              ),
+                            ),
                             Expanded(
                               child: CustomText(
                                 content: "${widget.activity} Activity",
@@ -520,71 +618,64 @@ class _PackageContainerState extends State<PackageContainer> {
                             ),
                             // const Spacer(),
 
-                                Container(
-                                  height: 15,
-                                  width: 15,
-                                  margin: const EdgeInsets.only(right: 5),
-                                  child: const Card(
-                                    shape: CircleBorder(),
-                                    elevation: 0,
-                                    color: greyColor1,
-                                  ),
-                                ),
-                            Expanded(
-                                  child: CustomText(
-                                content: widget.country,
-                                    fontSize: 15,
-                                    maxline: 2,
-                                    align: TextAlign.start,
-                                    textColor: greyColor1,
-                                  ),
-                                ),
-                               
-                               
-                              ],
+                            Container(
+                              height: 15,
+                              width: 15,
+                              margin: const EdgeInsets.only(right: 5),
+                              child: const Card(
+                                shape: CircleBorder(),
+                                elevation: 0,
+                                color: greyColor1,
+                              ),
                             ),
-                          ),
-                          Column(
-                            children: List.generate(
-                                widget.activityName.take(3).length,
-                                (index) => Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 10),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Padding(
-                                            padding: EdgeInsets.only(top: 2),
-                                            child: Icon(
-                                              Icons.check,
-                                              color: greenColor,
-                                              size: 13,
-                                            ),
-                                          ),
-                                          Container(
-                                              padding: const EdgeInsets.only(
-                                                  left: 2),
-                                              width: AppDimension.getWidth(
-                                                      context) *
-                                                  .8,
-                                              // color: Colors.cyan,
-                                              child: CustomText(
-                                                content:
-                                                    widget.activityName[index],
-                                                textColor: greenColor,
-                                                fontSize: 15,
-                                                maxline: 2,
-                                                align: TextAlign.start,
-                                              ))
-                                         
-                                        ],
+                            Expanded(
+                              child: CustomText(
+                                content: widget.country,
+                                fontSize: 15,
+                                maxline: 2,
+                                align: TextAlign.start,
+                                textColor: greyColor1,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Column(
+                        children: List.generate(
+                            widget.activityName.take(3).length,
+                            (index) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 10),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Padding(
+                                        padding: EdgeInsets.only(top: 2),
+                                        child: Icon(
+                                          Icons.check,
+                                          color: greenColor,
+                                          size: 13,
+                                        ),
                                       ),
-                                    )),
-                          ),
-                      
+                                      Container(
+                                          padding:
+                                              const EdgeInsets.only(left: 2),
+                                          width:
+                                              AppDimension.getWidth(context) *
+                                                  .8,
+                                          // color: Colors.cyan,
+                                          child: CustomText(
+                                            content: widget.activityName[index],
+                                            textColor: greenColor,
+                                            fontSize: 15,
+                                            maxline: 2,
+                                            align: TextAlign.start,
+                                          ))
+                                    ],
+                                  ),
+                                )),
+                      ),
                       Container(
                         padding: const EdgeInsets.symmetric(
                             vertical: 5, horizontal: 5),
@@ -597,15 +688,14 @@ class _PackageContainerState extends State<PackageContainer> {
                           children: [
                             RichText(
                                 text: TextSpan(children: [
-                         
                               (widget.total == widget.discountPrice.toString())
                                   ? const TextSpan()
                                   : TextSpan(
                                       text:
                                           "AED ${double.tryParse(widget.total)?.round()}"
                                               .toUpperCase(),
-                                  style: GoogleFonts.nunito(
-                                      color: Colors.black,
+                                      style: GoogleFonts.nunito(
+                                          color: Colors.black,
                                           fontSize:
                                               (widget.discountPrice == null ||
                                                       widget.discountPrice == 0)
@@ -618,7 +708,7 @@ class _PackageContainerState extends State<PackageContainer> {
                                                   : TextDecoration.lineThrough,
                                           decorationColor: btnColor,
                                           decorationThickness: 3,
-                                      fontWeight: FontWeight.w700)),
+                                          fontWeight: FontWeight.w700)),
                               (widget.total == widget.discountPrice.toString())
                                   ? const TextSpan()
                                   : (widget.discountPrice == null ||
@@ -631,10 +721,10 @@ class _PackageContainerState extends State<PackageContainer> {
                                   : TextSpan(
                                       text:
                                           'AED ${widget.discountPrice?.round()}',
-                                  style: GoogleFonts.nunito(
-                                      color: Colors.black,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w700)),
+                                      style: GoogleFonts.nunito(
+                                          color: Colors.black,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w700)),
                               TextSpan(
                                   text: " / Person",
                                   style: GoogleFonts.nunito(

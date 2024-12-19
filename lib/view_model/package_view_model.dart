@@ -238,7 +238,6 @@ class GetPackageHistoryViewModel with ChangeNotifier {
     }
     return null;
   }
- 
 }
 
 // Get Package History Detail By Id View Model
@@ -349,7 +348,6 @@ class PackageCancelViewModel with ChangeNotifier {
       notifyListeners();
     }
     return null;
-   
   }
 }
 
