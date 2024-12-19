@@ -18,7 +18,7 @@ import 'package:flutter_cab/view_model/services/http_service.dart';
 class UserProfileRepository {
   // final BaseApiServices _apiServices = NetworkApiService();
 
-  Future<dynamic> userProfileRepositoryApi(
+  Future<UserProfileModel> userProfileRepositoryApi(
       {required BuildContext context,
       required Map<String, dynamic> query}) async {
     var http = HttpService(

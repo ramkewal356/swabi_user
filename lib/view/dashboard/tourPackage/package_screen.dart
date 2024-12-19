@@ -17,6 +17,7 @@ import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view_model/offer_view_model.dart';
 import 'package:flutter_cab/view_model/package_view_model.dart';
 import 'package:flutter_cab/view_model/user_profile_view_model.dart';
+import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -24,11 +25,8 @@ import 'package:provider/provider.dart';
 
 class Packages extends StatefulWidget {
   final String ursID;
-
-  const Packages({
-    super.key,
-    required this.ursID,
-  });
+  final String? userSate;
+  const Packages({super.key, required this.ursID, this.userSate});
 
   @override
   State<Packages> createState() => _PackagesState();
@@ -37,6 +35,7 @@ class Packages extends StatefulWidget {
 class _PackagesState extends State<Packages> {
   TextEditingController controller = TextEditingController();
   TextEditingController statecontroller = TextEditingController();
+  UserViewModel userViewModel = UserViewModel();
 
   late final ValueNotifier<DateTime> _selectedDateNotifier;
   DateTime tomorrow = DateTime.now().add(const Duration(days: 1));
@@ -49,21 +48,30 @@ class _PackagesState extends State<Packages> {
   List<Content> getPackageList = [];
   String countryName = 'United Arab Emirates';
   String stateName = 'Dubai';
-
+  String uId = '';
   @override
   void initState() {
     super.initState();
     // TODO: implement initState
-    statecontroller = TextEditingController();
+    statecontroller = Provider.of<UserProfileViewModel>(context, listen: false)
+        .stateController;
     _selectedDateNotifier =
         ValueNotifier(DateTime.now().add(const Duration(days: 1)));
 
     controller = TextEditingController(text: _dateFormat.format(tomorrow));
     getCountry();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // getUser();
-      Provider.of<UserProfileViewModel>(context, listen: false)
-          .fetchUserProfileViewModelApi(context, {"userId": widget.ursID});
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final user = await userViewModel.getUserId();
+      if (user.userId != null && user.userId!.isNotEmpty) {
+        setState(() {
+          uId = user.userId!;
+        });
+
+        await Provider.of<UserProfileViewModel>(context, listen: false)
+            .fetchUserProfileViewModelApi(context, {"userId": uId});
+      }
+      print('gfgbg/...///../..//.//.....,..,.,,..,${statecontroller.text}');
+
       fetchPackageList();
     });
     _scrollController.addListener(() {
@@ -76,9 +84,7 @@ class _PackagesState extends State<Packages> {
         }
       }
     });
-    setState(() {
-      statecontroller.text = stateName;
-    });
+
     // controller.text = _selectedDate.day.toString();
   }
 
@@ -99,7 +105,7 @@ class _PackagesState extends State<Packages> {
         "days": "",
         "price": "",
         "country": countryName,
-        "state": statecontroller.text.isEmpty ? stateName : statecontroller.text
+        "state": statecontroller.text
         // "packageStatus": "TRUE",
       });
       var data = resp?.data.content ?? [];
@@ -198,10 +204,11 @@ class _PackagesState extends State<Packages> {
   @override
   void dispose() {
     // TODO: implement dispose
-    statecontroller.dispose();
+    // statecontroller.dispose();
     _scrollController.dispose();
-
     super.dispose();
+    // statecontroller.dispose();
+
   }
 
   bool loader = false;
@@ -210,10 +217,10 @@ class _PackagesState extends State<Packages> {
   // List<Content> imgList = [];
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      statecontroller.text =
-          context.watch<UserProfileViewModel>().DataList.data?.data.state ?? '';
-    });
+    // setState(() {
+    //   statecontroller.text =
+    //       context.watch<UserProfileViewModel>().DataList.data?.data.state ?? '';
+    // });
     print('vnxcbvncxnmvnmxcv..////xv//cv/c/vxc/vv/${statecontroller.text}');
     String status = context
         .watch<GetPackageListViewModel>()

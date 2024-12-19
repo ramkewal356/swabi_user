@@ -43,26 +43,35 @@ class _home_screenState extends State<home_screen>
     super.initState();
     _tabcontroller = TabController(length: 2, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      userViewModel.getUserId().then((value) {
-        setState(() {
-          if (value.userId != null && value.userId != '') {
-            uId = value.userId.toString();
-          }
-        });
-        Provider.of<UserProfileViewModel>(context, listen: false)
-            .fetchUserProfileViewModelApi(context, {"userId": uId});
-        getNotification();
-      });
+      getUser();
+
       _tabcontroller?.addListener(() {
         setState(() {
           _initialIndex = _tabcontroller?.index ?? 0;
         });
         debugPrint('gfgfgfgh $_initialIndex');
       });
-      // Provider.of<OfferViewModel>(context, listen: false).getOfferList(
-      //     context: context, date: DateFormat('dd-MM-yyyy').format(dateTime));
     });
-    // _scrollController.addListener(_scrollListener);
+  }
+
+  void getUser() async {
+    final user = await userViewModel.getUserId();
+    if (user.userId != null && user.userId!.isNotEmpty) {
+      setState(() {
+        uId = user.userId!;
+      });
+
+      final userProfile =
+          await Provider.of<UserProfileViewModel>(context, listen: false)
+              .fetchUserProfileViewModelApi(context, {"userId": uId});
+
+      if (userProfile != null) {
+        setState(() {
+          userdata = userProfile.data;
+        });
+        getNotification();
+      }
+    }
   }
 
   void getNotification() {
@@ -89,10 +98,9 @@ class _home_screenState extends State<home_screen>
   bool isLoadingData = false;
   @override
   Widget build(BuildContext context) {
-    // print("UserId here at homeScreen $uId");
     userdata = context.watch<UserProfileViewModel>().DataList.data?.data;
+    
 
-   
     return PopScope(
         canPop: false,
         onPopInvoked: (val) async {
@@ -107,10 +115,9 @@ class _home_screenState extends State<home_screen>
         child: Scaffold(
             backgroundColor: background,
             onDrawerChanged: (isOpened) {
-              Provider.of<UserProfileViewModel>(context,
-                                listen: false)
-                            .fetchUserProfileViewModelApi(
-                                context, {"userId": uId});
+              // Provider.of<UserProfileViewModel>(context, listen: false)
+              //     .fetchUserProfileViewModelApi(context, {"userId": uId});
+              
               getNotification();
             },
             appBar: AppBar(
@@ -157,7 +164,7 @@ class _home_screenState extends State<home_screen>
                   )
                   // child: Image.asset(appLogo1)
                   ),
-                  
+
               actions: [
                 Consumer<NotificationViewModel>(
                   builder: (context, value, child) {

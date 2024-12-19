@@ -271,11 +271,8 @@ final GoRouter myRouter = GoRouter(
         parentNavigatorKey: _rootNavigatorKey,
         builder: (BuildContext context, GoRouterState state) {
           final uid = state.extra as Map<String, dynamic>;
-        
-
           return Packages(
             ursID: uid['user'],
-         
           );
         },
         routes: [

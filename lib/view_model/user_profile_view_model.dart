@@ -19,22 +19,36 @@ class UserProfileViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchUserProfileViewModelApi(
+  TextEditingController stateController = TextEditingController();
+  Future<UserProfileModel?> fetchUserProfileViewModelApi(
     BuildContext context,
     data,
     /*String uid */
   ) async {
-    setDataList(ApiResponse.loading());
-    _myRepo
-        .userProfileRepositoryApi(context: context, query: data)
-        .then((value) async {
-      setDataList(ApiResponse.completed(value));
-      // context.push("/profilePage",extra: {"userId":uid});
-    }).onError((error, stackTrace) {
-      // debugPrint("data nhi chla");
-      Utils.toastMessage(error.toString());
+    try {
+      setDataList(ApiResponse.loading());
+      var resp =
+          await _myRepo.userProfileRepositoryApi(context: context, query: data);
+      if (resp.status.httpCode == '200') {
+        setDataList(ApiResponse.completed(resp));
+        stateController.text = resp.data.state;
+        notifyListeners();
+      }
+      return resp;
+    } catch (error) {
       setDataList(ApiResponse.error(error.toString()));
-    });
+    }
+    return null;
+    // setDataList(ApiResponse.loading());
+    // await _myRepo
+    //     .userProfileRepositoryApi(context: context, query: data)
+    //     .then((value) {
+    //   setDataList(ApiResponse.completed(value));
+    // }).onError((error, stackTrace) {
+    //   // debugPrint("data nhi chla");
+    //   Utils.toastMessage(error.toString());
+    //   setDataList(ApiResponse.error(error.toString()));
+    // });
   }
 }
 
