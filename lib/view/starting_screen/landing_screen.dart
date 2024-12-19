@@ -10,9 +10,7 @@ import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view/consts.dart';
 import 'package:flutter_cab/view_model/home_page_view_model.dart';
-import 'package:flutter_cab/view_model/package_view_model.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 
@@ -129,6 +127,7 @@ class _LandingScreenState extends State<LandingScreen> {
   Widget build(BuildContext context) {
     getActivityCategoryList =
         context.watch<GetActivityCategoryListViewModel>().getActivityList.data;
+  
     getAllActivityList =
         context.watch<GetAllActivityViewModel>().getAllActivityList.data;
     getStateWithImageList = context
@@ -196,6 +195,9 @@ class _LandingScreenState extends State<LandingScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: ListTile(
+                onTap: () {
+                  context.push('/login');
+                },
                 contentPadding: EdgeInsets.symmetric(horizontal: 10),
                 minVerticalPadding: 10,
                 horizontalTitleGap: 10,
@@ -212,14 +214,17 @@ class _LandingScreenState extends State<LandingScreen> {
                   'Holiday Package',
                   style: titleText,
                 ),
-                trailing: Icon(Icons.keyboard_arrow_right_outlined),
+                trailing: const Icon(Icons.keyboard_arrow_right_outlined),
               ),
             ),
             const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: ListTile(
-                contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                onTap: () {
+                  context.push('/login');
+                },
+                contentPadding: const EdgeInsets.symmetric(horizontal: 10),
                 minVerticalPadding: 10,
                 horizontalTitleGap: 10,
                 shape: RoundedRectangleBorder(
@@ -235,7 +240,7 @@ class _LandingScreenState extends State<LandingScreen> {
                   'Rentals Vehicle',
                   style: titleText,
                 ),
-                trailing: Icon(Icons.keyboard_arrow_right_outlined),
+                trailing: const Icon(Icons.keyboard_arrow_right_outlined),
               ),
             ),
           ],
@@ -257,7 +262,7 @@ class _LandingScreenState extends State<LandingScreen> {
                           prefixIcon: const Icon(Icons.search),
                           hintText: 'Where to ? \n Anywhere,anytime',
                           border: OutlineInputBorder(
-                              borderSide: BorderSide(color: greyColor1),
+                              borderSide: const BorderSide(color: greyColor1),
                               borderRadius: BorderRadius.circular(5)),
                           contentPadding:
                               const EdgeInsets.symmetric(vertical: 10)),
@@ -287,53 +292,63 @@ class _LandingScreenState extends State<LandingScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
-                    child: Container(
-                      // height: 60,
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 5, horizontal: 10),
-                      decoration: BoxDecoration(
-                          border: Border.all(),
-                          color: background,
-                          borderRadius: BorderRadius.circular(5)),
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            holidays,
-                            width: 25,
-                            height: 25,
-                            fit: BoxFit.cover,
-                          ),
-                          Text(
-                            'Holiday package',
-                            style: titleTextStyle,
-                          )
-                        ],
+                    child: GestureDetector(
+                      onTap: () {
+                        context.push('/login');
+                      },
+                      child: Container(
+                        // height: 60,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 10),
+                        decoration: BoxDecoration(
+                            border: Border.all(),
+                            color: background,
+                            borderRadius: BorderRadius.circular(5)),
+                        child: Column(
+                          children: [
+                            Image.asset(
+                              holidays,
+                              width: 25,
+                              height: 25,
+                              fit: BoxFit.cover,
+                            ),
+                            Text(
+                              'Holiday package',
+                              style: titleTextStyle,
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: Container(
-                      // height: 60,
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 5, horizontal: 10),
-                      decoration: BoxDecoration(
-                          border: Border.all(),
-                          color: background,
-                          borderRadius: BorderRadius.circular(5)),
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            rentalbooking,
-                            width: 25,
-                            height: 25,
-                            fit: BoxFit.cover,
-                          ),
-                          Text(
-                            'Rental Vehicle',
-                            style: titleTextStyle,
-                          )
-                        ],
+                    child: GestureDetector(
+                      onTap: () {
+                        context.push('/login');
+                      },
+                      child: Container(
+                        // height: 60,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 10),
+                        decoration: BoxDecoration(
+                            border: Border.all(),
+                            color: background,
+                            borderRadius: BorderRadius.circular(5)),
+                        child: Column(
+                          children: [
+                            Image.asset(
+                              rentalbooking,
+                              width: 25,
+                              height: 25,
+                              fit: BoxFit.cover,
+                            ),
+                            Text(
+                              'Rental Vehicle',
+                              style: titleTextStyle,
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   )
@@ -343,68 +358,80 @@ class _LandingScreenState extends State<LandingScreen> {
             const SizedBox(height: 10),
             Image.asset(topiamge),
             const SizedBox(height: 8),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  InkWell(
-                    onTap: _scrollToPrevious,
-                    child: const Icon(Icons.keyboard_arrow_left_outlined),
-                  ),
-                  Expanded(
-                    child: SizedBox(
-                      height: 60,
-                      child: ListView.builder(
-                        controller: _scrollController,
-                        itemCount: getActivityCategoryList?.data?.length,
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          var data = getActivityCategoryList?.data?[index];
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              children: [
-                                Image.network(
-                                  data?.activityCategoryIcon ??
-                                      'https://img.icons8.com/?size=100&id=72696&format=png&color=000000',
-                                  height: 24,
-                                  width: 24,
-                                  fit: BoxFit.cover,
-                                ),
-                                Expanded(
-                                    child: Text(
-                                        data?.activityCategoryName ?? 'xyz'))
-                              ],
+            (getActivityCategoryList?.data ?? []).isEmpty
+                ? const SizedBox.shrink()
+                : Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        InkWell(
+                          onTap: _scrollToPrevious,
+                          child: const Icon(Icons.keyboard_arrow_left_outlined),
+                        ),
+                        Expanded(
+                          child: SizedBox(
+                            height: 60,
+                            child: ListView.builder(
+                              controller: _scrollController,
+                              itemCount: getActivityCategoryList?.data?.length,
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) {
+                                var data =
+                                    getActivityCategoryList?.data?[index];
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    children: [
+                                      (data?.activityCategoryIcon ?? '').isEmpty
+                                          ? Image.asset(
+                                              rentalbooking,
+                                              height: 24,
+                                              width: 24,
+                                              fit: BoxFit.cover,
+                                            )
+                                          : Image.network(
+                                              data?.activityCategoryIcon ??
+                                                  'https://img.icons8.com/?size=100&id=72696&format=png&color=000000',
+                                              height: 24,
+                                              width: 24,
+                                              fit: BoxFit.cover,
+                                            ),
+                                      Expanded(
+                                          child: Text(
+                                              data?.activityCategoryName ??
+                                                  'xyz'))
+                                    ],
+                                  ),
+                                );
+                              },
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                        ),
+                        // Center(
+                        //   child: Row(
+                        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //     children: [
+                        //       IconButton(
+                        //         onPressed: _scrollToPrevious,
+                        //         icon: Icon(Icons.keyboard_arrow_left_outlined),
+                        //       ),
+                        //       IconButton(
+                        //         onPressed: _scrollToNext,
+                        //         icon: Icon(Icons.keyboard_arrow_right_outlined),
+                        //       )
+                        //     ],
+                        //   ),
+                        // ),
+                        InkWell(
+                          onTap: _scrollToNext,
+                          child:
+                              const Icon(Icons.keyboard_arrow_right_outlined),
+                        )
+                      ],
                     ),
                   ),
-                  // Center(
-                  //   child: Row(
-                  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //     children: [
-                  //       IconButton(
-                  //         onPressed: _scrollToPrevious,
-                  //         icon: Icon(Icons.keyboard_arrow_left_outlined),
-                  //       ),
-                  //       IconButton(
-                  //         onPressed: _scrollToNext,
-                  //         icon: Icon(Icons.keyboard_arrow_right_outlined),
-                  //       )
-                  //     ],
-                  //   ),
-                  // ),
-                  InkWell(
-                    onTap: _scrollToNext,
-                    child: const Icon(Icons.keyboard_arrow_right_outlined),
-                  )
-                ],
-              ),
-            ),
             Padding(
               padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
               child: Text(
@@ -500,7 +527,8 @@ class _LandingScreenState extends State<LandingScreen> {
                             surfaceTintColor: Colors.transparent,
                             color: Colors.transparent,
                             shape: RoundedRectangleBorder(
-                              side: BorderSide(width: 1, color: background),
+                              side:
+                                  const BorderSide(width: 1, color: background),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Stack(
@@ -540,9 +568,14 @@ class _LandingScreenState extends State<LandingScreen> {
                           vertical: 10, horizontal: 20),
                       child: Align(
                           alignment: Alignment.bottomRight,
-                          child: Text(
-                            'see all',
-                            style: landingtitleStyle,
+                          child: InkWell(
+                            onTap: () {
+                              context.push('/login');
+                            },
+                            child: Text(
+                              'see all',
+                              style: landingtitleStyle,
+                            ),
                           )),
                     )
                   ],
@@ -559,8 +592,8 @@ class _LandingScreenState extends State<LandingScreen> {
             Container(
               height: 240,
               width: double.infinity,
-              margin: EdgeInsets.symmetric(horizontal: 8),
-              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+              margin: const EdgeInsets.symmetric(horizontal: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
               decoration: BoxDecoration(
                   color: background, borderRadius: BorderRadius.circular(15)),
               child: Row(
@@ -626,7 +659,7 @@ class _LandingScreenState extends State<LandingScreen> {
                 ],
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Container(
               height: 280,
               width: double.infinity,
@@ -703,15 +736,20 @@ class _LandingScreenState extends State<LandingScreen> {
                         },
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           vertical: 5, horizontal: 20),
                       child: Align(
                           alignment: Alignment.bottomRight,
-                          child: Text(
-                            'see all',
-                            style: landingtitleStyle,
+                          child: InkWell(
+                            onTap: () {
+                              context.push('/login');
+                            },
+                            child: Text(
+                              'see all',
+                              style: landingtitleStyle,
+                            ),
                           )),
                     ),
                   ],
@@ -742,7 +780,8 @@ class _LandingScreenState extends State<LandingScreen> {
                             'WHY CHOOSE US',
                             style: exploreText,
                           ),
-                          Text('Your Trusted Partner for Swabi Tour & Travels'),
+                          const Text(
+                              'Your Trusted Partner for Swabi Tour & Travels'),
                           const SizedBox(height: 20),
                           Row(
                             children: [
@@ -784,75 +823,80 @@ class _LandingScreenState extends State<LandingScreen> {
                             ],
                           )
                         ]))),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Text(
-                'Our Recomandation',
-                style: landingText,
-              ),
-            ),
-            SizedBox(
-              height: 220,
-              width: double.infinity,
-              child: CarouselSlider.builder(
-                  itemCount: getBottomPackageList.length,
-                  itemBuilder: (context, index, realIndex) {
-                    var data = getBottomPackageList[index];
-                    var packageImage = data.packageActivities
-                        .expand((e) => e.activity.activityImageUrl)
-                        .toList();
-                    return Stack(
-                      // clipBehavior: Clip.none,
-                      children: [
-                        Container(
-                          height: 200,
-                          margin: const EdgeInsets.symmetric(
-                              horizontal: 0), // 10px total gap (5px + 5px)
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 6,
-                                offset: const Offset(0, 3),
-                              )
-                            ],
-                          ),
-                          clipBehavior: Clip.antiAlias,
-                          child: getBottomPackageList.isEmpty
-                              ? Image.asset(
-                                  explorebgimage, // Replace with your images
-                                  fit: BoxFit.cover,
-                                )
-                              : Image.network(
-                                  packageImage[0],
-                                  fit: BoxFit.cover,
+            getBottomPackageList.isEmpty
+                ? const SizedBox.shrink()
+                : Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Text(
+                      'Our Recomandation',
+                      style: landingText,
+                    ),
+                  ),
+            getBottomPackageList.isEmpty
+                ? const SizedBox.shrink()
+                : SizedBox(
+                    height: 220,
+                    width: double.infinity,
+                    child: CarouselSlider.builder(
+                        itemCount: getBottomPackageList.length,
+                        itemBuilder: (context, index, realIndex) {
+                          var data = getBottomPackageList[index];
+                          var packageImage = data.packageActivities
+                              .expand((e) => e.activity.activityImageUrl)
+                              .toList();
+                          return Stack(
+                            // clipBehavior: Clip.none,
+                            children: [
+                              Container(
+                                height: 200,
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal:
+                                        0), // 10px total gap (5px + 5px)
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 3),
+                                    )
+                                  ],
                                 ),
-                        ),
-                        // Positioned(
-                        //     left: 0,
-                        //     right: 0,
-                        //     bottom: 0,
-                        //     top: 0,
-                        //     child: Center(
-                        //       child: Text(
-                        //         data.packageName,
-                        //         textAlign: TextAlign.center,
-                        //         style: btnTextStyle,
-                        //       ),
-                        //     ))
-                      ],
-                    );
-                  },
-                  options: CarouselOptions(
-                    height: 200,
-                    autoPlay: true,
-                    viewportFraction: .6,
-                    enlargeFactor: 0.3,
-                    enlargeCenterPage: true,
-                    // aspectRatio: 0.35
-                  )),
-            )
+                                clipBehavior: Clip.antiAlias,
+                                child: packageImage.isEmpty
+                                    ? Image.asset(
+                                        explorebgimage, // Replace with your images
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Image.network(
+                                        packageImage[0],
+                                        fit: BoxFit.cover,
+                                      ),
+                              ),
+                              // Positioned(
+                              //     left: 0,
+                              //     right: 0,
+                              //     bottom: 0,
+                              //     top: 0,
+                              //     child: Center(
+                              //       child: Text(
+                              //         data.packageName,
+                              //         textAlign: TextAlign.center,
+                              //         style: btnTextStyle,
+                              //       ),
+                              //     ))
+                            ],
+                          );
+                        },
+                        options: CarouselOptions(
+                          height: 200,
+                          autoPlay: true,
+                          viewportFraction: .6,
+                          enlargeFactor: 0.3,
+                          enlargeCenterPage: true,
+                          // aspectRatio: 0.35
+                        )),
+                  )
           ],
         ),
       ),
