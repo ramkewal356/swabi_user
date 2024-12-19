@@ -1,8 +1,8 @@
 class AppUrl {
   // static var baseUrl = "http://swabi.ap-south-1.elasticbeanstalk.com";
   // static var baseUrlForImage = "http://swabi.ap-south-1.elasticbeanstalk.com";
-  static var baseUrl = 'https://dev-api.swabitours.com';
-  static var baseUrlForImage = "https://dev-api.swabitours.com";
+  static var baseUrl = 'https://api.swabitours.com';
+  static var baseUrlForImage = "https://api.swabitours.com";
   static var locationBaseUrl = 'https://www.universal-tutorial.com';
 
   ///registration URL
