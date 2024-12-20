@@ -217,6 +217,35 @@ class _LoginScreenState extends State<LoginScreen> {
                     btnHeading: 'Signup',
                     sideHeading: " Don't have an account ? ",
                   ),
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          color: Colors.grey,
+                          indent: 50,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          "or",
+                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          color: Colors.grey,
+                          endIndent: 50,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Login_SignUpBtn(
+                    onTap: () => context.pop(),
+                    btnHeading: 'Home',
+                    sideHeading: "Back to  ",
+                  ),
                 ]),
           ),
         ),

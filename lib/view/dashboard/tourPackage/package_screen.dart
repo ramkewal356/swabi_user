@@ -47,32 +47,37 @@ class _PackagesState extends State<Packages> {
   bool isLoadingMore = false;
   List<Content> getPackageList = [];
   String countryName = 'United Arab Emirates';
-  String stateName = 'Dubai';
+  String stateName = '';
   String uId = '';
   @override
   void initState() {
     super.initState();
     // TODO: implement initState
-    statecontroller = Provider.of<UserProfileViewModel>(context, listen: false)
-        .stateController;
+    // stateName = userViewModel.getState();
+
     _selectedDateNotifier =
         ValueNotifier(DateTime.now().add(const Duration(days: 1)));
 
     controller = TextEditingController(text: _dateFormat.format(tomorrow));
     getCountry();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+
+
       final user = await userViewModel.getUserId();
       if (user.userId != null && user.userId!.isNotEmpty) {
         setState(() {
           uId = user.userId!;
         });
 
-        await Provider.of<UserProfileViewModel>(context, listen: false)
+        var userData =
+            await Provider.of<UserProfileViewModel>(context, listen: false)
             .fetchUserProfileViewModelApi(context, {"userId": uId});
-      }
-      print('gfgbg/...///../..//.//.....,..,.,,..,${statecontroller.text}');
+        if (userData != null && userData?.data != null) {
+          fetchState();
 
-      fetchPackageList();
+        }
+      }
+
     });
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
@@ -86,6 +91,31 @@ class _PackagesState extends State<Packages> {
     });
 
     // controller.text = _selectedDate.day.toString();
+  }
+
+  void fetchState() async {
+    try {
+      final String userState = await userViewModel.getState();
+      if (userState.isNotEmpty) {
+        setState(() {
+          stateName = userState; // Update local state
+          print('Fetched state: $stateName');
+        });
+        statecontroller.text = stateName;
+        // Update the text controller
+      } else {
+        setState(() {
+          stateName = Provider.of<UserProfileViewModel>(context, listen: false)
+              .userStateName; // Fallback to another source
+        });
+        print('Fetched state:,,,,..,,,....,,..,,.,,.,,.,.. $stateName');
+
+        statecontroller.text = stateName;
+      }
+      fetchPackageList();
+    } catch (e) {
+      print('Error fetching state: $e');
+    }
   }
 
   Future<void> fetchPackageList() async {
@@ -105,7 +135,7 @@ class _PackagesState extends State<Packages> {
         "days": "",
         "price": "",
         "country": countryName,
-        "state": statecontroller.text
+        "state": statecontroller.text.isEmpty ? stateName : statecontroller.text
         // "packageStatus": "TRUE",
       });
       var data = resp?.data.content ?? [];
@@ -204,11 +234,10 @@ class _PackagesState extends State<Packages> {
   @override
   void dispose() {
     // TODO: implement dispose
-    // statecontroller.dispose();
+    statecontroller.dispose();
     _scrollController.dispose();
     super.dispose();
     // statecontroller.dispose();
-
   }
 
   bool loader = false;
@@ -217,11 +246,6 @@ class _PackagesState extends State<Packages> {
   // List<Content> imgList = [];
   @override
   Widget build(BuildContext context) {
-    // setState(() {
-    //   statecontroller.text =
-    //       context.watch<UserProfileViewModel>().DataList.data?.data.state ?? '';
-    // });
-    print('vnxcbvncxnmvnmxcv..////xv//cv/c/vxc/vv/${statecontroller.text}');
     String status = context
         .watch<GetPackageListViewModel>()
         .getPackageList
@@ -248,7 +272,7 @@ class _PackagesState extends State<Packages> {
               child: Customtextformfield(
                   fillColor: background,
                   readOnly: true,
-                  prefixIcon: Icon(Icons.location_on_outlined),
+                  prefixIcon: const Icon(Icons.location_on_outlined),
                   controller: TextEditingController(text: countryName),
                   hintText: 'Select country'),
             ),
@@ -335,6 +359,8 @@ class _PackagesState extends State<Packages> {
                                         isLastPage = false;
                                       });
                                       fetchPackageList();
+                                      userViewModel
+                                          .setSate(statecontroller.text);
                                     },
                                     child: const Icon(
                                       Icons.search,

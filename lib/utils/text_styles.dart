@@ -78,6 +78,11 @@ TextStyle topcityTextStyle = GoogleFonts.roboto(
 TextStyle rentalDescriptionStyle = GoogleFonts.roboto(
     color: blackColor, fontSize: 12, fontWeight: FontWeight.w400);
 TextStyle chooseUsTextStyle = GoogleFonts.roboto(
-    color: Color(0xFF81001E), fontSize: 12, fontWeight: FontWeight.w500);
+    color: const Color(0xFF81001E), fontSize: 12, fontWeight: FontWeight.w500);
 TextStyle subtitleTextStyle = GoogleFonts.roboto(
     color: background, fontSize: 14, fontWeight: FontWeight.w600);
+TextStyle subscribeTextStyle = GoogleFonts.roboto(
+    backgroundColor: background,
+    color: background,
+    fontSize: 20,
+    fontWeight: FontWeight.w600);

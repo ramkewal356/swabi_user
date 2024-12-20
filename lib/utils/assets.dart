@@ -92,6 +92,8 @@ const String insantBookingIcon = "assets/images/insant-booking-icon.png";
 const String easyPaymentIcon = "assets/images/easy-payment-icon.png";
 const String serviceAndSupportIcon = "assets/images/service-support-icon.png";
 const String advanceBookingIcon = "assets/images/advance-booking-icon.png";
+const String subcribeimage = "assets/images/subscribe-bottom-image.png";
+
 
 
 

@@ -5,7 +5,6 @@ import '/model/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserViewModel with ChangeNotifier {
-
   bool _loading = false;
   bool get loading => _loading;
   String filename = '';
@@ -47,6 +46,18 @@ class UserViewModel with ChangeNotifier {
     return true;
   }
 
+  void setSate(String state) async {
+    final SharedPreferences sp = await SharedPreferences.getInstance();
+    sp.setString('stateName', state);
+    notifyListeners();
+  }
+
+  Future<String> getState() async {
+    final SharedPreferences sp = await SharedPreferences.getInstance();
+    final String state = sp.getString('stateName') ?? "";
+    return state;
+  }
+
   Future<UserModel> getUser() async {
     final SharedPreferences sp = await SharedPreferences.getInstance();
     final String? token = sp.getString('token');
@@ -76,13 +87,14 @@ class UserViewModel with ChangeNotifier {
     final bool remember = sp.getBool('remember') ?? false;
     return remember;
   }
- 
 
   Future<dynamic> remove(context) async {
     final SharedPreferences sp = await SharedPreferences.getInstance();
     sp.remove('token');
     sp.remove('userId');
     sp.remove('baseUrl');
+    sp.remove('stateName');
+
     // sp.clear();
     Utils.toastSuccessMessage("Logout Successfully");
   }

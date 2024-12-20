@@ -5,6 +5,7 @@ import 'package:flutter_cab/model/get_activity_category_list_model.dart';
 import 'package:flutter_cab/model/get_all_activity_list_model.dart';
 import 'package:flutter_cab/model/get_state_with_image_list_model.dart';
 import 'package:flutter_cab/model/package_models.dart';
+import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
@@ -127,7 +128,7 @@ class _LandingScreenState extends State<LandingScreen> {
   Widget build(BuildContext context) {
     getActivityCategoryList =
         context.watch<GetActivityCategoryListViewModel>().getActivityList.data;
-  
+
     getAllActivityList =
         context.watch<GetAllActivityViewModel>().getAllActivityList.data;
     getStateWithImageList = context
@@ -145,6 +146,10 @@ class _LandingScreenState extends State<LandingScreen> {
           height: 24,
           fit: BoxFit.cover,
         ),
+        actions: [
+          IconButton(
+              onPressed: () {}, icon: Icon(Icons.notifications_none_outlined))
+        ],
       ),
       drawer: Drawer(
         backgroundColor: background,
@@ -166,6 +171,7 @@ class _LandingScreenState extends State<LandingScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: ListTile(
                 onTap: () {
+                  context.pop();
                   context.push('/login');
                 },
                 selectedTileColor: btnColor,
@@ -188,7 +194,7 @@ class _LandingScreenState extends State<LandingScreen> {
                   color: background,
                 ),
                 title: const Text('Login for booking'),
-                trailing: Icon(Icons.keyboard_arrow_right_outlined),
+                trailing: const Icon(Icons.keyboard_arrow_right_outlined),
               ),
             ),
             const SizedBox(height: 20),
@@ -196,9 +202,11 @@ class _LandingScreenState extends State<LandingScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: ListTile(
                 onTap: () {
+                  context.pop();
+
                   context.push('/login');
                 },
-                contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 10),
                 minVerticalPadding: 10,
                 horizontalTitleGap: 10,
                 shape: RoundedRectangleBorder(
@@ -222,6 +230,7 @@ class _LandingScreenState extends State<LandingScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: ListTile(
                 onTap: () {
+                  context.pop();
                   context.push('/login');
                 },
                 contentPadding: const EdgeInsets.symmetric(horizontal: 10),
@@ -258,6 +267,7 @@ class _LandingScreenState extends State<LandingScreen> {
                       child: SizedBox(
                     height: 40,
                     child: TextField(
+                      readOnly: true,
                       decoration: InputDecoration(
                           prefixIcon: const Icon(Icons.search),
                           hintText: 'Where to ? \n Anywhere,anytime',
@@ -270,6 +280,9 @@ class _LandingScreenState extends State<LandingScreen> {
                   )),
                   const SizedBox(width: 10),
                   InkWell(
+                    onTap: () {
+                      context.push('/login');
+                    },
                     child: Container(
                       height: 40,
                       width: 40,
@@ -382,48 +395,39 @@ class _LandingScreenState extends State<LandingScreen> {
                                     getActivityCategoryList?.data?[index];
                                 return Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    children: [
-                                      (data?.activityCategoryIcon ?? '').isEmpty
-                                          ? Image.asset(
-                                              rentalbooking,
-                                              height: 24,
-                                              width: 24,
-                                              fit: BoxFit.cover,
-                                            )
-                                          : Image.network(
-                                              data?.activityCategoryIcon ??
-                                                  'https://img.icons8.com/?size=100&id=72696&format=png&color=000000',
-                                              height: 24,
-                                              width: 24,
-                                              fit: BoxFit.cover,
-                                            ),
-                                      Expanded(
-                                          child: Text(
-                                              data?.activityCategoryName ??
-                                                  'xyz'))
-                                    ],
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      context.push('/login');
+                                    },
+                                    child: Column(
+                                      children: [
+                                        (data?.activityCategoryIcon ?? '')
+                                                .isEmpty
+                                            ? Image.asset(
+                                                rentalbooking,
+                                                height: 24,
+                                                width: 24,
+                                                fit: BoxFit.cover,
+                                              )
+                                            : Image.network(
+                                                data?.activityCategoryIcon ??
+                                                    'https://img.icons8.com/?size=100&id=72696&format=png&color=000000',
+                                                height: 24,
+                                                width: 24,
+                                                fit: BoxFit.cover,
+                                              ),
+                                        Expanded(
+                                            child: Text(
+                                                data?.activityCategoryName ??
+                                                    'xyz'))
+                                      ],
+                                    ),
                                   ),
                                 );
                               },
                             ),
                           ),
                         ),
-                        // Center(
-                        //   child: Row(
-                        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //     children: [
-                        //       IconButton(
-                        //         onPressed: _scrollToPrevious,
-                        //         icon: Icon(Icons.keyboard_arrow_left_outlined),
-                        //       ),
-                        //       IconButton(
-                        //         onPressed: _scrollToNext,
-                        //         icon: Icon(Icons.keyboard_arrow_right_outlined),
-                        //       )
-                        //     ],
-                        //   ),
-                        // ),
                         InkWell(
                           onTap: _scrollToNext,
                           child:
@@ -449,42 +453,47 @@ class _LandingScreenState extends State<LandingScreen> {
                   var packageImage = data.packageActivities
                       .expand((e) => e.activity.activityImageUrl)
                       .toList();
-                  return Card(
-                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                    clipBehavior: Clip.antiAlias,
-                    surfaceTintColor: Colors.transparent,
-                    color: Colors.transparent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Stack(
-                      children: [
-                        Container(
-                          height: 165,
-                          width: 130,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5)),
-                          child: (packageImage ?? []).isEmpty
-                              ? Image.asset(
-                                  tour,
-                                  fit: BoxFit.cover,
-                                )
-                              : Image.network(
-                                  packageImage[0] ?? '',
-                                  fit: BoxFit.cover,
-                                ),
-                        ),
-                        Positioned(
-                          left: 0,
-                          right: 0,
-                          bottom: 10,
-                          child: Text(
-                            data.packageName ?? '',
-                            style: subtitleTextStyle,
-                            textAlign: TextAlign.center,
+                  return GestureDetector(
+                    onTap: () {
+                      context.push('/login');
+                    },
+                    child: Card(
+                      margin: const EdgeInsets.symmetric(horizontal: 8),
+                      clipBehavior: Clip.antiAlias,
+                      surfaceTintColor: Colors.transparent,
+                      color: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Stack(
+                        children: [
+                          Container(
+                            height: 165,
+                            width: 130,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5)),
+                            child: (packageImage ?? []).isEmpty
+                                ? Image.asset(
+                                    tour,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Image.network(
+                                    packageImage[0] ?? '',
+                                    fit: BoxFit.cover,
+                                  ),
                           ),
-                        )
-                      ],
+                          Positioned(
+                            left: 0,
+                            right: 0,
+                            bottom: 10,
+                            child: Text(
+                              data.packageName ?? '',
+                              style: subtitleTextStyle,
+                              textAlign: TextAlign.center,
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   );
                 },
@@ -494,92 +503,93 @@ class _LandingScreenState extends State<LandingScreen> {
             Container(
               height: 280,
               width: double.infinity,
+              margin: const EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
                 image: DecorationImage(
                     image: Image.asset(
                   rectanglebgimage,
+                 
+                  ).image,
                   fit: BoxFit.cover,
-                ).image),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Center(
-                        child: Text(
-                          'Top Cities in UAE',
-                          style: topcityTextStyle,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 115,
-                      child: ListView.builder(
-                        itemCount: getStateWithImageList?.data?.length,
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          var data = getStateWithImageList?.data?[index];
-                          return Card(
-                            clipBehavior: Clip.antiAlias,
-                            surfaceTintColor: Colors.transparent,
-                            color: Colors.transparent,
-                            shape: RoundedRectangleBorder(
-                              side:
-                                  const BorderSide(width: 1, color: background),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Stack(
-                              children: [
-                                Container(
-                                  height: 115,
-                                  width: 115,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5)),
-                                  child: (data?.stateImage ?? "").isEmpty
-                                      ? Image.asset(
-                                          stateDetail[index]['image'],
-                                          fit: BoxFit.cover,
-                                        )
-                                      : Image.network(
-                                          data?.stateImage ?? '',
-                                          fit: BoxFit.cover,
-                                        ),
-                                ),
-                                Positioned(
-                                    left: 0,
-                                    right: 0,
-                                    bottom: 10,
-                                    child: Text(
-                                      data?.state ?? '',
-                                      style: landingtitleStyle,
-                                      textAlign: TextAlign.center,
-                                    ))
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 20),
-                      child: Align(
-                          alignment: Alignment.bottomRight,
-                          child: InkWell(
-                            onTap: () {
-                              context.push('/login');
-                            },
-                            child: Text(
-                              'see all',
-                              style: landingtitleStyle,
-                            ),
-                          )),
-                    )
-                  ],
                 ),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        'Top Cities in UAE',
+                        style: topcityTextStyle,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 115,
+                    child: ListView.builder(
+                      itemCount: getStateWithImageList?.data?.length,
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        var data = getStateWithImageList?.data?[index];
+                        return Card(
+                          clipBehavior: Clip.antiAlias,
+                          surfaceTintColor: Colors.transparent,
+                          margin: const EdgeInsets.symmetric(horizontal: 6),
+                          color: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            side: const BorderSide(width: 1, color: background),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Stack(
+                            children: [
+                              Container(
+                                height: 115,
+                                width: 115,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: (data?.stateImage ?? "").isEmpty
+                                    ? Image.asset(
+                                        stateDetail[index]['image'],
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Image.network(
+                                        data?.stateImage ?? '',
+                                        fit: BoxFit.cover,
+                                      ),
+                              ),
+                              Positioned(
+                                  left: 0,
+                                  right: 0,
+                                  bottom: 10,
+                                  child: Text(
+                                    data?.state ?? '',
+                                    style: landingtitleStyle,
+                                    textAlign: TextAlign.center,
+                                  ))
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 20),
+                    child: Align(
+                        alignment: Alignment.bottomRight,
+                        child: InkWell(
+                          onTap: () {
+                            context.push('/login');
+                          },
+                          child: Text(
+                            'see all',
+                            style: landingtitleStyle,
+                          ),
+                        )),
+                  )
+                ],
               ),
             ),
             Padding(
@@ -662,16 +672,20 @@ class _LandingScreenState extends State<LandingScreen> {
             const SizedBox(height: 10),
             Container(
               height: 280,
+              margin: EdgeInsets.symmetric(horizontal: 10),
               width: double.infinity,
               decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
                 image: DecorationImage(
                     image: Image.asset(
                   explorebgimage,
-                  fit: BoxFit.fill,
-                ).image),
+                      // fit: BoxFit.fill,
+                    ).image,
+                    fit: BoxFit.cover),
+              
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -691,46 +705,43 @@ class _LandingScreenState extends State<LandingScreen> {
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
                           var data = getAllActivityList?.data?.content?[index];
-                          return Padding(
-                            padding: const EdgeInsets.only(left: 10),
-                            child: Card(
-                              clipBehavior: Clip.antiAlias,
-                              // margin: EdgeInsets.symmetric(horizontal: 8),
-                              surfaceTintColor: Colors.transparent,
-                              color: Colors.transparent,
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(width: 1, color: background),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Stack(
-                                children: [
-                                  Container(
-                                    height: 148,
-                                    width: 103,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5)),
-                                    child: (data?.activityImageUrl ?? [])
-                                            .isEmpty
-                                        ? Image.asset(
-                                            tour,
-                                            fit: BoxFit.cover,
-                                          )
-                                        : Image.network(
-                                            data?.activityImageUrl?[0] ?? '',
-                                            fit: BoxFit.cover,
-                                          ),
-                                  ),
-                                  Positioned(
-                                      left: 0,
-                                      right: 0,
-                                      bottom: 10,
-                                      child: Text(
-                                        data?.activityName ?? '',
-                                        style: landingtitleStyle,
-                                        textAlign: TextAlign.center,
-                                      ))
-                                ],
-                              ),
+                          return Card(
+                            clipBehavior: Clip.none,
+                            margin: EdgeInsets.symmetric(horizontal: 6),
+                            surfaceTintColor: Colors.transparent,
+                            color: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              side:
+                                  const BorderSide(width: 1, color: background),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Stack(
+                              children: [
+                                Container(
+                                  height: 148,
+                                  width: 103,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5)),
+                                  child: (data?.activityImageUrl ?? []).isEmpty
+                                      ? Image.asset(
+                                          tour,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : Image.network(
+                                          data?.activityImageUrl?[0] ?? '',
+                                          fit: BoxFit.cover,
+                                        ),
+                                ),
+                                Positioned(
+                                    left: 0,
+                                    right: 0,
+                                    bottom: 10,
+                                    child: Text(
+                                      data?.activityName ?? '',
+                                      style: landingtitleStyle,
+                                      textAlign: TextAlign.center,
+                                    ))
+                              ],
                             ),
                           );
                         },
@@ -873,18 +884,6 @@ class _LandingScreenState extends State<LandingScreen> {
                                         fit: BoxFit.cover,
                                       ),
                               ),
-                              // Positioned(
-                              //     left: 0,
-                              //     right: 0,
-                              //     bottom: 0,
-                              //     top: 0,
-                              //     child: Center(
-                              //       child: Text(
-                              //         data.packageName,
-                              //         textAlign: TextAlign.center,
-                              //         style: btnTextStyle,
-                              //       ),
-                              //     ))
                             ],
                           );
                         },
@@ -896,7 +895,72 @@ class _LandingScreenState extends State<LandingScreen> {
                           enlargeCenterPage: true,
                           // aspectRatio: 0.35
                         )),
-                  )
+                  ),
+            Stack(
+              children: [
+                SizedBox(
+                    height: 250,
+                    width: double.infinity,
+                    child: Image.asset(
+                      subcribeimage,
+                      fit: BoxFit.cover,
+                    )),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: Text(
+                          'Haven’t decided yet? \nLet us inspire you even more.',
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: background,
+                              shadows: [
+                                Shadow(
+                                    color: blackColor.withOpacity(0.5),
+                                    offset: Offset(1, 1))
+                              ]),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.all(10.0),
+                        decoration: BoxDecoration(
+                            color: background,
+                            borderRadius: BorderRadius.circular(5)),
+                        child: Customtextformfield(
+                            readOnly: true,
+                            fillColor: background,
+                            prefixIcon: const Icon(Icons.email_outlined),
+                            suffixIcons: Container(
+                                width: 100,
+                                margin: const EdgeInsets.all(2),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 10),
+                                decoration: const BoxDecoration(
+                                    color: greyColor1,
+                                    borderRadius: BorderRadius.only(
+                                        topRight: Radius.circular(5),
+                                        bottomRight: Radius.circular(5))),
+                                child: Center(
+                                  child: Text(
+                                    'Subscribe',
+                                    style: landingTextStyle,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                )),
+                            controller: TextEditingController(),
+                            hintText: 'Enter your email'),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            )
           ],
         ),
       ),
