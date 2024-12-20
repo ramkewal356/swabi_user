@@ -242,7 +242,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                   Login_SignUpBtn(
-                    onTap: () => context.pop(),
+                    onTap: () => context.push('/landing_screen'),
                     btnHeading: 'Home',
                     sideHeading: "Back to  ",
                   ),
