@@ -19,7 +19,8 @@ class UserProfileViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  TextEditingController stateController = TextEditingController();
+  // TextEditingController stateController = TextEditingController();
+  String userStateName = '';
   Future<UserProfileModel?> fetchUserProfileViewModelApi(
     BuildContext context,
     data,
@@ -31,9 +32,10 @@ class UserProfileViewModel with ChangeNotifier {
           await _myRepo.userProfileRepositoryApi(context: context, query: data);
       if (resp.status.httpCode == '200') {
         setDataList(ApiResponse.completed(resp));
-        stateController.text = resp.data.state;
+        userStateName = resp.data.state;
         notifyListeners();
       }
+      debugPrint('djhsbdjhddbnbnb...>>>>>>>>>>$userStateName');
       return resp;
     } catch (error) {
       setDataList(ApiResponse.error(error.toString()));
