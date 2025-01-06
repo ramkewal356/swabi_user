@@ -128,13 +128,13 @@ class _AccountScreenState extends State<AccountScreen> {
             heading: "My Profile",
             // onTap: () => context.push("/profilePage",extra: {"userId":widget.userId}),
             onTap: () {
-              Navigator.of(context).pop();
+              // Navigator.of(context).pop();
       
               Provider.of<UserProfileViewModel>(context, listen: false)
                   .fetchUserProfileViewModelApi(
                       context, {"userId": widget.userId});
               context.push("/profilePage", extra: {"userId": widget.userId});
-     
+     Navigator.pop(context);
             },
           ),
         ),
@@ -145,10 +145,11 @@ class _AccountScreenState extends State<AccountScreen> {
               iconColor: btnColor,
               heading: "My Rental Trips",
               onTap: () {
-                Navigator.of(context).pop();
+                // Navigator.of(context).pop();
 
                 context.push("/rentalForm/rentalHistory",
                     extra: {"myIdNo": widget.userId});
+                Navigator.pop(context);
               }
               // context.push("/booking")
               ),
@@ -160,10 +161,11 @@ class _AccountScreenState extends State<AccountScreen> {
               img: package,
               heading: "My Packages",
               onTap: () {
-                Navigator.of(context).pop();
+                // Navigator.of(context).pop();
 
                 context.push("/package/packageHistoryManagement",
                     extra: {"userID": widget.userId});
+                Navigator.pop(context);
               } // context.push("/booking")
               ),
         ),
@@ -175,9 +177,10 @@ class _AccountScreenState extends State<AccountScreen> {
               iconColor: btnColor,
               heading: "All Offers",
               onTap: () {
-                Navigator.of(context).pop();
+                // Navigator.of(context).pop();
 
                 context.push("/allOffer", extra: {'initialIndex': 0});
+                Navigator.pop(context);
               }),
         ),
         Padding(
@@ -187,9 +190,10 @@ class _AccountScreenState extends State<AccountScreen> {
               iconColor: btnColor,
               heading: "Transactions",
               onTap: () {
-                Navigator.of(context).pop();
+                // Navigator.of(context).pop();
                 context
                     .push("/myTransaction", extra: {"userId": widget.userId});
+                Navigator.pop(context);
               }),
         ),
         Padding(
@@ -199,9 +203,10 @@ class _AccountScreenState extends State<AccountScreen> {
               iconColor: btnColor,
               heading: "My Wallet",
               onTap: () {
-                Navigator.of(context).pop();
+                // Navigator.of(context).pop();
 
                 context.push("/myWallet", extra: {"userId": widget.userId});
+                Navigator.pop(context);
               }),
         ),
         Padding(
@@ -211,9 +216,10 @@ class _AccountScreenState extends State<AccountScreen> {
               img: helpSupport,
               heading: "Help & Support",
               onTap: () {
-                Navigator.of(context).pop();
+                // Navigator.of(context).pop();
 
                 context.push("/help&support");
+                Navigator.pop(context);
               }),
         ),
         const Spacer(),
