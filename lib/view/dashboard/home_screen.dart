@@ -101,16 +101,25 @@ class _home_screenState extends State<home_screen>
     userdata = context.watch<UserProfileViewModel>().DataList.data?.data;
     
 
-    return PopScope(
-        canPop: false,
-        onPopInvoked: (val) async {
-          if (GoRouterState.of(context).uri.toString() != '/') {
-            context.go('/');
-            // return;
-          } else if (GoRouterState.of(context).uri.toString() == '/') {
-            await showDialog(
-                context: context, builder: (context) => exitContainer());
-          }
+    // return PopScope(
+    //     canPop: false,
+    //     onPopInvoked: (val) async {
+    //       if (GoRouterState.of(context).uri.toString() != '/') {
+    //         context.go('/');
+    //         // return;
+    //       } else if (GoRouterState.of(context).uri.toString() == '/') {
+    //         await showDialog(
+    //             context: context, builder: (context) => exitContainer());
+    //       }
+    //     },
+    return WillPopScope(
+        onWillPop: () async {
+          bool shouldExit = await showDialog(
+            context: context,
+            builder: (context) => exitContainer(),
+          );
+          return shouldExit ?? false;
+       
         },
         child: Scaffold(
             backgroundColor: background,

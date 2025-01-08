@@ -134,6 +134,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   .fetchUserProfileViewModelApi(
                       context, {"userId": widget.userId});
               context.push("/profilePage", extra: {"userId": widget.userId});
+             
      
             },
           ),
@@ -149,6 +150,8 @@ class _AccountScreenState extends State<AccountScreen> {
 
                 context.push("/rentalForm/rentalHistory",
                     extra: {"myIdNo": widget.userId});
+               
+
               }
               // context.push("/booking")
               ),
@@ -164,6 +167,8 @@ class _AccountScreenState extends State<AccountScreen> {
 
                 context.push("/package/packageHistoryManagement",
                     extra: {"userID": widget.userId});
+              
+
               } // context.push("/booking")
               ),
         ),
@@ -178,6 +183,8 @@ class _AccountScreenState extends State<AccountScreen> {
                 Navigator.of(context).pop();
 
                 context.push("/allOffer", extra: {'initialIndex': 0});
+             
+
               }),
         ),
         Padding(
@@ -190,6 +197,8 @@ class _AccountScreenState extends State<AccountScreen> {
                 Navigator.of(context).pop();
                 context
                     .push("/myTransaction", extra: {"userId": widget.userId});
+               
+
               }),
         ),
         Padding(
@@ -202,6 +211,8 @@ class _AccountScreenState extends State<AccountScreen> {
                 Navigator.of(context).pop();
 
                 context.push("/myWallet", extra: {"userId": widget.userId});
+              
+
               }),
         ),
         Padding(
@@ -214,6 +225,8 @@ class _AccountScreenState extends State<AccountScreen> {
                 Navigator.of(context).pop();
 
                 context.push("/help&support");
+               
+
               }),
         ),
         const Spacer(),

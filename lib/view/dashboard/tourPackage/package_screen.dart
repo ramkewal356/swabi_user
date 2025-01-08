@@ -47,7 +47,7 @@ class _PackagesState extends State<Packages> {
   bool isLoadingMore = false;
   List<Content> getPackageList = [];
   String countryName = 'United Arab Emirates';
-  String stateName = '';
+  String stateName = 'Dubai';
   String uId = '';
   @override
   void initState() {
@@ -59,8 +59,8 @@ class _PackagesState extends State<Packages> {
         ValueNotifier(DateTime.now().add(const Duration(days: 1)));
 
     controller = TextEditingController(text: _dateFormat.format(tomorrow));
-    getCountry();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      getCountry();
 
 
       final user = await userViewModel.getUserId();
@@ -100,17 +100,19 @@ class _PackagesState extends State<Packages> {
         setState(() {
           stateName = userState; // Update local state
           print('Fetched state: $stateName');
-        });
         statecontroller.text = stateName;
+
+        });
         // Update the text controller
       } else {
         setState(() {
           stateName = Provider.of<UserProfileViewModel>(context, listen: false)
               .userStateName; // Fallback to another source
+          statecontroller.text = stateName;
+
         });
         print('Fetched state:,,,,..,,,....,,..,,.,,.,,.,.. $stateName');
 
-        statecontroller.text = stateName;
       }
       fetchPackageList();
     } catch (e) {
@@ -213,9 +215,10 @@ class _PackagesState extends State<Packages> {
   String accessToken = '';
   void getCountry() async {
     try {
-      var countryProvider =
-          Provider.of<GetCountryStateListViewModel>(context, listen: false);
-      countryProvider.getAccessToken(context: context).then((onValue) {
+      // var countryProvider =
+      Provider.of<GetCountryStateListViewModel>(context, listen: false)
+          .getAccessToken(context: context)
+          .then((onValue) {
         debugPrint('token,.....c//.c.... $onValue');
         setState(() {
           accessToken = onValue['auth_token'].toString();
@@ -423,11 +426,11 @@ class _PackagesState extends State<Packages> {
                                       state: getPackageList[index].state,
                                       location: getPackageList[index].location,
                                       total: getPackageList[index].totalPrice,
-                                      activityName: List.generate(
+                                      activityList: List.generate(
                                           activityData.length,
                                           (index) => activityData[index]
                                               .activity
-                                              .activityName),
+                                              ),
                                       activity: getPackageList[index]
                                           .packageActivities
                                           .length
@@ -497,7 +500,7 @@ class PackageContainer extends StatefulWidget {
   final String country;
   final String state;
   final String activity;
-  final List<String> activityName;
+  final List<Activity> activityList;
   final String location;
   final String total;
   final String packageName;
@@ -512,7 +515,7 @@ class PackageContainer extends StatefulWidget {
       // required this.noOfNights,
       required this.country,
       required this.activity,
-      required this.activityName,
+      required this.activityList,
       required this.state,
       required this.total,
       required this.location,
@@ -675,7 +678,7 @@ class _PackageContainerState extends State<PackageContainer> {
                       ),
                       Column(
                         children: List.generate(
-                            widget.activityName.take(3).length,
+                            widget.activityList.take(3).length,
                             (index) => Padding(
                                   padding: const EdgeInsets.only(bottom: 10),
                                   child: Row(
@@ -699,7 +702,8 @@ class _PackageContainerState extends State<PackageContainer> {
                                                   .8,
                                           // color: Colors.cyan,
                                           child: CustomText(
-                                            content: widget.activityName[index],
+                                            content:
+                                                '${widget.activityList[index].activityName} ( ${widget.activityList[index].state} )',
                                             textColor: greenColor,
                                             fontSize: 15,
                                             maxline: 2,

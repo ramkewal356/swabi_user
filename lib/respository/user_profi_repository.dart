@@ -248,10 +248,14 @@ class UserProfileUpdateRepository {
       Response<dynamic>? response = await http.request<dynamic>();
       debugPrint("getcountry List response ${response?.data}");
       // var resp = GetStateListModel.fromJson(response?.data);
-      return response?.data;
+      if (response?.data != null) {
+        return response?.data;
+      } else {
+        return null;
+      }
     } catch (error) {
       debugPrint('error.. $error');
-      http.handleErrorResponse(context: context, error: error);
+      // http.handleErrorResponse(context: context, error: error);
       rethrow;
     }
   }

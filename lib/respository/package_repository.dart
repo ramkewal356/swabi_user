@@ -26,7 +26,7 @@ class GetPackageListRepository {
       return resp;
     } catch (e) {
       debugPrint("Get Package List Repo Field $e");
-      http.handleErrorResponse(context: context, error: e);
+      // http.handleErrorResponse(context: context, error: e);
       rethrow;
     }
   }
