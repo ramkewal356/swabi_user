@@ -105,12 +105,18 @@ class _PackagesState extends State<Packages> {
         });
         // Update the text controller
       } else {
-        setState(() {
-          stateName = Provider.of<UserProfileViewModel>(context, listen: false)
-              .userStateName; // Fallback to another source
-          statecontroller.text = stateName;
+      
+        final fallbackState =
+            Provider.of<UserProfileViewModel>(context, listen: false)
+                .userStateName;
 
+        setState(() {
+          stateName = fallbackState;
+          statecontroller.text = fallbackState; // Update the controller
+          debugPrint('Fetched fallback state: $fallbackState');
         });
+
+     
         print('Fetched state:,,,,..,,,....,,..,,.,,.,,.,.. $stateName');
 
       }
