@@ -144,7 +144,7 @@ class _AccountScreenState extends State<AccountScreen> {
               iconColor: btnColor,
               heading: "My Rental Trips",
               onTap: () {
-                // Navigator.of(context).pop();
+                Navigator.of(context).pop();
 
                 context.push("/rentalForm/rentalHistory",
                     extra: {"myIdNo": widget.userId});
@@ -159,7 +159,7 @@ class _AccountScreenState extends State<AccountScreen> {
               img: package,
               heading: "My Packages",
               onTap: () {
-                // Navigator.of(context).pop();
+                Navigator.of(context).pop();
 
                 context.push("/package/packageHistoryManagement",
                     extra: {"userID": widget.userId});
@@ -174,7 +174,7 @@ class _AccountScreenState extends State<AccountScreen> {
               iconColor: btnColor,
               heading: "All Offers",
               onTap: () {
-                // Navigator.of(context).pop();
+                Navigator.of(context).pop();
 
                 context.push("/allOffer", extra: {'initialIndex': 0});
               }),
@@ -186,7 +186,7 @@ class _AccountScreenState extends State<AccountScreen> {
               iconColor: btnColor,
               heading: "Transactions",
               onTap: () {
-                // Navigator.of(context).pop();
+                Navigator.of(context).pop();
                 context
                     .push("/myTransaction", extra: {"userId": widget.userId});
               }),
@@ -198,7 +198,7 @@ class _AccountScreenState extends State<AccountScreen> {
               iconColor: btnColor,
               heading: "My Wallet",
               onTap: () {
-                // Navigator.of(context).pop();
+                Navigator.of(context).pop();
 
                 context.push("/myWallet", extra: {"userId": widget.userId});
               }),
@@ -210,7 +210,7 @@ class _AccountScreenState extends State<AccountScreen> {
               img: helpSupport,
               heading: "Help & Support",
               onTap: () {
-                // Navigator.of(context).pop();
+                Navigator.of(context).pop();
 
                 context.push("/help&support");
               }),
