@@ -82,20 +82,23 @@ class _EditProfiePageState extends State<EditProfiePage> {
   String accessToken = '';
   void getCountry() async {
     try {
-      var countryProvider =
-          Provider.of<GetCountryStateListViewModel>(context, listen: false);
-      countryProvider.getAccessToken(context: context).then((onValue) {
-        debugPrint('token,.....c//.c.... $onValue');
-        setState(() {
-          accessToken = onValue['auth_token'].toString();
-        });
-        // countryProvider.getCountryList(context: context, token: accessToken);
-        Provider.of<GetCountryStateListViewModel>(context, listen: false)
+      Provider.of<GetCountryStateListViewModel>(context, listen: false)
             .getStateList(
-                context: context,
-                token: accessToken,
-                country: controllers[6].text);
-      });
+                context: context, country: controllers[6].text);
+      // var countryProvider =
+      //     Provider.of<GetCountryStateListViewModel>(context, listen: false);
+      // countryProvider.getAccessToken(context: context).then((onValue) {
+      //   debugPrint('token,.....c//.c.... $onValue');
+      //   setState(() {
+      //     accessToken = onValue['auth_token'].toString();
+      //   });
+      //   // countryProvider.getCountryList(context: context, token: accessToken);
+      //   Provider.of<GetCountryStateListViewModel>(context, listen: false)
+      //       .getStateList(
+      //           context: context,
+      //           token: accessToken,
+      //           country: controllers[6].text);
+      // });
     } catch (e) {
       debugPrint('error $e');
     }
@@ -114,8 +117,7 @@ class _EditProfiePageState extends State<EditProfiePage> {
     bool status = context.watch<UserProfileUpdateViewModel>().isLoading;
     // List country =
     //     context.watch<GetCountryStateListViewModel>().getCountryListModel;
-    List state =
-        context.watch<GetCountryStateListViewModel>().getStateListModel;
+    var state = context.watch<GetCountryStateListViewModel>().getStateNameModel;
     bool isLoadingState =
         context.watch<GetCountryStateListViewModel>().isLoading;
     return Scaffold(
@@ -285,9 +287,7 @@ class _EditProfiePageState extends State<EditProfiePage> {
               CustomDropdownButton(
                 controller: controllers[7],
                 // focusNode: focusNode3,
-                itemsList: state.map((state) {
-                  return state['state_name'].toString();
-                }).toList(),
+                itemsList: state?.map((stateName) => stateName).toList() ?? [],
 
                 // itemsList: [],
                 onChanged: isLoadingState

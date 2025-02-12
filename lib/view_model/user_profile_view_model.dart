@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
 import 'package:flutter_cab/model/changepassword_model.dart';
 import 'package:flutter_cab/model/common_model.dart';
+import 'package:flutter_cab/model/get_state_name_model.dart';
 import 'package:flutter_cab/model/user_profile_model.dart';
 import 'package:flutter_cab/respository/user_profi_repository.dart';
 import 'package:flutter_cab/utils/utils.dart';
@@ -236,7 +237,8 @@ class ResetPasswordViewModel with ChangeNotifier {
 class GetCountryStateListViewModel with ChangeNotifier {
   final _myRepo = UserProfileUpdateRepository();
   List<dynamic> getCountryListModel = [];
-  List<dynamic> getStateListModel = [];
+  // List<dynamic> getStateListModel = [];
+  List<String>? getStateNameModel;
   bool isLoading = false;
   Future<dynamic> getAccessToken({
     required BuildContext context,
@@ -276,28 +278,45 @@ class GetCountryStateListViewModel with ChangeNotifier {
     return null;
   }
 
-  Future<dynamic> getStateList({
+  Future<void> getStateList({
     required BuildContext context,
-    required String token,
     required String country,
   }) async {
-    Map<String, String> header = {
-      "Authorization": 'Bearer $token',
-    };
+    Map<String, dynamic> body = {"country": country};
     try {
       isLoading = true;
       notifyListeners();
       _myRepo
-          .getStateListApi(context: context, header: header, country: country)
+          .getStateListApi(
+        context: context,
+        body: body,
+      )
           .then((onValue) {
-        if (onValue != null) {
-          getStateListModel = onValue;
+        if (onValue.data != null) {
+          // Filter the data to get the country-specific states
+          var countryData = onValue.data?.firstWhere(
+            (item) => item.name == country,
+            // orElse: () => null,
+          );
+
+          if (countryData != null) {
+            var states = countryData.states;
+            getStateNameModel = states
+                ?.map((state) => state.name
+                    ?.replaceFirst(RegExp(r' Emirate$'), '') as String)
+                .toList();
+            debugPrint('vcnbxcnbxcn,,,,,,,,....???????? $getStateNameModel');
+          } else {
+            // If country is not found in the data, handle accordingly
+            getStateNameModel = [];
+          }
+
           isLoading = false;
-          notifyListeners(); // Returns a List
+          notifyListeners(); // Notify listeners after update
         } else {
+          // Handle case when the response is null
           isLoading = false;
           notifyListeners();
-          return []; // Return an empty List if the response is null
         }
       });
     } catch (e) {
@@ -308,6 +327,6 @@ class GetCountryStateListViewModel with ChangeNotifier {
       isLoading = false;
       notifyListeners();
     }
-    return null;
+    // return null;
   }
 }

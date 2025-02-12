@@ -249,14 +249,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.21"
-  dart_either:
-    dependency: transitive
-    description:
-      name: dart_either
-      sha256: "928895b8266ac5906eb4e2993fead563a73b17fc86eec6b40172100d56ca2507"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.0"
   dart_style:
     dependency: transitive
     description:
@@ -414,14 +406,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.5.0"
-  flutter_bloc_pattern:
-    dependency: transitive
-    description:
-      name: flutter_bloc_pattern
-      sha256: "76fc4e7cd79cfe770ca69a0ea8133cf1ac180ecf42e86d316db3693fcd871501"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.3.0"
   flutter_charts:
     dependency: "direct main"
     description:
@@ -430,14 +414,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.5.2"
-  flutter_google_places_hoc081098:
-    dependency: "direct main"
-    description:
-      name: flutter_google_places_hoc081098
-      sha256: b416afe9004d61b643d2c6467e6401960fe3102835a5df846683f47875183b0b
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.0"
   flutter_image_compress:
     dependency: "direct main"
     description:
@@ -558,14 +534,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
-  flutter_provider:
-    dependency: transitive
-    description:
-      name: flutter_provider
-      sha256: "5bc7d1e9edcf364397f312b9eb901337a644a5e4a907225bcd1d7e9b020ac914"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.0"
   flutter_shaders:
     dependency: transitive
     description:
@@ -720,14 +688,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "13.2.2"
-  google_api_headers:
-    dependency: "direct main"
-    description:
-      name: google_api_headers
-      sha256: b27a55935d5c51cedda8a925f5df8388cc327c94a47fef5a4335e8707e089878
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.6.0"
   google_fonts:
     dependency: "direct main"
     description:
@@ -1024,14 +984,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
-  listenable_stream:
-    dependency: transitive
-    description:
-      name: listenable_stream
-      sha256: "5458276035c7eb66477c30f8eab0942e56537ba3d268172574f7af97e265e894"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.0"
   location:
     dependency: "direct main"
     description:
@@ -1136,22 +1088,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
-  package_info_plus:
-    dependency: transitive
-    description:
-      name: package_info_plus
-      sha256: "7e76fad405b3e4016cd39d08f455a4eb5199723cf594cd1b8916d47140d93017"
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.2.0"
-  package_info_plus_platform_interface:
-    dependency: transitive
-    description:
-      name: package_info_plus_platform_interface
-      sha256: "9bc8ba46813a4cc42c66ab781470711781940780fd8beddd0c3da62506d3a6c6"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.1"
   path:
     dependency: transitive
     description:
@@ -1384,14 +1320,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.27.7"
-  rxdart_ext:
-    dependency: transitive
-    description:
-      name: rxdart_ext
-      sha256: ca0b07216b4568e70d88154efd893ded54cf8cea43276c66baae245a843c326f
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.9"
   sanitize_html:
     dependency: transitive
     description:

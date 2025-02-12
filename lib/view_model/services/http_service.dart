@@ -28,7 +28,6 @@ class HttpService<T> {
   Map<String, String>? headers;
   int? responseStatusCode;
   bool isAuthorizeRequest;
-
   HttpService({
     this.baseURL,
     this.endURL,

@@ -28,7 +28,7 @@ import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:flutter_cab/view_model/raise_issue_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_api_headers/google_api_headers.dart';
+// import 'package:google_api_headers/google_api_headers.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:intl/intl.dart';
@@ -512,30 +512,30 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
     });
   }
 
-  Future<List<double>?> getCoordinates(String location) async {
-    try {
-      final places = GoogleMapsPlaces(
-        apiKey: apiKey,
-        apiHeaders: await const GoogleApiHeaders().getHeaders(),
-      );
+  // Future<List<double>?> getCoordinates(String location) async {
+  //   try {
+  //     final places = GoogleMapsPlaces(
+  //       apiKey: apiKey,
+  //       apiHeaders: await const GoogleApiHeaders().getHeaders(),
+  //     );
 
-      var locations = await places
-          .searchByText(location)
-          .then((result) => result.results)
-          .then((results) => results.map((result) => result.geometry!.location))
-          .then((locations) => locations.toList());
+  //     var locations = await places
+  //         .searchByText(location)
+  //         .then((result) => result.results)
+  //         .then((results) => results.map((result) => result.geometry!.location))
+  //         .then((locations) => locations.toList());
 
-      if (locations.isNotEmpty) {
-        debugPrint("${locations.first.lat}Location");
-        return [locations.first.lat, locations.first.lng];
-      } else {
-        return [];
-      }
-    } catch (e) {
-      debugPrint("Error getting coordinates: $e");
-      return [];
-    }
-  }
+  //     if (locations.isNotEmpty) {
+  //       debugPrint("${locations.first.lat}Location");
+  //       return [locations.first.lat, locations.first.lng];
+  //     } else {
+  //       return [];
+  //     }
+  //   } catch (e) {
+  //     debugPrint("Error getting coordinates: $e");
+  //     return [];
+  //   }
+  // }
 
   String getIsoCode(String countryCode) {
     var list = countries

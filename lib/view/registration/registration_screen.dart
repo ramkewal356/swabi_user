@@ -72,31 +72,34 @@ class _registration_screenState extends State<registration_screen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _phoneFieldKey = GlobalKey();
+      getCountry();
+
     });
     controller[8].text = country;
-    getCountry();
   }
 
   Dio? dio;
   String accessToken = '';
   void getCountry() async {
     try {
-      var countryProvider =
-          Provider.of<GetCountryStateListViewModel>(context, listen: false);
-      countryProvider.getAccessToken(context: context).then((onValue) {
-        debugPrint('token,.....c//.c.... $onValue');
-        setState(() {
-          accessToken = onValue['auth_token'].toString();
-        });
-        // countryProvider.getCountryList(context: context, token: accessToken);
-        Provider.of<GetCountryStateListViewModel>(context, listen: false)
+      Provider.of<GetCountryStateListViewModel>(context, listen: false)
             .getStateList(
-                context: context, token: accessToken, country: country);
-      });
+                context: context, country: country);
+      // var countryProvider =
+      //     Provider.of<GetCountryStateListViewModel>(context, listen: false);
+      // countryProvider.getAccessToken(context: context).then((onValue) {
+      //   debugPrint('token,.....c//.c.... $onValue');
+      //   setState(() {
+      //     accessToken = onValue['auth_token'].toString();
+      //   });
+      //   // countryProvider.getCountryList(context: context, token: accessToken);
+      //   Provider.of<GetCountryStateListViewModel>(context, listen: false)
+      //       .getStateList(
+      //           context: context,  country: country);
+      // });
     } catch (e) {
       debugPrint('error $e');
     }
@@ -128,8 +131,7 @@ class _registration_screenState extends State<registration_screen> {
   @override
   Widget build(BuildContext context) {
     isLoading = context.watch<PostSignUpViewModel>().loading;
-    List state =
-        context.watch<GetCountryStateListViewModel>().getStateListModel;
+    var state = context.watch<GetCountryStateListViewModel>().getStateNameModel;
     bool isLoadingState =
         context.watch<GetCountryStateListViewModel>().isLoading;
     return Scaffold(
@@ -275,9 +277,8 @@ class _registration_screenState extends State<registration_screen> {
                     CustomDropdownButton(
                       controller: controller[9],
                       // focusNode: focusNode3,
-                      itemsList: state.map((state) {
-                        return state['state_name'].toString();
-                      }).toList(),
+                      itemsList:
+                          state?.map((stateName) => stateName).toList() ?? [],
 
                       // itemsList: [],
                       onChanged: isLoadingState

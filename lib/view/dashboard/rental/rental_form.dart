@@ -107,20 +107,23 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
   String accessToken = '';
   void getCountry() async {
     try {
-      var countryProvider =
-          Provider.of<GetCountryStateListViewModel>(context, listen: false);
-      countryProvider.getAccessToken(context: context).then((onValue) {
-        debugPrint('token,.....c//.c.... $onValue');
-        setState(() {
-          accessToken = onValue['auth_token'].toString();
-        });
-        // countryProvider.getCountryList(context: context, token: accessToken);
-        Provider.of<GetCountryStateListViewModel>(context, listen: false)
+      Provider.of<GetCountryStateListViewModel>(context, listen: false)
             .getStateList(
-                context: context,
-                token: accessToken,
-                country: countryController.text);
-      });
+                context: context, country: countryController.text);
+      // var countryProvider =
+      //     Provider.of<GetCountryStateListViewModel>(context, listen: false);
+      // countryProvider.getAccessToken(context: context).then((onValue) {
+      //   debugPrint('token,.....c//.c.... $onValue');
+      //   setState(() {
+      //     accessToken = onValue['auth_token'].toString();
+      //   });
+      //   // countryProvider.getCountryList(context: context, token: accessToken);
+      //   Provider.of<GetCountryStateListViewModel>(context, listen: false)
+      //       .getStateList(
+      //           context: context,
+      //           token: accessToken,
+      //           country: countryController.text);
+      // });
     } catch (e) {
       debugPrint('error $e');
     }
@@ -163,8 +166,7 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
             ?.data ??
         [];
     String status = context.watch<RentalViewModel>().DataList.status.toString();
-    List state =
-        context.watch<GetCountryStateListViewModel>().getStateListModel;
+    var state = context.watch<GetCountryStateListViewModel>().getStateNameModel;
     bool isLoadingState =
         context.watch<GetCountryStateListViewModel>().isLoading;
 
@@ -219,9 +221,7 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
               child: CustomDropdownButton(
                 controller: stateController,
                 // focusNode: focusNode3,
-                itemsList: state.map((state) {
-                  return state['state_name'].toString();
-                }).toList(),
+                itemsList: state?.map((stateName) => stateName).toList() ?? [],
 
                 // itemsList: [],
                 onChanged: isLoadingState

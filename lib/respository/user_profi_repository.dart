@@ -11,6 +11,7 @@ import 'package:flutter_cab/model/changepassword_model.dart';
 import 'package:flutter_cab/model/common_model.dart';
 import 'package:flutter_cab/model/get_country_list_model.dart';
 import 'package:flutter_cab/model/get_state_list_model.dart';
+import 'package:flutter_cab/model/get_state_name_model.dart';
 import 'package:flutter_cab/model/user_profile_model.dart';
 import 'package:flutter_cab/view_model/services/http_service.dart';
 
@@ -205,30 +206,28 @@ class UserProfileUpdateRepository {
     }
   }
 
-  Future<dynamic> getStateListApi(
-      {required BuildContext context,
-      required Map<String, String> header,
-      required String country}) async {
+  Future<GetStateNameModel> getStateListApi({
+    required BuildContext context,
+    required Map<String, dynamic> body,
+  }) async {
     var http = HttpService(
-        isAuthorizeRequest: false,
-        baseURL: AppUrl.locationBaseUrl,
-        endURL: AppUrl.getStateList + country,
-        methodType: HttpMethodType.GET,
-        bodyType: HttpBodyType.JSON,
-        headers: header);
+      baseURL: AppUrl.stateBaseUrl,
+      endURL: AppUrl.getStateNameUrl,
+      body: body,
+      bodyType: HttpBodyType.JSON,
+      isAuthorizeRequest: false,
+      methodType: HttpMethodType.GET,
+    );
+   
     try {
       Response<dynamic>? response = await http.request<dynamic>();
-      debugPrint("getcountry List response ${response?.data}");
-      // var resp = GetStateListModel.fromJson(response?.data);
-      if (response?.data != null) {
-        return response?.data;
-      } else {
-        return null;
-      }
-      // return response?.data;
+     
+      debugPrint("Response: ${response?.data}");
+      var resp = GetStateNameModel.fromJson(response?.data);
+      return resp;
     } catch (error) {
       debugPrint('error.. $error');
-      http.handleErrorResponse(context: context, error: error);
+      // http.handleErrorResponse(context: context, error: error);
       rethrow;
     }
   }

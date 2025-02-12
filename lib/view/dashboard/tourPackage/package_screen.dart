@@ -217,23 +217,25 @@ class _PackagesState extends State<Packages> {
     }
   }
 
-  Dio? dio;
+  // Dio? dio;
   String accessToken = '';
   void getCountry() async {
     try {
-      // var countryProvider =
       Provider.of<GetCountryStateListViewModel>(context, listen: false)
-          .getAccessToken(context: context)
-          .then((onValue) {
-        debugPrint('token,.....c//.c.... $onValue');
-        setState(() {
-          accessToken = onValue['auth_token'].toString();
-        });
-        // countryProvider.getCountryList(context: context, token: accessToken);
-        Provider.of<GetCountryStateListViewModel>(context, listen: false)
-            .getStateList(
-                context: context, token: accessToken, country: countryName);
-      });
+          .getStateList(context: context, country: countryName);
+      // var countryProvider =
+      // Provider.of<GetCountryStateListViewModel>(context, listen: false)
+      //     .getAccessToken(context: context)
+      //     .then((onValue) {
+      //   debugPrint('token,.....c//.c.... $onValue');
+      //   setState(() {
+      //     accessToken = onValue['auth_token'].toString();
+      //   });
+      //   // countryProvider.getCountryList(context: context, token: accessToken);
+      //   Provider.of<GetCountryStateListViewModel>(context, listen: false)
+      //       .getStateList(
+      //           context: context, token: accessToken, country: countryName);
+      // });
     } catch (e) {
       debugPrint('error $e');
     }
@@ -242,7 +244,7 @@ class _PackagesState extends State<Packages> {
   // List<Content> packageList = [];
   @override
   void dispose() {
-    // TODO: implement dispose
+   
     statecontroller.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -267,8 +269,7 @@ class _PackagesState extends State<Packages> {
         .toString();
 
     isLoadingData = context.watch<OfferViewModel>().isLoading1;
-    List state =
-        context.watch<GetCountryStateListViewModel>().getStateListModel;
+    var state = context.watch<GetCountryStateListViewModel>().getStateNameModel;
     // bool isLoadingState =
     //     context.watch<GetCountryStateListViewModel>().isLoading;
     return Stack(
@@ -295,10 +296,11 @@ class _PackagesState extends State<Packages> {
                     child: CustomDropdownButton(
                       controller: statecontroller,
                       // focusNode: focusNode3,
-                      itemsList: state.map((state) {
-                        return state['state_name'].toString();
-                      }).toList(),
-
+                      itemsList: state
+                              ?.map((stateName) => stateName)
+                              .toSet()
+                              .toList() ??
+                          [],
                       // itemsList: [],
                       onChanged: (value) {
                         // setState(() {
