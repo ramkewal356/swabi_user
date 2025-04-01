@@ -1,8 +1,8 @@
 class AppUrl {
-  // static var baseUrl = "http://swabi.ap-south-1.elasticbeanstalk.com";
-  // static var baseUrlForImage = "http://swabi.ap-south-1.elasticbeanstalk.com";
-  static var baseUrl = 'https://dev-api.swabitours.com';
-  static var baseUrlForImage = "https://dev-api.swabitours.com";
+  static var baseUrl = "https://live.swabi.xyz/api";
+  static var baseUrlForImage = "https://live.swabi.xyz/api";
+  // static var baseUrl = 'https://dev-api.swabitours.com';
+  // static var baseUrlForImage = "https://dev-api.swabitours.com";
   static var locationBaseUrl = 'https://www.universal-tutorial.com';
   static var stateBaseUrl = 'https://countriesnow.space';
 

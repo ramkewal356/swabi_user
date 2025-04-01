@@ -52,7 +52,7 @@ class _PackagesState extends State<Packages> {
   @override
   void initState() {
     super.initState();
-    // TODO: implement initState
+  
     // stateName = userViewModel.getState();
 
     _selectedDateNotifier =
@@ -395,7 +395,7 @@ class _PackagesState extends State<Packages> {
                     const CommonOfferContainer(
                       bookingType: 'PACKAGE_BOOKING',
                     ),
-                    status == "Status.completed"
+                    status == "Status.completed" 
                         ? getPackageList.isNotEmpty
                             ? ListView.builder(
                                 // controller: _scrollController,
@@ -489,7 +489,8 @@ class _PackagesState extends State<Packages> {
             )
           ],
         ),
-        status == "Status.completed" && isLoadingData == false
+        (status == "Status.completed" || status != 'Status.error') &&
+                isLoadingData == false
             ? Container()
             : const SpinKitFadingCube(
                 size: 50,

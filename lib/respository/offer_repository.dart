@@ -22,7 +22,8 @@ class OfferRepository {
       var resp = OfferListModel.fromJson(response?.data);
       return resp;
     } catch (error) {
-      http.handleErrorResponse(context: context, error: error);
+      // http.handleErrorResponse(context: context, error: error);
+      rethrow;
     }
     return null;
   }
