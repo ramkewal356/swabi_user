@@ -5,7 +5,6 @@ import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/res/custom_mobile_number.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
-import 'package:flutter_cab/view/dashboard/rental/book_your_ride_screen_.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
 import 'package:flutter_cab/view_model/services/payment_service.dart';
@@ -33,7 +32,7 @@ class CustomPaynowModal extends StatefulWidget {
   final String countryCode;
   final String mobile;
   final String email;
-
+  final String vendorId;
   const CustomPaynowModal(
       {super.key,
       required this.sumAmount,
@@ -54,7 +53,8 @@ class CustomPaynowModal extends StatefulWidget {
       required this.offerCode,
       required this.countryCode,
       required this.email,
-      required this.mobile});
+      required this.mobile,
+      required this.vendorId});
 
   @override
   State<CustomPaynowModal> createState() => _CustomPaynowModalState();
@@ -101,6 +101,7 @@ class _CustomPaynowModalState extends State<CustomPaynowModal> {
           "hours": widget.hour,
           "price": widget.price,
           "orderId": onValue?.data.orderId,
+          "vendorId": widget.vendorId,
           "pickUpLocation": widget.pickUpLocation,
           "guestName": nameController.text,
           "countryCode": countryCode,
@@ -142,6 +143,7 @@ class _CustomPaynowModalState extends State<CustomPaynowModal> {
                     .paymentVerifyViewModelApi(
                         context: context,
                         userId: widget.userId,
+                        venderId: widget.vendorId,
                         paymentId: response.paymentId,
                         razorpayOrderId: response.orderId,
                         razorpaySignature: response.signature)
@@ -189,8 +191,7 @@ class _CustomPaynowModalState extends State<CustomPaynowModal> {
     bool bookingStatus =
         context.watch<ConfirmRentalBookingViewModel>().isLoading;
     bool orderStatus = context.watch<RentalBookingViewModel>().isLoading;
-    print('object.......$bookingStatus');
-    print('vnmnmnvmncmvnmc, $orderStatus');
+
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Column(

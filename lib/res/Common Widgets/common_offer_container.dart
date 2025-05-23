@@ -9,6 +9,7 @@ import 'package:flutter_cab/view_model/offer_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 class CommonOfferContainer extends StatefulWidget {
   final String bookingType;
@@ -27,7 +28,7 @@ class _CommonOfferContainerState extends State<CommonOfferContainer> {
   OfferListModel? offerListData;
   @override
   void initState() {
-    // TODO: implement initState
+   
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Provider.of<OfferViewModel>(context, listen: false).getOfferList(
@@ -45,7 +46,7 @@ class _CommonOfferContainerState extends State<CommonOfferContainer> {
     if (newIndex != initialIndex) {
       setState(() {
         initialIndex = newIndex;
-        print('indexvalue $initialIndex');
+        debugPrint('indexvalue $initialIndex');
       });
     }
   }
@@ -66,7 +67,18 @@ class _CommonOfferContainerState extends State<CommonOfferContainer> {
       });
     });
   }
-
+  // Shimmer effect placeholder
+  Widget _buildShimmerPlaceholder() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        height: 150,
+        width: 150,
+        color: Colors.white,
+      ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     offerListData = context.watch<OfferViewModel>().offerListModel;
@@ -158,7 +170,9 @@ class _CommonOfferContainerState extends State<CommonOfferContainer> {
                                             color: background, width: 2)),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(10),
-                                      child: Image.network(
+                                      child: (data?.imageUrl ?? '').isEmpty
+                                          ? _buildShimmerPlaceholder()
+                                          : Image.network(
                                         data?.imageUrl ??
                                             'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTePpXbUcvlhV4a1px1UFFfXeZWZANowRWZXw&s',
                                         fit: BoxFit.fill,
@@ -217,9 +231,14 @@ class _CommonOfferContainerState extends State<CommonOfferContainer> {
                                                 style: TextStyle(
                                                     color: Colors.green),
                                               )
-                                            : Text(
-                                                data?.offerCode ?? '',
-                                                style: titleTextStyle,
+                                            : Expanded(
+                                                child: Text(
+                                                  data?.offerCode ?? '',
+                                                  style: titleTextStyle,
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
                                               ),
                                         GestureDetector(
                                           onTap: () {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/utils/utils.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_maps_webservice/places.dart';
 
 class CustomSearchLocation extends StatefulWidget {
@@ -155,7 +156,9 @@ class SearchLocationPage extends StatefulWidget {
 }
 
 class _SearchLocationPageState extends State<SearchLocationPage> {
-  String kGoogleApiKey = 'AIzaSyDhKIUQ4QBoDuOsooDfNY_EjCG0MB7Ami8';
+  // String kGoogleApiKey = 'AIzaSyDhKIUQ4QBoDuOsooDfNY_EjCG0MB7Ami8';
+  String kGoogleApiKey = dotenv.env['API_KEY'] ?? '';
+
   final TextEditingController _searchController = TextEditingController();
   late GoogleMapsPlaces googlePlace;
   List<Prediction> predictions = [];
@@ -173,7 +176,7 @@ class _SearchLocationPageState extends State<SearchLocationPage> {
         components: [Component("country", "ae")],
       );
 
-      if (result.predictions != null) {
+      if (result.predictions != []) {
         setState(() {
           predictions = result.predictions;
         });

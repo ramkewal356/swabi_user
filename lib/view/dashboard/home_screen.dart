@@ -15,7 +15,7 @@ import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:badges/badges.dart' as badges;
+// import 'package:badges/badges.dart' as badges;
 
 ///Home Screen Old
 class home_screen extends StatefulWidget {
@@ -28,7 +28,7 @@ class home_screen extends StatefulWidget {
 class _home_screenState extends State<home_screen>
     with TickerProviderStateMixin {
   UserViewModel userViewModel = UserViewModel();
-  final ScrollController _scrollController = ScrollController();
+  // final ScrollController _scrollController = ScrollController();
   DateTime dateTime = DateTime.now();
 
   String uId = '';
@@ -86,7 +86,7 @@ class _home_screenState extends State<home_screen>
 
   @override
   void dispose() {
-    // TODO: implement dispose
+  
     super.dispose();
     _tabcontroller!.dispose();
   }
@@ -112,13 +112,14 @@ class _home_screenState extends State<home_screen>
     //             context: context, builder: (context) => exitContainer());
     //       }
     //     },
+    // ignore: deprecated_member_use
     return WillPopScope(
         onWillPop: () async {
           bool shouldExit = await showDialog(
             context: context,
             builder: (context) => exitContainer(),
           );
-          return shouldExit ?? false;
+          return shouldExit;
        
         },
         child: Scaffold(
@@ -195,7 +196,7 @@ class _home_screenState extends State<home_screen>
                       child: Badge(
                         backgroundColor: btnColor,
                         isLabelVisible: unReadItem == 0 ? false : true,
-                        label: Text('${unReadItem.toString()}'),
+                        label: Text(unReadItem.toString()),
                         child: const Icon(
                           Icons.notifications_none_outlined,
                           size: 30,

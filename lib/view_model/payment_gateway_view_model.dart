@@ -61,12 +61,14 @@ class PaymentVerifyViewModel with ChangeNotifier {
   Future<PaymentVerifyModel?> paymentVerifyViewModelApi(
       {required BuildContext context,
       required String userId,
+      required String venderId,
       required String? paymentId,
       required String? razorpayOrderId,
       required String? razorpaySignature}) async {
     Map<String, dynamic> body = {
       "userId": userId,
       "paymentId": paymentId,
+      "vendorId": venderId,
       "razorpayOrderId": razorpayOrderId,
       "razorpaySignature": razorpaySignature
     };

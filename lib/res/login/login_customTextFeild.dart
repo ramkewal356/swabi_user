@@ -101,6 +101,7 @@ class CustomTextFeild extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class LoginTextFeild extends StatefulWidget {
   final FocusNode? focusNode;
   final String heading;
@@ -144,7 +145,7 @@ class _LoginTextFeildState extends State<LoginTextFeild> {
                 padding: const EdgeInsets.only(bottom: 5),
                 child: Text.rich(TextSpan(children: [
                   TextSpan(text: widget.heading, style: titleTextStyle),
-                  TextSpan(text: ' *', style: TextStyle(color: redColor))
+                  const TextSpan(text: ' *', style: TextStyle(color: redColor))
                 ])),
               )
             : const SizedBox.shrink(),
@@ -212,6 +213,7 @@ class _LoginTextFeildState extends State<LoginTextFeild> {
   }
 }
 
+// ignore: must_be_immutable
 class CommonTextFeild extends StatefulWidget {
   final String heading;
   final bool headingReq;

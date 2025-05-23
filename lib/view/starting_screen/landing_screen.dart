@@ -472,13 +472,13 @@ class _LandingScreenState extends State<LandingScreen> {
                             width: 130,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5)),
-                            child: (packageImage ?? []).isEmpty
+                            child: (packageImage).isEmpty
                                 ? Image.asset(
                                     tour,
                                     fit: BoxFit.cover,
                                   )
                                 : Image.network(
-                                    packageImage[0] ?? '',
+                                    packageImage[0],
                                     fit: BoxFit.cover,
                                   ),
                           ),
@@ -487,7 +487,7 @@ class _LandingScreenState extends State<LandingScreen> {
                             right: 0,
                             bottom: 10,
                             child: Text(
-                              data.packageName ?? '',
+                              data.packageName,
                               style: subtitleTextStyle,
                               textAlign: TextAlign.center,
                             ),

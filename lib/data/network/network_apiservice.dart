@@ -21,7 +21,7 @@ class NetworkApiService extends BaseApiServices {
     dynamic responseJson;
     try {
       var prefsToken = await SharedPreferences.getInstance();
-      dynamic token = prefsToken.getString('token');
+      prefsToken.getString('token');
       Map<String, String> headers = {
         'Content-Type': 'multipart/form-data',
       };

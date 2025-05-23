@@ -2,19 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cab/model/calculate_price_model.dart';
 import 'package:flutter_cab/model/get_package_details_by_id_model.dart';
-// import 'package:flutter_cab/model/package_models.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/customdropdown_button.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
-import 'package:flutter_cab/res/Custom%20Widgets/custom_phonefield.dart';
 import 'package:flutter_cab/res/custom_appbar_widget.dart';
-import 'package:flutter_cab/res/custom_container.dart';
-import 'package:flutter_cab/res/custom_text_widget.dart';
 import 'package:flutter_cab/res/custom_mobile_number.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/string_extenstion.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/utils/utils.dart';
@@ -26,7 +21,6 @@ import 'package:flutter_cab/view_model/user_profile_view_model.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl_phone_field/countries.dart';
-import 'package:marqueer/marqueer.dart';
 import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
@@ -35,6 +29,7 @@ class PackageBookingMemberPage extends StatefulWidget {
   final double amt;
   final String bookingDate;
   final String packageID;
+  final String venderId;
   final List<String> participantTypes;
   final List<PackageActivity> packageActivityList;
   const PackageBookingMemberPage(
@@ -43,6 +38,7 @@ class PackageBookingMemberPage extends StatefulWidget {
       required this.packageID,
       required this.amt,
       required this.bookingDate,
+      required this.venderId,
       required this.participantTypes,
       required this.packageActivityList});
 
@@ -69,7 +65,6 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
   FocusNode focusNode2 = FocusNode();
   FocusNode focusNode3 = FocusNode();
   FocusNode couponFocus = FocusNode();
-  GlobalKey _phoneKey = GlobalKey();
   bool tableIcon = false;
 
   // String ageUnit = '';
@@ -84,10 +79,10 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
   String primaryCountryCode = '';
   String secondaryCountryCode = '971';
   String initialCountryCode = 'AE';
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
   @override
   void initState() {
-    // TODO: implement initState
+  
     super.initState();
     // updateButtonStates();
     controller[0].text = widget.bookingDate;
@@ -96,12 +91,11 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
           .fetchUserProfileViewModelApi(context, {'userId': widget.userID});
       getData();
     });
-    _phoneKey = GlobalKey();
     checkParticipantTypes(widget.participantTypes);
   }
 
   getData() async {
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     final userProfile =
         Provider.of<UserProfileViewModel>(context, listen: false)
             .DataList
@@ -118,9 +112,8 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
       if (list.isNotEmpty) {
         // controllers[4].text = list.first.dialCode;
         initialCountryCode = list.first.code;
-        _phoneKey = GlobalKey();
         //  = list.first.code;
-        print('isocode.................... ${list.first.code}');
+        debugPrint('isocode.................... ${list.first.code}');
       }
     });
   }
@@ -163,20 +156,20 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
     });
   }
 
-  void _subAmount() {
-    setState(() {
-      // sumAmount -= double.parse(widget.amt);
-      sumAmount -= widget.amt;
+  // void _subAmount() {
+  //   setState(() {
+  //     // sumAmount -= double.parse(widget.amt);
+  //     sumAmount -= widget.amt;
 
-      taxAmount = taxamount();
+  //     taxAmount = taxamount();
 
-      // amount += double.parse(widget.amt);
-      payAbleAmount = sumAmount + taxAmount;
-      debugPrint('taxamount....$taxAmount');
-      debugPrint('totalPayableAmount....$payAbleAmount');
-      discountAmount == 0 ? null : discountAmount = getPercentage();
-    });
-  }
+  //     // amount += double.parse(widget.amt);
+  //     payAbleAmount = sumAmount + taxAmount;
+  //     debugPrint('taxamount....$taxAmount');
+  //     debugPrint('totalPayableAmount....$payAbleAmount');
+  //     discountAmount == 0 ? null : discountAmount = getPercentage();
+  //   });
+  // }
 
   bool _shouldDisableButton() {
     bool noAdultsPresent = !members.any((member) {
@@ -303,15 +296,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                   }
                   return null;
                 },
-                // onChanged: (p0) {
-                //   if (p0 != '') {
-                //     setstate(() {
-                //       validationMessage = 'return error';
-                //     });
-                //   } else {
-                //     validationMessage = '';
-                //   }
-                // },
+               
               ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -474,11 +459,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                 _addAmount();
               });
             }
-            // ageUnit = '';
-            // type = '';
-            // nameController.text = '';
-            // ageController.text = '';
-            // genderController.text = '';
+           
             setState(() {
               _shouldDisableButton();
             });
@@ -700,7 +681,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
+   
     super.dispose();
     nameController.dispose();
     ageController.dispose();
@@ -755,42 +736,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              // SizedBox(
-                              //   height: 20,
-                              //   child: Marqueer(
-                              //     pps: 50,
-                              //     controller: marqueeController,
-                              //     direction: MarqueerDirection.rtl,
-                              //     restartAfterInteractionDuration:
-                              //         const Duration(seconds: 0),
-                              //     restartAfterInteraction: true,
-                              //     onChangeItemInViewPort: (index) {
-                              //       debugPrint('item index: $index');
-                              //     },
-                              //     onInteraction: () {
-                              //       debugPrint('on interaction callback');
-                              //     },
-                              //     onStarted: () {
-                              //       debugPrint('on started callback');
-                              //     },
-                              //     onStopped: () {
-                              //       debugPrint('on stopped callback');
-                              //     },
-                              //     child: Padding(
-                              //       padding: EdgeInsets.symmetric(
-                              //           horizontal:
-                              //               MediaQuery.of(context).size.width /
-                              //                   2),
-                              //       child: const Text(
-                              //         '*Children under 2 years old can be booked for free.Certain activities are not recommended for senior citizens due to potential health risks.*',
-                              //         style: TextStyle(
-                              //           fontWeight: FontWeight.bold,
-                              //           color: btnColor,
-                              //         ),
-                              //       ),
-                              //     ),
-                              //   ),
-                              // ),
+                              
                               Container(
                                 margin:
                                     const EdgeInsets.only(bottom: 0, top: 5),
@@ -978,7 +924,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                   offerVisible
                                       ? Text(
                                           'Congrats!  You have availed discount of AED ${disAmount.toStringAsFixed(2)}.',
-                                          style: TextStyle(color: greenColor),
+                                          style: const TextStyle(color: greenColor),
                                         )
                                       : Container(),
                                 ],
@@ -1246,7 +1192,9 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                                   top: 10,
                                                   right: 10),
                                               child: Text(
-                                                '${member['name'].toString().capitalizeFirstOfEach}',
+                                                member['name']
+                                                    .toString()
+                                                    .capitalizeFirstOfEach,
                                                 style: titleTextStyle1,
                                               ),
                                             ),
@@ -1572,6 +1520,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                   "packageId": widget.packageID.toString(),
                                   "bookingDate": controller[0].text,
                                   "orderId": onValue?.data.orderId,
+                                  "vendorId": widget.venderId,
                                   "countryCode": primaryCountryCode
                                       .replaceAll("+", '')
                                       .trim(),
@@ -1590,12 +1539,13 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                   "totalPayableAmount": discountAmount == 0
                                       ? payAbleAmount.ceil()
                                       : discountAmount.ceil()
+                                     
                                 },
                                 widget.userID)
                             .then((onValue) {
                           setState(() {
                             bookingId = onValue?.data.packageBookingId ?? '';
-                            print(',,,,,,,,,,,,,,,,,,,,,,,,,,,$bookingId');
+                            debugPrint(',,,,,,,,,,,,,,,,,,,,,,,,,,,$bookingId');
                           });
                           if (onValue?.status.httpCode == '200') {
                             setState(() {
@@ -1620,6 +1570,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                     .paymentVerifyViewModelApi(
                                         context: context,
                                         userId: widget.userID.toString(),
+                                        venderId: widget.venderId,
                                         paymentId: response.paymentId,
                                         razorpayOrderId: response.orderId,
                                         razorpaySignature: response.signature)

@@ -30,7 +30,6 @@ import 'package:flutter_cab/view_model/rental_view_model.dart';
 import 'package:go_router/go_router.dart';
 // import 'package:google_api_headers/google_api_headers.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_maps_webservice/places.dart';
 import 'package:intl/intl.dart';
 import 'package:intl_phone_field/countries.dart';
 import 'package:marqueer/marqueer.dart';
@@ -1772,8 +1771,7 @@ class _ItineraryActivityContainerState
                                   ),
                                   Text(
                                     widget.itineraryDataList[index].pickupTime
-                                            .toString() ??
-                                        '',
+                                        .toString(),
                                     style: titleTextStyle1,
                                   ),
                                 ],

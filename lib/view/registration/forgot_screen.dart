@@ -31,7 +31,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         r'x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])';
     final regex = RegExp(pattern);
     if (value == null || value.isEmpty) {
-      return 'Enter enter email';
+      return 'Please enter your email';
       // return 'Please enter a valid email address';
     } else if (!regex.hasMatch(value)) {
       return 'Please enter a valid email address';

@@ -5,7 +5,6 @@ class NotificationScreen extends StatelessWidget {
 static const route = "/notification";
   @override
   Widget build(BuildContext context) {
-    final message = ModalRoute.of(context)?.settings.arguments;
     return  Scaffold(
       appBar: AppBar(title: const Text("Push Notification",
       )

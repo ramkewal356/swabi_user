@@ -37,7 +37,7 @@ class CustomButtonBig extends StatelessWidget {
                   //   )
                   ? const SpinKitWave(
                       size: 15,
-                      duration: Duration(milliseconds: 200),
+                      duration: Duration(milliseconds: 600),
                       color: background,
                     )
                   : Text(
@@ -129,7 +129,7 @@ class CustomButtonSmall extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('loading status......$loading');
+   
     return Column(
       children: [
         titleReq

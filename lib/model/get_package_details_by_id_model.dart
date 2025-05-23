@@ -45,6 +45,7 @@ class Data {
   int? modifiedDate;
   List<PackageActivity>? packageActivities;
   double? packageDiscountedAmount;
+  Vendor? vendor;
 
   Data({
     this.packageId,
@@ -60,6 +61,7 @@ class Data {
     this.modifiedDate,
     this.packageActivities,
     this.packageDiscountedAmount,
+      this.vendor
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
@@ -81,6 +83,7 @@ class Data {
             : List<PackageActivity>.from(json["packageActivities"]!
                 .map((x) => PackageActivity.fromJson(x))),
         packageDiscountedAmount: json["packageDiscountedAmount"],
+        vendor: json["vendor"] == null ? null : Vendor.fromJson(json["vendor"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -101,6 +104,7 @@ class Data {
             ? []
             : List<dynamic>.from(packageActivities!.map((x) => x.toJson())),
         "packageDiscountedAmount": packageDiscountedAmount,
+        "vendor": vendor?.toJson(),
       };
 }
 
@@ -448,7 +452,97 @@ class AgeGroupDiscountPercent {
         "INFANT": infant,
       };
 }
+class Vendor {
+  int? vendorId;
+  String? firstName;
+  String? lastName;
+  String? mobile;
+  String? email;
+  String? address;
+  DateTime? createdDate;
+  DateTime? modifiedDate;
+  bool? status;
+  dynamic otp;
+  bool? isOtpVerified;
+  String? userType;
+  String? gender;
+  String? countryCode;
+  dynamic notificationToken;
+  dynamic vendorProfileImageUrl;
+  String? lastLogin;
+  String? country;
+  String? state;
 
+  Vendor({
+    this.vendorId,
+    this.firstName,
+    this.lastName,
+    this.mobile,
+    this.email,
+    this.address,
+    this.createdDate,
+    this.modifiedDate,
+    this.status,
+    this.otp,
+    this.isOtpVerified,
+    this.userType,
+    this.gender,
+    this.countryCode,
+    this.notificationToken,
+    this.vendorProfileImageUrl,
+    this.lastLogin,
+    this.country,
+    this.state,
+  });
+
+  factory Vendor.fromJson(Map<String, dynamic> json) => Vendor(
+        vendorId: json["vendorId"],
+        firstName: json["firstName"],
+        lastName: json["lastName"],
+        mobile: json["mobile"],
+        email: json["email"],
+        address: json["address"],
+        createdDate: json["createdDate"] == null
+            ? null
+            : DateTime.parse(json["createdDate"]),
+        modifiedDate: json["modifiedDate"] == null
+            ? null
+            : DateTime.parse(json["modifiedDate"]),
+        status: json["status"],
+        otp: json["otp"],
+        isOtpVerified: json["isOtpVerified"],
+        userType: json["userType"],
+        gender: json["gender"],
+        countryCode: json["countryCode"],
+        notificationToken: json["notificationToken"],
+        vendorProfileImageUrl: json["vendorProfileImageUrl"],
+        lastLogin: json["lastLogin"],
+        country: json["country"],
+        state: json["state"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "vendorId": vendorId,
+        "firstName": firstName,
+        "lastName": lastName,
+        "mobile": mobile,
+        "email": email,
+        "address": address,
+        "createdDate": createdDate?.toIso8601String(),
+        "modifiedDate": modifiedDate?.toIso8601String(),
+        "status": status,
+        "otp": otp,
+        "isOtpVerified": isOtpVerified,
+        "userType": userType,
+        "gender": gender,
+        "countryCode": countryCode,
+        "notificationToken": notificationToken,
+        "vendorProfileImageUrl": vendorProfileImageUrl,
+        "lastLogin": lastLogin,
+        "country": country,
+        "state": state,
+      };
+}
 class Status {
   String? httpCode;
   bool? success;

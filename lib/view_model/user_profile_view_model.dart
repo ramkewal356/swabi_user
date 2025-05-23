@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
 import 'package:flutter_cab/model/changepassword_model.dart';
 import 'package:flutter_cab/model/common_model.dart';
-import 'package:flutter_cab/model/get_state_name_model.dart';
 import 'package:flutter_cab/model/user_profile_model.dart';
 import 'package:flutter_cab/respository/user_profi_repository.dart';
 import 'package:flutter_cab/utils/utils.dart';
@@ -42,16 +41,7 @@ class UserProfileViewModel with ChangeNotifier {
       setDataList(ApiResponse.error(error.toString()));
     }
     return null;
-    // setDataList(ApiResponse.loading());
-    // await _myRepo
-    //     .userProfileRepositoryApi(context: context, query: data)
-    //     .then((value) {
-    //   setDataList(ApiResponse.completed(value));
-    // }).onError((error, stackTrace) {
-    //   // debugPrint("data nhi chla");
-    //   Utils.toastMessage(error.toString());
-    //   setDataList(ApiResponse.error(error.toString()));
-    // });
+   
   }
 }
 
@@ -76,7 +66,7 @@ class ProfileImageViewModel with ChangeNotifier {
     }).onError((error, stackTrace) {
       setDataList(ApiResponse.error(error.toString()));
       // print('Profile Failed');
-      print(error.toString());
+      debugPrint(error.toString());
       // Utils.flushBarErrorMessage(error.toString(), context);
     });
   }

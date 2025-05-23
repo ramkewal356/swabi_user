@@ -28,7 +28,7 @@ class _MyTransactionState extends State<MyTransaction>
   int intialIndex = 0;
   @override
   void initState() {
-    // TODO: implement initState
+  
     super.initState();
     _tabController = TabController(length: tabList.length, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -48,7 +48,7 @@ class _MyTransactionState extends State<MyTransaction>
           _scrollController.position.maxScrollExtent) {
         // User has reached the end of the list
         if (!isLoadingMore && !isLastPage) {
-          print('testing......');
+      
           getTrasaction();
         }
       }
@@ -115,7 +115,7 @@ class _MyTransactionState extends State<MyTransaction>
 
   @override
   void dispose() {
-    // TODO: implement dispose
+   
     _tabController?.dispose();
 
     _scrollController.dispose();
@@ -207,7 +207,7 @@ class _MyTransactionState extends State<MyTransaction>
                                       Text(
                                         data.bookingId == null
                                             ? 'N/A'
-                                            : data.bookingId.toString() ?? '',
+                                            : data.bookingId.toString(),
                                         style: titleTextStyle1,
                                       ),
                                     ],
@@ -248,8 +248,7 @@ class _MyTransactionState extends State<MyTransaction>
                                                         'failed'
                                                     ? 'Failed'
                                                     : data.transactionStatus
-                                                            .toString() ??
-                                                        '',
+                                                        .toString(),
                                         style: TextStyle(
                                             fontWeight: FontWeight.w600,
                                             color: (data.transactionStatus ==

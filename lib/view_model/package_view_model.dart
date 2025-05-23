@@ -13,29 +13,69 @@ import 'package:provider/provider.dart';
 
 // Get Package List View Model
 class GetPackageListViewModel with ChangeNotifier {
+  int currentPage = 0;
+  int pageSize = 10;
+  bool isLastPage = false;
+  bool isLoadingMore = false;
+  List<Content> _packageList = [];
   final _myRepo = GetPackageListRepository();
-  ApiResponse<GetPackageListModel> getPackageList = ApiResponse.loading();
-
-  setDataList(ApiResponse<GetPackageListModel> response) {
+  ApiResponse<List<Content>> getPackageList = ApiResponse.loading();
+  List<Content> get items => _packageList;
+  setDataList(ApiResponse<List<Content>> response) {
     getPackageList = response;
     notifyListeners();
   }
 
-  Future<GetPackageListModel?> fetchGetPackageListViewModelApi(
-      BuildContext context, data) async {
-    try {
+  void resetPagination() {
+    _packageList.clear();
+    currentPage = 0;
+    isLastPage = false;
+    notifyListeners();
+  }
+
+  Future<void> fetchGetPackageListViewModelApi(
+      {required BuildContext context,
+      required String date,
+      required String country,
+      required String state,
+      required bool isPagination}) async {
+    if (isLoadingMore || isLastPage) return;
+    if (!isPagination) {
+      resetPagination();
       setDataList(ApiResponse.loading());
+    }
+    isLoadingMore = true;
+    notifyListeners();
+    Map<String, dynamic> query = {
+      "pageNumber": currentPage,
+      "pageSize": pageSize,
+      "date": date,
+      "search": "",
+      "days": "",
+      "price": "",
+      "country": country,
+      "state": state
+    };
+    try {
+      // if (currentPage == 0) setDataList(ApiResponse.loading());
       var resp = await _myRepo.getPackageListRepositoryApi(
-          context: context, query: data);
-      setDataList(ApiResponse.completed(resp));
+          context: context, query: query);
+      List<Content> newData = resp.data.content;
+      List<Content> allData =
+          (currentPage == 0) ? newData : [..._packageList, ...newData];
+      isLastPage = newData.length < pageSize;
+      _packageList = allData;
+      setDataList(ApiResponse.completed(List<Content>.from(_packageList)));
+      currentPage++;
       debugPrint('Get Package List Api Success');
-      return resp;
     } catch (error) {
       debugPrint(error.toString());
       debugPrint('Get Package List Api Failed');
       setDataList(ApiResponse.error(error.toString()));
+    } finally {
+      isLoadingMore = false;
+      notifyListeners();
     }
-    return null;
   }
 }
 
@@ -57,8 +97,12 @@ class GetPackageActivityByIdViewModel with ChangeNotifier {
         .getPackageActivityByIdRepositoryApi(context: context, query: data)
         .then((value) async {
       setDataList(ApiResponse.completed(value));
-      context.push("/package/packageDetails",
-          extra: {"packageID": packID, "userId": uId, "bookDate": dateBooking});
+      context.push("/package/packageDetails", extra: {
+        "packageID": packID,
+        "userId": uId,
+        "bookDate": dateBooking,
+        "venderId": value.data?.vendor?.vendorId.toString()
+      });
       debugPrint('Get Package Activity By Id ViewModel Success');
     }).onError((error, stackTrace) {
       debugPrint(error.toString());
@@ -196,6 +240,11 @@ class ConfirmPackageBookingViewModel with ChangeNotifier {
 
 // Get Package History View Model
 class GetPackageHistoryViewModel with ChangeNotifier {
+  int currentPage = 0;
+  int pageSize = 10;
+  bool isLastPage = false;
+  bool isLoadingMore = false;
+  List<PackageHistoryContent> _packageList = [];
   final _myRepo = GetPackageHistoryRepository();
   ApiResponse<GetPackageHistoryModel> getBookedHistory = ApiResponse.loading();
   setDataList(ApiResponse<GetPackageHistoryModel> response) {
@@ -203,6 +252,7 @@ class GetPackageHistoryViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  List<PackageHistoryContent> get items => _packageList;
   void updateDayStatus({required String newStatus, required String bookingId}) {
     if (getBookedHistory.data != null) {
       var booking = getBookedHistory.data?.data.content

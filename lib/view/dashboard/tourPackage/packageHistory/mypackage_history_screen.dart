@@ -69,7 +69,7 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
       // Update history with new data
       final data = response?.data.content ?? [];
 
-      print('Fetched data: $data');
+      debugPrint('Fetched data: $data');
 
       if (data.isNotEmpty) {
         setState(() {
@@ -94,7 +94,6 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _tabController = TabController(length: tabList.length, vsync: this);
 
@@ -116,7 +115,6 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
           _scrollController.position.maxScrollExtent) {
         // User has reached the end of the list
         if (!isLoadingMore && !lastPage) {
-          print('testing......');
           getPackageHistoryList();
         }
       }
@@ -139,7 +137,7 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
         .status
         .toString();
     debugPrint('status $status');
-   
+
     return Customtabbar(
         titleHeading: 'My Packages',
         controller: _tabController,
@@ -196,15 +194,13 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
 
                 return ListView.builder(
                   controller: _scrollController,
-                  itemCount: bookedHistory.length + (isLoadingMore ? 1 : 0),
+                  itemCount: bookedHistory.length + (lastPage ? 0 : 1),
                   itemBuilder: (context, index) {
                     if (index == bookedHistory.length) {
-                      return isLoadingMore
-                          ? const Center(
-                              child: CircularProgressIndicator(
-                              color: greenColor,
-                            ))
-                          : const SizedBox.shrink(); // Hide if not loading
+                      return const Center(
+                          child: CircularProgressIndicator(
+                        color: greenColor,
+                      ));
                     }
 
                     return Padding(
@@ -221,7 +217,6 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
                                 : bookedHistory[index].packagePrice == 'null'
                                     ? '0'
                                     : bookedHistory[index].packagePrice,
-                        
                         pkgName: bookedHistory[index].pkg.packageName,
                         location: bookedHistory[index].pkg.country,
                         imageList: bookedHistory[index]
@@ -317,12 +312,8 @@ class PackageHistoryContainer extends StatelessWidget {
               // child: Image.asset(tour,width: double.infinity,fit: BoxFit.fill,),
             ),
             Container(
-              // height: 50,
-              // width: AppDimension.getWidth(context)* .5,
               padding: const EdgeInsets.symmetric(horizontal: 10),
               margin: const EdgeInsets.only(bottom: 5, top: 10),
-              // decoration: const BoxDecoration(
-              //     border: Border(bottom: BorderSide(color: naturalGreyColor))),
               child: Row(
                 children: [
                   const CustomTextWidget(
@@ -350,7 +341,7 @@ class PackageHistoryContainer extends StatelessWidget {
               // height: 50,
               padding: const EdgeInsets.symmetric(horizontal: 10),
               margin: const EdgeInsets.only(bottom: 5),
-            
+
               child: textTile(
                   lable1: 'Booking Id',
                   value1: pkgID,
@@ -361,7 +352,6 @@ class PackageHistoryContainer extends StatelessWidget {
                 // height: 50,
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 margin: const EdgeInsets.only(bottom: 5),
-               
                 child: textTile(
                     lable1: 'Date',
                     value1: bookingDate,

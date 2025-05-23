@@ -4,8 +4,7 @@ import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:go_router/go_router.dart';
-import '../../data/network/base_apiservices.dart';
-import '../../data/network/network_apiservice.dart';
+
 
 class CustomBottomNavigationBar extends StatefulWidget {
   final Widget child;
@@ -21,7 +20,7 @@ class CustomBottomNavigationBar extends StatefulWidget {
 }
 
 class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
-  final BaseApiServices _apiServices = NetworkApiService();
+
 
   int currentIndex = 0;
 

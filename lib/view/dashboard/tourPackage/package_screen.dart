@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/package_models.dart';
 import 'package:flutter_cab/res/Common%20Widgets/common_offer_container.dart';
@@ -37,7 +35,6 @@ class _PackagesState extends State<Packages> {
   TextEditingController statecontroller = TextEditingController();
   UserViewModel userViewModel = UserViewModel();
 
-  late final ValueNotifier<DateTime> _selectedDateNotifier;
   DateTime tomorrow = DateTime.now().add(const Duration(days: 1));
   final DateFormat _dateFormat = DateFormat('dd-MM-yyyy');
   final ScrollController _scrollController = ScrollController();
@@ -52,16 +49,9 @@ class _PackagesState extends State<Packages> {
   @override
   void initState() {
     super.initState();
-  
-    // stateName = userViewModel.getState();
-
-    _selectedDateNotifier =
-        ValueNotifier(DateTime.now().add(const Duration(days: 1)));
-
     controller = TextEditingController(text: _dateFormat.format(tomorrow));
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       getCountry();
-
 
       final user = await userViewModel.getUserId();
       if (user.userId != null && user.userId!.isNotEmpty) {
@@ -71,26 +61,16 @@ class _PackagesState extends State<Packages> {
 
         var userData =
             await Provider.of<UserProfileViewModel>(context, listen: false)
-            .fetchUserProfileViewModelApi(context, {"userId": uId});
-        if (userData != null && userData?.data != null) {
+                .fetchUserProfileViewModelApi(context, {"userId": uId});
+        if (userData != null && userData.data.userId != '') {
           fetchState();
-
-        }
-      }
-
-    });
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
-        // User has reached the end of the list
-        if (!isLoadingMore && !isLastPage) {
-          print('testing......');
-          fetchPackageList();
         }
       }
     });
+    // fetchPackageList();
+    _scrollController.addListener(_onScroll);
 
-    // controller.text = _selectedDate.day.toString();
+ 
   }
 
   void fetchState() async {
@@ -99,13 +79,11 @@ class _PackagesState extends State<Packages> {
       if (userState.isNotEmpty) {
         setState(() {
           stateName = userState; // Update local state
-          print('Fetched state: $stateName');
-        statecontroller.text = stateName;
-
+          debugPrint('Fetched state: $stateName');
+          statecontroller.text = stateName;
         });
         // Update the text controller
       } else {
-      
         final fallbackState =
             Provider.of<UserProfileViewModel>(context, listen: false)
                 .userStateName;
@@ -116,55 +94,27 @@ class _PackagesState extends State<Packages> {
           debugPrint('Fetched fallback state: $fallbackState');
         });
 
-     
-        print('Fetched state:,,,,..,,,....,,..,,.,,.,,.,.. $stateName');
-
+        debugPrint('Fetched state:,,,,..,,,....,,..,,.,,.,,.,.. $stateName');
       }
       fetchPackageList();
     } catch (e) {
-      print('Error fetching state: $e');
+      debugPrint('Error fetching state: $e');
     }
   }
 
-  Future<void> fetchPackageList() async {
-    if (isLoadingMore || isLastPage) return;
-    setState(() {
-      isLoadingMore = true;
-    });
+  void fetchPackageList({bool isPagination = false}) {
+    context.read<GetPackageListViewModel>().fetchGetPackageListViewModelApi(
+        context: context,
+        date: controller.text,
+        country: countryName,
+        state: statecontroller.text.isEmpty ? stateName : statecontroller.text,
+        isPagination: isPagination);
+  }
 
-    try {
-      var resp =
-          await Provider.of<GetPackageListViewModel>(context, listen: false)
-              .fetchGetPackageListViewModelApi(context, {
-        "pageNumber": currentPage,
-        "pageSize": pageSize,
-        "date": controller.text,
-        "search": "",
-        "days": "",
-        "price": "",
-        "country": countryName,
-        "state": statecontroller.text.isEmpty ? stateName : statecontroller.text
-        // "packageStatus": "TRUE",
-      });
-      var data = resp?.data.content ?? [];
-      if (data.isNotEmpty) {
-        setState(() {
-          getPackageList.addAll(data);
-          currentPage++;
-          isLastPage = data.length < pageSize;
-          debugPrint('currentpage$currentPage');
-        });
-      } else {
-        setState(() {
-          isLastPage = true;
-        });
-      }
-    } catch (e) {
-      debugPrint('error$e');
-    } finally {
-      setState(() {
-        isLoadingMore = false;
-      });
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      fetchPackageList(isPagination: true);
     }
   }
 
@@ -187,10 +137,10 @@ class _PackagesState extends State<Packages> {
             textButtonTheme: TextButtonThemeData(
                 style: ButtonStyle(
               backgroundColor:
-                  MaterialStateProperty.all(btnColor), // Button background
+                  WidgetStateProperty.all(btnColor), // Button background
               foregroundColor:
-                  MaterialStateProperty.all(background), // Button text color
-              shape: MaterialStateProperty.all(
+                  WidgetStateProperty.all(background), // Button text color
+              shape: WidgetStateProperty.all(
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
             )),
@@ -223,19 +173,6 @@ class _PackagesState extends State<Packages> {
     try {
       Provider.of<GetCountryStateListViewModel>(context, listen: false)
           .getStateList(context: context, country: countryName);
-      // var countryProvider =
-      // Provider.of<GetCountryStateListViewModel>(context, listen: false)
-      //     .getAccessToken(context: context)
-      //     .then((onValue) {
-      //   debugPrint('token,.....c//.c.... $onValue');
-      //   setState(() {
-      //     accessToken = onValue['auth_token'].toString();
-      //   });
-      //   // countryProvider.getCountryList(context: context, token: accessToken);
-      //   Provider.of<GetCountryStateListViewModel>(context, listen: false)
-      //       .getStateList(
-      //           context: context, token: accessToken, country: countryName);
-      // });
     } catch (e) {
       debugPrint('error $e');
     }
@@ -244,7 +181,6 @@ class _PackagesState extends State<Packages> {
   // List<Content> packageList = [];
   @override
   void dispose() {
-   
     statecontroller.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -270,8 +206,9 @@ class _PackagesState extends State<Packages> {
 
     isLoadingData = context.watch<OfferViewModel>().isLoading1;
     var state = context.watch<GetCountryStateListViewModel>().getStateNameModel;
-    // bool isLoadingState =
-    //     context.watch<GetCountryStateListViewModel>().isLoading;
+    isLastPage = context.watch<GetPackageListViewModel>().isLastPage;
+    getPackageList =
+        context.watch<GetPackageListViewModel>().getPackageList.data ?? [];
     return Stack(
       children: [
         Column(
@@ -308,13 +245,6 @@ class _PackagesState extends State<Packages> {
                         // });
                       },
                       hintText: 'Select State',
-
-                      // validator: (p0) {
-                      //   if (p0 == null || p0.isEmpty) {
-                      //     return 'Please select state';
-                      //   }
-                      //   return null;
-                      // },
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -395,7 +325,7 @@ class _PackagesState extends State<Packages> {
                     const CommonOfferContainer(
                       bookingType: 'PACKAGE_BOOKING',
                     ),
-                    status == "Status.completed" 
+                    status == "Status.completed"
                         ? getPackageList.isNotEmpty
                             ? ListView.builder(
                                 // controller: _scrollController,
@@ -404,16 +334,15 @@ class _PackagesState extends State<Packages> {
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 0, horizontal: 10),
                                 itemCount: getPackageList.length +
-                                    (isLoadingMore ? 1 : 0),
+                                    (isLastPage ? 0 : 1),
                                 itemBuilder: (context, index) {
                                   if (index == getPackageList.length) {
-                                    return isLoadingMore
-                                        ? const Center(
+                                    return const Center(
                                             child: CircularProgressIndicator(
                                             color: greenColor,
-                                          ))
-                                        : const SizedBox
-                                            .shrink(); // Hide if not loading
+                                    ));
+
+                                    // Hide if not loading
                                   }
                                   List<PackageActivity> activityData =
                                       getPackageList[index].packageActivities;
@@ -436,9 +365,8 @@ class _PackagesState extends State<Packages> {
                                       total: getPackageList[index].totalPrice,
                                       activityList: List.generate(
                                           activityData.length,
-                                          (index) => activityData[index]
-                                              .activity
-                                              ),
+                                          (index) =>
+                                              activityData[index].activity),
                                       activity: getPackageList[index]
                                           .packageActivities
                                           .length
@@ -626,7 +554,7 @@ class _PackageContainerState extends State<PackageContainer> {
                                 color: greyColor1.withOpacity(.1),
                                 borderRadius: BorderRadius.circular(2)),
                             child: Text(
-                              "${int.tryParse(widget.noOfDays ?? '1') != null ? (int.parse(widget.noOfDays) - 1).toString() : '0'}N / ${widget.noOfDays ?? '0'}D",
+                              "${int.tryParse(widget.noOfDays) != null ? (int.parse(widget.noOfDays) - 1).toString() : '0'}N / ${widget.noOfDays}D",
                               style: GoogleFonts.lato(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,

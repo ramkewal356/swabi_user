@@ -31,7 +31,6 @@ class _registration_screenState extends State<registration_screen> {
   List<TextEditingController> controller =
       List.generate(10, (index) => TextEditingController());
   final _formKey = GlobalKey<FormState>();
-  GlobalKey _phoneFieldKey = GlobalKey();
   final firstNameFocus = FocusNode();
   final lastNameFocus = FocusNode();
   final emailFocus = FocusNode();
@@ -74,7 +73,6 @@ class _registration_screenState extends State<registration_screen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _phoneFieldKey = GlobalKey();
       getCountry();
 
     });
@@ -88,18 +86,7 @@ class _registration_screenState extends State<registration_screen> {
       Provider.of<GetCountryStateListViewModel>(context, listen: false)
             .getStateList(
                 context: context, country: country);
-      // var countryProvider =
-      //     Provider.of<GetCountryStateListViewModel>(context, listen: false);
-      // countryProvider.getAccessToken(context: context).then((onValue) {
-      //   debugPrint('token,.....c//.c.... $onValue');
-      //   setState(() {
-      //     accessToken = onValue['auth_token'].toString();
-      //   });
-      //   // countryProvider.getCountryList(context: context, token: accessToken);
-      //   Provider.of<GetCountryStateListViewModel>(context, listen: false)
-      //       .getStateList(
-      //           context: context,  country: country);
-      // });
+     
     } catch (e) {
       debugPrint('error $e');
     }
@@ -107,7 +94,7 @@ class _registration_screenState extends State<registration_screen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
+  
     controller[0].dispose();
     controller[1].dispose();
     controller[2].dispose();
@@ -238,32 +225,7 @@ class _registration_screenState extends State<registration_screen> {
                         hintText: 'Country',
                       ),
                     ),
-                    // CustomDropdownButton(
-                    //   controller: controllers[6],
-                    //   // focusNode: focusNode3,
-                    //   itemsList: country.map((country) {
-                    //     return country['country_name'].toString();
-                    //   }).toList(),
-                    //   onChanged: (value) {
-                    //     setState(() {
-                    //       controllers[6].text = value ?? '';
-                    //     });
-                    //     Provider.of<GetCountryStateListViewModel>(context,
-                    //             listen: false)
-                    //         .getStateList(
-                    //             context: context,
-                    //             token: accessToken,
-                    //             country: value ?? '');
-                    //   },
-                    //   hintText: 'Select Country',
-
-                    //   // validator: (p0) {
-                    //   //   if (p0 == null || p0.isEmpty) {
-                    //   //     return 'Please select gender';
-                    //   //   }
-                    //   //   return null;
-                    //   // },
-                    // ),
+                   
                     const SizedBox(height: 10),
 
                     Padding(
@@ -313,134 +275,7 @@ class _registration_screenState extends State<registration_screen> {
                         state: controller[9].text,
                         // stateValidation: true,
                         hintText: 'Search your location'),
-                    // FormField<String>(
-                    //     autovalidateMode: AutovalidateMode.onUserInteraction,
-                    //     validator: (value) {
-                    //       if (controller[3].text.isEmpty) {
-                    //         return 'Please enter address';
-                    //       }
-                    //       return null;
-                    //     },
-                    //     builder: (FormFieldState<String> field) {
-                    //       return Column(
-                    //         crossAxisAlignment: CrossAxisAlignment.start,
-                    //         children: [
-                    //           Container(
-                    //             padding:
-                    //                 const EdgeInsets.symmetric(horizontal: 0),
-                    //             height: 50,
-                    //             child: GooglePlaceAutoCompleteTextField(
-                    //               focusNode: addressFocus,
-                    //               textEditingController: controller[3],
-                    //               boxDecoration: BoxDecoration(
-                    //                   color: background,
-                    //                   borderRadius: BorderRadius.circular(5),
-                    //                   border: Border.all(
-                    //                       color: naturalGreyColor
-                    //                           .withOpacity(0.3))),
-                    //               googleAPIKey:
-                    //                   // "AIzaSyADRdiTbSYUR8oc6-ryM1F1NDNjkHDr0Yo",
-                    //                   'AIzaSyDhKIUQ4QBoDuOsooDfNY_EjCG0MB7Ami8',
-                    //               inputDecoration: InputDecoration(
-                    //                 contentPadding: const EdgeInsets.symmetric(
-                    //                     horizontal: 10, vertical: 10),
-                    //                 isDense: true,
-                    //                 hintText: "Search your location",
-                    //                 border: const OutlineInputBorder(
-                    //                     borderSide: BorderSide.none),
-                    //                 hintStyle: textTitleHint,
-                    //                 filled: true,
-                    //                 fillColor: background,
-                    //                 disabledBorder: const OutlineInputBorder(
-                    //                     borderRadius: BorderRadius.all(
-                    //                         Radius.circular(5)),
-                    //                     borderSide: BorderSide.none),
-                    //               ),
-                    //               textStyle: titleTextStyle,
-                    //               debounceTime: 400,
-                    //               countries: ["ae"],
-                    //               isLatLngRequired: true,
-
-                    //               getPlaceDetailWithLatLng: (prediction) {
-                    //                 print(
-                    //                     "Latitude: ${prediction.lat}, Longitude: ${prediction.lng}");
-                    //                 // You can use prediction.lat and prediction.lng here as needed
-                    //                 // Example: Save them to variables or perform further actions
-                    //               },
-
-                    //               itemClick: (prediction) {
-                    //                 if (prediction.description
-                    //                         ?.contains(controller[9].text) ??
-                    //                     false) {
-                    //                   controller[3].text =
-                    //                       prediction.description ?? "";
-                    //                   controller[3].selection =
-                    //                       TextSelection.fromPosition(
-                    //                           TextPosition(
-                    //                     offset:
-                    //                         prediction.description?.length ?? 0,
-                    //                   ));
-                    //                   field.didChange(prediction.description);
-                    //                 } else {
-                    //                   // Show a validation message or feedback to the user if the location is not valid
-                    //                   print(
-                    //                       "Please select a location in Dubai.");
-                    //                   Utils.toastMessage(
-                    //                       "Please select a location in ${controller[9].text}");
-                    //                 }
-                    //                 // controller[3].text =
-                    //                 //     prediction.description ?? "";
-                    //                 // controller[3].selection =
-                    //                 //     TextSelection.fromPosition(TextPosition(
-                    //                 //         offset: prediction
-                    //                 //                 .description?.length ??
-                    //                 //             0));
-                    //                 // field.didChange(prediction.description);
-                    //               },
-                    //               seperatedBuilder: const Divider(),
-
-                    //               // OPTIONAL// If you want to customize list view item builder
-                    //               itemBuilder: (context, index, prediction) {
-                    //                 return Padding(
-                    //                   padding: const EdgeInsets.symmetric(
-                    //                       vertical: 10, horizontal: 5),
-                    //                   child: Container(
-                    //                     // color: background,
-                    //                     child: Row(
-                    //                       children: [
-                    //                         const Icon(
-                    //                           Icons.location_on,
-                    //                           size: 15,
-                    //                         ),
-                    //                         const SizedBox(
-                    //                           width: 7,
-                    //                         ),
-                    //                         Expanded(
-                    //                             child: Text(
-                    //                           prediction.description ?? "",
-                    //                           style: titleTextStyle,
-                    //                         ))
-                    //                       ],
-                    //                     ),
-                    //                   ),
-                    //                 );
-                    //               },
-                    //               isCrossBtnShown: false,
-
-                    //               // default 600 ms ,
-                    //             ),
-                    //           ),
-                    //           if (field.hasError)
-                    //             Padding(
-                    //               padding: const EdgeInsets.only(left: 10),
-                    //               child: Text(
-                    //                 field.errorText!,
-                    //                 style: TextStyle(color: redColor),
-                    //               ),
-                    //             ),
-                    //         ],
-                    //       );
-                    //     }),
+                   
                     const SizedBox(height: 10),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 5),

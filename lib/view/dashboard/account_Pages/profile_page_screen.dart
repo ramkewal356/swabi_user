@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/network/network_apiservice.dart';
 import 'package:flutter_cab/model/user_profile_model.dart';
@@ -19,7 +18,6 @@ import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:image/image.dart' as img;
 
 class ProfilePage extends StatefulWidget {
   final String user;
@@ -105,8 +103,8 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _uploadImage(File file) async {
-    var profilePic =
-        await MultipartFile.fromFile(file.path, filename: "profile.jpg");
+    // var profilePic =
+    //     await MultipartFile.fromFile(file.path, filename: "profile.jpg");
     // Map<String, dynamic> body = {"driverId": widget.user, "image": profilePic};
     try {
       await Provider.of<ProfileImageViewModel>(context, listen: false)
@@ -209,7 +207,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   headingReq: true,
                   initiValueReq: false,
                   controller: TextEditingController(text: widget.user),
-                  initialValueText: widget.user ?? '',
+                  initialValueText: widget.user,
                   prefixIcon: true,
                   readOnly: true,
                   img: profile,
@@ -221,11 +219,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   initiValueReq: false,
                   controller: TextEditingController(
                       text:
-                          "${userdata.firstName ?? ''} ${userdata.lastName ?? ''}"
+                          "${userdata.firstName} ${userdata.lastName}"
                               .toString()
                               .capitalizeFirstOfEach),
                   initialValueText:
-                      "${userdata.firstName ?? ''} ${userdata.lastName ?? ''}",
+                      "${userdata.firstName} ${userdata.lastName}",
                   prefixIcon: true,
                   readOnly: true,
                   img: profile,
@@ -236,7 +234,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   headingReq: true,
                   initiValueReq: false,
                   controller: TextEditingController(text: userdata.email),
-                  initialValueText: userdata.email ?? '',
+                  initialValueText: userdata.email,
                   prefixIcon: true,
                   readOnly: true,
                   img: email,
@@ -248,7 +246,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   prefixIcon: true,
                   initiValueReq: false,
                   controller: TextEditingController(text: userdata.gender),
-                  initialValueText: userdata.gender ?? '',
+                  initialValueText: userdata.gender,
                   readOnly: true,
                   img: genderImg,
                 ),
@@ -259,7 +257,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   prefixIcon: true,
                   initiValueReq: false,
                   controller: TextEditingController(text: userdata.country),
-                  initialValueText: userdata.country ?? '',
+                  initialValueText: userdata.country,
                   readOnly: true,
                   img: address,
                 ),
@@ -270,7 +268,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   prefixIcon: true,
                   initiValueReq: false,
                   controller: TextEditingController(text: userdata.state),
-                  initialValueText: userdata.state ?? '',
+                  initialValueText: userdata.state,
                   readOnly: true,
                   img: address,
                 ),
@@ -281,7 +279,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   prefixIcon: true,
                   initiValueReq: false,
                   controller: TextEditingController(text: userdata.address),
-                  initialValueText: userdata.address ?? '',
+                  initialValueText: userdata.address,
                   readOnly: true,
                   img: address,
                 ),
@@ -293,7 +291,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   initiValueReq: false,
                   controller: TextEditingController(
                       text: "+${userdata.countryCode} ${userdata.mobile}"),
-                  initialValueText: userdata.mobile ?? '',
+                  initialValueText: userdata.mobile,
                   readOnly: true,
                   img: phone,
                 ),

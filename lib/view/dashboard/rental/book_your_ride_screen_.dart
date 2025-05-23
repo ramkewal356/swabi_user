@@ -49,7 +49,7 @@ class _BookYourCabState extends State<BookYourCab> {
 
   @override
   void initState() {
-    // TODO: implement initState
+  
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Provider.of<RentalValidationViewModel>(context, listen: false)
@@ -119,14 +119,10 @@ class _BookYourCabState extends State<BookYourCab> {
     ProfileData? profileUser =
         context.watch<UserProfileViewModel>().DataList.data?.data;
     List<Body> filteredData =
-        rentalData.where((rental) => rental.carType == widget.carType).toList();
+        rentalData.where((rental) => rental.carName == widget.carType).toList();
     debugPrint(widget.carType);
     // debugPrint(paymentOrderId);
-    String status = context
-        .watch<ConfirmRentalBookingViewModel>()
-        .rentalDataList
-        .status
-        .toString();
+
     return Scaffold(
       appBar: CustomAppBar(
         heading: "Book Your Ride",
@@ -147,7 +143,7 @@ class _BookYourCabState extends State<BookYourCab> {
                 return Stack(
                   children: [
                     BookingContainer(
-                      carName: rental.carType,
+                      carName: rental.carName,
                       carImage: rental.carImage,
                       seats: rental.seats,
                       hour: rental.hours,
@@ -221,6 +217,7 @@ class _BookYourCabState extends State<BookYourCab> {
                                 carType: rental.carType,
                                 date: rental.date,
                                 userId: widget.userId,
+                                vendorId: rental.vendorId.toString(),
                                 price: rental.totalPrice,
                                 hour: rental.hours,
                                 kilometer: rental.kilometers,
@@ -247,6 +244,7 @@ class _BookYourCabState extends State<BookYourCab> {
                                   carType: rental.carType,
                                   date: rental.date,
                                   userId: widget.userId,
+                                  vendorId: rental.vendorId.toString(),
                                   price: rental.totalPrice,
                                   hour: rental.hours,
                                   kilometer: rental.kilometers,
@@ -263,31 +261,8 @@ class _BookYourCabState extends State<BookYourCab> {
 
                       onTap: () {},
                     ),
-                    // status == 'Status.loading'
-                    //     ? Center(
-                    //         child: Container(
-                    //           height: 200,
-                    //           width: 200,
-                    //           decoration: BoxDecoration(
-                    //               color: background,
-                    //               borderRadius: BorderRadius.circular(10)),
-                    //           child: const Column(
-                    //             mainAxisAlignment: MainAxisAlignment.center,
-                    //             children: [
-                    //               SpinKitCircle(
-                    //                 size: 60,
-                    //                 color: btnColor,
-                    //               ),
-                    //               SizedBox(height: 10),
-                    //               Text(
-                    //                 'Please wait.....',
-                    //                 style: TextStyle(color: greenColor),
-                    //               )
-                    //             ],
-                    //           ),
-                    //         ),
-                    //       )
-                    //     : const SizedBox()
+                   
+                  
                   ],
                 );
               }),

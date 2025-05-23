@@ -118,8 +118,8 @@ class HttpService<T> {
         break;
       case HttpMethodType.POST:
         // FormData dataaa = bodyData;
-        print({"bodyData formdata": bodyData});
-        print({"baseUrl": this.baseURL! + this.endURL!});
+        debugPrint("bodyData formdata $bodyData");
+        debugPrint("baseUrl ${this.baseURL! + this.endURL!}");
         return _http!.post<T>(
           this.baseURL! + this.endURL!,
           queryParameters: this.queryParameters,

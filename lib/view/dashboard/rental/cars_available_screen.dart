@@ -7,7 +7,6 @@ import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
-import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -33,7 +32,7 @@ class CarsDetailsAvailable extends StatefulWidget {
 class _CarsDetailsAvailableState extends State<CarsDetailsAvailable> {
   @override
   void initState() {
-    // TODO: implement initState
+ 
     super.initState();
   }
 
@@ -61,7 +60,7 @@ class _CarsDetailsAvailableState extends State<CarsDetailsAvailable> {
               itemCount: rentalData.length,
               itemBuilder: (context, index) {
                 return TransContainer(
-                    carName: rentalData[index].carType,
+                    carName: rentalData[index].carName,
                     carImage: rentalData[index].carImage,
                     pickTime: rentalData[index].pickupTime,
                     price: rentalData[index].price,
@@ -77,11 +76,11 @@ class _CarsDetailsAvailableState extends State<CarsDetailsAvailable> {
                         load = true;
                         selectIndex = index;
                       });
-                      double amount =
-                          double.parse(rentalData[index].totalPrice);
+                      // double amount =
+                      //     double.parse(rentalData[index].totalPrice);
                       
                       context.push('/rentalForm/bookYourCab', extra: {
-                        "carType": rentalData[index].carType,
+                        "carType": rentalData[index].carName,
                         "userId": widget.id.toString(),
                         "bookdate": rentalData[index].date,
                         "totalAmt": rentalData[index].totalPrice,

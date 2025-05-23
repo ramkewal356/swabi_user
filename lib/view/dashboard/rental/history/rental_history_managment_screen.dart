@@ -84,7 +84,7 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
         'pageSize': pageSize,
         'bookingStatus': status,
         "search": '',
-        "sortBy": 'date',
+        "sortBy": 'id',
         "sortDirection": isVisibleIcon ? 'asc' : 'desc'
       });
 
@@ -105,7 +105,7 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
         });
       }
     } catch (e) {
-      print('Error fetching data: $e');
+    
       // Handle error, e.g., show a toast or error message
     } finally {
       setState(() {
@@ -116,7 +116,7 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
 
   @override
   void initState() {
-    // TODO: implement initState
+  
     super.initState();
 
     _tabController = TabController(length: tabList.length, vsync: this);

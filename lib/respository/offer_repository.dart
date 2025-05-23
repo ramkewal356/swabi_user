@@ -25,7 +25,7 @@ class OfferRepository {
       // http.handleErrorResponse(context: context, error: error);
       rethrow;
     }
-    return null;
+   
   }
 
   Future<OfferDetailByIdModel?> offerDetailsApi(
@@ -44,6 +44,7 @@ class OfferRepository {
       var resp = OfferDetailByIdModel.fromJson(response?.data);
       return resp;
     } catch (error) {
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: error);
     }
     return null;
@@ -65,6 +66,7 @@ class OfferRepository {
       var resp = OfferDetailByIdModel.fromJson(response?.data);
       return resp;
     } catch (error) {
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: error);
     }
     return null;

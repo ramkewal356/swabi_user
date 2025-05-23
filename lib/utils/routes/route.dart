@@ -14,7 +14,6 @@ import 'package:flutter_cab/view/dashboard/account_Pages/transaction.dart';
 import 'package:flutter_cab/view/dashboard/account_Pages/verify_password_screen.dart';
 import 'package:flutter_cab/view/dashboard/bottom_bar_screen.dart';
 import 'package:flutter_cab/view/dashboard/home_screen.dart';
-import 'package:flutter_cab/view/dashboard/account_screen.dart';
 import 'package:flutter_cab/view/dashboard/offers_pages/all_offers_screen.dart';
 import 'package:flutter_cab/view/dashboard/offers_pages/offer_details_screen.dart';
 import 'package:flutter_cab/view/dashboard/raiseIssue_pages/issue_view_details_screen.dart';
@@ -48,7 +47,7 @@ final _shellNavigatorKey = GlobalKey<NavigatorState>();
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 final GoRouter myRouter = GoRouter(
-  // initialLocation: '/profilePage/editProfilePage',
+ 
   initialLocation: '/splash',
   navigatorKey: _rootNavigatorKey,
   routes: <RouteBase>[
@@ -280,14 +279,14 @@ final GoRouter myRouter = GoRouter(
             path: 'packageDetails',
             parentNavigatorKey: _rootNavigatorKey,
             builder: (BuildContext context, GoRouterState state) {
-              final pkgId = state.extra as Map<String, dynamic>;
-              final usrId = state.extra as Map<String, dynamic>;
-              final bookingDate = state.extra as Map<String, dynamic>;
+              final extra = state.extra as Map<String, dynamic>;
+              
               // return  const PackageDetailsOld();
               return PackageDetails(
-                packageId: pkgId['packageID'],
-                userId: usrId['userId'],
-                bookDate: bookingDate['bookDate'],
+                packageId: extra['packageID'],
+                userId: extra['userId'],
+                bookDate: extra['bookDate'],
+                venderId: extra["venderId"],
               );
             },
           ),
@@ -295,19 +294,16 @@ final GoRouter myRouter = GoRouter(
             path: 'packageBookingMember',
             parentNavigatorKey: _rootNavigatorKey,
             builder: (BuildContext context, GoRouterState state) {
-              final pkgId = state.extra as Map<String, dynamic>;
-              final usrId = state.extra as Map<String, dynamic>;
-              final amt = state.extra as Map<String, dynamic>;
-              final bookingDate = state.extra as Map<String, dynamic>;
-              final participantTypes = state.extra as Map<String, dynamic>;
-              final activityList = state.extra as Map<String, dynamic>;
+              final extra = state.extra as Map<String, dynamic>;
+            
               return PackageBookingMemberPage(
-                packageID: pkgId["pkgID"],
-                userID: usrId['usrID'],
-                amt: amt['amt'],
-                bookingDate: bookingDate['bookDate'],
-                participantTypes: participantTypes['participantTypes'],
-                packageActivityList: activityList['activityList'],
+                packageID: extra["pkgID"],
+                userID: extra['usrID'],
+                amt: extra['amt'],
+                bookingDate: extra['bookDate'],
+                participantTypes: extra['participantTypes'],
+                packageActivityList: extra['activityList'],
+                venderId: extra["venderId"],
               );
             },
           ),

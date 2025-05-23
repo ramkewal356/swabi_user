@@ -84,7 +84,7 @@ class ValidationForm extends StatelessWidget {
           if (shouldValidate) {
             return validateEmail(value);
           }
-          return null; // Validation skipped
+          // Validation skipped
         },
       ),
      

@@ -22,12 +22,13 @@ class PackageDetails extends StatefulWidget {
   final String packageId;
   final String userId;
   final String bookDate;
-
+  final String venderId;
   const PackageDetails(
       {super.key,
       required this.packageId,
       required this.userId,
-      required this.bookDate});
+      required this.bookDate,
+      required this.venderId});
 
   @override
   State<PackageDetails> createState() => _PackageDetailsState();
@@ -62,7 +63,6 @@ class _PackageDetailsState extends State<PackageDetails> {
             ?.expand((e) => e.activity?.activityImageUrl ?? [])
             .toList() ??
         [];
- 
 
     return Scaffold(
       backgroundColor: bgGreyColor,
@@ -79,13 +79,7 @@ class _PackageDetailsState extends State<PackageDetails> {
                       const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                   children: [
                     const SizedBox(height: 10),
-                    // const CustomTextWidget(
-                    //     sideLogo: true,
-                    //     content: "Package Images",
-                    //     fontSize: 20,
-                    //     fontWeight: FontWeight.w700,
-                    //     textColor: textColor),
-                    // const SizedBox(height: 10),
+                   
                     CommonContainer(
                       elevation: 0,
                       borderReq: true,
@@ -120,9 +114,7 @@ class _PackageDetailsState extends State<PackageDetails> {
                                       .toString()
                                       .capitalizeFirstOfEach ??
                                   ''),
-                          // detailItem(
-                          //     lable: 'Total Price',
-                          //     value: 'AED ${packageActivity?.totalPrice}'),
+                         
                           detailItem(
                               lable: 'No. Of Activities',
                               value: "${packageActivityList.length}"),
@@ -287,22 +279,15 @@ class _PackageDetailsState extends State<PackageDetails> {
                   children: [
                     RichText(
                         text: TextSpan(children: [
-                      // TextSpan(
-                      //     text: "AED ",
-                      //     style: GoogleFonts.lato(
-                      //       color: background,
-                      //       fontSize: 16,
-                      //       fontWeight: FontWeight.w600,
-                      //     )),
-                      //Total Amt
+                    
                       (packageActivity?.totalPrice ==
                               packageActivity?.packageDiscountedAmount)
-                          ? TextSpan()
+                          ? const TextSpan()
                           : TextSpan(
                               text:
                                   "AED ${packageActivity?.totalPrice?.round()}",
                               style: GoogleFonts.lato(
-                            color: background,
+                                  color: background,
                                   fontSize: (packageActivity
                                                   ?.packageDiscountedAmount ==
                                               null ||
@@ -311,7 +296,7 @@ class _PackageDetailsState extends State<PackageDetails> {
                                               0)
                                       ? 20
                                       : 16,
-                            fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w600,
                                   decoration: (packageActivity
                                                   ?.packageDiscountedAmount ==
                                               null ||
@@ -361,7 +346,8 @@ class _PackageDetailsState extends State<PackageDetails> {
                         "amt": packageActivity?.totalPrice,
                         "bookDate": widget.bookDate,
                         "participantTypes": allParticipantTypes,
-                        "activityList": packageActivityList
+                        "activityList": packageActivityList,
+                        "venderId": widget.venderId
                       }),
                     )
                   ],
@@ -455,7 +441,7 @@ class _ActivityContainerState extends State<ActivityContainer> {
   DateTime _dateTime = DateTime.now();
   @override
   Widget build(BuildContext context) {
-    String currentDate = DateFormat('dd-MM-yyyy').format(_dateTime);
+    // String currentDate = DateFormat('dd-MM-yyyy').format(_dateTime);
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: CommonContainer(
@@ -466,7 +452,6 @@ class _ActivityContainerState extends State<ActivityContainer> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-          
             CommonContainer(
               elevation: 0,
               height: 220,
@@ -485,12 +470,12 @@ class _ActivityContainerState extends State<ActivityContainer> {
               textColor: btnColor,
             ),
             const SizedBox(height: 5),
-          
+
             CustomViewmoreViewless(
                 moreText: widget.description.replaceAll(RegExp(r'\s+'), '')),
 
             const SizedBox(height: 15),
-           
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -571,9 +556,7 @@ class _ActivityContainerState extends State<ActivityContainer> {
                 ? RichText(
                     textAlign: TextAlign.start,
                     text: TextSpan(children: [
-                      TextSpan(
-                          text: "Suitable For : ",
-                          style: titleText),
+                      TextSpan(text: "Suitable For : ", style: titleText),
                       TextSpan(
                           children:
                               widget.suitableFor.asMap().entries.map((entry) {
@@ -594,8 +577,7 @@ class _ActivityContainerState extends State<ActivityContainer> {
             RichText(
                 textAlign: TextAlign.start,
                 text: TextSpan(children: [
-                  TextSpan(
-                      text: "Location : ", style: titleText),
+                  TextSpan(text: "Location : ", style: titleText),
                   TextSpan(
                       text: widget.address.capitalizeFirstOfEach,
                       style: valueText)

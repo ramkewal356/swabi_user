@@ -1,4 +1,4 @@
-import 'dart:convert';
+
 
 class RentalCarListStatusModel {
   Status status;
@@ -58,6 +58,8 @@ class RentalCarListStatusData {
 class Body {
   String date;
   String pickupTime;
+  String carName;
+  String vendorId;
   String hours;
   String carType;
   String carImage;
@@ -71,6 +73,8 @@ class Body {
 
   Body({
     required this.date,
+    required this.carName,
+    required this.vendorId,
     required this.pickupTime,
     required this.hours,
     required this.carType,
@@ -87,6 +91,8 @@ class Body {
   factory Body.fromJson(Map<String, dynamic> json) => Body(
         date: json["date"] ?? "",
         pickupTime: json["pickupTime"],
+        carName: json["carName"] ?? '',
+        vendorId: json["vendorId"].toString(),
         hours: json["hours"].toString(),
         carType: json["carType"] ?? "",
         carImage: json["carImage"] ?? "",
@@ -102,6 +108,8 @@ class Body {
   Map<String, dynamic> toJson() => {
         "date": date,
         "pickupTime": pickupTime,
+        "carName": carName,
+        "vendorId": vendorId,
         "hours": hours,
         "carType": carType,
         "carImage": carImage,
@@ -421,7 +429,7 @@ class RentalCancelData {
 
   factory RentalCancelData.fromJson(Map<String, dynamic> json) =>
       RentalCancelData(
-        headers: json["headers"].toString() ?? '',
+        headers: json["headers"].toString(),
         body: json["body"] ?? '',
         statusCode: json["statusCode"] ?? '',
         statusCodeValue: json["statusCodeValue"].toString(),
@@ -617,7 +625,7 @@ class Content {
       id: json["id"].toString(),
       rentalBookingId: json["rentalBookingId"].toString(),
       date: json["date"] ?? "",
-      pickupTime: json["pickupTime"].toString() ?? '',
+      pickupTime: json["pickupTime"].toString(),
       locationLongitude: json["locationLongitude"].toString(),
       locationLatitude: json["locationLatitude"].toString(),
       bookingStatus: json["bookingStatus"] ?? '',
@@ -664,7 +672,7 @@ class Content {
         "createdDate": createdDate,
         "modifiedDate": modifiedDate,
         "rentalManagement": rentalManagement,
-        "vehicle": vehicle?.toJson(),
+        "vehicle": vehicle.toJson(),
         "driver": driver,
         "rideStartTime": rideStartTime,
         "rideEndTime": rideEndTime,

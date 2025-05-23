@@ -6,8 +6,6 @@ import 'package:flutter_cab/model/rental_booking_model.dart';
 import 'package:flutter_cab/view_model/services/http_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../data/network/base_apiservices.dart';
-import '../data/network/network_apiservice.dart';
 
 class RentalRepository {
   Future<RentalCarListStatusModel> rentalRepositoryApi(
@@ -28,6 +26,7 @@ class RentalRepository {
     } catch (e) {
       // print("rental api not successful error");
       // print(e);
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: e);
       rethrow;
     }
@@ -36,7 +35,6 @@ class RentalRepository {
 
 ///Rental Booking Repo
 class RentalBookingRepository {
-  final BaseApiServices _apiServices = NetworkApiService();
   Future<RentalCarBookingModel?> rentalBookingApi(
       {required BuildContext context,
       required Map<String, dynamic> body}) async {
@@ -60,7 +58,8 @@ class RentalBookingRepository {
       var resp = RentalCarBookingModel.fromJson(response?.data);
       return resp;
     } catch (error) {
-      print({'error..': error});
+      debugPrint('error $error');
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: error);
     }
     return null;
@@ -77,18 +76,17 @@ class RentalBookingRepository {
         bodyType: HttpBodyType.JSON,
         isAuthorizeRequest: false);
     try {
-      
       Response<dynamic>? response = await http.request<dynamic>();
       debugPrint("Get Rental Booked By Id Repo Success ${response?.data}");
       var resp = RentalCarBookingModel.fromJson(response?.data);
       return resp;
     } catch (e) {
       debugPrint("Get Rental Booked By Id Repo Field $e");
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: e);
       rethrow;
     }
   }
-  
 }
 
 ///Rental Booking Cancel Repo
@@ -120,8 +118,6 @@ class RentalBookingCancelRepository {
 
 ///Rental Booking List Repo
 class RentalBookingListRepository {
-  final BaseApiServices _apiServices = NetworkApiService();
-
   Future<RentalCarBookingListModel> rentalBookingListRepositoryApi(
       {required BuildContext context,
       required Map<String, dynamic> query}) async {
@@ -135,10 +131,11 @@ class RentalBookingListRepository {
     try {
       Response<dynamic>? response = await http.request<dynamic>();
       debugPrint("rentalBooking Repo api success${response?.data}");
-     
+
       var resp = RentalCarBookingListModel.fromJson(response?.data);
       return resp;
     } catch (e) {
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: e);
       debugPrint('rentalBooking Repo api not successful error $e');
       rethrow;
@@ -148,8 +145,6 @@ class RentalBookingListRepository {
 
 ///Rental View Single Detail Repo
 class RentalViewDetailsRepository {
-  final BaseApiServices _apiServices = NetworkApiService();
-
   Future<RentalDetailsSingleModel> rentalViewDetailsRepositoryApi(
       {required BuildContext context,
       required Map<String, dynamic> query}) async {
@@ -170,6 +165,7 @@ class RentalViewDetailsRepository {
       var resp = RentalDetailsSingleModel.fromJson(response?.data);
       return resp;
     } catch (e) {
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: e);
       debugPrint('rental View Detail api not successful error $e');
       rethrow;
@@ -191,12 +187,13 @@ class RentalViewPaymentDetailsRepository {
         isAuthorizeRequest: false);
     try {
       Response<dynamic>? response = await http.request<dynamic>();
-      print('response..${response?.data}');
+      debugPrint('response..${response?.data}');
       var resp = PaymentDetailsModel.fromJson(response?.data);
       return resp;
     } catch (error) {
-      print({'error..': error});
+      debugPrint('error $error');
       http.handleErrorResponse(
+        // ignore: use_build_context_synchronously
         context: context,
         error: error,
       );
@@ -208,8 +205,6 @@ class RentalViewPaymentDetailsRepository {
 
 ///Rental Validation  Repo
 class RentalValidationRepository {
-  final BaseApiServices _apiServices = NetworkApiService();
-
   Future<dynamic> rentalValidationRepositoryApi(
       {required BuildContext context,
       required Map<String, dynamic> query}) async {
@@ -255,6 +250,7 @@ class GetRentalRangeListRepository {
       var resp = GetRentalRangeListModel.fromJson(response?.data);
       return resp;
     } catch (e) {
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: e);
       debugPrint('get rental Matrics List Repo Field $e');
       rethrow;
