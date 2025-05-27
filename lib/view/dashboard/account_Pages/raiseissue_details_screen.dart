@@ -32,7 +32,7 @@ class _RaiseissuedetailsState extends State<Raiseissuedetails>
   int intialIndex = 0;
   @override
   void initState() {
-    // TODO: implement initState
+  
     super.initState();
     _tabController = TabController(length: tabList.length, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -52,7 +52,7 @@ class _RaiseissuedetailsState extends State<Raiseissuedetails>
           _scrollController.position.maxScrollExtent) {
         // User has reached the end of the list
         if (!isLoadingMore && !isLastPage) {
-          print('testing......');
+    
           getRaiseIssue();
         }
       }
@@ -84,7 +84,7 @@ class _RaiseissuedetailsState extends State<Raiseissuedetails>
       // Update history with new data
       final data = resp?.data?.content ?? [];
 
-      print('Fetched data: $data');
+  
       if (data.isNotEmpty) {
         setState(() {
           allRaiseList.addAll(data);

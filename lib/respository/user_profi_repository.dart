@@ -37,6 +37,7 @@ class UserProfileRepository {
       return resp;
     } catch (e) {
       debugPrint("UserProfile Repo api not success");
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: e);
       rethrow;
     }
@@ -84,6 +85,7 @@ class UserProfileUpdateRepository {
       return resp;
     } catch (e) {
       debugPrint("UserProfile Update Repo api not success");
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: e);
       rethrow;
     }
@@ -106,6 +108,7 @@ class UserProfileUpdateRepository {
       return resp;
     } catch (error) {
       debugPrint('error $error');
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: error);
       rethrow;
     }
@@ -128,6 +131,7 @@ class UserProfileUpdateRepository {
       return resp;
     } catch (error) {
       debugPrint('error $error');
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: error);
     }
     return null;
@@ -150,6 +154,7 @@ class UserProfileUpdateRepository {
       return resp;
     } catch (error) {
       debugPrint('error $error');
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: error);
     }
     return null;
@@ -172,6 +177,7 @@ class UserProfileUpdateRepository {
       return resp;
     } catch (error) {
       debugPrint('error $error');
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: error);
     }
     return null;
@@ -198,6 +204,7 @@ class UserProfileUpdateRepository {
       // return resp;
     } catch (error) {
       debugPrint('error.. $error');
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: error);
       rethrow;
     }

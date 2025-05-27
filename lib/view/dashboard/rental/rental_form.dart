@@ -77,7 +77,7 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
   String country = 'United Arab Emirates';
   @override
   void initState() {
-    // TODO: implement initState
+  
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -97,7 +97,7 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
   }
 
   void _unfocusLocationField() {
-    print('jcmzxcmnzxbcmnxzbcnxz..,,..,..............');
+ 
     if (locationFocusNode.hasFocus) {
       locationFocusNode.unfocus();
     }

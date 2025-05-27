@@ -27,7 +27,7 @@ class _NotificationPageState extends State<NotificationPage> {
   List<Content> earlierNotification = [];
   @override
   void initState() {
-    // TODO: implement initState
+  
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getNotification();
@@ -96,7 +96,7 @@ class _NotificationPageState extends State<NotificationPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
+  
     super.dispose();
     _scrollController.dispose();
   }

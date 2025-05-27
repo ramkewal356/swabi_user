@@ -24,6 +24,7 @@ class HomePageRepository {
       return resp;
     } catch (e) {
       debugPrint("Get Package List Repo Field $e");
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: e);
       rethrow;
     }
@@ -46,6 +47,7 @@ class HomePageRepository {
       return resp;
     } catch (e) {
       debugPrint("Get Package List Repo Field $e");
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: e);
       rethrow;
     }
@@ -68,6 +70,7 @@ class HomePageRepository {
       return resp;
     } catch (e) {
       debugPrint("Get Package List Repo Field $e");
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: e);
       rethrow;
     }
@@ -89,6 +92,7 @@ class HomePageRepository {
       return resp;
     } catch (e) {
       debugPrint("Get Package List Repo Field $e");
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: e);
       rethrow;
     }

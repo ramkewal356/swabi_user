@@ -1,6 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_cab/model/get_activity_category_list_model.dart';
 import 'package:flutter_cab/model/get_all_activity_list_model.dart';
 import 'package:flutter_cab/model/get_state_with_image_list_model.dart';
@@ -30,7 +29,7 @@ class _LandingScreenState extends State<LandingScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
+  
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getActivityCategory();
@@ -116,7 +115,7 @@ class _LandingScreenState extends State<LandingScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
+   
     super.dispose();
     _scrollController.dispose();
   }
@@ -148,7 +147,8 @@ class _LandingScreenState extends State<LandingScreen> {
         ),
         actions: [
           IconButton(
-              onPressed: () {}, icon: Icon(Icons.notifications_none_outlined))
+              onPressed: () {},
+              icon: const Icon(Icons.notifications_none_outlined))
         ],
       ),
       drawer: Drawer(
@@ -672,7 +672,7 @@ class _LandingScreenState extends State<LandingScreen> {
             const SizedBox(height: 10),
             Container(
               height: 280,
-              margin: EdgeInsets.symmetric(horizontal: 10),
+              margin: const EdgeInsets.symmetric(horizontal: 10),
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
@@ -707,7 +707,7 @@ class _LandingScreenState extends State<LandingScreen> {
                           var data = getAllActivityList?.data?.content?[index];
                           return Card(
                             clipBehavior: Clip.none,
-                            margin: EdgeInsets.symmetric(horizontal: 6),
+                            margin: const EdgeInsets.symmetric(horizontal: 6),
                             surfaceTintColor: Colors.transparent,
                             color: Colors.transparent,
                             shape: RoundedRectangleBorder(
@@ -923,7 +923,7 @@ class _LandingScreenState extends State<LandingScreen> {
                               shadows: [
                                 Shadow(
                                     color: blackColor.withOpacity(0.5),
-                                    offset: Offset(1, 1))
+                                    offset: const Offset(1, 1))
                               ]),
                         ),
                       ),

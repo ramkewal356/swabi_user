@@ -7,6 +7,7 @@ import 'package:flutter_cab/model/raise_issue_model.dart';
 import 'package:flutter_cab/model/get_issue_by_booking_id_model.dart';
 import 'package:flutter_cab/model/user_model.dart';
 import 'package:flutter_cab/respository/raise_issue_repository.dart';
+import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 
@@ -41,14 +42,16 @@ class RaiseissueViewModel with ChangeNotifier {
       required String bookingId,
       required String bookingType,
       required String raisedById,
-      required String issueDescription}) async {
+      required String issueDescription,
+      required String vendorId}) async {
     Map<String, dynamic> body = {
       "bookingId": bookingId,
       "bookingType": bookingType,
       "raisedById": raisedById,
       "raisedByRole": "USER",
       "issueType": "Service Issue",
-      "issueDescription": issueDescription
+      "issueDescription": issueDescription,
+      "vendor": {"vendorId": vendorId}
     };
     try {
       raisedloading = true;
@@ -65,6 +68,9 @@ class RaiseissueViewModel with ChangeNotifier {
           _raiseIssueModel = onValue;
           raisedloading = false;
           notifyListeners();
+          Utils.toastSuccessMessage(
+            'Raise Request Successfully',
+          );
         }
       });
     } catch (e) {
@@ -94,6 +100,7 @@ class RaiseissueViewModel with ChangeNotifier {
         "pageSize": pageSize.toString()
       };
       GetIssueModel? issueModel =
+          // ignore: use_build_context_synchronously
           await _myRepo.getRaiseIssueApi(context: context, query: query);
       _getIssueModel = issueModel;
       notifyListeners();

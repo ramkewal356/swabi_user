@@ -69,9 +69,9 @@ class _CustomButtonState extends State<CustomButton> {
 
   void _handleTap() {
     if (_selectedValue == true) {
-      print('Your Self');
+      debugPrint('Your Self');
     } else {
-      print("For Other's");
+      debugPrint("For Other's");
     }
     widget.onTap();  // Call the original onTap callback
   }

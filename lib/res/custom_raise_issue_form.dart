@@ -12,12 +12,12 @@ import 'package:provider/provider.dart';
 class RaiseIssueDialog extends StatefulWidget {
   final String bookingId;
   final String bookingType;
-  // final String raisedById;
+  final String venderId;
   const RaiseIssueDialog({
     super.key,
     required this.bookingId,
     required this.bookingType,
-    // required this.raisedById
+      required this.venderId
   });
 
   @override
@@ -29,7 +29,7 @@ class _RaiseIssueDialogState extends State<RaiseIssueDialog> {
   UserViewModel userViewModel = UserViewModel();
 
   String? _selectedIssue;
-  TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final List<String> _issueOptions = [
     'Expected a shorter wait time',
@@ -41,7 +41,7 @@ class _RaiseIssueDialogState extends State<RaiseIssueDialog> {
   String? userId;
   @override
   void initState() {
-    // TODO: implement initState
+  
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       userViewModel.getUserId().then((value) async {
@@ -153,10 +153,11 @@ class _RaiseIssueDialogState extends State<RaiseIssueDialog> {
                               issueDescription:
                                   _selectedIssue == 'My reason is not listed'
                                       ? _descriptionController.text
-                                      : _selectedIssue ?? '');
-                      Utils.toastSuccessMessage(
-                        'Raise Request Successfully',
-                      );
+                                      : _selectedIssue ?? '',
+                              vendorId: widget.venderId);
+                      // Utils.toastSuccessMessage(
+                      //   'Raise Request Successfully',
+                      // );
                       Navigator.of(context).pop();
                     }
                   } else {
@@ -169,10 +170,11 @@ class _RaiseIssueDialogState extends State<RaiseIssueDialog> {
                             issueDescription:
                                 _selectedIssue == 'My reason is not listed'
                                     ? _descriptionController.text
-                                    : _selectedIssue ?? '');
-                    Utils.toastSuccessMessage(
-                      'Raise Request Successfully',
-                    );
+                                    : _selectedIssue ?? '',
+                            vendorId: widget.venderId);
+                    // Utils.toastSuccessMessage(
+                    //   'Raise Request Successfully',
+                    // );
                     Navigator.of(context).pop();
                   }
                 } else {

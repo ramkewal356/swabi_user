@@ -28,7 +28,7 @@ class _WalletScreenState extends State<WalletScreen> {
     final int value2 = int.tryParse(item2) ?? 0;
     setState(() {
       result = '${value1 + value2}';
-      print('result $result');
+    
     });
   }
 
@@ -256,7 +256,7 @@ class _WalletScreenState extends State<WalletScreen> {
         child: Column(
           children: [
             CircleAvatar(
-              backgroundColor: Color.fromARGB(252, 242, 199, 161),
+              backgroundColor: const Color.fromARGB(252, 242, 199, 161),
               child: icon,
               // child: Icon(
               //   icon,

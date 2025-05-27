@@ -28,7 +28,6 @@ class _MyTransactionState extends State<MyTransaction>
   int intialIndex = 0;
   @override
   void initState() {
-  
     super.initState();
     _tabController = TabController(length: tabList.length, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -48,7 +47,6 @@ class _MyTransactionState extends State<MyTransaction>
           _scrollController.position.maxScrollExtent) {
         // User has reached the end of the list
         if (!isLoadingMore && !isLastPage) {
-      
           getTrasaction();
         }
       }
@@ -56,7 +54,7 @@ class _MyTransactionState extends State<MyTransaction>
   }
 
   Future<void> getTrasaction() async {
-    if (isLoadingMore || isLastPage) return;
+    if (isLoadingMore) return;
     setState(() {
       isLoadingMore = true;
     });
@@ -91,12 +89,15 @@ class _MyTransactionState extends State<MyTransaction>
         resp = await Provider.of<GetTranactionViewModel>(context, listen: false)
             .getTranactionApi(context: context, query: query);
       }
-      var data = resp?.data?.content ?? [];
-      if (data.isNotEmpty) {
+      List<Content> newData = resp?.data?.content ?? [];
+      List<Content> allData =
+          (currentPage == 0) ? newData : [...allTranaction, ...newData];
+
+      if (allData.isNotEmpty) {
         setState(() {
-          allTranaction.addAll(data);
+          allTranaction = allData;
           currentPage++;
-          isLastPage = data.length < pageSize;
+          isLastPage = newData.length < pageSize;
           debugPrint('currentpage$currentPage');
         });
       } else {
@@ -115,7 +116,6 @@ class _MyTransactionState extends State<MyTransaction>
 
   @override
   void dispose() {
-   
     _tabController?.dispose();
 
     _scrollController.dispose();
@@ -125,7 +125,7 @@ class _MyTransactionState extends State<MyTransaction>
   @override
   Widget build(BuildContext context) {
     debugPrint('userId....${widget.userId}');
-  
+
     return Customtabbar(
         titleHeading: 'My Transactions',
         controller: _tabController,
@@ -142,7 +142,9 @@ class _MyTransactionState extends State<MyTransaction>
           // const SizedBox(height: 10),
           return Consumer<GetTranactionViewModel>(
             builder: (context, value, child) {
-              return value.getTrasaction.status.toString() == 'Status.loading'
+              return value.getTrasaction.status.toString() ==
+                          'Status.loading' &&
+                      currentPage == 0
                   ? const Center(
                       child: CircularProgressIndicator(
                       color: greenColor,
@@ -150,7 +152,16 @@ class _MyTransactionState extends State<MyTransaction>
                   : allTranaction.isNotEmpty
                       ? ListView.builder(
                           controller: _scrollController,
+                          itemCount:
+                              allTranaction.length + (isLastPage ? 0 : 1),
                           itemBuilder: (context, index) {
+                            if (index == allTranaction.length) {
+                              return const Center(
+                                  child: CircularProgressIndicator(
+                                color: greenColor,
+                              ));
+                              // Hide if not loading
+                            }
                             var data = allTranaction[index];
                             DateTime date = tabList[intialIndex] == 'REFUNDED'
                                 ? DateTime.fromMillisecondsSinceEpoch(
@@ -163,15 +174,7 @@ class _MyTransactionState extends State<MyTransaction>
                                     isUtc: false);
                             String formateDate =
                                 DateFormat('MMM d, yyyy h:mm a').format(date);
-                            if (index == allTranaction.length) {
-                              return isLoadingMore
-                                  ? const Center(
-                                      child: CircularProgressIndicator(
-                                      color: greenColor,
-                                    ))
-                                  : const SizedBox
-                                      .shrink(); // Hide if not loading
-                            }
+                           
                             return Container(
                               decoration: BoxDecoration(
                                   color: background,
@@ -269,17 +272,13 @@ class _MyTransactionState extends State<MyTransaction>
                               ),
                             );
                           },
-                          itemCount:
-                              allTranaction.length + (isLoadingMore ? 1 : 0))
+                        )
                       : Center(
-                          child: Text(
-                            'No Transaction Available',
-                              style: nodataTextStyle
-                          ),
+                          child: Text('No Transaction Available',
+                              style: nodataTextStyle),
                         );
             },
           );
         }));
-  
   }
 }

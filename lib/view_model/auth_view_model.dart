@@ -46,9 +46,9 @@ class AuthViewModel with ChangeNotifier {
         if (value?.status?.httpCode == '200') {
           final userPreference =
               Provider.of<UserViewModel>(context, listen: false);
-          print("save token");
+       
           // userPreference.saveEmail(value['user']);
-          print('login');
+          
 
           userPreference.saveToken(UserModel(token: value?.data?.token));
           userPreference
@@ -56,8 +56,8 @@ class AuthViewModel with ChangeNotifier {
           rememberMe
               ? userPreference.saveRememberMe(email, password, rememberMe)
               : userPreference.clearRememberMe();
-          print('token: ${value?.data?.token}');
-          print('user: ${value?.data?.userId.toString()}');
+          debugPrint('token: ${value?.data?.token}');
+          debugPrint('user: ${value?.data?.userId.toString()}');
           Utils.toastSuccessMessage("Login Successfully");
           context.go('/');
           setLoading(false);

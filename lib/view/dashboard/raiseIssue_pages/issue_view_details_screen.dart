@@ -154,7 +154,7 @@ class _IssueviewdetailsState extends State<Issueviewdetails> {
         style: titleTextStyle,
       ),
       const SizedBox(width: 5),
-      Text(':'),
+      const Text(':'),
       const SizedBox(width: 5),
       Text(
         vale,

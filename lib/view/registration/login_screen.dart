@@ -38,14 +38,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
+ 
     super.initState();
     savecredential();
   }
 
   // @override
   // void dispose() {
-  //   // TODO: implement dispose
+
   //   super.dispose();
   //   controller[0].dispose();
   //   controller[1].dispose();
@@ -63,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
+  
     super.dispose();
 
     focusNode1.dispose();

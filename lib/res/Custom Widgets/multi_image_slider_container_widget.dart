@@ -85,12 +85,13 @@ class _MultiImageSliderState extends State<MultiImageSlider> {
       );
     } else if (widget.images.length == 1) {
       return Padding(
-        padding: const EdgeInsets.all(5.0),
+        padding: const EdgeInsets.all(4.0),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(5),
           child: Image.network(
+            width: double.infinity,
             widget.images[0],
-            // fit: BoxFit.cover,
+            fit: BoxFit.cover,
           ),
         ),
       );
@@ -112,7 +113,7 @@ class _MultiImageSliderState extends State<MultiImageSlider> {
                     borderRadius: BorderRadius.circular(5),
                     child: Image.network(
                       widget.images[index],
-                      // fit: BoxFit.cover,
+                      fit: BoxFit.cover,
                     )),
               );
             },

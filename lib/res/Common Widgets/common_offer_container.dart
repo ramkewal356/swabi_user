@@ -60,7 +60,7 @@ class _CommonOfferContainerState extends State<CommonOfferContainer> {
         isCopied = true;
       });
       // Optionally reset "Copied" text after a few seconds
-      Future.delayed(Duration(seconds: 2), () {
+      Future.delayed(const Duration(seconds: 2), () {
         setState(() {
           isCopied = false;
         });

@@ -124,10 +124,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
+  
     super.initState();
     dataUser = widget.user;
-    print({'dfaghjhjh': dataUser});
+   
   }
 
   var userId;

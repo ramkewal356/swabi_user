@@ -106,7 +106,6 @@ class RentalBookingViewModel with ChangeNotifier {
       notifyListeners();
 
       return resp;
-      
     } catch (e) {
       debugPrint('$e');
       isLoading == false;
@@ -118,8 +117,6 @@ class RentalBookingViewModel with ChangeNotifier {
     }
     return null;
   }
-
-  
 }
 
 class ConfirmRentalBookingViewModel with ChangeNotifier {
@@ -216,7 +213,7 @@ class RentalBookingCancelViewModel with ChangeNotifier {
 
           Provider.of<RentalBookingListViewModel>(context, listen: false)
               .updateDayStatus(newStatus: "CANCELLED", bookingId: bookingId);
-        
+
           setDataList(ApiResponse.completed(onValue));
           // context.pop();
           Navigator.pop(context);
@@ -227,26 +224,29 @@ class RentalBookingCancelViewModel with ChangeNotifier {
       setDataList(ApiResponse.error(e.toString()));
     }
     return null;
-    
   }
 }
 
 // Rental Booking List FilterWise View Model
 class RentalBookingListViewModel with ChangeNotifier {
-  final _myRepo = RentalBookingListRepository();
-  ApiResponse<RentalCarBookingListModel> rentalBookingList =
-      ApiResponse.loading();
- 
+  int currentPage = 0;
+  bool isLoadingMore = false;
 
-  setDataList(ApiResponse<RentalCarBookingListModel> response) {
+  bool isLastPage = false; // Assuming true at the start
+  int pageSize = 10;
+  final _myRepo = RentalBookingListRepository();
+  List<Content> _rentalBookingData = [];
+  ApiResponse<List<Content>> rentalBookingList = ApiResponse.loading();
+  List<Content> get items => _rentalBookingData;
+  setDataList(ApiResponse<List<Content>> response) {
     rentalBookingList = response;
     notifyListeners();
   }
 
   void updateDayStatus({required String newStatus, required String bookingId}) {
     if (rentalBookingList.data != null) {
-      var booking = rentalBookingList.data?.data.content
-          .firstWhere((e) => e.id == bookingId);
+      var booking =
+          rentalBookingList.data?.firstWhere((e) => e.id == bookingId);
       debugPrint('bookingStatus>>>>>>>>>2222 ${booking?.bookingStatus}');
       if (booking != null) {
         booking.bookingStatus = newStatus;
@@ -254,26 +254,57 @@ class RentalBookingListViewModel with ChangeNotifier {
         notifyListeners(); // Notify listeners after the change
       }
     } else {
-      print('object.....>>>...');
+      debugPrint('object.....>>>...');
     }
   }
 
-  
-  Future<RentalCarBookingListModel?> fetchRentalBookingListBookedViewModelApi(
-      BuildContext context, data) async {
-    try {
+  Future<void> fetchRentalBookingListBookedViewModelApi(
+      {required BuildContext context,
+      required String userId,
+      required bool isPagination,
+      required bool isFilter,
+      required String filterText,
+      required bool isSort,
+      required String sortText}) async {
+    if (isLoadingMore) return;
+    bool isNewSort = (isSort || isFilter);
+    if (isNewSort && !isPagination) {
+      currentPage = 0;
+      _rentalBookingData.clear();
+      isLastPage = false;
       setDataList(ApiResponse.loading());
-      final resp = await _myRepo.rentalBookingListRepositoryApi(
-          context: context, query: data);
-      setDataList(ApiResponse.completed(resp));
-      return resp;
+    }
+    if (isLastPage) return;
+    isLoadingMore = true;
+    notifyListeners();
+    Map<String, dynamic> query = {
+      'userId': userId,
+      'pageNumber': currentPage,
+      'pageSize': pageSize,
+      'bookingStatus': filterText,
+      "search": '',
+      "sortBy": 'id',
+      "sortDirection": sortText
+    };
+    try {
+      // setDataList(ApiResponse.loading());
+      var resp = await _myRepo.rentalBookingListRepositoryApi(
+          context: context, query: query);
+      List<Content> newData = resp.data.content;
+      List<Content> allData =
+          (currentPage == 0) ? newData : [..._rentalBookingData, ...newData];
+
+      isLastPage = newData.length < pageSize;
+      _rentalBookingData = allData;
+      currentPage++;
+      setDataList(ApiResponse.completed(_rentalBookingData));
     } catch (error) {
       setDataList(ApiResponse.error(error.toString()));
+    } finally {
+      isLoadingMore = false;
+      notifyListeners();
     }
-    return null;
   }
-
-  
 }
 
 // Rental View Detail View Model
@@ -292,37 +323,22 @@ class RentalViewDetailViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchRentalBookedViewDetialViewModelApi(
-      BuildContext context, data, String bookid, String uid) async {
-    setDataList(ApiResponse.loading());
-    debugPrint(bookid);
-    _myRepo
-        .rentalViewDetailsRepositoryApi(context: context, query: data)
-        .then((value) async {
-      setDataList(ApiResponse.completed(value));
-      context.push('/rentalForm/rentalBookedPageView', extra: {
-        "bookedId": bookid,
-        "useriD": uid,
-        "paymentId": value.data.paymentId
-      }).then((onValue) {
-        debugPrint('then.apicalling,.,.,.,.,.,.,../,,.,.,/..,./.,///,/,/,//');
-        Provider.of<RentalBookingListViewModel>(context, listen: false)
-            .fetchRentalBookingListBookedViewModelApi(context, {
-          'userId': uid,
-          'pageNumber': '0',
-          'pageSize': '100',
-          'bookingStatus': 'ALL',
-          "search": '',
-          "sortBy": 'date',
-          "sortDirection": 'desc'
-        });
-      });
-      // Utils.toastMessage("Rental Car View Detail Booking");
-    }).onError((error, stackTrace) {
-      debugPrint(error.toString());
-      // Utils.flushBarErrorMessage(error.toString(), context);
+  Future<RentalDetailsSingleModel?> fetchRentalBookedViewDetialViewModelApi(
+    BuildContext context,
+    data,
+  ) async {
+    try {
+      setDataList(ApiResponse.loading());
+      // debugPrint(bookid);
+      var resp = await _myRepo.rentalViewDetailsRepositoryApi(
+          context: context, query: data);
+      setDataList(ApiResponse.completed(resp));
+      return resp;
+    } catch (error) {
       setDataList(ApiResponse.error(error.toString()));
-    });
+    }
+
+    return null;
   }
 
   Future<void> fetchRentalBookedViewDetialViewModelApi1(

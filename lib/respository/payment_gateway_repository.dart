@@ -28,6 +28,7 @@ class PaymentCreateOrderIDRepository {
      
 
       debugPrint('error $error');
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: error);
       rethrow;
     }
@@ -51,12 +52,13 @@ class PaymentVerifyRepository {
         body: body);
     try {
       Response<dynamic>? response = await http.request<dynamic>();
-      print({"paymentVerifyresponse": response?.data});
+      debugPrint("paymentVerifyresponse ${response?.data}");
       var resp = PaymentVerifyModel.fromJson(response?.data);
       return resp;
     } catch (error) {
       debugPrint('error $error');
       http.handleErrorResponse(
+        // ignore: use_build_context_synchronously
         context: context,
         error: error,
       );
@@ -84,6 +86,7 @@ class PaymentTrasactionRespository {
       return resp;
     } catch (error) {
       debugPrint('error $error');
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: error);
       rethrow;
     }
@@ -106,6 +109,7 @@ class PaymentTrasactionRespository {
       return resp;
     } catch (error) {
       debugPrint('error $error');
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: error);
       rethrow;
     }

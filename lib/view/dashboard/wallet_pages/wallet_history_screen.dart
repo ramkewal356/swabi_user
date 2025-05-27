@@ -28,7 +28,7 @@ class _WalletHistoryScreenState extends State<WalletHistoryScreen>
   int intialIndex = 0;
   @override
   void initState() {
-    // TODO: implement initState
+  
     super.initState();
     _tabController = TabController(length: tabList.length, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -48,7 +48,7 @@ class _WalletHistoryScreenState extends State<WalletHistoryScreen>
           _scrollController.position.maxScrollExtent) {
         // User has reached the end of the list
         if (!isLoadingMore && !isLastPage) {
-          print('testing......');
+      
           getTrasaction();
         }
       }
@@ -106,7 +106,7 @@ class _WalletHistoryScreenState extends State<WalletHistoryScreen>
 
   @override
   void dispose() {
-    // TODO: implement dispose
+  
     _tabController?.dispose();
 
     _scrollController.dispose();

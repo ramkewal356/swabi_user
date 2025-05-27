@@ -51,6 +51,7 @@ class GetPackageActivityByIdRepository {
       return resp;
     } catch (e) {
       debugPrint("Get Package Activity By Id Repo Field $e");
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: e);
       rethrow;
     }
@@ -74,6 +75,7 @@ class CalculatePriceRepository {
       return resp;
     } catch (e) {
       debugPrint("Get Package Activity By Id Repo Field $e");
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: e);
       rethrow;
     }
@@ -99,6 +101,7 @@ class GetPackageBookedByIdRepository {
       return resp;
     } catch (e) {
       debugPrint("Get Package Booked By Id Repo Field $e");
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: e);
       rethrow;
     }
@@ -122,6 +125,7 @@ class GetPackageBookedByIdRepository {
       return resp;
     } catch (e) {
       debugPrint("Get Package Booked By Id Repo Field $e");
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: e);
       rethrow;
     }
@@ -181,6 +185,7 @@ class GetPackageHistoryDetailByIdRepository {
       return resp;
     } catch (e) {
       debugPrint("Get Package History Detail By Id Repo Field $e");
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: e);
       rethrow;
     }
@@ -207,6 +212,7 @@ class PackageCancelRepository {
       return resp;
     } catch (e) {
       debugPrint("Package Cancel Repo Field");
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: e);
       debugPrint(e.toString());
       rethrow;
@@ -238,6 +244,7 @@ class AddPickUpLocationPackageRepository {
       // return response = AddPickUpLocationModel.fromJson(response);
     } catch (e) {
       debugPrint("Add PickUp Location Package Repo Fieldb$e");
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: e);
 
       rethrow;
@@ -289,6 +296,7 @@ class ChangeMobileRepository {
       var resp = ChangeMobileModel.fromJson(response?.data);
       return resp;
     } catch (error) {
+      // ignore: use_build_context_synchronously
       http.handleErrorResponse(context: context, error: error);
     }
     return null;

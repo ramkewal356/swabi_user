@@ -215,9 +215,9 @@ class _AccountScreenState extends State<AccountScreen> {
                 context.push("/help&support");
               }),
         ),
-        const Spacer(),
+        // const Spacer(),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
           child: CustomButtonLogout(
               img: logout,
               btnHeading: "Logout",

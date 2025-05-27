@@ -438,7 +438,7 @@ class ActivityContainer extends StatefulWidget {
 }
 
 class _ActivityContainerState extends State<ActivityContainer> {
-  DateTime _dateTime = DateTime.now();
+  final DateTime _dateTime = DateTime.now();
   @override
   Widget build(BuildContext context) {
     // String currentDate = DateFormat('dd-MM-yyyy').format(_dateTime);

@@ -40,12 +40,10 @@ class FormTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          child: Text(
-            title,
-            overflow: TextOverflow.ellipsis,
-            style: appbarTextStyle,
-          ),
+        Text(
+          title,
+          overflow: TextOverflow.ellipsis,
+          style: appbarTextStyle,
         ),
         Container(
           height: 35,
@@ -174,9 +172,12 @@ class _FormDatePickerState extends State<FormDatePicker> {
             textButtonTheme: TextButtonThemeData(
                 style: ButtonStyle(
               backgroundColor:
+                  // ignore: deprecated_member_use
                   MaterialStateProperty.all(btnColor), // Button background
               foregroundColor:
+                  // ignore: deprecated_member_use
                   MaterialStateProperty.all(background), // Button text color
+              // ignore: deprecated_member_use
               shape: MaterialStateProperty.all(
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
@@ -208,12 +209,10 @@ class _FormDatePickerState extends State<FormDatePicker> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            child: Text(
-              widget.title,
-              overflow: TextOverflow.ellipsis,
-              style: appbarTextStyle,
-            ),
+          Text(
+            widget.title,
+            overflow: TextOverflow.ellipsis,
+            style: appbarTextStyle,
           ),
           Container(
             height: 35,
@@ -307,9 +306,12 @@ class _DatePickerFormState extends State<DatePickerForm> {
             textButtonTheme: TextButtonThemeData(
                 style: ButtonStyle(
               backgroundColor:
+                  // ignore: deprecated_member_use
                   MaterialStateProperty.all(btnColor), // Button background
               foregroundColor:
+                  // ignore: deprecated_member_use
                   MaterialStateProperty.all(background), // Button text color
+              // ignore: deprecated_member_use
               shape: MaterialStateProperty.all(
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
@@ -954,7 +956,7 @@ class _FormDatePickerExpenseState extends State<FormDatePickerExpense> {
             dialogTheme: DialogTheme(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5)),
-                actionsPadding: EdgeInsets.all(10)),
+                actionsPadding: const EdgeInsets.all(10)),
             colorScheme: const ColorScheme.light(
               primary: btnColor, // Change this to the desired color
             ),
@@ -979,9 +981,12 @@ class _FormDatePickerExpenseState extends State<FormDatePickerExpense> {
             textButtonTheme: TextButtonThemeData(
                 style: ButtonStyle(
               backgroundColor:
+                  // ignore: deprecated_member_use
                   MaterialStateProperty.all(btnColor), // Button background
               foregroundColor:
+                  // ignore: deprecated_member_use
                   MaterialStateProperty.all(background), // Button text color
+              // ignore: deprecated_member_use
               shape: MaterialStateProperty.all(
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
@@ -1000,7 +1005,7 @@ class _FormDatePickerExpenseState extends State<FormDatePickerExpense> {
                 borderRadius: BorderRadius.circular(16.0), // Border radius here
               ),
               child: SingleChildScrollView(
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   padding: EdgeInsets.zero,
                   child: child!)),
         );
@@ -1026,7 +1031,7 @@ class _FormDatePickerExpenseState extends State<FormDatePickerExpense> {
                 margin: const EdgeInsets.only(bottom: 5),
                 child: Text.rich(TextSpan(children: [
                   TextSpan(text: widget.title, style: titleTextStyle),
-                  TextSpan(text: ' *', style: TextStyle(color: redColor))
+                  const TextSpan(text: ' *', style: TextStyle(color: redColor))
                 ])),
               )
             : const SizedBox(),
@@ -1120,12 +1125,10 @@ class CommonTextField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         title1
-            ? Container(
-                child: Text(
-                  title,
-                  overflow: TextOverflow.ellipsis,
-                  style: appbarTextStyle,
-                ),
+            ? Text(
+                title,
+                overflow: TextOverflow.ellipsis,
+                style: appbarTextStyle,
               )
             : const SizedBox.shrink(),
         Container(

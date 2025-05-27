@@ -36,20 +36,10 @@ class _CustomphonefieldState extends State<Customphonefield> {
   // String initialCountryCode = 'AE';
   @override
   void initState() {
-    // TODO: implement initState
+  
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      // setState(() {
-      //   var list = countries
-      //       .where((code) => code.dialCode == widget.countryCode)
-      //       .toList();
-      //   if (list.isNotEmpty) {
-      //     // controllers[4].text = list.first.dialCode;
-      //     initialCountryCode = list.first.code;
-      //     //  = list.first.code;
-      //     print('isocode.................... ${list.first.code}');
-      //   }
-      // });
+    
     });
   }
 
@@ -60,7 +50,7 @@ class _CustomphonefieldState extends State<Customphonefield> {
         key: widget.poneKey,
         style: titleTextStyle,
         // invalidNumberMessage: 'fhghjjkjkllkllklklklk',
-        flagsButtonPadding: EdgeInsets.only(left: 10),
+        flagsButtonPadding: const EdgeInsets.only(left: 10),
         showCountryFlag: true,
         dropdownTextStyle: titleTextStyle,
         dropdownIconPosition: IconPosition.trailing,
@@ -93,8 +83,8 @@ class _CustomphonefieldState extends State<Customphonefield> {
           filled: true,
           fillColor: background,
 
-          helperStyle: TextStyle(height: 1),
-          errorStyle: TextStyle(height: 1),
+          helperStyle: const TextStyle(height: 1),
+          errorStyle: const TextStyle(height: 1),
           // hintStyle: titleTextStyle,
           isDense: true,
           errorBorder: OutlineInputBorder(

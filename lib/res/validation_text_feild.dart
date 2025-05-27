@@ -48,7 +48,7 @@ class ValidationTextField extends StatelessWidget {
         headingReq
             ? Text.rich(TextSpan(children: [
                 TextSpan(text: heading, style: titleTextStyle),
-                TextSpan(text: ' *', style: TextStyle(color: redColor))
+                const TextSpan(text: ' *', style: TextStyle(color: redColor))
               ]))
             : const SizedBox.shrink(),
         headingReq ? const SizedBox(height: 5) : const SizedBox(),

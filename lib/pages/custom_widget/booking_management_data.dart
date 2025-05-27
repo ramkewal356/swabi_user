@@ -94,11 +94,11 @@ class BookinMyData extends DataTableSource {
               },
               onSelected: (value) {
                 if (value == 0) {
-                  print("My account menu is selected.");
+                  debugPrint("My account menu is selected.");
                 } else if (value == 1) {
-                  print("Settings menu is selected.");
+                  debugPrint("Settings menu is selected.");
                 } else if (value == 2) {
-                  print("Logout menu is selected.");
+                  debugPrint("Logout menu is selected.");
                 }
               }),
         ),

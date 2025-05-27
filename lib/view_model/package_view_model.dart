@@ -246,8 +246,9 @@ class GetPackageHistoryViewModel with ChangeNotifier {
   bool isLoadingMore = false;
   List<PackageHistoryContent> _packageList = [];
   final _myRepo = GetPackageHistoryRepository();
-  ApiResponse<GetPackageHistoryModel> getBookedHistory = ApiResponse.loading();
-  setDataList(ApiResponse<GetPackageHistoryModel> response) {
+  ApiResponse<List<PackageHistoryContent>> getBookedHistory =
+      ApiResponse.loading();
+  setDataList(ApiResponse<List<PackageHistoryContent>> response) {
     getBookedHistory = response;
     notifyListeners();
   }
@@ -255,8 +256,8 @@ class GetPackageHistoryViewModel with ChangeNotifier {
   List<PackageHistoryContent> get items => _packageList;
   void updateDayStatus({required String newStatus, required String bookingId}) {
     if (getBookedHistory.data != null) {
-      var booking = getBookedHistory.data?.data.content
-          .firstWhere((e) => e.packageBookingId == bookingId);
+      var booking = getBookedHistory.data
+          ?.firstWhere((e) => e.packageBookingId == bookingId);
 
       if (booking != null) {
         booking.bookingStatus = newStatus;
@@ -266,27 +267,55 @@ class GetPackageHistoryViewModel with ChangeNotifier {
   }
 
 // Asynchronous function to fetch data from the repository
-  Future<GetPackageHistoryModel?> fetchGetPackageHistoryBookedViewModelApi(
-      BuildContext context, Map<String, dynamic> data) async {
-    try {
-      // Set state to loading before starting the API call
+  Future<void> fetchGetPackageHistoryBookedViewModelApi(
+      {required BuildContext context,
+      required bool isPagination,
+      required bool isFilter,
+      required bool isSort,
+      required String userId,
+      required String filterText,
+      required String sortText}) async {
+    if (isLoadingMore) return;
+    bool isNewSort = (isSort || isFilter);
+    if (isNewSort && !isPagination) {
+      currentPage = 0;
+      _packageList.clear();
+      isLastPage = false;
       setDataList(ApiResponse.loading());
-
-      // Await the API call
-      final value = await _myRepo.getPackageHistoryRepositoryApi(
-          context: context, data: data);
-
-      // Set the state to completed when the API call is successful
-      setDataList(ApiResponse.completed(value));
-
-      debugPrint('Get Package History ViewModel Success');
-      return value;
-    } catch (error) {
-      // If there's an error, set the state to error
-      debugPrint('Get Package History ViewModel Failed: $error');
-      setDataList(ApiResponse.error(error.toString()));
     }
-    return null;
+    if (isLastPage) return;
+    isLoadingMore = true;
+    notifyListeners();
+    Map<String, dynamic> query = {
+      "userId": userId,
+      "bookingStatus": filterText,
+      "pageNumber": currentPage,
+      "pageSize": pageSize,
+      "search": '',
+      "sortBy": 'bookingId',
+      "sortDirection": sortText
+    };
+    try {
+      // if (currentPage == 0) setDataList(ApiResponse.loading());
+      var resp = await _myRepo.getPackageHistoryRepositoryApi(
+          context: context, data: query);
+      List<PackageHistoryContent> newData = resp?.data.content ?? [];
+      List<PackageHistoryContent> allData =
+          (currentPage == 0) ? newData : [..._packageList, ...newData];
+      isLastPage = newData.length < pageSize;
+      _packageList = allData;
+      setDataList(ApiResponse.completed(
+          List<PackageHistoryContent>.from(_packageList)));
+      currentPage++;
+      debugPrint('Get Package List Api Success');
+    } catch (error) {
+      debugPrint(error.toString());
+      debugPrint('Get Package List Api Failed');
+      setDataList(ApiResponse.error(error.toString()));
+    } finally {
+      isLoadingMore = false;
+      notifyListeners();
+    }
   }
 }
 
@@ -301,25 +330,36 @@ class GetPackageHistoryDetailByIdViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchGetPackageHistoryDetailByIdViewModelApi(
-      BuildContext context, data, String userID, String bookingID) async {
-    setDataList(ApiResponse.loading());
-    _myRepo
-        .getPackageHistoryDetailByIdRepositoryApi(context: context, query: data)
-        .then((value) async {
-      setDataList(ApiResponse.completed(value));
-      // context.push("/package/packageDetails",extra: {"packageID":packID,"userId":uId,"bookDate":dateBooking});
-      context.push("/package/packageDetailsPageView", extra: {
-        "user": userID,
-        "book": bookingID,
-        "paymentId": value?.data.paymentId
-      });
-      debugPrint('Get Package History Detail By Id ViewModel Success');
-    }).onError((error, stackTrace) {
-      debugPrint(error.toString());
-      debugPrint('Get Package History Detail By Id ViewModel Failed');
+  Future<GetPackageHIstoryDetailsModel?>
+      fetchGetPackageHistoryDetailByIdViewModelApi(
+          {required BuildContext context, required String bookingId}) async {
+    Map<String, dynamic> query = {"packageBookingId": bookingId};
+    try {
+      setDataList(ApiResponse.loading());
+      var resp = await _myRepo.getPackageHistoryDetailByIdRepositoryApi(
+          context: context, query: query);
+      setDataList(ApiResponse.completed(resp));
+      return resp;
+    } catch (error) {
       setDataList(ApiResponse.error(error.toString()));
-    });
+    }
+    return null;
+    // _myRepo
+    //     .getPackageHistoryDetailByIdRepositoryApi(context: context, query: data)
+    //     .then((value) async {
+    //   setDataList(ApiResponse.completed(value));
+    //   // context.push("/package/packageDetails",extra: {"packageID":packID,"userId":uId,"bookDate":dateBooking});
+    //   context.push("/package/packageDetailsPageView", extra: {
+    //     "user": userID,
+    //     "book": bookingID,
+    //     "paymentId": value?.data.paymentId
+    //   });
+    //   debugPrint('Get Package History Detail By Id ViewModel Success');
+    // }).onError((error, stackTrace) {
+    //   debugPrint(error.toString());
+    //   debugPrint('Get Package History Detail By Id ViewModel Failed');
+    //   setDataList(ApiResponse.error(error.toString()));
+    // });
   }
 
   Future<void> fetchPackageHistoryDetailByIdViewModelApi(
@@ -509,7 +549,6 @@ class ChangeMobileViewModel with ChangeNotifier {
         notifyListeners();
       });
     } catch (e) {
-      print('errrrrrrrrrrrrrrrrrrrr$e');
       isLoading = false;
       notifyListeners();
     } finally {

@@ -32,7 +32,7 @@ class _TimePickerDropdownState extends State<TimePickerDropdown> {
   }
 
   void reset() {
-    print('resettime,,,,,,,,,,,,,,,,');
+  
     setState(() {
       selectedHour = null;
       selectedMinute = null;
@@ -41,8 +41,8 @@ class _TimePickerDropdownState extends State<TimePickerDropdown> {
   }
 
   void _updateTime() {
-    print("Time updated: ${widget.hrcontroller.text}");
-    print("Time updated: ${widget.mincontroller.text}");
+    debugPrint("Time updated: ${widget.hrcontroller.text}");
+    debugPrint("Time updated: ${widget.mincontroller.text}");
   }
 
   String formatTimeAsJson(int? hour, int? minute) {
@@ -54,7 +54,7 @@ class _TimePickerDropdownState extends State<TimePickerDropdown> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
+   
     selectedHour = null;
     selectedMinute = null;
     widget.hrcontroller.dispose();
@@ -165,7 +165,7 @@ class _TimePickerDropdownState extends State<TimePickerDropdown> {
                       widget.mincontroller.text =
                           formatTimeAsJson(selectedHour, selectedMinute);
                     });
-                    print("Selected time: ${widget.mincontroller.text}");
+                    debugPrint("Selected time: ${widget.mincontroller.text}");
                   },
                   items: List<DropdownMenuItem<int>>.generate(
                     4,

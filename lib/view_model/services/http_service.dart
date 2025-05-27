@@ -53,7 +53,7 @@ class HttpService<T> {
     var prefsToken = await SharedPreferences.getInstance();
     dynamic token = prefsToken.getString('token');
     this.headers?.addAll({"Token": token});
-    print(this.headers);
+  
 
     // this.headers!.addAll({"token": "${_auth.authenticationToken}"});
     // print({'token....jhjh': this.headers});
@@ -69,8 +69,7 @@ class HttpService<T> {
     }
 
     // Body Type check
-    print({"this.bodyType": this.bodyType});
-    print({"post body": this.body});
+ 
 
     switch (this.bodyType) {
       case HttpBodyType.FormData:
@@ -94,15 +93,10 @@ class HttpService<T> {
     }
 
     // Method Type check
-    print({"this.methodType": this.methodType});
-    print({
-      "URL": this.baseURL! + this.endURL!,
-      "queryParameters": queryParameters
-    });
+ 
     switch (this.methodType) {
       case HttpMethodType.GET:
-        print("Getapicall");
-        print({"call": this.headers});
+      
         return _http!.get<T>(
           this.baseURL! + this.endURL!,
           queryParameters: this.queryParameters,
@@ -166,10 +160,7 @@ class HttpService<T> {
         );
         break;
       case HttpMethodType.DELETE:
-        print({
-          "URL": this.baseURL! + this.endURL!,
-          "queryParameters": queryParameters
-        });
+       
         return _http!.delete<T>(
           this.baseURL! + this.endURL!,
           queryParameters: this.queryParameters,

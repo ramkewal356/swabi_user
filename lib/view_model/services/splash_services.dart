@@ -20,7 +20,7 @@ class SplashServices {
       } else {
         await Future.delayed(const Duration(seconds: 4));
         // context.push('/');
-        print('Token ${value.token}');
+     
         context.push('/');
       }
     }).onError((error, stackTrace) {

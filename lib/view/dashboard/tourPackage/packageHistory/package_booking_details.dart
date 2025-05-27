@@ -1,8 +1,5 @@
-
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_cab/model/get_issue_by_booking_id_model.dart';
 import 'package:flutter_cab/model/package_models.dart';
 import 'package:flutter_cab/model/payment_details_model.dart';
@@ -57,30 +54,45 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
   bool loading = false;
   int? day;
   PaymentDetailsModel? paymentDetails;
+  String? selectedText;
+  FocusNode? focusNode;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<GetPackageItineraryViewModel>(context, listen: false)
-          .fetchGetPackageItineraryViewModelApi(
-              context, {"packageBookingId": widget.packageBookID});
-      getPaymentDetail();
-      Provider.of<RaiseissueViewModel>(context, listen: false)
-          .getIssueByBookingId(
-              context: context,
-              bookingId: widget.packageBookID,
-              userId: widget.userId,
-              bookingType: 'PACKAGE_BOOKING');
-      // Provider.of<GetPaymentRefundViewModel>(context, listen: false)
-      //     .getPaymentRefundApi(context: context, paymentId: widget.paymentId);
+      getPackageDetails();
     });
-    // day = detailsData.bookingDate * pkgDetails.noOfDays;
   }
 
-  Future<void> getPaymentDetail() async {
+  void getPackageDetails() {
+    context
+        .read<GetPackageHistoryDetailByIdViewModel>()
+        .fetchGetPackageHistoryDetailByIdViewModelApi(
+            context: context, bookingId: widget.packageBookID)
+        .then((onValue) {
+      if (onValue?.status.httpCode == '200') {
+        Provider.of<GetPackageItineraryViewModel>(context, listen: false)
+            .fetchGetPackageItineraryViewModelApi(
+                context, {"packageBookingId": widget.packageBookID});
+        getPaymentDetail(paymentId: onValue?.data.paymentId ?? '');
+        Provider.of<RaiseissueViewModel>(context, listen: false)
+            .getIssueByBookingId(
+                context: context,
+                bookingId: widget.packageBookID,
+                userId: widget.userId,
+                bookingType: 'PACKAGE_BOOKING');
+        if (onValue?.data.bookingStatus == 'CANCELLED') {
+          Provider.of<GetPaymentRefundViewModel>(context, listen: false)
+              .getPaymentRefundApi(
+                  context: context, paymentId: onValue?.data.paymentId ?? "");
+        }
+      }
+    });
+  }
+
+  Future<void> getPaymentDetail({required String paymentId}) async {
     await Provider.of<RentalPaymentDetailsViewModel>(context, listen: false)
-        .rentalPaymentDetail(context: context, paymentId: widget.paymentId)
+        .rentalPaymentDetail(context: context, paymentId: paymentId)
         .then((onValue) {
       if (onValue?.status?.httpCode == '200') {
         setState(() {
@@ -90,331 +102,293 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
     });
   }
 
-  var detailsData, pkgDetails, userDetails, dataPackage;
-  List<PackageHIstoryDetailsMemberList> memberListDetails = [];
-  List<PackageHIstoryDetailsPackageActivity> packageHistoryActivityList = [];
-  List<AssignedDriverOnPackageBooking> packageDriverDetails = [];
-  List<AssignedVehicleOnPackageBooking> packageVehicleDetail = [];
-  List<String> packageImage = [];
-  FocusNode? focusNode;
+  // var detailsData, pkgDetails, userDetails, dataPackage;
+  // List<PackageHIstoryDetailsMemberList> memberListDetails = [];
+  // List<PackageHIstoryDetailsPackageActivity> packageHistoryActivityList = [];
+  // List<AssignedDriverOnPackageBooking> packageDriverDetails = [];
+  // List<AssignedVehicleOnPackageBooking> packageVehicleDetail = [];
+  // List<String> packageImage = [];
+
   ////GetPackageItinerary
-  var getPackageItinerary;
-  String? selectedText;
-  List<ItineraryDetail> getPackageItineraryList = [];
+  // var getPackageItinerary;
+
+  // List<ItineraryDetail> getPackageItineraryList = [];
   @override
   void dispose() {
-    // TODO: implement dispose
     cancelController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    var httpStatus = context
-        .watch<GetPackageHistoryDetailByIdViewModel>()
-        .getPackageHistoryDetailById
-        .status
-        .toString();
-
-    if (httpStatus == "Status.completed") {
-      detailsData = context
-              .watch<GetPackageHistoryDetailByIdViewModel>()
-              .getPackageHistoryDetailById
-              .data
-              ?.data ??
-          [];
-      memberListDetails = context
-              .watch<GetPackageHistoryDetailByIdViewModel>()
-              .getPackageHistoryDetailById
-              .data
-              ?.data
-              .memberList ??
-          [];
-      userDetails = context
-              .watch<GetPackageHistoryDetailByIdViewModel>()
-              .getPackageHistoryDetailById
-              .data
-              ?.data
-              .user ??
-          '';
-
-      pkgDetails = context
-          .watch<GetPackageHistoryDetailByIdViewModel>()
-          .getPackageHistoryDetailById
-          .data
-          ?.data
-          .pkg;
-
-      packageHistoryActivityList = context
-              .watch<GetPackageHistoryDetailByIdViewModel>()
-              .getPackageHistoryDetailById
-              .data
-              ?.data
-              .pkg
-              .packageActivities ??
-          [];
-      packageImage = context
-              .watch<GetPackageHistoryDetailByIdViewModel>()
-              .getPackageHistoryDetailById
-              .data
-              ?.data
-              .pkg
-              .packageActivities
-              .expand((e) => e.activity.activityImageUrl)
-              .toList() ??
-          [];
-      packageDriverDetails = context
-              .watch<GetPackageHistoryDetailByIdViewModel>()
-              .getPackageHistoryDetailById
-              .data
-              ?.data
-              .assignedDriverOnPackageBookings ??
-          [];
-      packageVehicleDetail = context
-              .watch<GetPackageHistoryDetailByIdViewModel>()
-              .getPackageHistoryDetailById
-              .data
-              ?.data
-              .assignedVehicleOnPackageBookings ??
-          [];
-    }
-
-    getPackageItineraryList = context
-            .watch<GetPackageItineraryViewModel>()
-            .getPackageItineraryList
-            .data
-            ?.data
-            ?.itineraryDetails ??
-        [];
-    getPackageItinerary = context
-            .watch<GetPackageItineraryViewModel>()
-            .getPackageItineraryList
-            .data
-            ?.data
-            ?.packageBookingId ??
-        '';
-    getIssueByBookingId =
-        context.watch<RaiseissueViewModel>().getIssueBybookingId.data;
-    // debugPrint("${getPackageItineraryList.length} GetItineraryDetailsList");
-    debugPrint("${widget.paymentId} paymentId......ramji");
+    // getPackageItineraryList = context
+    //         .watch<GetPackageItineraryViewModel>()
+    //         .getPackageItineraryList
+    //         .data
+    //         ?.data
+    //         ?.itineraryDetails ??
+    //     [];
+    // getPackageItinerary = context
+    //         .watch<GetPackageItineraryViewModel>()
+    //         .getPackageItineraryList
+    //         .data
+    //         ?.data
+    //         ?.packageBookingId ??
+    //     '';
+    // getIssueByBookingId =
+    //     context.watch<RaiseissueViewModel>().getIssueBybookingId.data;
 
     return Scaffold(
       backgroundColor: bgGreyColor,
       appBar: const CustomAppBar(
         heading: "Booking Details",
       ),
-      body: PageLayout_Page(
-          // onRefresh: () async {
-          //   await Provider.of<GetPackageHistoryDetailByIdViewModel>(
-          //       context,
-          //       listen: false)
-          //       .fetchGetPackageHistoryDetailByIdViewModelApi(
-          //       context,
-          //       {
-          //         "packageBookingId": widget.packageBookID
-          //       },
-          //       widget.userId,
-          //       widget.packageBookID);
-          // },
-          child: ListView(
-        children: [
-          detailsData != []
-              ? PackageDetailsContainer(
-                  getIssueByBookingId: getIssueByBookingId,
-                  id: widget.packageBookID,
-                  pkgImage: packageImage,
-                  packageName: pkgDetails.packageName,
-                  bookingStatus: detailsData.bookingStatus,
-                  location: pkgDetails.location,
-                  primaryCountryCode: detailsData.countryCode,
-                  primaryMobileNo: detailsData.mobile,
-                  secondaryCountryCode: detailsData.alternateMobileCountryCode,
-                  secondaryMobileNo: detailsData.alternateMobile,
-                  country: pkgDetails.country,
-                  startTime: detailsData.bookingDate,
-                  endTime: detailsData.endDate,
-                  totalMembers: memberListDetails.length.toString(),
-                  days: pkgDetails.noOfDays,
-                  cancelReason: detailsData.cancellationReason,
-                  cancelledBy: detailsData.cancelledBy,
-                  pickUpLocation: detailsData.pickupLocation,
-                  controllerWidget: alertController,
-                  taxAmount: detailsData.taxAmount,
-                  discountAmount: detailsData.discountAmount,
-                  packageAmount: detailsData.packagePrice,
-                  iteneryList: getPackageItineraryList,
+      body: PageLayout_Page(child:
+          Consumer<GetPackageHistoryDetailByIdViewModel>(
+              builder: (context, viewModel, snapshot) {
+        if (viewModel.getPackageHistoryDetailById.status.toString() ==
+            'Status.loading') {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: Colors.green,
+            ),
+          );
+        } else if (viewModel.getPackageHistoryDetailById.status.toString() ==
+            'Status.error') {
+          return const Center(
+            child: Text('No Data Found'),
+          );
+        } else if (viewModel.getPackageHistoryDetailById.status.toString() ==
+            'Status.completed') {
+          var data = viewModel.getPackageHistoryDetailById.data?.data;
+          var memberListDetails = data?.memberList ?? [];
+          var packageDriverDetails =
+              data?.assignedDriverOnPackageBookings ?? [];
+          var packageVehicleDetail =
+              data?.assignedVehicleOnPackageBookings ?? [];
+          var packageHistoryActivityList = data?.pkg.packageActivities ?? [];
+          List<ItineraryDetail> getPackageItineraryList = context
+                  .watch<GetPackageItineraryViewModel>()
+                  .getPackageItineraryList
+                  .data
+                  ?.data
+                  ?.itineraryDetails ??
+              [];
+          getIssueByBookingId =
+              context.watch<RaiseissueViewModel>().getIssueBybookingId.data;
+          return ListView(
+            children: [
+              viewModel.getPackageHistoryDetailById.data?.data != null
+                  ? PackageDetailsContainer(
+                      getIssueByBookingId: getIssueByBookingId,
+                      vendorId: data?.pkg.vendor?.vendorId.toString() ?? '',
+                      id: widget.packageBookID,
+                      pkgImage: data?.pkg.packageActivities
+                              .expand((e) => e.activity.activityImageUrl)
+                              .toList() ??
+                          [],
+                      packageName: data?.pkg.packageName ?? '',
+                      bookingStatus: data?.bookingStatus ?? '',
+                      location: data?.pickupLocation ?? '',
+                      primaryCountryCode: data?.countryCode ?? '',
+                      primaryMobileNo: data?.mobile ?? '',
+                      secondaryCountryCode:
+                          data?.alternateMobileCountryCode ?? '',
+                      secondaryMobileNo: data?.alternateMobile ?? '',
+                      country: data?.pkg.country ?? '',
+                      startTime: data?.bookingDate ?? '',
+                      endTime: data?.endDate ?? '',
+                      totalMembers: data?.memberList.length.toString() ?? '',
+                      days: data?.pkg.noOfDays ?? '',
+                      cancelReason: data?.cancellationReason ?? '',
+                      cancelledBy: data?.cancelledBy ?? '',
+                      pickUpLocation: data?.pickupLocation ?? '',
+                      controllerWidget: alertController,
+                      taxAmount: data?.taxAmount ?? '',
+                      discountAmount: data?.discountAmount ?? '',
+                      packageAmount: data?.packagePrice ?? '',
+                      iteneryList: getPackageItineraryList,
 
-                  alertOnTap: () {
-                    Provider.of<AddPickUpLocationPackageViewModel>(context,
-                            listen: false)
-                        .fetchAddPickUpLocationPackageViewModelApi(
-                            context,
-                            {
-                              "packageBookingId": widget.packageBookID,
-                              "pickupLocation": alertController.text
-                            },
-                            widget.packageBookID);
-                   
-                  },
-                 
-                  totalAmt: detailsData.totalPayableAmount,
-                  paymentDetails: paymentDetails,
-                  memberList: List.generate(
-                      memberListDetails.length,
-                      (index) => PackageHIstoryDetailsMemberList(
-                          memberId: memberListDetails[index].memberId,
-                          name: memberListDetails[index].name,
-                          ageUnit: memberListDetails[index].ageUnit,
-                          age: memberListDetails[index].age,
-                          gender: memberListDetails[index].gender)),
-                  driverDetails: List.generate(
-                      packageDriverDetails.length,
-                      (index) => AssignedDriverOnPackageBooking(
-                          date: packageDriverDetails[index].date,
-                          driverAssignedId: "",
-                          isCancelled: false,
-                          driver: Driver(
-                              driverId:
-                                  packageDriverDetails[index].driverAssignedId,
-                              firstName:
-                                  packageDriverDetails[index].driver.firstName,
-                              lastName:
-                                  packageDriverDetails[index].driver.lastName,
-                              driverAddress: "",
-                              emiratesId: "",
-                              mobile: packageDriverDetails[index].driver.mobile,
-                              countryCode: "",
-                              email: "",
-                              gender: packageDriverDetails[index].driver.gender,
-                              licenceNumber: "",
-                              createdDate: "",
-                              modifiedDate: "",
-                              profileImageUrl: "",
-                              userType: "",
-                              vendorId: "",
-                              driverStatus: ""))),
-                  vehicleDetails: List.generate(
-                      packageVehicleDetail.length,
-                      (index) => AssignedVehicleOnPackageBooking(
-                            vehicle: Vehicle(
-                                vehicleId: "",
-                                carName:
-                                    packageVehicleDetail[index].vehicle.carName,
-                                year: "",
-                                carType: "",
-                                brandName: "",
-                                fuelType: "",
-                                seats: "",
-                                color: "",
-                                vehicleNumber: packageVehicleDetail[index]
-                                    .vehicle
-                                    .vehicleNumber,
-                                modelNo: "",
-                                createdDate: "",
-                                modifiedDate: "",
-                                images: [],
-                                vehicleStatus: ""),
-                            date: packageVehicleDetail[index].date,
-                            assignedId: "",
-                            isCancelled: false,
-                          )),
+                      alertOnTap: () {
+                        Provider.of<AddPickUpLocationPackageViewModel>(context,
+                                listen: false)
+                            .fetchAddPickUpLocationPackageViewModelApi(
+                                context,
+                                {
+                                  "packageBookingId": widget.packageBookID,
+                                  "pickupLocation": alertController.text
+                                },
+                                widget.packageBookID);
+                      },
 
-                  ///Activity Details List
-                  child: getPackageItineraryList.isNotEmpty
-                      ? ItineraryActivityContainer(
-                          itineraryDataList: getPackageItineraryList.isNotEmpty
-                              ? getPackageItineraryList
-                              : packageHistoryActivityList,
-                          isPackageItinerary:
-                              getPackageItineraryList.isNotEmpty,
-                        )
+                      totalAmt: data?.totalPayableAmount ?? '',
+                      paymentDetails: paymentDetails,
+                      memberList: List.generate(
+                          memberListDetails.length,
+                          (index) => PackageHIstoryDetailsMemberList(
+                              memberId: memberListDetails[index].memberId,
+                              name: memberListDetails[index].name,
+                              ageUnit: memberListDetails[index].ageUnit,
+                              age: memberListDetails[index].age,
+                              gender: memberListDetails[index].gender)),
+                      driverDetails: List.generate(
+                          packageDriverDetails.length,
+                          (index) => AssignedDriverOnPackageBooking(
+                              date: packageDriverDetails[index].date,
+                              driverAssignedId: "",
+                              isCancelled: false,
+                              driver: Driver(
+                                  driverId: packageDriverDetails[index]
+                                      .driverAssignedId,
+                                  firstName: packageDriverDetails[index]
+                                      .driver
+                                      .firstName,
+                                  lastName: packageDriverDetails[index]
+                                      .driver
+                                      .lastName,
+                                  driverAddress: "",
+                                  emiratesId: "",
+                                  mobile:
+                                      packageDriverDetails[index].driver.mobile,
+                                  countryCode: "",
+                                  email: "",
+                                  gender:
+                                      packageDriverDetails[index].driver.gender,
+                                  licenceNumber: "",
+                                  createdDate: "",
+                                  modifiedDate: "",
+                                  profileImageUrl: "",
+                                  userType: "",
+                                  vendorId: "",
+                                  driverStatus: ""))),
+                      vehicleDetails: List.generate(
+                          packageVehicleDetail.length,
+                          (index) => AssignedVehicleOnPackageBooking(
+                                vehicle: Vehicle(
+                                    vehicleId: "",
+                                    carName: packageVehicleDetail[index]
+                                        .vehicle
+                                        .carName,
+                                    year: "",
+                                    carType: "",
+                                    brandName: "",
+                                    fuelType: "",
+                                    seats: "",
+                                    color: "",
+                                    vehicleNumber: packageVehicleDetail[index]
+                                        .vehicle
+                                        .vehicleNumber,
+                                    modelNo: "",
+                                    createdDate: "",
+                                    modifiedDate: "",
+                                    images: [],
+                                    vehicleStatus: ""),
+                                date: packageVehicleDetail[index].date,
+                                assignedId: "",
+                                isCancelled: false,
+                              )),
 
-                     
-                      : ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: packageHistoryActivityList.length,
-                          itemBuilder: (context, index) {
-                            final data = packageHistoryActivityList[index];
-                            final List image = packageHistoryActivityList[index]
-                                .activity
-                                .activityImageUrl;
-                            return ActivityContainer(
-                              days:
-                                  "Activity ${data.day == "null" ? index + 1 : data.day}",
-                              actyImage: List.generate(
-                                  image.length, (index) => image[index]),
-                              activityName: data.activity.activityName,
-                              description: data.activity.description,
-                              activityHour: data.activity.activityHours,
-                              activityVisit: data.activity.bestTimeToVisit,
-                              openTime: data.activity.startTime,
-                              closeTime: data.activity.endTime,
-                              suitableFor: data.activity.participantType,
-                              address: data.activity.address,
-                              // activityPrice: data.activity.activityPrice ?? "",
-                              // discountPrice:
-                              //     data.activity.discountedAmount ?? 0,
-                            );
-                          },
-                        ),
-                  onTap: () {
-                    showModalBottomSheet(
-                        context: context,
-                        isDismissible: false,
-                        backgroundColor: background,
-                        isScrollControlled: true,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(10),
-                          ),
-                        ),
-                        builder: (BuildContext context) {
-                          return Padding(
-                            padding: EdgeInsets.only(
-                              bottom: MediaQuery.of(context)
-                                  .viewInsets
-                                  .bottom, // Adjust modal size when keyboard opens
+                      ///Activity Details List
+                      child: getPackageItineraryList.isNotEmpty
+                          ? ItineraryActivityContainer(
+                              itineraryDataList:
+                                  getPackageItineraryList.isNotEmpty
+                                      ? getPackageItineraryList
+                                      : packageHistoryActivityList,
+                              isPackageItinerary:
+                                  getPackageItineraryList.isNotEmpty,
+                            )
+                          : ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: packageHistoryActivityList.length,
+                              itemBuilder: (context, index) {
+                                final data = packageHistoryActivityList[index];
+                                final List image =
+                                    packageHistoryActivityList[index]
+                                        .activity
+                                        .activityImageUrl;
+                                return ActivityContainer(
+                                  days:
+                                      "Activity ${data.day == "null" ? index + 1 : data.day}",
+                                  actyImage: List.generate(
+                                      image.length, (index) => image[index]),
+                                  activityName: data.activity.activityName,
+                                  description: data.activity.description,
+                                  activityHour: data.activity.activityHours,
+                                  activityVisit: data.activity.bestTimeToVisit,
+                                  openTime: data.activity.startTime,
+                                  closeTime: data.activity.endTime,
+                                  suitableFor: data.activity.participantType,
+                                  address: data.activity.address,
+                                  // activityPrice: data.activity.activityPrice ?? "",
+                                  // discountPrice:
+                                  //     data.activity.discountedAmount ?? 0,
+                                );
+                              },
                             ),
-                            child: SingleChildScrollView(
-                                physics: const NeverScrollableScrollPhysics(),
-                                child: StatefulBuilder(builder:
-                                    (BuildContext context,
-                                        StateSetter setstate) {
-                                  bool cancelStatus = context
-                                      .watch<PackageCancelViewModel>()
-                                      .isLoading;
-                                  return CancelContainerDialog(
-                                    loading: cancelStatus,
-                                    controllerCancel: cancelController,
-                                    onTap: () async {
-                                      await Provider.of<PackageCancelViewModel>(
-                                              context,
-                                              listen: false)
-                                          .fetchPackageCancelViewModelApi(
-                                              context,
-                                              {
-                                                "packageBookingId":
-                                                    widget.packageBookID,
-                                                "cancellationReason":
-                                                    cancelController.text,
-                                                "cancelledBy": "USER"
-                                              },
-                                              widget.userId,
-                                              widget.packageBookID,
-                                              widget.paymentId);
+                      onTap: () {
+                        showModalBottomSheet(
+                            context: context,
+                            isDismissible: false,
+                            backgroundColor: background,
+                            isScrollControlled: true,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(10),
+                              ),
+                            ),
+                            builder: (BuildContext context) {
+                              return Padding(
+                                padding: EdgeInsets.only(
+                                  bottom: MediaQuery.of(context)
+                                      .viewInsets
+                                      .bottom, // Adjust modal size when keyboard opens
+                                ),
+                                child: SingleChildScrollView(
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    child: StatefulBuilder(builder:
+                                        (BuildContext context,
+                                            StateSetter setstate) {
+                                      bool cancelStatus = context
+                                          .watch<PackageCancelViewModel>()
+                                          .isLoading;
+                                      return CancelContainerDialog(
+                                        loading: cancelStatus,
+                                        controllerCancel: cancelController,
+                                        onTap: () async {
+                                          await Provider.of<
+                                                      PackageCancelViewModel>(
+                                                  context,
+                                                  listen: false)
+                                              .fetchPackageCancelViewModelApi(
+                                                  context,
+                                                  {
+                                                    "packageBookingId":
+                                                        widget.packageBookID,
+                                                    "cancellationReason":
+                                                        cancelController.text,
+                                                    "cancelledBy": "USER"
+                                                  },
+                                                  widget.userId,
+                                                  widget.packageBookID,
+                                                  data?.paymentId ?? '');
 
-                                      // controller.dispose();
-                                    },
-                                  );
-                                })),
-                          );
-                        });
-                  },
-                )
-              : const SizedBox()
-        ],
-      )),
+                                          // controller.dispose();
+                                        },
+                                      );
+                                    })),
+                              );
+                            });
+                      },
+                    )
+                  : const SizedBox()
+            ],
+          );
+        }
+        return Container();
+      })),
     );
   }
 }
@@ -442,6 +416,7 @@ class PackageDetailsContainer extends StatefulWidget {
   final String cancelReason;
   final String cancelledBy;
   final Widget child;
+  final String vendorId;
   final List<PackageHIstoryDetailsMemberList> memberList;
   final List<AssignedVehicleOnPackageBooking> vehicleDetails;
   final List<AssignedDriverOnPackageBooking> driverDetails;
@@ -466,6 +441,7 @@ class PackageDetailsContainer extends StatefulWidget {
       required this.controllerWidget,
       this.alertOnTap,
       required this.totalAmt,
+      required this.vendorId,
       required this.primaryCountryCode,
       required this.primaryMobileNo,
       required this.secondaryCountryCode,
@@ -492,7 +468,7 @@ class PackageDetailsContainer extends StatefulWidget {
 }
 
 class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
-  String apiKey = 'AIzaSyADRdiTbSYUR8oc6-ryM1F1NDNjkHDr0Yo';
+  // String apiKey = 'AIzaSyADRdiTbSYUR8oc6-ryM1F1NDNjkHDr0Yo';
   String sourceLocation = "Source Location";
   double logitude = 0.0;
   double latitude = 0.0;
@@ -901,7 +877,6 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                           ),
                         ),
                         Text(':', style: titleTextStyle),
-
                         const SizedBox(width: 10),
                         Flexible(
                           child: GestureDetector(
@@ -918,10 +893,8 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                                     decorationThickness: 1.5),
                               )),
                         ),
-                       
                       ],
                     ),
-             
               contactTile(
                   title: 'Pickup Location',
                   value: widget.pickUpLocation.isEmpty
@@ -1157,7 +1130,6 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                             : paymentRefund?.data?.refundStatus == 'processed'
                                 ? "PROCESSED"
                                 : '${paymentRefund?.data?.refundStatus}'),
-                   
                   ],
                 ),
               )
@@ -1529,6 +1501,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                                   return RaiseIssueDialog(
                                     bookingId: widget.id,
                                     bookingType: 'PACKAGE_BOOKING',
+                                    venderId: widget.vendorId,
                                   );
                                 })),
                               );
@@ -1543,7 +1516,8 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                       height: 40,
                       width: AppDimension.getWidth(context) * .35,
                       btnHeading: "Cancel Booking",
-                      onTap: widget.onTap ?? () => print("Cancel Button Press"),
+                      onTap: widget.onTap ??
+                          () => debugPrint("Cancel Button Press"),
                     ),
                   )
                 : const SizedBox(),
@@ -1830,7 +1804,7 @@ class _ItineraryActivityContainerState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 10),
-      
+
         CommonContainer(
           elevation: 0,
           height: 200,

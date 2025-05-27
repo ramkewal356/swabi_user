@@ -1,4 +1,3 @@
-
 class GetPackageListModel {
   Status status;
   Data data;
@@ -108,22 +107,20 @@ class Content {
   });
 
   factory Content.fromJson(Map<String, dynamic> json) => Content(
-        packageId: json["packageId"].toString(),
-        country: json["country"] ?? "",
-        state: json["state"] ?? "",
-        packageName: json["packageName"] ?? "",
-        location: json["location"] ?? "",
-        noOfDays: json["noOfDays"] ?? "",
-        packageImageUrl:
-            List<String>.from(json["packageImageUrl"].map((x) => x)),
-        totalPrice: json["totalPrice"].toString(),
-        packageStatus: json["packageStatus"].toString(),
-        createdDate: json["createdDate"].toString(),
-        modifiedDate: json["modifiedDate"].toString(),
-        packageActivities: List<PackageActivity>.from(
-            json["packageActivities"].map((x) => PackageActivity.fromJson(x))),
-      packageDiscountedAmount: json['packageDiscountedAmount'] ?? 0
-      );
+      packageId: json["packageId"].toString(),
+      country: json["country"] ?? "",
+      state: json["state"] ?? "",
+      packageName: json["packageName"] ?? "",
+      location: json["location"] ?? "",
+      noOfDays: json["noOfDays"] ?? "",
+      packageImageUrl: List<String>.from(json["packageImageUrl"].map((x) => x)),
+      totalPrice: json["totalPrice"].toString(),
+      packageStatus: json["packageStatus"].toString(),
+      createdDate: json["createdDate"].toString(),
+      modifiedDate: json["modifiedDate"].toString(),
+      packageActivities: List<PackageActivity>.from(
+          json["packageActivities"].map((x) => PackageActivity.fromJson(x))),
+      packageDiscountedAmount: json['packageDiscountedAmount'] ?? 0);
 
   Map<String, dynamic> toJson() => {
         "packageId": packageId,
@@ -801,6 +798,7 @@ class Pkg {
   String createdDate;
   String modifiedDate;
   List<BookPackageByMemberPackageActivity> packageActivities;
+ 
 
   Pkg({
     required this.packageId,
@@ -833,6 +831,7 @@ class Pkg {
         packageActivities: List<BookPackageByMemberPackageActivity>.from(
             json["packageActivities"]
                 .map((x) => BookPackageByMemberPackageActivity.fromJson(x))),
+       
       );
 
   Map<String, dynamic> toJson() => {
@@ -849,6 +848,7 @@ class Pkg {
         "modifiedDate": modifiedDate,
         "packageActivities":
             List<dynamic>.from(packageActivities.map((x) => x.toJson())),
+       
       };
 }
 
@@ -2277,7 +2277,7 @@ class PackageHIstoryDetailsPkg {
   String createdDate;
   String modifiedDate;
   List<PackageHIstoryDetailsPackageActivity> packageActivities;
-
+  Vendor? vendor;
   PackageHIstoryDetailsPkg({
     required this.packageId,
     required this.country,
@@ -2291,6 +2291,7 @@ class PackageHIstoryDetailsPkg {
     required this.createdDate,
     required this.modifiedDate,
     required this.packageActivities,
+      this.vendor
   });
 
   factory PackageHIstoryDetailsPkg.fromJson(Map<String, dynamic> json) =>
@@ -2310,6 +2311,7 @@ class PackageHIstoryDetailsPkg {
         packageActivities: List<PackageHIstoryDetailsPackageActivity>.from(
             json["packageActivities"]
                 .map((x) => PackageHIstoryDetailsPackageActivity.fromJson(x))),
+        vendor: json["vendor"] == null ? null : Vendor.fromJson(json["vendor"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -2326,6 +2328,7 @@ class PackageHIstoryDetailsPkg {
         "modifiedDate": modifiedDate,
         "packageActivities":
             List<dynamic>.from(packageActivities.map((x) => x.toJson())),
+        "vendor": vendor?.toJson(),
       };
 }
 
@@ -3348,6 +3351,110 @@ class GetPackageItineraryActivity {
         "modifiedDate": modifiedDate,
         // "activityReligiousOffDates": List<dynamic>.from(activityReligiousOffDates.map((x) => x)),
         "discountedAmount": discountedAmount
+      };
+}
+
+class Vendor {
+  int? vendorId;
+  String? firstName;
+  String? lastName;
+  String? mobile;
+  String? email;
+  String? address;
+  DateTime? createdDate;
+  DateTime? modifiedDate;
+  bool? status;
+  dynamic otp;
+  bool? isOtpVerified;
+  String? userType;
+  String? gender;
+  String? countryCode;
+  dynamic notificationToken;
+  String? vendorProfileImageUrl;
+  String? lastLogin;
+  String? country;
+  String? state;
+  int? userId;
+  String? profileImageUrl;
+  dynamic bid;
+
+  Vendor({
+    this.vendorId,
+    this.firstName,
+    this.lastName,
+    this.mobile,
+    this.email,
+    this.address,
+    this.createdDate,
+    this.modifiedDate,
+    this.status,
+    this.otp,
+    this.isOtpVerified,
+    this.userType,
+    this.gender,
+    this.countryCode,
+    this.notificationToken,
+    this.vendorProfileImageUrl,
+    this.lastLogin,
+    this.country,
+    this.state,
+    this.userId,
+    this.profileImageUrl,
+    this.bid,
+  });
+
+  factory Vendor.fromJson(Map<String, dynamic> json) => Vendor(
+        vendorId: json["vendorId"],
+        firstName: json["firstName"],
+        lastName: json["lastName"],
+        mobile: json["mobile"],
+        email: json["email"],
+        address: json["address"],
+        createdDate: json["createdDate"] == null
+            ? null
+            : DateTime.parse(json["createdDate"]),
+        modifiedDate: json["modifiedDate"] == null
+            ? null
+            : DateTime.parse(json["modifiedDate"]),
+        status: json["status"],
+        otp: json["otp"],
+        isOtpVerified: json["isOtpVerified"],
+        userType: json["userType"],
+        gender: json["gender"],
+        countryCode: json["countryCode"],
+        notificationToken: json["notificationToken"],
+        vendorProfileImageUrl: json["vendorProfileImageUrl"],
+        lastLogin: json["lastLogin"],
+        country: json["country"],
+        state: json["state"],
+        userId: json["userId"],
+        profileImageUrl: json["profileImageUrl"],
+        bid: json["bid"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "vendorId": vendorId,
+        "firstName": firstName,
+        "lastName": lastName,
+        "mobile": mobile,
+        "email": email,
+        "address": address,
+        "createdDate": createdDate?.toIso8601String(),
+        "modifiedDate": modifiedDate?.toIso8601String(),
+        "status": status,
+        "otp": otp,
+        "isOtpVerified": isOtpVerified,
+        "userType": userType,
+        "gender": gender,
+        "countryCode": countryCode,
+        "notificationToken": notificationToken,
+        "vendorProfileImageUrl": vendorProfileImageUrl,
+        "lastLogin": lastLogin,
+        "country": country,
+        "state": state,
+        "userId": userId,
+        "profileImageUrl": profileImageUrl,
+        "bid": bid,
       };
 }
 

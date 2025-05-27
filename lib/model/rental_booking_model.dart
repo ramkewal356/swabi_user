@@ -1,5 +1,3 @@
-
-
 class RentalCarListStatusModel {
   Status status;
   RentalCarListStatusData data;
@@ -1068,7 +1066,7 @@ class RentalDetailsSingleData {
   double taxAmount;
   String taxPercentage;
   String totalPayableAmount;
-
+  String vendorId;
   RentalDetailsSingleData(
       {required this.id,
       required this.rentalBookingId,
@@ -1103,7 +1101,8 @@ class RentalDetailsSingleData {
       required this.discountAmount,
       required this.taxAmount,
       required this.taxPercentage,
-      required this.totalPayableAmount});
+      required this.totalPayableAmount,
+      required this.vendorId});
 
   factory RentalDetailsSingleData.fromJson(Map<String, dynamic> json) =>
       RentalDetailsSingleData(
@@ -1140,7 +1139,9 @@ class RentalDetailsSingleData {
           discountAmount: json["discountAmount"]?.toString() ?? '',
           taxAmount: json["taxAmount"] ?? 0.0,
           taxPercentage: json["taxPercentage"]?.toString() ?? '',
-          totalPayableAmount: json["totalPayableAmount"]?.toString() ?? '');
+        totalPayableAmount: json["totalPayableAmount"]?.toString() ?? '',
+        vendorId: json["vendorId"]?.toString() ?? '',
+      );
 
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -1176,7 +1177,8 @@ class RentalDetailsSingleData {
         "discountAmount": discountAmount,
         "taxAmount": taxAmount,
         "taxPercentage": taxPercentage,
-        "totalPayableAmount": totalPayableAmount
+        "totalPayableAmount": totalPayableAmount,
+        "vendorId": vendorId
       };
 }
 
@@ -1243,7 +1245,7 @@ class RentalDetialsSingleDriver {
   String? modifiedDate;
   String? profileImageUrl;
   String? userType;
-  String? vendorId;
+
   // List<DriverUnavailableDate> unavailableDates;
   String? driverStatus;
 
@@ -1262,7 +1264,7 @@ class RentalDetialsSingleDriver {
     this.modifiedDate,
     this.profileImageUrl,
     this.userType,
-    this.vendorId,
+
     // required this.unavailableDates,
     this.driverStatus,
   });
@@ -1283,7 +1285,7 @@ class RentalDetialsSingleDriver {
         modifiedDate: json["modifiedDate"]?.toString() ?? '',
         profileImageUrl: json["profileImageUrl"]?.toString() ?? '',
         userType: json["userType"]?.toString() ?? '',
-        vendorId: json["vendorId"]?.toString() ?? '',
+
         // unavailableDates: List<DriverUnavailableDate>.from(json["unavailableDates"].map((x) => DriverUnavailableDate.fromJson(x))),
         driverStatus: json["driverStatus"]?.toString() ?? '',
       );
@@ -1303,7 +1305,7 @@ class RentalDetialsSingleDriver {
         "modifiedDate": modifiedDate,
         "profileImageUrl": profileImageUrl,
         "userType": userType,
-        "vendorId": vendorId,
+
         // "unavailableDates": List<dynamic>.from(unavailableDates.map((x) => x.toJson())),
         "driverStatus": driverStatus,
       };

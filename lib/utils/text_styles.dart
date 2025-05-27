@@ -66,9 +66,9 @@ TextStyle subtitleText = GoogleFonts.lato(
 TextStyle valueText = GoogleFonts.lato(
     color: blackColor, fontSize: 14, fontWeight: FontWeight.w400);
 TextStyle landingText = GoogleFonts.roboto(
-    color: Color(0xFF81001E), fontSize: 20, fontWeight: FontWeight.w600);
+    color: const Color(0xFF81001E), fontSize: 20, fontWeight: FontWeight.w600);
 TextStyle exploreText = GoogleFonts.roboto(
-    color: Color(0xFF81001E), fontSize: 20, fontWeight: FontWeight.w800);
+    color: const Color(0xFF81001E), fontSize: 20, fontWeight: FontWeight.w800);
 TextStyle landingtitleStyle = GoogleFonts.roboto(
     color: background, fontSize: 16, fontWeight: FontWeight.w600);
 TextStyle landingTextStyle = GoogleFonts.roboto(

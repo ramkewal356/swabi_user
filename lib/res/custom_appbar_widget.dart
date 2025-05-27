@@ -86,7 +86,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   child: InkWell(
                       onTap: rightIconOnTapReq
-                          ? rightIconOnTapOnTap ?? () => print("Custom Appbar")
+                          ? rightIconOnTapOnTap ??
+                              () => debugPrint("Custom Appbar")
                           : null,
                       child: Image.asset(
                         rightIconImage,

@@ -65,7 +65,7 @@ class PageLayout_Curve extends StatelessWidget {
                     borderRadius: BorderRadius.circular(5),
                     onTap: addtionalIconReq
                         ? iconOnTap
-                        : () => print("Icon Btn Press"),
+                        : () => debugPrint("Icon Btn Press"),
                     child: SizedBox(
                       height: 30,
                       width: 30,
@@ -105,7 +105,7 @@ class PageLayout_Curve extends StatelessWidget {
                     // CustomButtonSmall()
                     CustomButtonBig(
                         btnHeading: btnHeading,
-                        onTap: onTap ?? () => print("onTap"))
+                        onTap: onTap ?? () => debugPrint("onTap"))
                     : const SizedBox.shrink()
               ],
             ),
@@ -185,7 +185,7 @@ class PageLayout_Page extends StatelessWidget {
               saveBtn
                   ? CustomButtonBig(
                       btnHeading: btnHeading,
-                      onTap: onTap ?? () => print("onTap"),
+                      onTap: onTap ?? () => debugPrint("onTap"),
                     )
                   : const SizedBox.shrink(),
             ],

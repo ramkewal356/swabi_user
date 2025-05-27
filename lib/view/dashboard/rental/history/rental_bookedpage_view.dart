@@ -1,9 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/get_issue_by_booking_id_model.dart';
 import 'package:flutter_cab/model/payment_details_model.dart';
 import 'package:flutter_cab/model/payment_refund_model.dart';
-import 'package:flutter_cab/model/rental_booking_model.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_paymentdetails_container.dart';
@@ -42,7 +40,7 @@ class RentalBookedPageView extends StatefulWidget {
 
 class _RentalBookedPageViewState extends State<RentalBookedPageView> {
   final TextEditingController controller = TextEditingController();
-  RentalDetailsSingleData? fulldata;
+  // RentalDetailsSingleData? fulldata;
   PaymentData? paymentDetails;
   GetIssueByBookingIdModel? getIssueByBookingId;
   PaymentRefundModel? paymentRefund;
@@ -50,15 +48,29 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
   String? currency;
   @override
   void initState() {
-    // TODO: implement initState
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      getPaymentDetail();
-      getissueDetail();
-      // getPaymentRefund();
+      _getRentalDetails();
     });
-    // currency = getCurrencyByCountryCode('IN');
-    // print('Currency for IN: ${currency} - ${currency}');
+
     super.initState();
+  }
+
+  void _getRentalDetails() {
+    context
+        .read<RentalViewDetailViewModel>()
+        .fetchRentalBookedViewDetialViewModelApi(context, {
+      "id": widget.bookedId,
+    }).then((onValue) {
+      if (onValue?.status.httpCode == '200') {
+        getPaymentDetail(paymentId: onValue?.data.paymentId ?? '');
+        getissueDetail();
+        if (onValue?.data.bookingStatus == 'CANCELLED') {
+          Provider.of<GetPaymentRefundViewModel>(context, listen: false)
+              .getPaymentRefundApi(
+                  context: context, paymentId: onValue?.data.paymentId ?? '');
+        }
+      }
+    });
   }
 
   void getissueDetail() {
@@ -70,15 +82,15 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
             bookingType: 'RENTAL_BOOKING');
   }
 
-  Future<void> getPaymentDetail() async {
+  Future<void> getPaymentDetail({required String paymentId}) async {
     setState(() {
       loading = true;
     });
 
-    print('paymentid:...${widget.paymentId}');
+    debugPrint('paymentid:...${widget.paymentId}');
 
     await Provider.of<RentalPaymentDetailsViewModel>(context, listen: false)
-        .rentalPaymentDetail(context: context, paymentId: widget.paymentId)
+        .rentalPaymentDetail(context: context, paymentId: paymentId)
         .then((onValue) {
       if (onValue?.status?.httpCode == '200') {
         setState(() {
@@ -89,14 +101,8 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
     });
   }
 
-  Future<void> getPaymentRefund() async {
-    await Provider.of<GetPaymentRefundViewModel>(context, listen: false)
-        .getPaymentRefundApi(context: context, paymentId: widget.paymentId);
-  }
-
   @override
   void dispose() {
-    // TODO: implement dispose
     controller.dispose();
     super.dispose();
   }
@@ -105,25 +111,9 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
   // List<String> vehicleImage = [];
   @override
   Widget build(BuildContext context) {
-    fulldata = context.watch<RentalViewDetailViewModel>().dataList.data?.data;
+    // fulldata = context.watch<RentalViewDetailViewModel>().dataList.data?.data;
     getIssueByBookingId =
         context.watch<RaiseissueViewModel>().getIssueBybookingId.data;
-
-    DateTime dateTime1 = DateTime.fromMillisecondsSinceEpoch(
-      (int.tryParse(fulldata?.createdDate ?? '')) ?? 0 * 1000,
-    );
-
-    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
-        (paymentDetails?.createdAt ?? 0) * 1000,
-        isUtc: true);
-    Duration offset = const Duration(hours: 5, minutes: 30);
-    DateTime adjustedTime = dateTime.add(offset);
-
-    String formattedTime =
-        '${DateFormat('HH:mm').format(adjustedTime)} GMT (+05:30)';
-    paymentRefund =
-        context.watch<GetPaymentRefundViewModel>().getPaymentRefund.data;
-    debugPrint('paymentdewatil.......${paymentDetails?.amount}');
 
     return Scaffold(
       backgroundColor: bgGreyColor,
@@ -131,262 +121,274 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
         heading: "Booking Preview",
       ),
       body: PageLayout_Page(
-        child: Stack(
-          children: [
-            ListView(
-              children: [
-                RentalBookingContainer(
-                  // bookingId: fulldata.bookerId,
-                  // carName: vehicleMap['carName'] ?? 'N/A',
-                  // bookingPrice: fulldata?.rentalCharge ?? '',
-                  cancelBy: fulldata?.cancelledBy ?? '',
-                  cancelresion: fulldata?.cancellationReason ?? '',
-                  totalPayableAmount: fulldata?.totalPayableAmount ?? '',
-                  getIssueByBookingId: getIssueByBookingId,
-                  createdDate: DateFormat('dd-MM-yyyy').format(dateTime1),
-                  rideStartTime: fulldata?.rideStartTime ?? '',
-                  extraRideDistance: fulldata?.extraKilometers ?? '',
-                  extraRideTime: fulldata?.extraMinutes ?? '',
-                  totalRideTime: fulldata?.totalRentTime ?? '',
-                  vehicleType: fulldata?.vehicle.carType ?? '',
-                  id: widget.bookedId,
-                  kilometer: fulldata?.kilometers ?? '',
-                  pickDate: fulldata?.date ?? '',
-                  pickTime: fulldata?.pickupTime ?? '',
+        child: Consumer<RentalViewDetailViewModel>(
+          builder: (context, viewModel, state) {
+            if (viewModel.dataList.status.toString() == "Status.loading") {
+              return const Center(
+                child: CircularProgressIndicator(
+                  color: Colors.green,
+                ),
+              );
+            } else if (viewModel.dataList.status.toString() == "Status.error") {
+              return const Center(
+                child: Text('No Data Found'),
+              );
+            } else if (viewModel.dataList.status.toString() ==
+                "Status.completed") {
+              var fulldata = viewModel.dataList.data?.data;
+              DateTime dateTime1 = DateTime.fromMillisecondsSinceEpoch(
+                (int.tryParse(fulldata?.createdDate ?? '')) ?? 0 * 1000,
+              );
 
-                  // rentalCharge: (fulldata?.discountAmount ?? '').isEmpty ||
-                  //         fulldata?.discountAmount == '0'
-                  //     ? fulldata?.rentalCharge ?? ''
-                  //     : fulldata?.discountAmount ?? '',
-                  status: fulldata?.bookingStatus ?? '',
-                  fuel: fulldata?.vehicle.fuelType?.toString() ?? '',
-                  pickUpLocation: fulldata?.pickupLocation != null
-                      ? fulldata?.pickupLocation ?? ''
-                      : 'N/A',
-                  paid: fulldata?.paidStatus ?? '',
-                  vehicleNo: fulldata?.vehicle.vehicleNumber?.toString() ?? '',
-                  color: fulldata?.vehicle.color?.toString() ?? '',
-                  // seats: vehicleMap['seats'] ?? 'N/A',
-                  carType: fulldata?.carType ?? "",
-                  brandName: fulldata?.vehicle.brandName?.toString() ?? '',
-                  /////////////////Guest Detail////////////////////////
-                  guestId: fulldata?.guest.guestId?.toString() ?? '',
-                  firstName: fulldata?.guest.guestName?.toString() ?? '',
-                  lastName: fulldata?.guest.guestName == '' ||
-                          fulldata?.guest.guestName != null
-                      ? ""
-                      : "",
-                  contact:
-                      '+${fulldata?.guest.countryCode?.toString() ?? '971'} ${fulldata?.guest.guestMobile?.toString()}',
-                  gender: fulldata?.guest.gender?.toString() ?? '',
-                  btn: Container(),
-                ),
-                const SizedBox(height: 10),
-                paymentDetails != null
-                    ? Custompaymentdetailscontainer(
-                        paymentId: paymentDetails?.id ?? '',
-                        paymentDate: DateFormat('dd-MM-yyyy').format(dateTime),
-                        amount:
-                            '${(double.tryParse(paymentDetails?.amount.toString() ?? '') ?? 0) / 100}',
-                        taxAmount:
-                            '${fulldata?.taxAmount.toStringAsFixed(1) ?? 0.0}',
-                        discountAmount: fulldata?.discountAmount ?? '',
-                        rentalAmount: fulldata?.rentalCharge ?? '',
-                        paymentTime: formattedTime)
-                    : Container(),
-                paymentRefund?.data != null &&
-                        fulldata?.bookingStatus == 'CANCELLED'
-                    ? RefundPaymentContainer(
-                        // refundId: paymentRefund?.data?.refundId ?? '',
-                        refundAmount:
-                            paymentRefund?.data?.refundedAmount.toString() ??
-                                '',
-                        refundStatus: paymentRefund?.data?.refundStatus ?? '',
-                        // refundDate: paymentRefund?.data?.createdAt ?? 0
-                      )
-                    : Container(),
-                const SizedBox(height: 10),
-                fulldata?.vehicle != null &&
-                        fulldata?.vehicle.carName != null &&
-                        fulldata!.vehicle.carName!.isNotEmpty
-                    ? VechicleDetailsContainer(
-                        color: fulldata?.vehicle.color ?? '',
-                        vehicleName: fulldata?.vehicle.carName ?? '',
-                        brandName: fulldata?.vehicle.brandName ?? '',
-                        vehicleNo: fulldata?.vehicle.vehicleNumber ?? '',
-                        fuelType: fulldata?.vehicle.fuelType ?? '',
-                        seats: fulldata?.vehicle.seats ?? '',
-                        vehicleType: fulldata?.carType ?? '',
-                        vehicleImage: fulldata?.vehicle.images ?? [],
-                      )
-                    : Container(),
-                const SizedBox(
-                  height: 10,
-                ),
-                fulldata?.driver != null &&
-                        fulldata?.driver.firstName != null &&
-                        fulldata!.driver.firstName!.isNotEmpty
-                    ? DriverDetailsContainer(
-                        firstName: fulldata?.driver.firstName?.toString() ?? '',
-                        lastName: fulldata?.driver.lastName?.toString() ?? '',
-                        gender: fulldata?.driver.gender?.toString() ?? '',
-                        countryCode:
-                            fulldata?.driver.countryCode?.toString() ?? '',
-                        mobile: fulldata?.driver.mobile?.toString() ?? '',
-                        email: fulldata?.driver.email?.toString() ?? '',
-                        address:
-                            fulldata?.driver.driverAddress.toString() ?? '',
-                      )
-                    : Container(),
-                const SizedBox(height: 10),
-                fulldata?.bookingStatus == "COMPLETED"
-                    ? const SizedBox.shrink()
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          (getIssueByBookingId?.data ?? []).isEmpty
-                              ? CustomButtonSmall(
-                                  height: 40,
-                                  width: 120,
-                                  btnHeading: 'Raised Issue',
-                                  onTap: () {
-                                    showModalBottomSheet(
-                                      context: context,
-                                      isDismissible: false,
-                                      backgroundColor: background,
-                                      isScrollControlled: true,
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.vertical(
-                                          top: Radius.circular(10),
-                                        ),
-                                      ),
-                                      builder: (BuildContext context) {
-                                        return Padding(
-                                          padding: EdgeInsets.only(
-                                              bottom: MediaQuery.of(context)
-                                                  .viewInsets
-                                                  .bottom),
-                                          child: SingleChildScrollView(child:
-                                              StatefulBuilder(builder:
-                                                  (BuildContext context,
-                                                      StateSetter setstate) {
-                                            return RaiseIssueDialog(
-                                              bookingId: widget.bookedId,
-                                              bookingType: 'RENTAL_BOOKING',
-                                            );
-                                          })),
-                                        );
-                                      },
-                                    );
-                                  })
-                              : Container(),
-                          fulldata?.bookingStatus == "BOOKED"
-                              ? Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  child: CustomButtonSmall(
-                                    width: AppDimension.getWidth(context) * .35,
+              DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
+                  (paymentDetails?.createdAt ?? 0) * 1000,
+                  isUtc: true);
+              Duration offset = const Duration(hours: 5, minutes: 30);
+              DateTime adjustedTime = dateTime.add(offset);
+
+              String formattedTime =
+                  '${DateFormat('HH:mm').format(adjustedTime)} GMT (+05:30)';
+              paymentRefund = context
+                  .watch<GetPaymentRefundViewModel>()
+                  .getPaymentRefund
+                  .data;
+              debugPrint('paymentdewatil.......${paymentDetails?.amount}');
+              return ListView(
+                children: [
+                  RentalBookingContainer(
+                    cancelBy: fulldata?.cancelledBy ?? '',
+                    cancelresion: fulldata?.cancellationReason ?? '',
+                    totalPayableAmount: fulldata?.totalPayableAmount ?? '',
+                    getIssueByBookingId: getIssueByBookingId,
+                    createdDate: DateFormat('dd-MM-yyyy').format(dateTime1),
+                    rideStartTime: fulldata?.rideStartTime ?? '',
+                    extraRideDistance: fulldata?.extraKilometers ?? '',
+                    extraRideTime: fulldata?.extraMinutes ?? '',
+                    totalRideTime: fulldata?.totalRentTime ?? '',
+                    vehicleType: fulldata?.vehicle.carType ?? '',
+                    id: widget.bookedId,
+                    kilometer: fulldata?.kilometers ?? '',
+                    pickDate: fulldata?.date ?? '',
+                    pickTime: fulldata?.pickupTime ?? '',
+
+                    status: fulldata?.bookingStatus ?? '',
+                    fuel: fulldata?.vehicle.fuelType?.toString() ?? '',
+                    pickUpLocation: fulldata?.pickupLocation != null
+                        ? fulldata?.pickupLocation ?? ''
+                        : 'N/A',
+                    paid: fulldata?.paidStatus ?? '',
+                    vehicleNo:
+                        fulldata?.vehicle.vehicleNumber?.toString() ?? '',
+                    color: fulldata?.vehicle.color?.toString() ?? '',
+                    carType: fulldata?.carType ?? "",
+                    brandName: fulldata?.vehicle.brandName?.toString() ?? '',
+                    /////////////////Guest Detail////////////////////////
+                    guestId: fulldata?.guest.guestId?.toString() ?? '',
+                    firstName: fulldata?.guest.guestName?.toString() ?? '',
+                    lastName: fulldata?.guest.guestName == '' ||
+                            fulldata?.guest.guestName != null
+                        ? ""
+                        : "",
+                    contact:
+                        '+${fulldata?.guest.countryCode?.toString() ?? '971'} ${fulldata?.guest.guestMobile?.toString()}',
+                    gender: fulldata?.guest.gender?.toString() ?? '',
+                    btn: Container(),
+                  ),
+                  const SizedBox(height: 10),
+                  paymentDetails != null
+                      ? Custompaymentdetailscontainer(
+                          paymentId: paymentDetails?.id ?? '',
+                          paymentDate:
+                              DateFormat('dd-MM-yyyy').format(dateTime),
+                          amount:
+                              '${(double.tryParse(paymentDetails?.amount.toString() ?? '') ?? 0) / 100}',
+                          taxAmount:
+                              '${fulldata?.taxAmount.toStringAsFixed(1) ?? 0.0}',
+                          discountAmount: fulldata?.discountAmount ?? '',
+                          rentalAmount: fulldata?.rentalCharge ?? '',
+                          paymentTime: formattedTime)
+                      : Container(),
+                  paymentRefund?.data != null &&
+                          fulldata?.bookingStatus == 'CANCELLED'
+                      ? RefundPaymentContainer(
+                          // refundId: paymentRefund?.data?.refundId ?? '',
+                          refundAmount:
+                              paymentRefund?.data?.refundedAmount.toString() ??
+                                  '',
+                          refundStatus: paymentRefund?.data?.refundStatus ?? '',
+                          // refundDate: paymentRefund?.data?.createdAt ?? 0
+                        )
+                      : Container(),
+                  const SizedBox(height: 10),
+                  fulldata?.vehicle != null &&
+                          fulldata?.vehicle.carName != null &&
+                          fulldata!.vehicle.carName!.isNotEmpty
+                      ? VechicleDetailsContainer(
+                          color: fulldata.vehicle.color ?? '',
+                          vehicleName: fulldata.vehicle.carName ?? '',
+                          brandName: fulldata.vehicle.brandName ?? '',
+                          vehicleNo: fulldata.vehicle.vehicleNumber ?? '',
+                          fuelType: fulldata.vehicle.fuelType ?? '',
+                          seats: fulldata.vehicle.seats ?? '',
+                          vehicleType: fulldata.carType,
+                          vehicleImage: fulldata.vehicle.images,
+                        )
+                      : Container(),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  fulldata?.driver != null &&
+                          fulldata?.driver.firstName != null &&
+                          fulldata!.driver.firstName!.isNotEmpty
+                      ? DriverDetailsContainer(
+                          firstName:
+                              fulldata.driver.firstName?.toString() ?? '',
+                          lastName: fulldata.driver.lastName?.toString() ?? '',
+                          gender: fulldata.driver.gender?.toString() ?? '',
+                          countryCode:
+                              fulldata.driver.countryCode?.toString() ?? '',
+                          mobile: fulldata.driver.mobile?.toString() ?? '',
+                          email: fulldata.driver.email?.toString() ?? '',
+                          address: fulldata.driver.driverAddress.toString(),
+                        )
+                      : Container(),
+                  const SizedBox(height: 10),
+                  fulldata?.bookingStatus == "COMPLETED"
+                      ? const SizedBox.shrink()
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            (getIssueByBookingId?.data ?? []).isEmpty
+                                ? CustomButtonSmall(
                                     height: 40,
-                                    btnHeading: "Cancel Booking",
-                                    // loading: cancelledStatus == "Status.loading" && loading,
+                                    width: 120,
+                                    btnHeading: 'Raised Issue',
                                     onTap: () {
                                       showModalBottomSheet(
-                                          context: context,
-                                          isDismissible: false,
-                                          backgroundColor: background,
-                                          isScrollControlled: true,
-                                          shape: const RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.vertical(
-                                              top: Radius.circular(10),
-                                            ),
+                                        context: context,
+                                        isDismissible: false,
+                                        backgroundColor: background,
+                                        isScrollControlled: true,
+                                        shape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(10),
                                           ),
-                                          builder: (BuildContext context) {
-                                            return Padding(
-                                              padding: EdgeInsets.only(
-                                                  bottom: MediaQuery.of(context)
-                                                      .viewInsets
-                                                      .bottom),
-                                              child: SingleChildScrollView(
-                                                  child: StatefulBuilder(
-                                                      builder:
-                                                          (BuildContext context,
-                                                              StateSetter
-                                                                  setstate) {
-                                                String cancelledStatus = context
-                                                    .watch<
-                                                        RentalBookingCancelViewModel>()
-                                                    .cancelldataList
-                                                    .status
-                                                    .toString();
-                                                return CancelContainerDialog(
-                                                    loading: cancelledStatus ==
-                                                            "Status.loading" &&
-                                                        loading,
-                                                    controllerCancel:
-                                                        controller,
-                                                    onTap: () async {
-                                                      print(
-                                                          'bnnvncvxcvxzvznbxvcbnvn');
-                                                      setstate(() {
-                                                        loading = true;
-                                                      });
-                                                      await Provider.of<
-                                                                  RentalBookingCancelViewModel>(
-                                                              context,
-                                                              listen: false)
-                                                          .fetchRentalBookingCancelViewModelApi(
-                                                              context,
-                                                              {
-                                                                "id": widget
-                                                                    .bookedId,
-                                                                "reason":
-                                                                    controller
-                                                                        .text,
-                                                                "cancelledBy":
-                                                                    "USER"
-                                                              },
-                                                              widget.useriD,
-                                                              fulldata?.id
-                                                                      .toString() ??
-                                                                  '',
-                                                              fulldata?.paymentId
-                                                                      .toString() ??
-                                                                  '');
+                                        ),
+                                        builder: (BuildContext context) {
+                                          return Padding(
+                                            padding: EdgeInsets.only(
+                                                bottom: MediaQuery.of(context)
+                                                    .viewInsets
+                                                    .bottom),
+                                            child: SingleChildScrollView(child:
+                                                StatefulBuilder(builder:
+                                                    (BuildContext context,
+                                                        StateSetter setstate) {
+                                              return RaiseIssueDialog(
+                                                bookingId: widget.bookedId,
+                                                bookingType: 'RENTAL_BOOKING',
+                                                venderId:
+                                                    fulldata?.vendorId ?? '',
+                                              );
+                                            })),
+                                          );
+                                        },
+                                      );
+                                    })
+                                : Container(),
+                            fulldata?.bookingStatus == "BOOKED"
+                                ? Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    child: CustomButtonSmall(
+                                      width:
+                                          AppDimension.getWidth(context) * .35,
+                                      height: 40,
+                                      btnHeading: "Cancel Booking",
+                                      // loading: cancelledStatus == "Status.loading" && loading,
+                                      onTap: () {
+                                        showModalBottomSheet(
+                                            context: context,
+                                            isDismissible: false,
+                                            backgroundColor: background,
+                                            isScrollControlled: true,
+                                            shape: const RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.vertical(
+                                                top: Radius.circular(10),
+                                              ),
+                                            ),
+                                            builder: (BuildContext context) {
+                                              return Padding(
+                                                padding: EdgeInsets.only(
+                                                    bottom:
+                                                        MediaQuery.of(context)
+                                                            .viewInsets
+                                                            .bottom),
+                                                child: SingleChildScrollView(
+                                                    child: StatefulBuilder(
+                                                        builder: (BuildContext
+                                                                context,
+                                                            StateSetter
+                                                                setstate) {
+                                                  String cancelledStatus = context
+                                                      .watch<
+                                                          RentalBookingCancelViewModel>()
+                                                      .cancelldataList
+                                                      .status
+                                                      .toString();
+                                                  return CancelContainerDialog(
+                                                      loading: cancelledStatus ==
+                                                              "Status.loading" &&
+                                                          loading,
+                                                      controllerCancel:
+                                                          controller,
+                                                      onTap: () async {
+                                                        setstate(() {
+                                                          loading = true;
+                                                        });
+                                                        await Provider.of<
+                                                                    RentalBookingCancelViewModel>(
+                                                                context,
+                                                                listen: false)
+                                                            .fetchRentalBookingCancelViewModelApi(
+                                                                context,
+                                                                {
+                                                                  "id": widget
+                                                                      .bookedId,
+                                                                  "reason":
+                                                                      controller
+                                                                          .text,
+                                                                  "cancelledBy":
+                                                                      "USER"
+                                                                },
+                                                                widget.useriD,
+                                                                fulldata?.id
+                                                                        .toString() ??
+                                                                    '',
+                                                                fulldata?.paymentId
+                                                                        .toString() ??
+                                                                    '');
 
-                                                      setstate(() {
-                                                        loading = false;
+                                                        setstate(() {
+                                                          loading = false;
+                                                        });
+                                                        // controller.dispose();
                                                       });
-                                                      // controller.dispose();
-                                                    });
-                                              })),
-                                            );
-                                          });
-                                    },
-                                  ),
-                                )
-                              : Container(),
-                        ],
-                      )
-              ],
-            ),
-            if (loading)
-              Positioned(
-                left: 0,
-                right: 0,
-                top: 0,
-                bottom: 0,
-                child: Container(
-                    height: 100,
-                    width: 100,
-                    decoration: BoxDecoration(
-                        color: background,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: const Center(
-                        child: CircularProgressIndicator(
-                      color: Colors.green,
-                    ))),
-              )
-          ],
+                                                })),
+                                              );
+                                            });
+                                      },
+                                    ),
+                                  )
+                                : Container(),
+                          ],
+                        )
+                ],
+              );
+            }
+            return Container();
+          },
         ),
       ),
     );
@@ -610,7 +612,6 @@ class _RentalBookingContainerState extends State<RentalBookingContainer> {
                                         decorationThickness: 1.5),
                                   )),
                             ),
-                        
                           ],
                         ),
                   bookingItem(
@@ -929,7 +930,7 @@ class DriverDetailsContainer extends StatelessWidget {
                       SizedBox(
                         // width: 100,
                         child: Text(
-                          '+${countryCode} ${mobile}',
+                          '+$countryCode $mobile',
                           style: titleTextStyle1,
                           maxLines: 3,
                         ),

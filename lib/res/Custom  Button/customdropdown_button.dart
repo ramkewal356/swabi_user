@@ -33,7 +33,7 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
 
   @override
   void initState() {
-    // TODO: implement initState
+  
     super.initState();
     widget.controller.addListener(_update);
   }
@@ -46,7 +46,7 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
+    
     widget.controller.removeListener(_update);
 
     super.dispose();
@@ -88,13 +88,13 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
                   setState(() {
                     // widget.selecteValue = value;
                     widget.controller.text = value ?? '';
-                    print('controller  ${widget.controller.text}');
+                
                   });
                   field.didChange(value);
                   if (widget.onChanged != null) {
                     widget.onChanged!(value);
                   }
-                  print(widget.selecteValue);
+            
                 },
                 buttonStyleData: ButtonStyleData(
                   height: 50,
@@ -127,8 +127,10 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
                   offset: const Offset(0, 0),
                   scrollbarTheme: ScrollbarThemeData(
                     radius: const Radius.circular(20),
+                    // ignore: deprecated_member_use
                     thickness: MaterialStateProperty.all(6),
                     thumbColor: WidgetStateProperty.all(btnColor),
+                    // ignore: deprecated_member_use
                     thumbVisibility: MaterialStateProperty.all(true),
                   ),
                 ),
@@ -143,7 +145,7 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
                   padding: const EdgeInsets.only(left: 10),
                   child: Text(
                     field.errorText!,
-                    style: TextStyle(color: redColor),
+                    style: const TextStyle(color: redColor),
                   ),
                 )
             ],

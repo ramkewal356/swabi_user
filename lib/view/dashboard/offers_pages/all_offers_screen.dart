@@ -26,7 +26,7 @@ class _AlloffersScreenState extends State<AlloffersScreen>
   int _intialIndex = 0;
   @override
   void initState() {
-    // TODO: implement initState
+ 
     super.initState();
     _intialIndex = widget.initialIndex ?? _intialIndex;
 

@@ -15,14 +15,14 @@ class BottomBarScreen extends StatefulWidget {
 class _BottomBarScreenState extends State<BottomBarScreen> {
   int _selectedIndex = 0;
   List<Widget> widgetOptions = [
-    LandingScreen(),
-    Packages(
+    const LandingScreen(),
+    const Packages(
       ursID: '2',
       // country: '',
       // state: '',
     ),
-    RentalForm(userId: '2'),
-    ProfilePage(user: '2')
+    const RentalForm(userId: '2'),
+    const ProfilePage(user: '2')
   ];
 
   void _onItemTapped(int index) {
@@ -38,7 +38,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
         child: widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: Container(
-        decoration: BoxDecoration(color: btnColor),
+        decoration: const BoxDecoration(color: btnColor),
         child: BottomNavigationBar(
           unselectedItemColor: Colors.white70,
           elevation: 0,

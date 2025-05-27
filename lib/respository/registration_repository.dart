@@ -21,7 +21,7 @@ class RegistrationRepository {
         isAuthorizeRequest: false);
     try {
       Response<dynamic>? response = await http.request<dynamic>();
-      print('response...$response');
+      debugPrint('response...$response');
       var resp = SignUpModel.fromJson(response?.data);
       return resp;
     } catch (error) {

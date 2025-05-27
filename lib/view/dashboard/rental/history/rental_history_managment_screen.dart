@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/model/rental_booking_model.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_tabbar.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view/dashboard/rental/history/rental_listing_container.dart';
-import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class RentalHistoryManagment extends StatefulWidget {
@@ -21,6 +20,7 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
     with SingleTickerProviderStateMixin {
   ScrollController scrollController = ScrollController();
   ScrollController scrollController1 = ScrollController();
+  String status = 'ALL';
   List<String> tabList = [
     'All Booking',
     'Upcoming',
@@ -30,152 +30,100 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
   ];
   TabController? _tabController;
   int initialIndex = 0;
-  int currentPage = 0;
-  bool isLoadingMore = false;
   bool isVisibleIcon = false;
-  bool lastPage = false; // Assuming true at the start
-  final int pageSize = 10; // Set your page size
+  String sortText = 'desc';
   final ScrollController _scrollController = ScrollController();
-  List<Content> bookingList = [];
-  Future<void> getPackageHistoryList() async {
-    // Avoid fetching data if already loading or reached the last page
-    if (isLoadingMore || lastPage) return;
-
-    setState(() {
-      isLoadingMore = true;
-    });
-
-    // String status = tabList[initialIndex]; // Get current tab status
-    String status = '';
-    if (tabList[initialIndex] == 'All Booking') {
-      setState(() {
-        status = 'ALL';
-      });
-    } else if (tabList[initialIndex] == 'Upcoming') {
-      setState(() {
-        status = 'BOOKED';
-      });
-    } else if (tabList[initialIndex] == 'Ongoing') {
-      setState(() {
-        status = 'ON_RUNNING';
-      });
-    } else if (tabList[initialIndex] == 'Completed') {
-      setState(() {
-        status = 'COMPLETED';
-      });
-    } else if (tabList[initialIndex] == 'Cancelled') {
-      setState(() {
-        status = 'CANCELLED';
-      });
-    } else {
-      setState(() {
-        status = 'ALL';
-      });
-    }
+ 
+  Future<void> getRentalHistoryList(
+      {bool isPagination = false,
+      bool isfilter = false,
+      bool isSort = false}) async {
+   
 
     try {
-      // Fetch data using Provider
-
-      final response =
-          await Provider.of<RentalBookingListViewModel>(context, listen: false)
-              .fetchRentalBookingListBookedViewModelApi(context, {
-        'userId': widget.myId,
-        'pageNumber': currentPage,
-        'pageSize': pageSize,
-        'bookingStatus': status,
-        "search": '',
-        "sortBy": 'id',
-        "sortDirection": isVisibleIcon ? 'asc' : 'desc'
-      });
-
-      // Update history with new data
-      final data = response?.data.content ?? [];
-
-      debugPrint('Fetched data: $data');
-
-      if (data.isNotEmpty) {
-        setState(() {
-          bookingList.addAll(data); // Append new data to the existing list
-          currentPage++; // Increment page number
-          lastPage = data.length < pageSize; // Check if this is the last page
-        });
-      } else {
-        setState(() {
-          lastPage = true; // No more data available
-        });
-      }
-    } catch (e) {
     
+
+      context
+          .read<RentalBookingListViewModel>()
+          .fetchRentalBookingListBookedViewModelApi(
+            context: context,
+            userId: widget.myId,
+            filterText: status,
+            isFilter: isfilter,
+            isPagination: isPagination,
+            isSort: isSort,
+            sortText: sortText,
+          );
+    } catch (e) {
       // Handle error, e.g., show a toast or error message
-    } finally {
-      setState(() {
-        isLoadingMore = false;
-      });
     }
   }
 
   @override
   void initState() {
-  
     super.initState();
 
     _tabController = TabController(length: tabList.length, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      getPackageHistoryList();
+      getRentalHistoryList(isSort: true);
     });
     _tabController?.addListener(() {
-      initialIndex = _tabController?.index ?? 0;
-      setState(() {
-        currentPage = 0; // Reset pagination when tab changes
-        bookingList.clear(); // Clear the history
-        lastPage = false;
-      });
-      getPackageHistoryList();
-    });
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
-        // User has reached the end of the list
-        if (!isLoadingMore && !lastPage) {
-          print('testing......');
-          getPackageHistoryList();
-        }
+      if (_tabController!.indexIsChanging) return;
+
+      if (initialIndex != _tabController!.index) {
+        initialIndex = _tabController!.index;
+        _onFilter(initialIndex);
       }
     });
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onSort() {
+    setState(() {
+      isVisibleIcon = !isVisibleIcon;
+      sortText = isVisibleIcon ? 'asc' : 'desc';
+    });
+    getRentalHistoryList(isSort: true);
+  }
+
+  void _onFilter(int index) {
+    const statusMap = {
+      'All Booking': 'ALL',
+      'Upcoming': 'BOOKED',
+      'Ongoing': 'ON_RUNNING',
+      'Completed': 'COMPLETED',
+      'Cancelled': 'CANCELLED',
+    };
+
+    setState(() {
+      status = statusMap[tabList[index]] ?? 'ALL';
+      debugPrint('vvnbvbnvb,,,,,, $status');
+    });
+    getRentalHistoryList(isfilter: true);
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      getRentalHistoryList(isPagination: true);
+    }
   }
 
   int intialloadingIndex = -1;
   bool sortVisiblty = true;
   @override
   Widget build(BuildContext context) {
-    var status =
-        context.watch<RentalViewDetailViewModel>().dataList.status.toString();
-   
+    // var status =
+    //     context.watch<RentalViewDetailViewModel>().dataList.status.toString();
+
     return Customtabbar(
         titleHeading: 'My Rental Trips',
         sortVisiblty: sortVisiblty,
         isVisible: isVisibleIcon,
         controller: _tabController,
         tabs: tabList,
-        onTap: (p0) {
-          setState(() {
-            currentPage = 0; // Reset pagination when tab changes
-            bookingList.clear(); // Clear the history
-            lastPage = false;
-          });
-          getPackageHistoryList();
-        },
-        onTapSort: () {
-          setState(() {
-            isVisibleIcon = !isVisibleIcon;
-            currentPage = 0; // Reset pagination when tab changes
-            bookingList.clear(); // Clear the history
-            lastPage = false;
-          });
-
-          getPackageHistoryList();
-    
-        },
+        onTap: _onFilter,
+        onTapSort: _onSort,
         viewchildren: List.generate(tabList.length, (index) {
           return Consumer<RentalBookingListViewModel>(
             builder: (context, viewModel, child) {
@@ -190,13 +138,12 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
                 return Center(
                     child: Text(
                   'No Data Found',
-                  style:
-                      nodataTextStyle,
+                  style: nodataTextStyle,
                 ));
               } else if (response.status.toString() == "Status.completed") {
-                final data = response.data?.data.content ?? [];
+                final rentalData = response.data ?? [];
 
-                if (data.isEmpty && currentPage == 0) {
+                if (rentalData.isEmpty) {
                   // return const Center(child: Text('No Data Available'));
 
                   return Center(
@@ -210,17 +157,15 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
 
                 return ListView.builder(
                   controller: _scrollController,
-                  itemCount: bookingList.length + (isLoadingMore ? 1 : 0),
+                  itemCount: rentalData.length + (viewModel.isLastPage ? 0 : 1),
                   itemBuilder: (context, index) {
-                    if (index == bookingList.length) {
-                      return isLoadingMore
-                          ? const Center(
-                              child: CircularProgressIndicator(
-                              color: greenColor,
-                            ))
-                          : const SizedBox.shrink(); // Hide if not loading
+                    if (index == rentalData.length) {
+                      return const Center(
+                          child: CircularProgressIndicator(
+                        color: greenColor,
+                      ));
                     }
-
+                    var data = rentalData[index];
                     return Padding(
                       padding:
                           const EdgeInsets.only(bottom: 5, left: 5, right: 5),
@@ -229,44 +174,41 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
                           setState(() {
                             intialloadingIndex = index;
                           });
-                          if (bookingList[index].id != index.toString()) {
-                            Provider.of<RentalViewDetailViewModel>(context,
-                                    listen: false)
-                                .fetchRentalBookedViewDetialViewModelApi(
-                                    context,
-                                    {
-                                      "id": bookingList[index].id,
-                                    },
-                                    bookingList[index].id.toString(),
-                                    widget.myId);
+                          if (data.id != index.toString()) {
+                            // Provider.of<RentalViewDetailViewModel>(context,
+                            //         listen: false)
+                            //     .fetchRentalBookedViewDetialViewModelApi(
+                            //         context,
+                            //         {
+                            //   "id": data.id,
+                            // });
+                            context.push('/rentalForm/rentalBookedPageView',
+                                extra: {
+                                  "bookedId": data.id,
+                                  "useriD": widget.myId,
+                                  "paymentId": data.paymentId
+                                }).then((onValue) {
+                              getRentalHistoryList(isSort: true);
+                            });
 
-                            bookingList[index].bookingStatus == 'CANCELLED'
-                                ? await Provider.of<GetPaymentRefundViewModel>(
-                                        context,
-                                        listen: false)
-                                    .getPaymentRefundApi(
-                                        context: context,
-                                        paymentId: bookingList[index].paymentId)
-                                : null;
+                            
                           } else {
                             const CircularProgressIndicator(
                                 color: Colors.green);
                           }
                         },
-                        loader: status == 'Status.loading' &&
+                        loader: data.id == index.toString() &&
                             intialloadingIndex == index,
-                        time: bookingList[index].pickupTime,
-                        bookingID: bookingList[index].id,
-                        images: bookingList[index].vehicle.images,
-                        pickUplocation: bookingList[index].pickupLocation,
-                        carName: bookingList[index].carType,
-                        status: bookingList[index].bookingStatus,
-                        date: bookingList[index].date,
-                        rentalCharge:
-                            bookingList[index].totalPayableAmount.isEmpty
-                                ? bookingList[index].rentalCharge
-                                : bookingList[index].totalPayableAmount,
-                       
+                        time: data.pickupTime,
+                        bookingID: data.id,
+                        images: data.vehicle.images,
+                        pickUplocation: data.pickupLocation,
+                        carName: data.carType,
+                        status: data.bookingStatus,
+                        date: data.date,
+                        rentalCharge: data.totalPayableAmount.isEmpty
+                            ? data.rentalCharge
+                            : data.totalPayableAmount,
                       ),
                     );
                   },

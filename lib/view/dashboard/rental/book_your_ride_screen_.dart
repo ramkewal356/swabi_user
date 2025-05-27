@@ -190,7 +190,7 @@ class _BookYourCabState extends State<BookYourCab> {
                             setState(() {
                               visibleCoupon = true;
                               discountedAmount = getPercentage();
-                              print(
+                              debugPrint(
                                   'discountpercentage.....,..,.,$discountedAmount');
                             });
                           } else {
