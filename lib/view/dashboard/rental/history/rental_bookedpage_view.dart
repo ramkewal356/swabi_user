@@ -130,8 +130,11 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                 ),
               );
             } else if (viewModel.dataList.status.toString() == "Status.error") {
-              return const Center(
-                child: Text('No Data Found'),
+              return Center(
+                child: Text(
+                  'No Data Found',
+                  style: nodataTextStyle,
+                ),
               );
             } else if (viewModel.dataList.status.toString() ==
                 "Status.completed") {

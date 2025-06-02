@@ -19,8 +19,7 @@ class TermCondition extends StatelessWidget {
           child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Text("TERM AND CONDITION",
-          //     style: pageHeadingTextStyle, textAlign: TextAlign.left),
+         
           const SizedBox(
             height: 10,
           ),

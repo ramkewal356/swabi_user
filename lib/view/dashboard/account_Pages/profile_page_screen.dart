@@ -103,9 +103,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _uploadImage(File file) async {
-    // var profilePic =
-    //     await MultipartFile.fromFile(file.path, filename: "profile.jpg");
-    // Map<String, dynamic> body = {"driverId": widget.user, "image": profilePic};
+   
     try {
       await Provider.of<ProfileImageViewModel>(context, listen: false)
           .postProfileImageApi(context, {

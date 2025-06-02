@@ -33,19 +33,12 @@ class _AlloffersScreenState extends State<AlloffersScreen>
     _tabController = TabController(
         length: tabList.length, vsync: this, initialIndex: _intialIndex);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      // Provider.of<OfferViewModel>(context, listen: false).getOfferList(
-      //     context: context,
-      //     date: DateFormat('dd-MM-yyyy').format(dateTime),
-      //     bookingType: 'ALL');
+    
       getOfferList();
     });
     _tabController?.addListener(() {
       _intialIndex = _tabController?.index ?? 0;
-      // setState(() {
-      //   currentPage = 0;
-      //   allRaiseList.clear();
-      //   isLastPage = false;
-      // });
+     
       getOfferList();
     });
   }

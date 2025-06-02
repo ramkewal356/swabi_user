@@ -22,9 +22,7 @@ class _RaiseissuedetailsState extends State<Raiseissuedetails>
   final ScrollController _scrollController = ScrollController();
 
   List<Content> allRaiseList = [];
-  // List<Data> openRaiseList = [];
-  // List<Data> inProgressRaiseList = [];
-  // List<Data> resolveRaiseList = [];
+ 
   bool isLastPage = false;
   bool isLoadingMore = false;
   int currentPage = 0;

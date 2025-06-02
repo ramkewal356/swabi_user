@@ -155,8 +155,11 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
           );
         } else if (viewModel.getPackageHistoryDetailById.status.toString() ==
             'Status.error') {
-          return const Center(
-            child: Text('No Data Found'),
+          return Center(
+            child: Text(
+              'No Data Found',
+              style: nodataTextStyle,
+            ),
           );
         } else if (viewModel.getPackageHistoryDetailById.status.toString() ==
             'Status.completed') {
@@ -487,30 +490,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
     });
   }
 
-  // Future<List<double>?> getCoordinates(String location) async {
-  //   try {
-  //     final places = GoogleMapsPlaces(
-  //       apiKey: apiKey,
-  //       apiHeaders: await const GoogleApiHeaders().getHeaders(),
-  //     );
 
-  //     var locations = await places
-  //         .searchByText(location)
-  //         .then((result) => result.results)
-  //         .then((results) => results.map((result) => result.geometry!.location))
-  //         .then((locations) => locations.toList());
-
-  //     if (locations.isNotEmpty) {
-  //       debugPrint("${locations.first.lat}Location");
-  //       return [locations.first.lat, locations.first.lng];
-  //     } else {
-  //       return [];
-  //     }
-  //   } catch (e) {
-  //     debugPrint("Error getting coordinates: $e");
-  //     return [];
-  //   }
-  // }
 
   String getIsoCode(String countryCode) {
     var list = countries

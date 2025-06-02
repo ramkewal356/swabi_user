@@ -175,13 +175,7 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
                             intialloadingIndex = index;
                           });
                           if (data.id != index.toString()) {
-                            // Provider.of<RentalViewDetailViewModel>(context,
-                            //         listen: false)
-                            //     .fetchRentalBookedViewDetialViewModelApi(
-                            //         context,
-                            //         {
-                            //   "id": data.id,
-                            // });
+                           
                             context.push('/rentalForm/rentalBookedPageView',
                                 extra: {
                                   "bookedId": data.id,
@@ -223,6 +217,6 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
             },
           );
         }));
-    // );
+
   }
 }

@@ -85,20 +85,7 @@ class _EditProfiePageState extends State<EditProfiePage> {
       Provider.of<GetCountryStateListViewModel>(context, listen: false)
             .getStateList(
                 context: context, country: controllers[6].text);
-      // var countryProvider =
-      //     Provider.of<GetCountryStateListViewModel>(context, listen: false);
-      // countryProvider.getAccessToken(context: context).then((onValue) {
-      //   debugPrint('token,.....c//.c.... $onValue');
-      //   setState(() {
-      //     accessToken = onValue['auth_token'].toString();
-      //   });
-      //   // countryProvider.getCountryList(context: context, token: accessToken);
-      //   Provider.of<GetCountryStateListViewModel>(context, listen: false)
-      //       .getStateList(
-      //           context: context,
-      //           token: accessToken,
-      //           country: controllers[6].text);
-      // });
+     
     } catch (e) {
       debugPrint('error $e');
     }

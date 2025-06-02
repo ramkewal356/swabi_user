@@ -344,22 +344,7 @@ class GetPackageHistoryDetailByIdViewModel with ChangeNotifier {
       setDataList(ApiResponse.error(error.toString()));
     }
     return null;
-    // _myRepo
-    //     .getPackageHistoryDetailByIdRepositoryApi(context: context, query: data)
-    //     .then((value) async {
-    //   setDataList(ApiResponse.completed(value));
-    //   // context.push("/package/packageDetails",extra: {"packageID":packID,"userId":uId,"bookDate":dateBooking});
-    //   context.push("/package/packageDetailsPageView", extra: {
-    //     "user": userID,
-    //     "book": bookingID,
-    //     "paymentId": value?.data.paymentId
-    //   });
-    //   debugPrint('Get Package History Detail By Id ViewModel Success');
-    // }).onError((error, stackTrace) {
-    //   debugPrint(error.toString());
-    //   debugPrint('Get Package History Detail By Id ViewModel Failed');
-    //   setDataList(ApiResponse.error(error.toString()));
-    // });
+   
   }
 
   Future<void> fetchPackageHistoryDetailByIdViewModelApi(

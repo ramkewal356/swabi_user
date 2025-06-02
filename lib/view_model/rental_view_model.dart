@@ -195,10 +195,7 @@ class RentalBookingCancelViewModel with ChangeNotifier {
       String paymentId) async {
     try {
       setDataList(ApiResponse.loading());
-      // // debugPrint('bncnvccnbcbncbc,,......,,,,,,,,,,');
-      // setDataList(ApiResponse.error(''));
-      // // context.pop();
-      // return null;
+ 
       await _myRepo
           .rentalBookingCancelRepositoryApi(context: context, query: data)
           .then((onValue) {
