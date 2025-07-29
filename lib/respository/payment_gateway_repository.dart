@@ -29,7 +29,7 @@ class PaymentCreateOrderIDRepository {
 
       debugPrint('error $error');
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: error);
+      http.handleErrorResponse(error: error);
       rethrow;
     }
   }
@@ -59,7 +59,7 @@ class PaymentVerifyRepository {
       debugPrint('error $error');
       http.handleErrorResponse(
         // ignore: use_build_context_synchronously
-        context: context,
+       
         error: error,
       );
     }
@@ -87,7 +87,7 @@ class PaymentTrasactionRespository {
     } catch (error) {
       debugPrint('error $error');
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: error);
+      http.handleErrorResponse(error: error);
       rethrow;
     }
   }
@@ -110,7 +110,7 @@ class PaymentTrasactionRespository {
     } catch (error) {
       debugPrint('error $error');
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: error);
+      http.handleErrorResponse(error: error);
       rethrow;
     }
   }

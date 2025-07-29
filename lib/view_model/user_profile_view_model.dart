@@ -7,115 +7,107 @@ import 'package:flutter_cab/model/common_model.dart';
 import 'package:flutter_cab/model/user_profile_model.dart';
 import 'package:flutter_cab/respository/user_profi_repository.dart';
 import 'package:flutter_cab/utils/utils.dart';
+import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+
 
 class UserProfileViewModel with ChangeNotifier {
   final _myRepo = UserProfileRepository();
-  ApiResponse<UserProfileModel> DataList = ApiResponse.loading();
+  ApiResponse<UserProfileModel> dataList = ApiResponse.initial();
 
   setDataList(ApiResponse<UserProfileModel> response) {
-    DataList = response;
+    dataList = response;
     notifyListeners();
   }
 
-  // TextEditingController stateController = TextEditingController();
+ 
   String userStateName = '';
   Future<UserProfileModel?> fetchUserProfileViewModelApi(
-    BuildContext context,
-    data,
-    /*String uid */
+  
+   
   ) async {
+    String vendorId = await UserViewModel().getUserId() ?? '';
+    Map<String, dynamic> query = {"userId": vendorId};
     try {
       setDataList(ApiResponse.loading());
       var resp =
-          await _myRepo.userProfileRepositoryApi(context: context, query: data);
+          await _myRepo.userProfileRepositoryApi(query: query);
       if (resp.status.httpCode == '200') {
         setDataList(ApiResponse.completed(resp));
         userStateName = resp.data.state;
         notifyListeners();
       }
-      debugPrint('djhsbdjhddbnbnb...>>>>>>>>>>$userStateName');
+
       return resp;
     } catch (error) {
       setDataList(ApiResponse.error(error.toString()));
     }
     return null;
-   
   }
 }
 
 // ///Profile Image View Model
 class ProfileImageViewModel with ChangeNotifier {
   final _myRepo = ProfileImageRepository();
-  ApiResponse<String> DataList = ApiResponse.loading();
+  ApiResponse<CommonModel> dataList = ApiResponse.initial();
 
-  setDataList(ApiResponse<String> response) {
-    DataList = response;
+  setDataList(ApiResponse<CommonModel> response) {
+    dataList = response;
     notifyListeners();
   }
 
-  Future<void> postProfileImageApi(BuildContext context, dynamic data) async {
-    _myRepo.fetchProfileImageApi(data).then((value) async {
-      setDataList(ApiResponse.completed(value));
-      // context.pop();
-      Utils.toastSuccessMessage(
-        DataList.data ?? "Profile Uploaded Successfully",
-      );
-      // print('Profile Upload Completed');
-    }).onError((error, stackTrace) {
-      setDataList(ApiResponse.error(error.toString()));
-      // print('Profile Failed');
-      debugPrint(error.toString());
-      // Utils.flushBarErrorMessage(error.toString(), context);
-    });
+  Future<void> postProfileImageApi(
+      Map<String, dynamic> body, String userType) async {
+    try {
+      setDataList(ApiResponse.loading());
+      var resp =
+          await _myRepo.fetchProfileImageApi(body: body, userType: userType);
+      setDataList(ApiResponse.completed(resp));
+      Utils.toastSuccessMessage(resp.data?.body ?? '');
+    } catch (e) {
+      debugPrint('error $e');
+      setDataList(ApiResponse.error(e.toString()));
+    }
+  
   }
 }
 
 ///User Profile Update View Model
 class UserProfileUpdateViewModel with ChangeNotifier {
   final _myRepo = UserProfileUpdateRepository();
-  ApiResponse<UserProfileUpdateModel> dataList = ApiResponse.loading();
+  ApiResponse<bool> dataList = ApiResponse.initial();
   bool isLoading = false;
-  setDataList(ApiResponse<UserProfileUpdateModel> response) {
+  setDataList(ApiResponse<bool> response) {
     dataList = response;
     notifyListeners();
   }
 
-  Future<void> fetchUserProfileUpdateViewModelApi(
-      BuildContext context, data, String uid) async {
-    setDataList(ApiResponse.loading());
-    isLoading = true;
-    notifyListeners();
+  Future<bool> profileUpdateViewModelApi(
+      {required Map<String, dynamic> body, required String userType}) async {
+    try {
+      setDataList(ApiResponse.loading());
+      var resp = await _myRepo.userProfileUpdateRepositoryApi(
+          body: body, userType: userType);
 
-    _myRepo
-        .userProfileUpdateRepositoryApi(context: context, body: data)
-        .then((value) async {
-      Provider.of<UserProfileViewModel>(context, listen: false)
-          .fetchUserProfileViewModelApi(
-              context, {"userId": uid}).then((value) => debugPrint("k"));
+      if (resp) {
+        setDataList(ApiResponse.completed(true));
+        return true;
+      } else {
+        setDataList(ApiResponse.error("Update failed"));
+        return false;
+      }
+    } catch (e) {
+      setDataList(ApiResponse.error(e.toString()));
+      return false;
+    }
 
-      setDataList(ApiResponse.completed(value));
-      context.pop();
-
-      Utils.toastSuccessMessage(
-        "Profile Updated Successfully",
-      );
-      isLoading = false;
-      notifyListeners();
-    }).onError((error, stackTrace) {
-      // debugPrint(error.toString());
-      // print("api failed");
-      setDataList(ApiResponse.error(error.toString()));
-      isLoading = false;
-      notifyListeners();
-    });
+   
   }
 }
 
 class ChangePasswordViewModel with ChangeNotifier {
   final _myRepo = UserProfileUpdateRepository();
-  ApiResponse<ChangePasswordModel> dataList = ApiResponse.loading();
+  ApiResponse<ChangePasswordModel> dataList = ApiResponse.initial();
 
   setDataList(ApiResponse<ChangePasswordModel> response) {
     dataList = response;
@@ -208,6 +200,7 @@ class ResetPasswordViewModel with ChangeNotifier {
       var resp = await _myRepo.resetPasswordApi(context: context, query: query);
       if (resp?.status?.httpCode == '200') {
         Utils.toastSuccessMessage(resp?.data?.body ?? '');
+        // ignore: use_build_context_synchronously
         context.push('/login');
         isLoading2 = false;
         notifyListeners();

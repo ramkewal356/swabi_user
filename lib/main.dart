@@ -12,6 +12,8 @@ import 'package:flutter_cab/view_model/registration_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
 import 'package:flutter_cab/view_model/user_profile_view_model.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
+import 'package:flutter_cab/view_model/vendor_dashboard_view_model.dart';
+import 'package:flutter_cab/view_model/vendor_view_model.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:provider/provider.dart';
@@ -87,6 +89,9 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (context) => GetAllActivityViewModel()),
         ChangeNotifierProvider(
             create: (context) => GetStateWithImageListViewModel()),
+        ChangeNotifierProvider(create: (create) => VendorViewModel()),
+        ChangeNotifierProvider(create: (create) => VendorDashboardViewModel())
+
       ],
       child: const MyApp(),
     ));

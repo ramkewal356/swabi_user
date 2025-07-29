@@ -1,11 +1,6 @@
-
-
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/app_url.dart';
-import 'package:flutter_cab/data/network/base_apiservices.dart';
-import 'package:flutter_cab/data/network/network_apiservice.dart';
 import 'package:flutter_cab/model/changepassword_model.dart';
 import 'package:flutter_cab/model/common_model.dart';
 import 'package:flutter_cab/model/get_state_name_model.dart';
@@ -17,7 +12,7 @@ class UserProfileRepository {
   // final BaseApiServices _apiServices = NetworkApiService();
 
   Future<UserProfileModel> userProfileRepositoryApi(
-      {required BuildContext context,
+      {
       required Map<String, dynamic> query}) async {
     var http = HttpService(
         isAuthorizeRequest: false,
@@ -29,64 +24,90 @@ class UserProfileRepository {
     try {
       Response<dynamic>? response = await http.request<dynamic>();
       debugPrint("UserProfile Repo api success ${response?.data}");
-      // dynamic response = await _apiServices
-      //     .getGetApiResponse("http://swabi.ap-south-1.elasticbeanstalk.com"
-      //         "/user/get_user_by_userId?userId=${data["userId"]}");
-      // print("UserProfile Repo api success $data");
+
       var resp = UserProfileModel.fromJson(response?.data);
       return resp;
     } catch (e) {
       debugPrint("UserProfile Repo api not success");
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: e);
+      http.handleErrorResponse(error: e);
       rethrow;
     }
   }
 }
 
 class ProfileImageRepository {
-  final BaseApiServices _apiServices = NetworkApiService();
-
-  Future<dynamic> fetchProfileImageApi(data) async {
-    try {
-      /// for image
-      dynamic response = await _apiServices.uploadImageHTTP2(
-          // "http://swabi.ap-south-1.elasticbeanstalk.com/"
-          "${AppUrl.baseUrl}"
-          "/user/upload_profile",
-          data["image"],
-          data['userId']);
-
-      return response["data"]["body"];
-    } catch (e) {
-      if (kDebugMode) {
-        // print("$e profile image field");
-      }
-      rethrow;
-    }
-  }
-}
-
-class UserProfileUpdateRepository {
-  Future<dynamic> userProfileUpdateRepositoryApi(
-      {required BuildContext context,
-      required Map<String, dynamic> body}) async {
+  
+  Future<CommonModel> fetchProfileImageApi(
+      {required Map<String, dynamic> body, required String userType}) async {
     var http = HttpService(
         isAuthorizeRequest: false,
         baseURL: AppUrl.baseUrl,
-        endURL: AppUrl.updateProfileUrl,
+        endURL: userType == 'USER'
+            ? AppUrl.updateProfilePicUrl
+            : AppUrl.updateVendorProfilePicUrl,
+        methodType:
+            userType == 'USER' ? HttpMethodType.PUT : HttpMethodType.PATCH,
+        bodyType: HttpBodyType.FormData,
+        body: body);
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("passord change response ${response?.data}");
+      var resp = CommonModel.fromJson(response?.data);
+      return resp;
+    } catch (e) {
+      debugPrint("UserProfile Update Repo api not success");
+      // ignore: use_build_context_synchronously
+      http.handleErrorResponse(error: e);
+      rethrow;
+    }
+  }
+  // Future<dynamic> fetchProfileImageApi(data, String userType) async {
+  //   try {
+  //     final String path = userType == 'VENDOR'
+  //         ? '/vendor/upload_vendor_profile'
+  //         : '/user/upload_profile';
+
+  //     /// for image
+  //     dynamic response = await _apiServices.uploadImageHTTP2(
+  //         // "http://swabi.ap-south-1.elasticbeanstalk.com/"
+  //         "${AppUrl.baseUrl}"
+  //         '$path',
+  //         data["image"],
+  //         userType == 'USER' ? data['userId'] : data["vendorId"]);
+  //     debugPrint('vbnm,cdksdsjdjcbnm${response["data"]["body"]}');
+  //     return response["data"]["body"];
+  //   } catch (e) {
+  //     if (kDebugMode) {
+  //       // print("$e profile image field");
+  //     }
+  //     rethrow;
+  //   }
+  // }
+}
+
+
+class UserProfileUpdateRepository {
+  Future<bool> userProfileUpdateRepositoryApi(
+      {required Map<String, dynamic> body, required String userType}) async {
+    var http = HttpService(
+        isAuthorizeRequest: false,
+        baseURL: AppUrl.baseUrl,
+        endURL: userType == 'USER'
+            ? AppUrl.updateProfileUrl
+            : AppUrl.updateVendorProfilecUrl,
         methodType: HttpMethodType.PUT,
         bodyType: HttpBodyType.JSON,
         body: body);
     try {
       Response<dynamic>? response = await http.request<dynamic>();
       debugPrint("passord change response ${response?.data}");
-      var resp = UserProfileUpdateModel.fromJson(response?.data);
-      return resp;
+      // var resp = UserProfileUpdateModel.fromJson(response?.data);
+      return true;
     } catch (e) {
       debugPrint("UserProfile Update Repo api not success");
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: e);
+      http.handleErrorResponse(error: e);
       rethrow;
     }
   }
@@ -109,7 +130,7 @@ class UserProfileUpdateRepository {
     } catch (error) {
       debugPrint('error $error');
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: error);
+      http.handleErrorResponse(error: error);
       rethrow;
     }
   }
@@ -132,7 +153,7 @@ class UserProfileUpdateRepository {
     } catch (error) {
       debugPrint('error $error');
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: error);
+      http.handleErrorResponse(error: error);
     }
     return null;
   }
@@ -155,7 +176,7 @@ class UserProfileUpdateRepository {
     } catch (error) {
       debugPrint('error $error');
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: error);
+      http.handleErrorResponse(error: error);
     }
     return null;
   }
@@ -178,7 +199,7 @@ class UserProfileUpdateRepository {
     } catch (error) {
       debugPrint('error $error');
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: error);
+      http.handleErrorResponse(error: error);
     }
     return null;
   }
@@ -205,7 +226,7 @@ class UserProfileUpdateRepository {
     } catch (error) {
       debugPrint('error.. $error');
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: error);
+      http.handleErrorResponse(error: error);
       rethrow;
     }
   }
@@ -222,10 +243,10 @@ class UserProfileUpdateRepository {
       isAuthorizeRequest: false,
       methodType: HttpMethodType.GET,
     );
-   
+
     try {
       Response<dynamic>? response = await http.request<dynamic>();
-     
+
       debugPrint("Response: ${response?.data}");
       var resp = GetStateNameModel.fromJson(response?.data);
       return resp;

@@ -46,6 +46,7 @@ class CustomButton extends StatefulWidget {
   const CustomButton({super.key, required this.options, required this.onTap});
 
   @override
+  // ignore: library_private_types_in_public_api
   _CustomButtonState createState() => _CustomButtonState();
 }
 

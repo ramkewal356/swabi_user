@@ -1,5 +1,6 @@
 import 'package:flutter_cab/utils/assets.dart';
 
+// ignore: constant_identifier_names
 const String GOOGLE_MAP_API_KEY = "AIzaSyCJBKoScbpy8uPA9kkGb_4WjuNm3j1PUAc";
 List<Map<String, dynamic>> stateDetail = [
   {"image": tour, "stateName": "Abu Dabi"},

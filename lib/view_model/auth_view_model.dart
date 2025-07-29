@@ -1,10 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../respository/user.dart';
-import '/model/user_model.dart';
 import '/utils/utils.dart';
 
 class AuthViewModel with ChangeNotifier {
@@ -28,17 +26,17 @@ class AuthViewModel with ChangeNotifier {
     notifyListeners();
   }
 
- 
-
-  Future<void> userLoginApi(
-      {required BuildContext context,
-      required String email,
-      required String password,
-      required bool rememberMe}) async {
+  Future<void> userLoginApi({
+    required BuildContext context,
+    required String email,
+    required String password,
+    required bool rememberMe,
+    required String userType,
+  }) async {
     Map<String, String> body = {
       'email': email,
       'password': password,
-      'userType': 'USER'
+      'userType': userType
     };
     try {
       setLoading(true);
@@ -46,20 +44,25 @@ class AuthViewModel with ChangeNotifier {
         if (value?.status?.httpCode == '200') {
           final userPreference =
               Provider.of<UserViewModel>(context, listen: false);
-       
-          // userPreference.saveEmail(value['user']);
-          
 
-          userPreference.saveToken(UserModel(token: value?.data?.token));
-          userPreference
-              .saveUserId(UserModel(userId: value?.data?.userId.toString()));
+          // userPreference.saveEmail(value['user']);
+
+          userPreference.saveUser(
+              userId: value?.data?.userId.toString() ?? '',
+              token: value?.data?.token ?? '',
+              userType: value?.data?.userType ?? "");
           rememberMe
               ? userPreference.saveRememberMe(email, password, rememberMe)
               : userPreference.clearRememberMe();
           debugPrint('token: ${value?.data?.token}');
-          debugPrint('user: ${value?.data?.userId.toString()}');
+          debugPrint('usertype: ${value?.data?.userType ?? ''}');
+          if (value?.data?.userType == 'USER') {
+            context.pushReplacement('/user_dashboard');
+          } else if (value?.data?.userType == 'VENDOR') {
+            context.pushReplacement('/vendor_dashboard');
+          }
           Utils.toastSuccessMessage("Login Successfully");
-          context.go('/');
+
           setLoading(false);
         }
       }).onError((error, stackTrace) {

@@ -32,7 +32,7 @@ class RaiseissueRepository {
       }
     } catch (dioError) {
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: dioError);
+      http.handleErrorResponse(error: dioError);
     }
     return null;
   }
@@ -60,7 +60,7 @@ class RaiseissueRepository {
       }
     } catch (dioError) {
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: dioError);
+      http.handleErrorResponse(error: dioError);
     }
     return null;
   }
@@ -88,7 +88,7 @@ class RaiseissueRepository {
       }
     } catch (dioError) {
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: dioError);
+      http.handleErrorResponse(error: dioError);
     }
     return null;
   }
@@ -116,7 +116,7 @@ class RaiseissueRepository {
       }
     } catch (dioError) {
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: dioError);
+      http.handleErrorResponse(error: dioError);
     }
     return null;
   }

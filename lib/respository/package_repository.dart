@@ -10,7 +10,7 @@ import 'package:flutter_cab/view_model/services/http_service.dart';
 ///Get Package List Repo
 class GetPackageListRepository {
   Future<GetPackageListModel> getPackageListRepositoryApi(
-      {required BuildContext context,
+      {
       required Map<String, dynamic> query}) async {
     var http = HttpService(
         baseURL: AppUrl.baseUrl,
@@ -26,7 +26,7 @@ class GetPackageListRepository {
       return resp;
     } catch (e) {
       debugPrint("Get Package List Repo Field $e");
-      // http.handleErrorResponse(context: context, error: e);
+      http.handleErrorResponse(error: e);
       rethrow;
     }
   }
@@ -52,7 +52,7 @@ class GetPackageActivityByIdRepository {
     } catch (e) {
       debugPrint("Get Package Activity By Id Repo Field $e");
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: e);
+      http.handleErrorResponse(error: e);
       rethrow;
     }
   }
@@ -76,7 +76,7 @@ class CalculatePriceRepository {
     } catch (e) {
       debugPrint("Get Package Activity By Id Repo Field $e");
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: e);
+      http.handleErrorResponse(error: e);
       rethrow;
     }
   }
@@ -102,7 +102,7 @@ class GetPackageBookedByIdRepository {
     } catch (e) {
       debugPrint("Get Package Booked By Id Repo Field $e");
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: e);
+      http.handleErrorResponse(error: e);
       rethrow;
     }
   }
@@ -126,7 +126,7 @@ class GetPackageBookedByIdRepository {
     } catch (e) {
       debugPrint("Get Package Booked By Id Repo Field $e");
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: e);
+      http.handleErrorResponse(error: e);
       rethrow;
     }
   }
@@ -153,7 +153,7 @@ class GetPackageHistoryRepository {
     } catch (e) {
       debugPrint("Get Package History Repo Field $e");
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: e);
+      http.handleErrorResponse(error: e);
       rethrow;
     }
   }
@@ -186,7 +186,7 @@ class GetPackageHistoryDetailByIdRepository {
     } catch (e) {
       debugPrint("Get Package History Detail By Id Repo Field $e");
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: e);
+      http.handleErrorResponse(error: e);
       rethrow;
     }
   }
@@ -213,7 +213,7 @@ class PackageCancelRepository {
     } catch (e) {
       debugPrint("Package Cancel Repo Field");
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: e);
+      http.handleErrorResponse(error: e);
       debugPrint(e.toString());
       rethrow;
     }
@@ -245,7 +245,7 @@ class AddPickUpLocationPackageRepository {
     } catch (e) {
       debugPrint("Add PickUp Location Package Repo Fieldb$e");
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: e);
+      http.handleErrorResponse(error: e);
 
       rethrow;
     }
@@ -297,7 +297,7 @@ class ChangeMobileRepository {
       return resp;
     } catch (error) {
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: error);
+      http.handleErrorResponse(error: error);
     }
     return null;
   }

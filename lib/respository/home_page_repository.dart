@@ -8,9 +8,7 @@ import 'package:flutter_cab/model/package_models.dart';
 import 'package:flutter_cab/view_model/services/http_service.dart';
 
 class HomePageRepository {
-  Future<GetActivityCategoryModel> getActivityCategoryList({
-    required BuildContext context,
-  }) async {
+  Future<GetActivityCategoryModel> getActivityCategoryList() async {
     var http = HttpService(
         baseURL: AppUrl.baseUrl,
         endURL: AppUrl.getActivityCategoryList,
@@ -25,13 +23,13 @@ class HomePageRepository {
     } catch (e) {
       debugPrint("Get Package List Repo Field $e");
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: e);
+      http.handleErrorResponse(error: e);
       rethrow;
     }
   }
 
   Future<GetPackageListModel> getPackageListApi(
-      {required BuildContext context,
+      {
       required Map<String, dynamic> query}) async {
     var http = HttpService(
         baseURL: AppUrl.baseUrl,
@@ -48,7 +46,7 @@ class HomePageRepository {
     } catch (e) {
       debugPrint("Get Package List Repo Field $e");
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: e);
+      http.handleErrorResponse(error: e);
       rethrow;
     }
   }
@@ -71,7 +69,7 @@ class HomePageRepository {
     } catch (e) {
       debugPrint("Get Package List Repo Field $e");
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: e);
+      http.handleErrorResponse(error: e);
       rethrow;
     }
   }
@@ -93,7 +91,7 @@ class HomePageRepository {
     } catch (e) {
       debugPrint("Get Package List Repo Field $e");
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: e);
+      http.handleErrorResponse(error: e);
       rethrow;
     }
   }

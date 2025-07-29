@@ -181,11 +181,11 @@ class CustomButtonSmall extends StatelessWidget {
   }
 }
 
-class Login_SignUpBtn extends StatelessWidget {
+class LoginSignUpBtn extends StatelessWidget {
   final VoidCallback onTap;
   final String sideHeading;
   final String btnHeading;
-  const Login_SignUpBtn(
+  const LoginSignUpBtn(
       {super.key,
       required this.onTap,
       required this.sideHeading,

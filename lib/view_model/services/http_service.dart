@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
@@ -59,6 +61,7 @@ class HttpService<T> {
     // print({'token....jhjh': this.headers});
   }
 
+  // ignore: avoid_shadowing_type_parameters
   Future<Response<T>>? request<T>() {
     dynamic bodyData;
     if (this.headers == null) {
@@ -77,19 +80,19 @@ class HttpService<T> {
           'Content-Type': 'application/x-www-form-urlencoded',
         });
         bodyData = this.body != null ? FormData.fromMap(this.body!) : null;
-        break;
+        
       case HttpBodyType.JSON:
         this.headers?.addAll({
           'Content-Type': 'application/json',
         });
         bodyData = this.body != null ? jsonEncode(this.body) : null;
-        break;
+        
       case HttpBodyType.XML:
         bodyData = this.body!["data"];
-        break;
+        
       default:
         bodyData = this.body;
-        break;
+        
     }
 
     // Method Type check
@@ -109,7 +112,7 @@ class HttpService<T> {
             receiveDataWhenStatusError: true,
           ),
         );
-        break;
+        
       case HttpMethodType.POST:
         // FormData dataaa = bodyData;
         debugPrint("bodyData formdata $bodyData");
@@ -128,7 +131,7 @@ class HttpService<T> {
             receiveDataWhenStatusError: true,
           ),
         );
-        break;
+        
       case HttpMethodType.PUT:
         return _http!.put<T>(
           this.baseURL! + this.endURL!,
@@ -143,7 +146,7 @@ class HttpService<T> {
             receiveDataWhenStatusError: true,
           ),
         );
-        break;
+        
       case HttpMethodType.PATCH:
         return _http!.patch<T>(
           this.baseURL! + this.endURL!,
@@ -158,7 +161,7 @@ class HttpService<T> {
             receiveDataWhenStatusError: true,
           ),
         );
-        break;
+        
       case HttpMethodType.DELETE:
        
         return _http!.delete<T>(
@@ -174,14 +177,14 @@ class HttpService<T> {
             receiveDataWhenStatusError: true,
           ),
         );
-        break;
+        
       default:
         return null;
     }
   }
 
   handleErrorResponse({
-    required BuildContext context,
+    // required BuildContext context,
     dynamic error,
     BaseResponseModel? errorResponse,
     bool tryParse = true,
@@ -213,11 +216,11 @@ class HttpService<T> {
         // print({"error 400": error.response.data["message"]});
         if (message != null) {
           Fluttertoast.showToast(msg: message);
-          break;
+          
         } else {
           Fluttertoast.showToast(msg: kStringBadRequest);
         }
-        break;
+        
       case 400:
         // bad request
         // print({"error 400": error.response.data["message"]});
@@ -225,11 +228,11 @@ class HttpService<T> {
           // Utils.flushBarErrorMessage(message, context);
           Fluttertoast.showToast(
               msg: message, backgroundColor: redColor, textColor: background);
-          break;
+          
         } else {
           Fluttertoast.showToast(msg: kStringBadRequest);
         }
-        break;
+        
       case 401:
         // unauthorize
         if (!isLogin) {
@@ -239,30 +242,30 @@ class HttpService<T> {
         } else {
           Fluttertoast.showToast(msg: kStringInvalidCredentials);
         }
-        break;
+        
       case 404:
         // Forbidden
         if (message != null) {
           Fluttertoast.showToast(msg: message);
-          break;
+          
         }
         Fluttertoast.showToast(msg: kStringForbidden);
-        break;
+        
       case 500:
         // internal server error
         if (message != null) {
           Fluttertoast.showToast(msg: message);
-          break;
+          
         }
         Fluttertoast.showToast(msg: kStringServerError);
-        break;
+        
       default:
         if (message != null) {
           Fluttertoast.showToast(msg: message);
-          break;
+          
         }
         Fluttertoast.showToast(msg: kStringSomethingWentWrong);
-        break;
+        
     }
     if (postHandleError != null) {
       postHandleError();

@@ -24,7 +24,7 @@ class NotificationRepository {
       return resp;
     } catch (error) {
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: error);
+      http.handleErrorResponse(error: error);
       rethrow;
     }
   }
@@ -46,7 +46,7 @@ class NotificationRepository {
       return resp;
     } catch (error) {
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: error);
+      http.handleErrorResponse(error: error);
       rethrow;
     }
   }

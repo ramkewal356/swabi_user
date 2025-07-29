@@ -7,8 +7,13 @@ class CustomModalbottomsheet extends StatefulWidget {
   final String title;
   final Widget child;
   final bool? exit;
+  final bool isChangePassword;
   const CustomModalbottomsheet(
-      {super.key, required this.title, required this.child, this.exit = false});
+      {super.key,
+      required this.title,
+      required this.child,
+      this.exit = false,
+      this.isChangePassword = false});
 
   @override
   State<CustomModalbottomsheet> createState() => _CustomModalbottomsheetState();
@@ -17,7 +22,39 @@ class CustomModalbottomsheet extends StatefulWidget {
 class _CustomModalbottomsheetState extends State<CustomModalbottomsheet> {
   @override
   Widget build(BuildContext context) {
-    return CustomButtonSmall(
+    return widget.isChangePassword
+        ? TextButton.icon(
+            style: ButtonStyle(
+              // ignore: deprecated_member_use
+              side: MaterialStateProperty.all(
+                const BorderSide(
+                  color: btnColor, // Border color
+                  width: 1.5, // Border width
+                ),
+              ),
+              // ignore: deprecated_member_use
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(8), // Optional: Rounded corners
+                ),
+              ),
+            ),
+            onPressed: () {
+              widget.exit == true ? context.pop() : null;
+              _showModalBottomSheet(context);
+            },
+            label: Text(
+              widget.title,
+              style:
+                  const TextStyle(color: btnColor, fontWeight: FontWeight.w600),
+            ),
+            icon: const Icon(
+              Icons.lock,
+              color: btnColor,
+            ),
+          )
+        : CustomButtonSmall(
         btnHeading: widget.title,
         onTap: () {
           widget.exit == true ? context.pop() : null;
@@ -26,7 +63,6 @@ class _CustomModalbottomsheetState extends State<CustomModalbottomsheet> {
   }
 
   Future<void> _showModalBottomSheet(BuildContext context) {
-  
     return showModalBottomSheet(
         context: context,
         isDismissible: false,

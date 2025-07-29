@@ -1,32 +1,30 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 
 class SplashServices {
-  // Future<UserModel> getUserData ()=> UserViewModel().getUser();
 
   UserViewModel userViewModel = UserViewModel();
 
-  void login(BuildContext context) {
-    userViewModel.getUser().then((value) async {
-      if (value.token == null || value.token == '') {
-        await Future.delayed(const Duration(seconds: 4));
-        debugPrint('Token ${value.token}');
-        // context.push('/login');
-        context.push('/landing_screen');
-        // context.push('/bottom_bar_screen');
-
+  void login(BuildContext context) async {
+    String? token = await userViewModel.getToken();
+    String userTpe = await userViewModel.getUserType() ?? '';
+    try {
+      
+      if (token != null || (token ?? '').isNotEmpty) {
+        if (userTpe == 'USER') {
+          // ignore: use_build_context_synchronously
+          context.pushReplacement('/user_dashboard');
+        } else if (userTpe == 'VENDOR') {
+          // ignore: use_build_context_synchronously
+          context.pushReplacement('/vendor_dashboard');
+        }
       } else {
-        await Future.delayed(const Duration(seconds: 4));
-        // context.push('/');
-     
-        context.push('/');
+        // ignore: use_build_context_synchronously
+        context.push('/landing_screen');
       }
-    }).onError((error, stackTrace) {
-      if (kDebugMode) {
-        print(error.toString());
-      }
-    });
+    } catch (e) {
+      debugPrint('error $e');
+    }
   }
 }

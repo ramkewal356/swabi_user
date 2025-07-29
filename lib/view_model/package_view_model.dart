@@ -19,7 +19,7 @@ class GetPackageListViewModel with ChangeNotifier {
   bool isLoadingMore = false;
   List<Content> _packageList = [];
   final _myRepo = GetPackageListRepository();
-  ApiResponse<List<Content>> getPackageList = ApiResponse.loading();
+  ApiResponse<List<Content>> getPackageList = ApiResponse.initial();
   List<Content> get items => _packageList;
   setDataList(ApiResponse<List<Content>> response) {
     getPackageList = response;
@@ -34,16 +34,19 @@ class GetPackageListViewModel with ChangeNotifier {
   }
 
   Future<void> fetchGetPackageListViewModelApi(
-      {required BuildContext context,
+      {
       required String date,
       required String country,
       required String state,
-      required bool isPagination}) async {
-    if (isLoadingMore || isLastPage) return;
-    if (!isPagination) {
+      required bool isPagination,
+      required bool isSearch}) async {
+    if (isLoadingMore) return;
+    if (!isPagination || isSearch) {
       resetPagination();
       setDataList(ApiResponse.loading());
     }
+    if (isLastPage) return;
+
     isLoadingMore = true;
     notifyListeners();
     Map<String, dynamic> query = {
@@ -58,8 +61,7 @@ class GetPackageListViewModel with ChangeNotifier {
     };
     try {
       // if (currentPage == 0) setDataList(ApiResponse.loading());
-      var resp = await _myRepo.getPackageListRepositoryApi(
-          context: context, query: query);
+      var resp = await _myRepo.getPackageListRepositoryApi(query: query);
       List<Content> newData = resp.data.content;
       List<Content> allData =
           (currentPage == 0) ? newData : [..._packageList, ...newData];

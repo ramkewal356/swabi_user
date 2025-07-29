@@ -16,6 +16,7 @@ class NetworkApiService extends BaseApiServices {
   @override
   Future uploadImageHTTP(
     url,
+    // ignore: avoid_renaming_method_parameters
     dynamic file,
   ) async {
     dynamic responseJson;
@@ -42,90 +43,11 @@ class NetworkApiService extends BaseApiServices {
     return jsonDecode(responseJson);
   }
 
-  //    @override
-  //     Future uploadImageHTTP2(
-  //     url,
-  //     dynamic file,
-  //     ) async {
-  //   dynamic responseJson;
-  //   try {
-  //     final prefsToken = await SharedPreferences.getInstance();
-  //     dynamic token = prefsToken.getString('token');
-  //     Map<String, String> headers = {
-  //       'Content-Type': 'multipart/form-data',
-  //       'token': token,
-  //       // 'Content-Length':'<calculated when request is sent>',
-  //       // 'Host':'<calculated when request is sent>'
-  //     };
-  //     var request = http.MultipartRequest('PUT', Uri.parse(url))
-  //       ..headers.addAll(headers)
-  //       ..files.add(await http.MultipartFile.fromPath('file', file,
-  //           contentType: MediaType("image", "jpeg")));
-  //     var response = await request.send();
-  //
-  //     if (response.statusCode == 200) {
-  //       print("abc");
-  //       responseJson = await response.stream.bytesToString();
-  //     } else {
-  //       print("xyz");
-  //       print(response.statusCode);
-  //       print(response.stream);
-  //       print(response.reasonPhrase);
-  //       throw UnauthorisedException(jsonEncode(response.reasonPhrase));
-  //       // throw UnauthorisedException(jsonEncode({"msg": "File upload error"}));
-  //     }
-  //   } on SocketException {
-  //     throw FetchDataException('API Connection Error');
-  //   }
-  //   return jsonDecode(responseJson);
-  // }
-  // @override
-  // Future uploadImageHTTP2(String url, dynamic file) async
-  // {
-  //   dynamic responseJson;
-  //   print("Yha Chla");
-  //   try {
-  //     final prefsToken = await SharedPreferences.getInstance();
-  //     dynamic token = prefsToken.getString('token');
-  //     Map<String, String> headers = {
-  //       'Content-Type': 'multipart/form-data',
-  //       'Postman-Token': token,
-  //       'Content-Length': '<calculated when request is sent>',
-  //       'Host': '<calculated when request is sent>',
-  //     };
-  //     print("Fir 2nd Yha Chla");
-  //     var request = http.MultipartRequest('PUT', Uri.parse(url))
-  //       ..headers.addAll(headers)
-  //       ..fields.addAll({
-  //
-  //         // 'gm_uniqueid': gmUniqueId,
-  //         // 'interaction': interaction,
-  //         // 'message': message
-  //       })
-  //       ..files.add(await http.MultipartFile.fromPath('file', file.toString(),
-  //           contentType: MediaType("image", "jpeg")));
-  //     print("Phir 3rd Yha Chla");
-  //     var response = await request.send();
-  //     print("Phir 4th Yha Chla");
-  //     if (response.statusCode == 200) {
-  //       print("abc");
-  //       responseJson = await response.stream.bytesToString();
-  //     } else {
-  //       print("xyz");
-  //       print(response.statusCode);
-  //       print(response.stream);
-  //       print(response.reasonPhrase);
-  //       throw UnauthorisedException(jsonEncode(response.reasonPhrase));
-  //     }
-  //   } on SocketException {
-  //     throw FetchDataException('API Connection Error');
-  //   }
-  //   return jsonDecode(responseJson);
-  //
-  // }
+ 
   @override
   Future<dynamic> uploadImageHTTP2(
     String url,
+    // ignore: avoid_renaming_method_parameters
     dynamic file,
     String userId,
   ) async {
@@ -202,7 +124,7 @@ class NetworkApiService extends BaseApiServices {
   Future deleteApiResponse(String url) async {
     var prefsToken = await SharedPreferences.getInstance();
     dynamic token = prefsToken.getString('token');
-    print("token==$token");
+   
     dynamic responseJson;
     try {
       if (kDebugMode) {

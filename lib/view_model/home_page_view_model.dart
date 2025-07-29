@@ -8,7 +8,7 @@ import 'package:flutter_cab/respository/home_page_repository.dart';
 
 class GetActivityCategoryListViewModel with ChangeNotifier {
   final _myRepo = HomePageRepository();
-  ApiResponse<GetActivityCategoryModel> getActivityList = ApiResponse.loading();
+  ApiResponse<GetActivityCategoryModel> getActivityList = ApiResponse.initial();
 
   setDataList(ApiResponse<GetActivityCategoryModel> response) {
     getActivityList = response;
@@ -16,11 +16,10 @@ class GetActivityCategoryListViewModel with ChangeNotifier {
   }
 
   Future<GetActivityCategoryModel?> getActivityCategoryListApi(
-    BuildContext context,
   ) async {
     try {
       setDataList(ApiResponse.loading());
-      var resp = await _myRepo.getActivityCategoryList(context: context);
+      var resp = await _myRepo.getActivityCategoryList();
       setDataList(ApiResponse.completed(resp));
       debugPrint('Get Package List Api Success');
       return resp;
@@ -43,10 +42,10 @@ class GetAllPackageListViewModel with ChangeNotifier {
   }
 
   Future<GetPackageListModel?> getAllPackageListApi(
-      BuildContext context, data) async {
+       data) async {
     try {
       setDataList(ApiResponse.loading());
-      var resp = await _myRepo.getPackageListApi(context: context, query: data);
+      var resp = await _myRepo.getPackageListApi(query: data);
       setDataList(ApiResponse.completed(resp));
       debugPrint('Get Package List Api Success');
       return resp;

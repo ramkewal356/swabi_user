@@ -46,8 +46,8 @@ class _RaiseIssueDialogState extends State<RaiseIssueDialog> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       userViewModel.getUserId().then((value) async {
         setState(() {
-          if (value.userId != null && value.userId != '') {
-            userId = value.userId.toString();
+          if (value != null && value == '') {
+            userId = value;
           }
         });
       });

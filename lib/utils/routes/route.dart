@@ -1,49 +1,46 @@
 // routes.dart
 
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPage_Layout.dart';
-import 'package:flutter_cab/view/dashboard/account_Pages/change_password.dart';
-import 'package:flutter_cab/view/dashboard/account_Pages/contact.dart';
-import 'package:flutter_cab/view/dashboard/account_Pages/faq_page_screen.dart';
-import 'package:flutter_cab/view/dashboard/account_Pages/help&support_screen.dart';
-import 'package:flutter_cab/view/dashboard/account_Pages/notification.dart';
-import 'package:flutter_cab/view/dashboard/account_Pages/profile_page_screen.dart';
-import 'package:flutter_cab/view/dashboard/account_Pages/raiseissue_details_screen.dart';
-import 'package:flutter_cab/view/dashboard/account_Pages/term_condition_screen.dart';
-import 'package:flutter_cab/view/dashboard/account_Pages/transaction.dart';
-import 'package:flutter_cab/view/dashboard/account_Pages/verify_password_screen.dart';
-import 'package:flutter_cab/view/dashboard/bottom_bar_screen.dart';
-import 'package:flutter_cab/view/dashboard/home_screen.dart';
-import 'package:flutter_cab/view/dashboard/offers_pages/all_offers_screen.dart';
-import 'package:flutter_cab/view/dashboard/offers_pages/offer_details_screen.dart';
-import 'package:flutter_cab/view/dashboard/raiseIssue_pages/issue_view_details_screen.dart';
-import 'package:flutter_cab/view/dashboard/rental/book_your_ride_screen_.dart';
-import 'package:flutter_cab/view/dashboard/rental/cancel_booking.dart';
-import 'package:flutter_cab/view/dashboard/rental/cars_available_screen.dart';
-import 'package:flutter_cab/view/dashboard/rental/history/rental_bookedpage_view.dart';
-import 'package:flutter_cab/view/dashboard/rental/history/rental_cancel_page_view.dart';
-import 'package:flutter_cab/view/dashboard/rental/history/rental_history_managment_screen.dart';
-import 'package:flutter_cab/view/dashboard/rental/rental_form.dart';
+import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPageLayout.dart';
+import 'package:flutter_cab/view/auth_screens/change_password.dart';
+import 'package:flutter_cab/view/help_and_support/contact.dart';
+import 'package:flutter_cab/view/help_and_support/help&support_screen.dart';
+import 'package:flutter_cab/view/notification/notification.dart';
+import 'package:flutter_cab/view/profile/profile_page_screen.dart';
+import 'package:flutter_cab/view/help_and_support/raiseissue_details_screen.dart';
+import 'package:flutter_cab/view/help_and_support/term_condition_screen.dart';
+import 'package:flutter_cab/view/customer/my_tranaction/transaction.dart';
+import 'package:flutter_cab/view/customer/customer_home_screen.dart';
+import 'package:flutter_cab/view/customer/offers_pages/all_offers_screen.dart';
+import 'package:flutter_cab/view/customer/offers_pages/offer_details_screen.dart';
+import 'package:flutter_cab/view/customer/raiseIssue_pages/issue_view_details_screen.dart';
+import 'package:flutter_cab/view/customer/my_rental/book_your_ride_screen_.dart';
+import 'package:flutter_cab/view/customer/my_rental/cancel_booking.dart';
+import 'package:flutter_cab/view/customer/my_rental/cars_available_screen.dart';
+import 'package:flutter_cab/view/customer/my_rental/history/rental_bookedpage_view.dart';
+import 'package:flutter_cab/view/customer/my_rental/history/rental_cancel_page_view.dart';
+import 'package:flutter_cab/view/customer/my_rental/history/rental_history_managment_screen.dart';
+import 'package:flutter_cab/view/customer/my_rental/rental_form.dart';
 // import 'package:flutter_cab/view/dashboard/tourPackage/addMemberDesign.dart';
-import 'package:flutter_cab/view/dashboard/tourPackage/package_screen.dart';
-import 'package:flutter_cab/view/dashboard/tourPackage/package_booking_member_screen.dart';
-import 'package:flutter_cab/view/dashboard/tourPackage/package_viewdetails_screen.dart';
-import 'package:flutter_cab/view/dashboard/tourPackage/packageHistory/mypackage_history_screen.dart';
-import 'package:flutter_cab/view/dashboard/account_Pages/edit_profile_screen.dart';
-import 'package:flutter_cab/view/dashboard/wallet_pages/wallet_history_screen.dart';
-import 'package:flutter_cab/view/dashboard/wallet_pages/wallet_screen.dart';
-import 'package:flutter_cab/view/registration/forgot_screen.dart';
-import 'package:flutter_cab/view/registration/login_screen.dart';
-import 'package:flutter_cab/view/registration/otp_verification_screen.dart';
-import 'package:flutter_cab/view/registration/registration_screen.dart';
+import 'package:flutter_cab/view/customer/my_package/package_screen.dart';
+import 'package:flutter_cab/view/customer/my_package/package_booking_member_screen.dart';
+import 'package:flutter_cab/view/customer/my_package/package_viewdetails_screen.dart';
+import 'package:flutter_cab/view/customer/my_package/packageHistory/mypackage_history_screen.dart';
+import 'package:flutter_cab/view/profile/edit_profile_screen.dart';
+import 'package:flutter_cab/view/customer/wallet_pages/wallet_history_screen.dart';
+import 'package:flutter_cab/view/customer/wallet_pages/wallet_screen.dart';
+import 'package:flutter_cab/view/auth_screens/forgot_screen.dart';
+import 'package:flutter_cab/view/auth_screens/login_screen.dart';
+import 'package:flutter_cab/view/auth_screens/otp_verification_screen.dart';
+import 'package:flutter_cab/view/auth_screens/registration_screen.dart';
 import 'package:flutter_cab/view/starting_screen/landing_screen.dart';
 import 'package:flutter_cab/view/starting_screen/splash_screen.dart';
-import 'package:flutter_cab/view/registration/reset_password_screen.dart';
+import 'package:flutter_cab/view/auth_screens/reset_password_screen.dart';
+import 'package:flutter_cab/view/vendor/vendor_dashboard_screen.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../view/dashboard/tourPackage/packageHistory/package_booking_details.dart';
+import '../../view/customer/my_package/packageHistory/package_booking_details.dart';
 
-final _shellNavigatorKey = GlobalKey<NavigatorState>();
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 final GoRouter myRouter = GoRouter(
@@ -61,11 +58,7 @@ final GoRouter myRouter = GoRouter(
         builder: (BuildContext context, GoRouterState state) {
           return const LandingScreen();
         }),
-    GoRoute(
-        path: '/bottom_bar_screen',
-        builder: (BuildContext context, GoRouterState state) {
-          return const BottomBarScreen();
-        }),
+  
     GoRoute(
       path: '/login',
       builder: (BuildContext context, GoRouterState state) {
@@ -79,10 +72,10 @@ final GoRouter myRouter = GoRouter(
       },
     ),
     GoRoute(
-      path: '/',
+      path: '/user_dashboard',
       builder: (BuildContext context, GoRouterState state) {
         // var data = state.extra as Map<String, dynamic>;
-        return const home_screen();
+        return const CustomerHomeScreen();
       },
     ),
     GoRoute(
@@ -98,9 +91,10 @@ final GoRouter myRouter = GoRouter(
         path: '/profilePage',
         builder: (BuildContext context, GoRouterState state) {
           var data = state.extra as Map<String, dynamic>;
-          // return ProfilePage(user:'1001',);
+        
           return ProfilePage(
             user: data['userId'],
+            userType: data["userType"],
           );
         },
         routes: [
@@ -124,13 +118,7 @@ final GoRouter myRouter = GoRouter(
         );
       },
     ),
-    GoRoute(
-      path: '/verifyPassword',
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (BuildContext context, GoRouterState state) {
-        return const VerifyPassword();
-      },
-    ),
+  
     GoRoute(
       path: '/forgotPassword',
       parentNavigatorKey: _rootNavigatorKey,
@@ -159,13 +147,7 @@ final GoRouter myRouter = GoRouter(
         );
       },
     ),
-    GoRoute(
-      path: '/faqPage',
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (BuildContext context, GoRouterState state) {
-        return const FAQPage();
-      },
-    ),
+  
     GoRoute(
       path: '/termCondition',
       parentNavigatorKey: _rootNavigatorKey,
@@ -256,7 +238,7 @@ final GoRouter myRouter = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       builder: (BuildContext context, GoRouterState state) {
         return const Scaffold(
-          body: PageLayout_Page(
+          body: PageLayoutPage(
             appHeading: "Setting Page",
             child: Center(
               child: Text("Setting Page"),
@@ -422,5 +404,10 @@ final GoRouter myRouter = GoRouter(
             },
           ),
         ]),
+    /// vendor routes
+    GoRoute(
+      path: '/vendor_dashboard',
+      builder: (context, state) => const VendorDashboardScreen(),
+    )
   ],
 );

@@ -39,12 +39,14 @@ class _LandingScreenState extends State<LandingScreen> {
 
   Future<void> getActivityCategory() async {
     try {
-      Provider.of<GetActivityCategoryListViewModel>(context, listen: false)
-          .getActivityCategoryListApi(context);
+      context
+          .read<GetActivityCategoryListViewModel>()
+          .getActivityCategoryListApi();
       // Fetch top package list
       final topResponse =
-          await Provider.of<GetAllPackageListViewModel>(context, listen: false)
-              .getAllPackageListApi(context, {
+          await context
+          .read<GetAllPackageListViewModel>()
+          .getAllPackageListApi({
         "pageNumber": 0,
         "pageSize": 5,
         "packageStatus": "TRUE",
@@ -62,8 +64,10 @@ class _LandingScreenState extends State<LandingScreen> {
 
       // Fetch bottom package list
       final bottomResponse =
-          await Provider.of<GetAllPackageListViewModel>(context, listen: false)
-              .getAllPackageListApi(context, {
+          // ignore: use_build_context_synchronously
+          await context
+              .read<GetAllPackageListViewModel>()
+              .getAllPackageListApi({
         "pageNumber": 1,
         "pageSize": 5,
         "packageStatus": "TRUE",

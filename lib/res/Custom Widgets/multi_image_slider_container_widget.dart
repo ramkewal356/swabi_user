@@ -9,6 +9,7 @@ class MultiImageSlider extends StatefulWidget {
   const MultiImageSlider({super.key, required this.images});
 
   @override
+  // ignore: library_private_types_in_public_api
   _MultiImageSliderState createState() => _MultiImageSliderState();
 }
 

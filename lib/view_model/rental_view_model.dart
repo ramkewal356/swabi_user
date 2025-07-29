@@ -16,7 +16,7 @@ class RentalViewModel with ChangeNotifier {
   final _myRepo = RentalRepository();
   bool _loading = false;
   bool get loading => _loading;
-  ApiResponse<RentalCarListStatusModel> DataList = ApiResponse.loading();
+  ApiResponse<RentalCarListStatusModel> dataList = ApiResponse.initial();
 
   setLoading(bool value) {
     _loading = value;
@@ -24,7 +24,7 @@ class RentalViewModel with ChangeNotifier {
   }
 
   setDataList(ApiResponse<RentalCarListStatusModel> response) {
-    DataList = response;
+    dataList = response;
     notifyListeners();
   }
 
@@ -38,11 +38,11 @@ class RentalViewModel with ChangeNotifier {
       setLoading(false);
       setDataList(ApiResponse.completed(value));
       // debugPrint('Rental Api Success');
-      (DataList.data?.data.body ?? []).isEmpty
+      (dataList.data?.data.body ?? []).isEmpty
           ? Utils.toastMessage(
-              DataList.data?.data.errorMessage ?? "Something went wrong")
+              dataList.data?.data.errorMessage ?? "Something went wrong")
           : null;
-      (DataList.data?.data.body ?? []).isNotEmpty
+      (dataList.data?.data.body ?? []).isNotEmpty
           ? context.push('/rentalForm/carsDetails',
               extra: {'id': myUserId, 'logitude': logi, "latitude": lati})
           : null;
@@ -84,10 +84,10 @@ class GetRentalRangeListViewModel with ChangeNotifier {
 /// Rental Booking View Model
 class RentalBookingViewModel with ChangeNotifier {
   final _myRepo = RentalBookingRepository();
-  ApiResponse<RentalCarBookingModel> DataList = ApiResponse.loading();
+  ApiResponse<RentalCarBookingModel> dataList = ApiResponse.initial();
   bool isLoading = false;
   setDataList(ApiResponse<RentalCarBookingModel> response) {
-    DataList = response;
+    dataList = response;
     notifyListeners();
   }
 
@@ -121,7 +121,7 @@ class RentalBookingViewModel with ChangeNotifier {
 
 class ConfirmRentalBookingViewModel with ChangeNotifier {
   final _myRepo = RentalBookingRepository();
-  ApiResponse<RentalCarBookingModel> rentalDataList = ApiResponse.loading();
+  ApiResponse<RentalCarBookingModel> rentalDataList = ApiResponse.initial();
   bool isLoading = false;
   setDataList(ApiResponse<RentalCarBookingModel> response) {
     rentalDataList = response;
@@ -180,7 +180,7 @@ class ConfirmRentalBookingViewModel with ChangeNotifier {
 class RentalBookingCancelViewModel with ChangeNotifier {
   final _myRepo = RentalBookingCancelRepository();
   ApiResponse<RentalCarBookingCancelModel> cancelldataList =
-      ApiResponse.loading();
+      ApiResponse.initial();
 
   setDataList(ApiResponse<RentalCarBookingCancelModel> response) {
     cancelldataList = response;
@@ -233,7 +233,7 @@ class RentalBookingListViewModel with ChangeNotifier {
   int pageSize = 10;
   final _myRepo = RentalBookingListRepository();
   List<Content> _rentalBookingData = [];
-  ApiResponse<List<Content>> rentalBookingList = ApiResponse.loading();
+  ApiResponse<List<Content>> rentalBookingList = ApiResponse.initial();
   List<Content> get items => _rentalBookingData;
   setDataList(ApiResponse<List<Content>> response) {
     rentalBookingList = response;
@@ -376,10 +376,10 @@ class RentalViewDetailViewModel with ChangeNotifier {
 ///Rental booking payment  detail view model
 class RentalPaymentDetailsViewModel with ChangeNotifier {
   final _myRepo = RentalViewPaymentDetailsRepository();
-  ApiResponse<PaymentDetailsModel> RentalPaymentDetail = ApiResponse.loading();
+  ApiResponse<PaymentDetailsModel> rentalPaymentDetails = ApiResponse.initial();
 
   setDataList(ApiResponse<PaymentDetailsModel> response) {
-    RentalPaymentDetail = response;
+    rentalPaymentDetails = response;
     notifyListeners();
   }
 
@@ -396,7 +396,7 @@ class RentalPaymentDetailsViewModel with ChangeNotifier {
       }
       return resp;
     } catch (e) {
-      print(e);
+      debugPrint('error $e');
     }
     return null;
   }
@@ -405,10 +405,10 @@ class RentalPaymentDetailsViewModel with ChangeNotifier {
 /// Rental Validation View Model
 class RentalValidationViewModel with ChangeNotifier {
   final _myRepo = RentalValidationRepository();
-  ApiResponse<RentalCarBookingValidationModel> DataList = ApiResponse.loading();
+  ApiResponse<RentalCarBookingValidationModel> dataList = ApiResponse.initial();
 
   setDataList(ApiResponse<RentalCarBookingValidationModel> response) {
-    DataList = response;
+    dataList = response;
     notifyListeners();
   }
 

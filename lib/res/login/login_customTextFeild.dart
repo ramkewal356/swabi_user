@@ -227,6 +227,7 @@ class CommonTextFeild extends StatefulWidget {
   final bool readOnly;
   final bool number;
   final String hint;
+  final Color? iconColor;
   CommonTextFeild(
       {this.heading = "",
       this.img = "",
@@ -240,6 +241,7 @@ class CommonTextFeild extends StatefulWidget {
       this.number = false,
       this.obscure = false,
       this.readOnly = false,
+      this.iconColor,
       super.key});
 
   @override
@@ -291,7 +293,7 @@ class _CommonTextFeildState extends State<CommonTextFeild> {
                             widget.img,
                             height: 5,
                             width: 5,
-                            color: naturalGreyColor,
+                            color: widget.iconColor ?? naturalGreyColor,
                           ),
                         )
                       : null,

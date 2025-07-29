@@ -93,6 +93,15 @@ const String easyPaymentIcon = "assets/images/easy-payment-icon.png";
 const String serviceAndSupportIcon = "assets/images/service-support-icon.png";
 const String advanceBookingIcon = "assets/images/advance-booking-icon.png";
 const String subcribeimage = "assets/images/subscribe-bottom-image.png";
+const String vehicleImage = "assets/images/vehicle.png";
+const String driverImage = "assets/images/driver.webp";
+const String rentalbookingImage = "assets/images/carBooking.webp";
+const String packageImage = "assets/images/group_booking.png";
+const String profilebgImage = "assets/images/profile_bg_img.png";
+const String verticleMenuIcon = "assets/images/icon-menu-vertical.png";
+
+
+
 
 
 

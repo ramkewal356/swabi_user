@@ -19,13 +19,13 @@ class UserRepository {
         body: body);
     try {
       Response<dynamic>? response = await http.request<dynamic>();
-      debugPrint("passord change response ${response?.data}");
+      debugPrint("user login response ${response?.data}");
       var resp = UserLoginModel.fromJson(response?.data);
       return resp;
     } catch (error) {
       debugPrint('error $error');
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: error);
+      http.handleErrorResponse(error: error);
       rethrow;
     }
   }

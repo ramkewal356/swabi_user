@@ -2,6 +2,8 @@
 //
 //     final getAllActivityListModel = getAllActivityListModelFromJson(jsonString);
 
+// ignore_for_file: constant_identifier_names
+
 import 'dart:convert';
 
 GetAllActivityListModel getAllActivityListModelFromJson(String str) =>

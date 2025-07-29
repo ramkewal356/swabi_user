@@ -5,7 +5,6 @@ import 'package:flutter_cab/model/getissue_model.dart';
 import 'package:flutter_cab/model/issuedetail_model.dart';
 import 'package:flutter_cab/model/raise_issue_model.dart';
 import 'package:flutter_cab/model/get_issue_by_booking_id_model.dart';
-import 'package:flutter_cab/model/user_model.dart';
 import 'package:flutter_cab/respository/raise_issue_repository.dart';
 import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
@@ -90,9 +89,9 @@ class RaiseissueViewModel with ChangeNotifier {
       isloading = true;
       notifyListeners();
       UserViewModel userViewModel = UserViewModel();
-      UserModel? usermodel = await userViewModel.getUserId();
+      String? userId = await userViewModel.getUserId() ?? '';
       Map<String, dynamic> query = {
-        "raisedById": usermodel.userId,
+        "raisedById": userId,
         "userType": "USER",
         "search": "",
         "issueStatus": issueStatus,

@@ -13,6 +13,8 @@ class CustomDropdownButton extends StatefulWidget {
   final TextEditingController controller;
   final List Function(BuildContext)? selectedItemBuilder;
   final String? Function(String?)? validator;
+  final bool withoutBorder;
+  final bool isEditable;
   CustomDropdownButton(
       {super.key,
       required this.itemsList,
@@ -22,7 +24,9 @@ class CustomDropdownButton extends StatefulWidget {
       this.focusNode,
       required this.controller,
       this.selectedItemBuilder,
-      this.validator});
+      this.validator,
+      this.withoutBorder = false,
+      this.isEditable = true});
 
   @override
   State<CustomDropdownButton> createState() => _CustomDropdownButtonState();
@@ -33,7 +37,6 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
 
   @override
   void initState() {
-  
     super.initState();
     widget.controller.addListener(_update);
   }
@@ -46,7 +49,6 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
 
   @override
   void dispose() {
-    
     widget.controller.removeListener(_update);
 
     super.dispose();
@@ -84,29 +86,41 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
                 value: widget.controller.text == ''
                     ? null
                     : widget.controller.text,
-                onChanged: (value) {
+                onChanged: widget.isEditable
+                    ? (value) {
                   setState(() {
                     // widget.selecteValue = value;
-                    widget.controller.text = value ?? '';
-                
+                          widget.controller.text = value ?? '';
                   });
                   field.didChange(value);
                   if (widget.onChanged != null) {
                     widget.onChanged!(value);
                   }
-            
-                },
+                      }
+                    : null,
                 buttonStyleData: ButtonStyleData(
                   height: 50,
-                  // width: 160,
-                  padding: const EdgeInsets.only(left: 0, right: 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(
-                      color: Colors.black12,
-                    ),
-                    color: background,
-                  ),
+                  padding: widget.withoutBorder
+                      ? const EdgeInsets.only(left: 0, right: 4, bottom: 2)
+                      : const EdgeInsets.only(left: 0, right: 10),
+                  decoration: widget.withoutBorder
+                      ? const BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Colors.black54,
+                              width: 1.2,
+                            ),
+                          ),
+                          // color: background,
+                        )
+                      : BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(
+                            color: Colors.black26,
+                            width: 1.2,
+                          ),
+                          color: background,
+                        ),
                   elevation: 0,
                 ),
                 iconStyleData: const IconStyleData(
@@ -151,7 +165,5 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
             ],
           );
         });
-
-    
   }
 }

@@ -11,9 +11,9 @@ class PostSignUpViewModel with ChangeNotifier {
   final _myRepo = RegistrationRepository();
   bool _loading = false;
   bool get loading => _loading;
-  ApiResponse<SignUpModel> DataList = ApiResponse.loading();
+  ApiResponse<SignUpModel> dataList = ApiResponse.initial();
   setDataList(ApiResponse<SignUpModel> response) {
-    DataList = response;
+    dataList = response;
     notifyListeners();
   }
 

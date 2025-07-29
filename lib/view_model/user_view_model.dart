@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/utils.dart';
-import '/model/user_model.dart';
+
 // ignore: depend_on_referenced_packages
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,13 +13,7 @@ class UserViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> saveToken(UserModel user) async {
-    final SharedPreferences sp = await SharedPreferences.getInstance();
-    sp.setString('token', user.token.toString());
-    notifyListeners();
-    return true;
-  }
-
+ 
   Future<bool> saveRememberMe(
       String email, String pass, bool rememberMe) async {
     final SharedPreferences sp = await SharedPreferences.getInstance();
@@ -39,11 +33,16 @@ class UserViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> saveUserId(UserModel userID) async {
+  Future<void> saveUser(
+      {required String userId,
+      required String token,
+      required String userType}) async {
     final SharedPreferences sp = await SharedPreferences.getInstance();
-    sp.setString('userId', userID.userId.toString());
-    notifyListeners();
-    return true;
+    await sp.setString('userId', userId);
+    await sp.setString('userType', userType);
+    await sp.setString('token', token);
+  
+   
   }
 
   void setSate(String state) async {
@@ -58,16 +57,21 @@ class UserViewModel with ChangeNotifier {
     return state;
   }
 
-  Future<UserModel> getUser() async {
+  Future<String?> getToken() async {
     final SharedPreferences sp = await SharedPreferences.getInstance();
-    final String? token = sp.getString('token');
-    return UserModel(token: token);
+    return sp.getString('token');
+   
   }
 
-  Future<UserModel> getUserId() async {
+  Future<String?> getUserId() async {
     final SharedPreferences sp = await SharedPreferences.getInstance();
-    final String? userId = sp.getString('userId');
-    return UserModel(userId: userId);
+    return sp.getString('userId');
+  }
+
+  Future<String?> getUserType() async {
+    final SharedPreferences sp = await SharedPreferences.getInstance();
+    return sp.getString('userType');
+    
   }
 
   Future<String> getEmail() async {
@@ -92,6 +96,7 @@ class UserViewModel with ChangeNotifier {
     final SharedPreferences sp = await SharedPreferences.getInstance();
     sp.remove('token');
     sp.remove('userId');
+    sp.remove('userType');
     sp.remove('baseUrl');
     sp.remove('stateName');
 

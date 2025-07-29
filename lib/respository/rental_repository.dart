@@ -27,7 +27,7 @@ class RentalRepository {
       // print("rental api not successful error");
       // print(e);
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: e);
+      http.handleErrorResponse(error: e);
       rethrow;
     }
   }
@@ -60,7 +60,7 @@ class RentalBookingRepository {
     } catch (error) {
       debugPrint('error $error');
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: error);
+      http.handleErrorResponse(error: error);
     }
     return null;
   }
@@ -83,7 +83,7 @@ class RentalBookingRepository {
     } catch (e) {
       debugPrint("Get Rental Booked By Id Repo Field $e");
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: e);
+      http.handleErrorResponse(error: e);
       rethrow;
     }
   }
@@ -109,7 +109,7 @@ class RentalBookingCancelRepository {
       return resp;
     } catch (e) {
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: e);
+      http.handleErrorResponse(error: e);
       debugPrint('cancel bookingbooking $e');
       rethrow;
     }
@@ -136,7 +136,7 @@ class RentalBookingListRepository {
       return resp;
     } catch (e) {
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: e);
+      http.handleErrorResponse(error: e);
       debugPrint('rentalBooking Repo api not successful error $e');
       rethrow;
     }
@@ -166,7 +166,7 @@ class RentalViewDetailsRepository {
       return resp;
     } catch (e) {
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: e);
+      http.handleErrorResponse(error: e);
       debugPrint('rental View Detail api not successful error $e');
       rethrow;
     }
@@ -194,7 +194,7 @@ class RentalViewPaymentDetailsRepository {
       debugPrint('error $error');
       http.handleErrorResponse(
         // ignore: use_build_context_synchronously
-        context: context,
+      
         error: error,
       );
     }
@@ -251,7 +251,7 @@ class GetRentalRangeListRepository {
       return resp;
     } catch (e) {
       // ignore: use_build_context_synchronously
-      http.handleErrorResponse(context: context, error: e);
+      http.handleErrorResponse(error: e);
       debugPrint('get rental Matrics List Repo Field $e');
       rethrow;
     }

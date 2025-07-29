@@ -16,7 +16,7 @@ TextStyle appbarTextStyle1 = GoogleFonts.lato(
 TextStyle btnTextStyle = GoogleFonts.lato(
     color: background, fontSize: 18, fontWeight: FontWeight.w700);
 
-TextStyle custom_ListTileTextStyle = GoogleFonts.lato(
+TextStyle customListTileTextStyle = GoogleFonts.lato(
     color: blackColor, fontSize: 16, fontWeight: FontWeight.w600);
 
 TextStyle loginTextStyle = GoogleFonts.lato(
@@ -36,6 +36,8 @@ TextStyle pageSubHeadingTextStyle = GoogleFonts.lato(
 
 TextStyle titleTextStyle = GoogleFonts.lato(
     color: blackColor, fontSize: 16, fontWeight: FontWeight.w600);
+TextStyle titleGrayColor = GoogleFonts.lato(
+    color: greyColor1, fontSize: 15, fontWeight: FontWeight.w600);
 TextStyle nodataTextStyle = GoogleFonts.lato(
     color: redColor, fontSize: 15, fontWeight: FontWeight.w600);
 TextStyle tableheaderStyle = GoogleFonts.lato(

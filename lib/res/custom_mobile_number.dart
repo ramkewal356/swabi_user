@@ -23,6 +23,7 @@ class CustomMobilenumber extends StatefulWidget {
   final bool readOnly;
   final double? width;
   final double? hieght;
+  final bool withoutBorder;
   const CustomMobilenumber(
       {super.key,
       required this.controller,
@@ -43,7 +44,8 @@ class CustomMobilenumber extends StatefulWidget {
       this.enabled,
       this.focusNode,
       this.width,
-      this.hieght});
+      this.hieght,
+      this.withoutBorder = false});
 
   @override
   State<CustomMobilenumber> createState() => _CustomMobilenumberState();
@@ -99,55 +101,68 @@ class _CustomMobilenumberState extends State<CustomMobilenumber> {
             ),
           ),
           fillColor: widget.readOnly ? Colors.red[50] : widget.fillColor,
-          filled: widget.fillColor != null,
+          filled: widget.withoutBorder ? false : widget.fillColor != null,
           hintText: widget.hintText,
           hintStyle: textTitleHint,
           contentPadding:
               const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-          // border: InputBorder.none,
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5.0),
-            borderSide: const BorderSide(
-              color: Color(0xFFCDCDCD),
-              // width: 2.0,
-            ),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5.0),
-            borderSide: const BorderSide(
-              color: Color(0xFFCDCDCD),
-              // width: 2.0,
-            ),
-          ),
-          disabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5.0),
-            borderSide: const BorderSide(
-              color: Color(0xFFCDCDCD),
-              // width: 2.0,
-            ),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5.0),
-            borderSide: const BorderSide(
-              color: Color(0xFFCDCDCD),
-              // width: 2.0,
-            ),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5.0),
-            borderSide: const BorderSide(
-              // color: redColor,
-              color: Color(0xFFCDCDCD),
-              // width: 2.0,
-            ),
-          ),
+          border: widget.withoutBorder
+              ? const UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black54))
+              : OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5.0),
+                  borderSide: const BorderSide(color: Color(0xFFCDCDCD)),
+                ),
+
+          focusedBorder: widget.withoutBorder
+              ? const UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black54),
+                )
+              : OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5.0),
+                  borderSide: const BorderSide(color: Color(0xFFCDCDCD)),
+                ),
+
+          enabledBorder: widget.withoutBorder
+              ? const UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black54),
+                )
+              : OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5.0),
+                  borderSide: const BorderSide(color: Color(0xFFCDCDCD)),
+                ),
+
+          disabledBorder: widget.withoutBorder
+              ? const UnderlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xFFCDCDCD)),
+                )
+              : OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5.0),
+                  borderSide: const BorderSide(color: Color(0xFFCDCDCD)),
+                ),
+
+          focusedErrorBorder: widget.withoutBorder
+              ? const UnderlineInputBorder(
+                  borderSide: BorderSide(color: redColor),
+                )
+              : OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5.0),
+                  borderSide: const BorderSide(color: redColor),
+                ),
+
+          errorBorder: widget.withoutBorder
+              ? const UnderlineInputBorder(
+                  borderSide: BorderSide(color: redColor),
+                )
+              : OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5.0),
+                  borderSide: const BorderSide(color: redColor),
+                ),
           errorStyle: const TextStyle(
             color: redColor, // Change error text color
             fontSize: 13, // Adjust error text size if needed
           ),
-          // border: OutlineInputBorder(
-          //     borderRadius: BorderRadius.circular(12),
-          //     borderSide: BorderSide(color: Color(0xFFCDCDCD))),
+         
         ),
         validator: (value) {
           if (value == null || value.isEmpty) {
