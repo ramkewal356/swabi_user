@@ -33,7 +33,7 @@ class HomePageRepository {
       required Map<String, dynamic> query}) async {
     var http = HttpService(
         baseURL: AppUrl.baseUrl,
-        endURL: AppUrl.getPackageList,
+        endURL: AppUrl.getAllPackageList,
         queryParameters: query,
         methodType: HttpMethodType.GET,
         bodyType: HttpBodyType.JSON,
@@ -56,27 +56,25 @@ class HomePageRepository {
       required Map<String, dynamic> query}) async {
     var http = HttpService(
         baseURL: AppUrl.baseUrl,
-        endURL: AppUrl.getAllActivityList,
+        endURL: AppUrl.getAllAcitivityListUrl,
         methodType: HttpMethodType.GET,
         queryParameters: query,
         bodyType: HttpBodyType.JSON,
         isAuthorizeRequest: false);
     try {
       Response<dynamic>? response = await http.request<dynamic>();
-      debugPrint("Get Package List Repo Success ${response?.data}");
+      debugPrint("Get Activity List Repo Success ${response?.data}");
       var resp = GetAllActivityListModel.fromJson(response?.data);
       return resp;
     } catch (e) {
-      debugPrint("Get Package List Repo Field $e");
+      debugPrint("Get Activity List Repo Field $e");
       // ignore: use_build_context_synchronously
       http.handleErrorResponse(error: e);
       rethrow;
     }
   }
 
-  Future<GetStateWithImageListModel> getStateWithImageListApi({
-    required BuildContext context,
-  }) async {
+  Future<GetStateWithImageListModel> getStateWithImageListApi() async {
     var http = HttpService(
         baseURL: AppUrl.baseUrl,
         endURL: AppUrl.getStateWithImageList,
@@ -85,11 +83,11 @@ class HomePageRepository {
         isAuthorizeRequest: false);
     try {
       Response<dynamic>? response = await http.request<dynamic>();
-      debugPrint("Get Package List Repo Success ${response?.data}");
+      debugPrint("Get Cities List Repo Success ${response?.data}");
       var resp = GetStateWithImageListModel.fromJson(response?.data);
       return resp;
     } catch (e) {
-      debugPrint("Get Package List Repo Field $e");
+      debugPrint("Get Cities List Repo Field $e");
       // ignore: use_build_context_synchronously
       http.handleErrorResponse(error: e);
       rethrow;

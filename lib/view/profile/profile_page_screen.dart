@@ -218,7 +218,9 @@ class _ProfilePageState extends State<ProfilePage> {
                           CustomModalbottomsheet(
                               title: 'Change Password',
                               isChangePassword: true,
-                              child: ChangePassword(userId: userdata.userId)),
+                              child: ChangePassword(
+                                  userId: widget.user,
+                                  userType: widget.userType)),
                           TextButton.icon(
                             style: ButtonStyle(
                               // ignore: deprecated_member_use

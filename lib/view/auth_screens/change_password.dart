@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_cab/data/response/status.dart';
 import 'package:flutter_cab/data/validatorclass.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
-import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view_model/user_profile_view_model.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
@@ -14,8 +14,13 @@ import 'package:provider/provider.dart';
 import '../../utils/color.dart';
 
 class ChangePassword extends StatefulWidget {
+  final String userType;
   final String userId;
-  const ChangePassword({super.key, required this.userId});
+  const ChangePassword({
+    super.key,
+    required this.userId,
+    required this.userType,
+  });
 
   @override
   State<ChangePassword> createState() => _ChangePasswordState();
@@ -50,38 +55,30 @@ class _ChangePasswordState extends State<ChangePassword> {
     super.dispose();
   }
 
-  bool isLoading = false;
+ 
 
   void _updatePassword() {
     if (_formKey.currentState!.validate()) {
+      final String idKey = widget.userType == 'USER' ? 'userId' : 'vendorId';
       Map<String, dynamic> query = {
-        "userId": widget.userId,
+        idKey: widget.userId,
         "oldPassword": _oldPasswordController.text,
         "newPassword": _newPasswordController.text
       };
 
       // Proceed with password update logic
       try {
-        setState(() {
-          isLoading = true;
-        });
+      
         Provider.of<ChangePasswordViewModel>(context, listen: false)
-            .changePasswordViewModelApi(context: context, query: query)
+            .changePasswordViewModelApi(query: query, userType: widget.userType)
             .then((onValue) {
           if (onValue?.status.httpCode == '200') {
-            Utils.toastSuccessMessage(
-              'Password changed successfully',
-            );
-            setState(() {
-              isLoading = false;
-            });
+          
             context.pop();
           }
         });
       } catch (e) {
-        setState(() {
-          isLoading = false;
-        });
+       
         debugPrint('error $e');
       }
     }
@@ -89,6 +86,7 @@ class _ChangePasswordState extends State<ChangePassword> {
 
   @override
   Widget build(BuildContext context) {
+    final status = context.watch<ChangePasswordViewModel>().dataList.status;
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Form(
@@ -222,7 +220,7 @@ class _ChangePasswordState extends State<ChangePassword> {
             const SizedBox(height: 20),
             // Spacer(),
             CustomButtonSmall(
-              loading: isLoading,
+              loading: status == Status.loading,
               btnHeading: "Submit",
               onTap: () => _updatePassword(),
             ),

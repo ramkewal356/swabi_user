@@ -34,7 +34,7 @@ class GetActivityCategoryListViewModel with ChangeNotifier {
 
 class GetAllPackageListViewModel with ChangeNotifier {
   final _myRepo = HomePageRepository();
-  ApiResponse<GetPackageListModel> getAllPackageList = ApiResponse.loading();
+  ApiResponse<GetPackageListModel> getAllPackageList = ApiResponse.initial();
 
   setDataList(ApiResponse<GetPackageListModel> response) {
     getAllPackageList = response;
@@ -47,11 +47,11 @@ class GetAllPackageListViewModel with ChangeNotifier {
       setDataList(ApiResponse.loading());
       var resp = await _myRepo.getPackageListApi(query: data);
       setDataList(ApiResponse.completed(resp));
-      debugPrint('Get Package List Api Success');
+      debugPrint('Get All Package List Api Success');
       return resp;
     } catch (error) {
       debugPrint(error.toString());
-      debugPrint('Get Package List Api Failed');
+      debugPrint('Get All Package List Api Failed');
       setDataList(ApiResponse.error(error.toString()));
     }
     return null;
@@ -97,16 +97,16 @@ class GetStateWithImageListViewModel with ChangeNotifier {
   }
 
   Future<GetStateWithImageListModel?> getStateWithImageApi(
-      BuildContext context) async {
+   ) async {
     try {
       setDataList(ApiResponse.loading());
-      var resp = await _myRepo.getStateWithImageListApi(context: context);
+      var resp = await _myRepo.getStateWithImageListApi();
       setDataList(ApiResponse.completed(resp));
-      debugPrint('Get Package List Api Success');
+      debugPrint('Get Cities List Api Success');
       return resp;
     } catch (error) {
       debugPrint(error.toString());
-      debugPrint('Get Package List Api Failed');
+      debugPrint('Get Cities List Api Failed');
       setDataList(ApiResponse.error(error.toString()));
     }
     return null;

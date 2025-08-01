@@ -115,12 +115,14 @@ class ChangePasswordViewModel with ChangeNotifier {
   }
 
   Future<ChangePasswordModel?> changePasswordViewModelApi(
-      {required BuildContext context,
-      required Map<String, dynamic> query}) async {
+      {required Map<String, dynamic> query, required String userType}) async {
     try {
       setDataList(ApiResponse.loading());
       var resp =
-          await _myRepo.changePasswordApi(context: context, query: query);
+          await _myRepo.changePasswordApi(query: query, userType: userType);
+      if (resp?.status.httpCode == '200') {
+        Utils.toastSuccessMessage(resp?.data.body ?? '');
+      }
       setDataList(ApiResponse.completed(resp));
       // Utils.flushBarSuccessMessage("Changed password Successfully", context);
       return resp;

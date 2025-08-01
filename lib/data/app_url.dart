@@ -11,6 +11,8 @@ class AppUrl {
   static var loginUrl = "/login";
   static var signupUrl = '/user/register_user';
   static var getPackageList = "/package/get_package_list";
+  static var getAllPackageList = "/package/get_All_package_list";
+
   static var getAllPackageListUrl = "/package/get_package_list_by_date";
   static var getPackageByIdUrl = '/package/get_package_by_id';
   static var getCalculatePriceUrl = '/package_booking/calculate_package_price';
@@ -27,7 +29,7 @@ class AppUrl {
   static var changepasswordUrl = "/user/change_user_password";
   static var updateProfileUrl = '/user/update_user';
   static var updateProfilePicUrl = '/user/upload_profile';
-  static var updateVendorProfilecUrl = '/vendor/update_vendor';
+  // static var updateVendorProfilecUrl = '/vendor/update_vendor';
   static var getProfileUrl = '/user/get_user_by_userId';
   static var rentalCarBookingUrl = "/rental/booking_v2";
   static var rentalCarSearchUrl = '/rental/rental_car_price';
@@ -69,6 +71,7 @@ class AppUrl {
       '/activity_category/list_activity_categories';
 
   static var getAllActivityList = '/activity/get_all_activity';
+  static var getAllAcitivityListUrl = '/activity/get_all_activities';
   static var getStateWithImageList = '/state_image/get_list_state_with_image';
   static var getStateNameUrl = '/api/v0.1/countries/states';
 
@@ -80,5 +83,8 @@ class AppUrl {
   static var getAllRentalBookingUrl = '/rental/get_count_of_rental_booking';
   static var getAllPackageBookingUrl =
       '/package_booking/get_count_of_package_booking';
-
+  static var vendorChangePasswordUrl = '/vendor/change_vendor_password';
+  static var vendorUpdateProfileUrl = '/vendor/update_vendor';
+  // bid management
+  static var getAllEnquiryUrl = '/travel/inquiries';
 }

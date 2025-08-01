@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class Validation {
 //sync text fill check
   Future<bool> istextField(String value) async {
@@ -45,5 +47,10 @@ class Validation {
       return 'Password must be at least 6 characters long';
     }
     return null;
+  }
+  String timeFormat(int? time) {
+    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(time ?? 0);
+    String formattedTime = DateFormat('hh:mm a').format(dateTime);
+    return formattedTime;
   }
 }

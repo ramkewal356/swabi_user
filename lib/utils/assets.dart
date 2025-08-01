@@ -99,10 +99,9 @@ const String rentalbookingImage = "assets/images/carBooking.webp";
 const String packageImage = "assets/images/group_booking.png";
 const String profilebgImage = "assets/images/profile_bg_img.png";
 const String verticleMenuIcon = "assets/images/icon-menu-vertical.png";
-
-
-
-
-
-
-
+const String dubaiMarina = "assets/images/dubaimarina-img.jpg";
+const String burjKhalifa = "assets/images/burj-img.jpg";
+const String palmJumeirah = "assets/images/palm-img.jpg";
+const String jumeirahBeach = "assets/images/jumirah-img.jpg";
+const String deira = "assets/images/deira-img.jpg";
+const String alFahidi = "assets/images/al-fahidi-img.jpg";

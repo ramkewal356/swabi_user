@@ -111,8 +111,17 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
               },
               {
                 "imgUrl": transaction,
+                "label": "Enquiry Management",
+                "onTap": () {
+                  context.push("/vendor_dashboard/enquiryManagement");
+                }
+              },
+              {
+                "imgUrl": transaction,
                 "label": "Bid Management",
-                "onTap": () {}
+                "onTap": () {
+                  context.push("/vendor_dashboard/bidManagement");
+                }
               },
               {
                 "imgUrl": rentalbooking,

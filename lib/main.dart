@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cab/utils/routes/route.dart';
 import 'package:flutter_cab/view_model/auth_view_model.dart';
+import 'package:flutter_cab/view_model/bid_view_model.dart';
+import 'package:flutter_cab/view_model/enquiry_view_model.dart';
 import 'package:flutter_cab/view_model/home_page_view_model.dart';
 import 'package:flutter_cab/view_model/notification_view_model.dart';
 import 'package:flutter_cab/view_model/offer_view_model.dart';
@@ -90,7 +92,10 @@ Future<void> main() async {
         ChangeNotifierProvider(
             create: (context) => GetStateWithImageListViewModel()),
         ChangeNotifierProvider(create: (create) => VendorViewModel()),
-        ChangeNotifierProvider(create: (create) => VendorDashboardViewModel())
+        ChangeNotifierProvider(create: (create) => VendorDashboardViewModel()),
+        ChangeNotifierProvider(create: (create) => BidViewModel()),
+        ChangeNotifierProvider(create: (create) => EnquiryViewModel()),
+
 
       ],
       child: const MyApp(),

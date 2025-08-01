@@ -8,7 +8,6 @@ import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
-import 'package:flutter_cab/view/consts.dart';
 import 'package:flutter_cab/view_model/home_page_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -26,10 +25,26 @@ class _LandingScreenState extends State<LandingScreen> {
   final List<String> items = List.generate(10, (index) => 'Item ${index + 1}');
   List<Content> getTopPackageList = [];
   List<Content> getBottomPackageList = [];
+  List<Map<String, String>> defaultCityData = [
+    {
+      "state": "Dubai Marina",
+      "stateImage": dubaiMarina,
+    },
+    {"state": "Burj Khalifa", "stateImage": burjKhalifa},
+    {
+      "state": "Palm Jumeirah",
+      "stateImage": palmJumeirah,
+    },
+    {
+      "state": "Jumeirah Beach",
+      "stateImage": jumeirahBeach,
+    },
+    {"state": "Deira", "stateImage": deira},
+    {"state": "Al Fahidi", "stateImage": alFahidi},
+  ];
 
   @override
   void initState() {
-  
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getActivityCategory();
@@ -43,13 +58,12 @@ class _LandingScreenState extends State<LandingScreen> {
           .read<GetActivityCategoryListViewModel>()
           .getActivityCategoryListApi();
       // Fetch top package list
-      final topResponse =
-          await context
+      final topResponse = await context
           .read<GetAllPackageListViewModel>()
           .getAllPackageListApi({
         "pageNumber": 0,
         "pageSize": 5,
-        "packageStatus": "TRUE",
+        "packageStatus": "true",
         "search": "",
       });
 
@@ -70,7 +84,7 @@ class _LandingScreenState extends State<LandingScreen> {
               .getAllPackageListApi({
         "pageNumber": 1,
         "pageSize": 5,
-        "packageStatus": "TRUE",
+        "packageStatus": "true",
         "search": "",
       });
 
@@ -92,11 +106,10 @@ class _LandingScreenState extends State<LandingScreen> {
         .getAllActivityApi(context, {
       "pageNumber": 0,
       "pageSize": 10,
-      "activityStatus": "TRUE",
+      "activityStatus": "true",
       "search": ""
     });
-    Provider.of<GetStateWithImageListViewModel>(context, listen: false)
-        .getStateWithImageApi(context);
+    context.read<GetStateWithImageListViewModel>().getStateWithImageApi();
   }
 
   /// Function to move the scroll view to the previous item
@@ -119,7 +132,6 @@ class _LandingScreenState extends State<LandingScreen> {
 
   @override
   void dispose() {
-   
     super.dispose();
     _scrollController.dispose();
   }
@@ -138,6 +150,20 @@ class _LandingScreenState extends State<LandingScreen> {
         .watch<GetStateWithImageListViewModel>()
         .getStateWithImageList
         .data;
+    // Convert API list
+    final apiList = getStateWithImageList?.data
+            ?.map((e) =>
+                CityData(state: e.state ?? '', stateImage: e.stateImage ?? ''))
+            .toList() ??
+        [];
+
+// Convert default list
+    final defaultList = defaultCityData
+        .map((e) => CityData(state: e['state']!, stateImage: e['stateImage']!))
+        .toList();
+
+// Choose source
+    final cityList = apiList.isNotEmpty ? apiList : defaultList;
     return Scaffold(
       backgroundColor: bgGreyColor,
       appBar: AppBar(
@@ -318,7 +344,7 @@ class _LandingScreenState extends State<LandingScreen> {
                         padding: const EdgeInsets.symmetric(
                             vertical: 5, horizontal: 10),
                         decoration: BoxDecoration(
-                            border: Border.all(),
+                            border: Border.all(color: btnColor),
                             color: background,
                             borderRadius: BorderRadius.circular(5)),
                         child: Column(
@@ -349,7 +375,7 @@ class _LandingScreenState extends State<LandingScreen> {
                         padding: const EdgeInsets.symmetric(
                             vertical: 5, horizontal: 10),
                         decoration: BoxDecoration(
-                            border: Border.all(),
+                            border: Border.all(color: btnColor),
                             color: background,
                             borderRadius: BorderRadius.circular(5)),
                         child: Column(
@@ -511,9 +537,8 @@ class _LandingScreenState extends State<LandingScreen> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
                 image: DecorationImage(
-                    image: Image.asset(
-                  rectanglebgimage,
-                 
+                  image: Image.asset(
+                    rectanglebgimage,
                   ).image,
                   fit: BoxFit.cover,
                 ),
@@ -532,11 +557,11 @@ class _LandingScreenState extends State<LandingScreen> {
                   SizedBox(
                     height: 115,
                     child: ListView.builder(
-                      itemCount: getStateWithImageList?.data?.length,
+                      itemCount: cityList.length,
                       shrinkWrap: true,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
-                        var data = getStateWithImageList?.data?[index];
+                        var city = cityList[index];
                         return Card(
                           clipBehavior: Clip.antiAlias,
                           surfaceTintColor: Colors.transparent,
@@ -553,22 +578,18 @@ class _LandingScreenState extends State<LandingScreen> {
                                 width: 115,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5)),
-                                child: (data?.stateImage ?? "").isEmpty
-                                    ? Image.asset(
-                                        stateDetail[index]['image'],
-                                        fit: BoxFit.cover,
-                                      )
-                                    : Image.network(
-                                        data?.stateImage ?? '',
-                                        fit: BoxFit.cover,
-                                      ),
+                                child: city.stateImage.startsWith('http')
+                                    ? Image.network(city.stateImage,
+                                        fit: BoxFit.cover)
+                                    : Image.asset(city.stateImage,
+                                        fit: BoxFit.cover),
                               ),
                               Positioned(
                                   left: 0,
                                   right: 0,
                                   bottom: 10,
                                   child: Text(
-                                    data?.state ?? '',
+                                    city.state,
                                     style: landingtitleStyle,
                                     textAlign: TextAlign.center,
                                   ))
@@ -682,11 +703,10 @@ class _LandingScreenState extends State<LandingScreen> {
                 borderRadius: BorderRadius.circular(15),
                 image: DecorationImage(
                     image: Image.asset(
-                  explorebgimage,
+                      explorebgimage,
                       // fit: BoxFit.fill,
                     ).image,
                     fit: BoxFit.cover),
-              
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 0),
@@ -723,7 +743,7 @@ class _LandingScreenState extends State<LandingScreen> {
                               children: [
                                 Container(
                                   height: 148,
-                                  width: 103,
+                                  width: 120,
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(5)),
                                   child: (data?.activityImageUrl ?? []).isEmpty
@@ -742,7 +762,7 @@ class _LandingScreenState extends State<LandingScreen> {
                                     bottom: 10,
                                     child: Text(
                                       data?.activityName ?? '',
-                                      style: landingtitleStyle,
+                                      style: subtitleTextStyle,
                                       textAlign: TextAlign.center,
                                     ))
                               ],
@@ -997,4 +1017,10 @@ class _LandingScreenState extends State<LandingScreen> {
       ),
     );
   }
+}
+class CityData {
+  final String state;
+  final String stateImage;
+
+  CityData({required this.state, required this.stateImage});
 }

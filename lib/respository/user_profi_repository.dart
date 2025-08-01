@@ -62,28 +62,7 @@ class ProfileImageRepository {
       rethrow;
     }
   }
-  // Future<dynamic> fetchProfileImageApi(data, String userType) async {
-  //   try {
-  //     final String path = userType == 'VENDOR'
-  //         ? '/vendor/upload_vendor_profile'
-  //         : '/user/upload_profile';
-
-  //     /// for image
-  //     dynamic response = await _apiServices.uploadImageHTTP2(
-  //         // "http://swabi.ap-south-1.elasticbeanstalk.com/"
-  //         "${AppUrl.baseUrl}"
-  //         '$path',
-  //         data["image"],
-  //         userType == 'USER' ? data['userId'] : data["vendorId"]);
-  //     debugPrint('vbnm,cdksdsjdjcbnm${response["data"]["body"]}');
-  //     return response["data"]["body"];
-  //   } catch (e) {
-  //     if (kDebugMode) {
-  //       // print("$e profile image field");
-  //     }
-  //     rethrow;
-  //   }
-  // }
+ 
 }
 
 
@@ -95,7 +74,7 @@ class UserProfileUpdateRepository {
         baseURL: AppUrl.baseUrl,
         endURL: userType == 'USER'
             ? AppUrl.updateProfileUrl
-            : AppUrl.updateVendorProfilecUrl,
+            : AppUrl.vendorUpdateProfileUrl,
         methodType: HttpMethodType.PUT,
         bodyType: HttpBodyType.JSON,
         body: body);
@@ -113,18 +92,19 @@ class UserProfileUpdateRepository {
   }
 
   Future<ChangePasswordModel?> changePasswordApi(
-      {required BuildContext context,
-      required Map<String, dynamic> query}) async {
+      {required Map<String, dynamic> query, required String userType}) async {
     var http = HttpService(
         isAuthorizeRequest: false,
         baseURL: AppUrl.baseUrl,
-        endURL: AppUrl.changepasswordUrl,
+        endURL: userType == 'USER'
+            ? AppUrl.changepasswordUrl
+            : AppUrl.vendorChangePasswordUrl,
         methodType: HttpMethodType.PATCH,
         bodyType: HttpBodyType.JSON,
         queryParameters: query);
     try {
       Response<dynamic>? response = await http.request<dynamic>();
-      debugPrint("passord change response ${response?.data}");
+      debugPrint("password change resp  ${response?.data}");
       var resp = ChangePasswordModel.fromJson(response?.data);
       return resp;
     } catch (error) {

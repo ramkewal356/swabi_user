@@ -36,15 +36,16 @@ import 'package:flutter_cab/view/auth_screens/registration_screen.dart';
 import 'package:flutter_cab/view/starting_screen/landing_screen.dart';
 import 'package:flutter_cab/view/starting_screen/splash_screen.dart';
 import 'package:flutter_cab/view/auth_screens/reset_password_screen.dart';
+import 'package:flutter_cab/view/vendor/enquiry_management/enquiry_management_screen.dart';
 import 'package:flutter_cab/view/vendor/vendor_dashboard_screen.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../view/customer/my_package/packageHistory/package_booking_details.dart';
+import '../../view/vendor/bid_management_screen/bid_management_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 final GoRouter myRouter = GoRouter(
- 
   initialLocation: '/splash',
   navigatorKey: _rootNavigatorKey,
   routes: <RouteBase>[
@@ -58,7 +59,7 @@ final GoRouter myRouter = GoRouter(
         builder: (BuildContext context, GoRouterState state) {
           return const LandingScreen();
         }),
-  
+
     GoRoute(
       path: '/login',
       builder: (BuildContext context, GoRouterState state) {
@@ -91,7 +92,7 @@ final GoRouter myRouter = GoRouter(
         path: '/profilePage',
         builder: (BuildContext context, GoRouterState state) {
           var data = state.extra as Map<String, dynamic>;
-        
+
           return ProfilePage(
             user: data['userId'],
             userType: data["userType"],
@@ -115,10 +116,11 @@ final GoRouter myRouter = GoRouter(
         var data = state.extra as Map<String, dynamic>;
         return ChangePassword(
           userId: data['userId'],
+          userType: data['idKey'],
         );
       },
     ),
-  
+
     GoRoute(
       path: '/forgotPassword',
       parentNavigatorKey: _rootNavigatorKey,
@@ -147,7 +149,7 @@ final GoRouter myRouter = GoRouter(
         );
       },
     ),
-  
+
     GoRoute(
       path: '/termCondition',
       parentNavigatorKey: _rootNavigatorKey,
@@ -262,7 +264,7 @@ final GoRouter myRouter = GoRouter(
             parentNavigatorKey: _rootNavigatorKey,
             builder: (BuildContext context, GoRouterState state) {
               final extra = state.extra as Map<String, dynamic>;
-              
+
               // return  const PackageDetailsOld();
               return PackageDetails(
                 packageId: extra['packageID'],
@@ -277,7 +279,7 @@ final GoRouter myRouter = GoRouter(
             parentNavigatorKey: _rootNavigatorKey,
             builder: (BuildContext context, GoRouterState state) {
               final extra = state.extra as Map<String, dynamic>;
-            
+
               return PackageBookingMemberPage(
                 packageID: extra["pkgID"],
                 userID: extra['usrID'],
@@ -404,10 +406,21 @@ final GoRouter myRouter = GoRouter(
             },
           ),
         ]),
+
     /// vendor routes
     GoRoute(
       path: '/vendor_dashboard',
       builder: (context, state) => const VendorDashboardScreen(),
+        routes: [
+          GoRoute(
+            path: 'bidManagement',
+            builder: (context, state) => const BidManagementScreen(),
+          ),
+          GoRoute(
+            path: 'enquiryManagement',
+            builder: (context, state) => const EnquiryManagementScreen(),
+          ),
+        ]
     )
   ],
 );

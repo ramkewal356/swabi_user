@@ -24,9 +24,7 @@ class RentalRepository {
       var resp = RentalCarListStatusModel.fromJson(response?.data);
       return resp;
     } catch (e) {
-      // print("rental api not successful error");
-      // print(e);
-      // ignore: use_build_context_synchronously
+      
       http.handleErrorResponse(error: e);
       rethrow;
     }
