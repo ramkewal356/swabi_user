@@ -3,6 +3,7 @@ import 'package:flutter_cab/model/getall_notification_model.dart';
 import 'package:flutter_cab/model/getlatest_notification_model.dart';
 import 'package:flutter_cab/model/update_notification_status_model.dart';
 import 'package:flutter_cab/respository/notification_repository.dart';
+import 'package:flutter_cab/view_model/user_view_model.dart';
 
 class NotificationViewModel with ChangeNotifier {
   final _myRepo = NotificationRepository();
@@ -31,8 +32,8 @@ class NotificationViewModel with ChangeNotifier {
 
   Future<UpdateNotificationStatusModel?> updateNotification({
     required BuildContext context,
-    required String userId,
   }) async {
+    String? userId = await UserViewModel().getUserId();
     Map<String, dynamic> query = {"receiverId": userId};
     try {
       var resp = await _myRepo.updateNotificationStatusApi(
@@ -46,10 +47,10 @@ class NotificationViewModel with ChangeNotifier {
 
   Future<GetAllNotificationModel?> getAllNotificationList(
       {required BuildContext context,
-      required String userId,
       required int pageNumber,
       required int pageSize,
       required String readStatus}) async {
+    String? userId = await UserViewModel().getUserId();
     Map<String, dynamic> query = {
       "receiverId": userId,
       "readStatus": readStatus,
@@ -69,7 +70,6 @@ class NotificationViewModel with ChangeNotifier {
           }
         });
       } else {
-        
         var resp =
             await _myRepo.getAllNotificationApi(context: context, query: query);
 

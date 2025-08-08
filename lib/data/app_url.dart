@@ -86,5 +86,10 @@ class AppUrl {
   static var vendorChangePasswordUrl = '/vendor/change_vendor_password';
   static var vendorUpdateProfileUrl = '/vendor/update_vendor';
   // bid management
+  static var sendEnquiryUrl = '/travel/sendInquiry';
   static var getAllEnquiryUrl = '/travel/inquiries';
+  static var getAllMyEnquiryUrl = '/bids/user/bids';
+  static var createBidUrl = '/bids/create';
+  static var getAllBidUrl = '/bids/vendor/1/submitted';
+  static var updateBidUrl = '/bids/vendor/update';
 }

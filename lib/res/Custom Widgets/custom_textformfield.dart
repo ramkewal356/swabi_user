@@ -6,6 +6,8 @@ import 'package:flutter_cab/utils/text_styles.dart';
 class Customtextformfield extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
+  final String? lable;
+  final TextStyle? lableStyle;
   final String? Function(String?)? validator;
   final Function(String)? onChanged;
   final bool? obscureText;
@@ -28,6 +30,7 @@ class Customtextformfield extends StatefulWidget {
   final double? width;
   final double? hieght;
   final List<TextInputFormatter>? inputFormatters;
+  final AutovalidateMode? autovalidateMode;
   const Customtextformfield(
       {super.key,
       required this.controller,
@@ -51,8 +54,11 @@ class Customtextformfield extends StatefulWidget {
       this.enabled,
       this.focusNode,
       this.errorText,
+      this.lable,
+      this.lableStyle,
       this.width,
       this.hieght,
+      this.autovalidateMode,
       this.inputFormatters = const []});
 
   @override
@@ -66,7 +72,8 @@ class _CustomtextformfieldState extends State<Customtextformfield> {
       height: widget.hieght,
       width: widget.width,
       child: TextFormField(
-        autovalidateMode: AutovalidateMode.onUserInteraction,
+        autovalidateMode:
+            widget.autovalidateMode ?? AutovalidateMode.onUserInteraction,
         enableInteractiveSelection: widget.enableInteractiveSelection,
         focusNode: widget.focusNode,
         readOnly: widget.readOnly ?? false,
@@ -88,6 +95,8 @@ class _CustomtextformfieldState extends State<Customtextformfield> {
         enabled: widget.enabled,
         decoration: InputDecoration(
           errorMaxLines: 2,
+          labelText: widget.lable,
+          labelStyle: widget.lableStyle ?? textTitleHint,
           errorText: widget.errorText,
           prefixIcon: widget.prefixiconvisible == true
               ? Padding(

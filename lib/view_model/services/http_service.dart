@@ -99,7 +99,9 @@ class HttpService<T> {
  
     switch (this.methodType) {
       case HttpMethodType.GET:
-      
+        debugPrint("bodyData formdata $bodyData");
+        debugPrint("baseUrl ${this.baseURL! + this.endURL!}");
+        debugPrint("queryParameters ${this.queryParameters}");  
         return _http!.get<T>(
           this.baseURL! + this.endURL!,
           queryParameters: this.queryParameters,

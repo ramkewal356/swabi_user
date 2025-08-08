@@ -13,6 +13,7 @@ import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
+import 'package:flutter_cab/utils/validation.dart';
 import 'package:flutter_cab/view_model/offer_view_model.dart';
 import 'package:flutter_cab/view_model/package_view_model.dart';
 import 'package:flutter_cab/view_model/user_profile_view_model.dart';
@@ -23,9 +24,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class Packages extends StatefulWidget {
-  final String ursID;
   final String? userSate;
-  const Packages({super.key, required this.ursID, this.userSate});
+  const Packages({super.key, this.userSate});
 
   @override
   State<Packages> createState() => _PackagesState();
@@ -37,6 +37,7 @@ class _PackagesState extends State<Packages> {
   UserViewModel userViewModel = UserViewModel();
 
   DateTime tomorrow = DateTime.now().add(const Duration(days: 1));
+ 
   final DateFormat _dateFormat = DateFormat('dd-MM-yyyy');
   final ScrollController _scrollController = ScrollController();
 
@@ -112,54 +113,54 @@ class _PackagesState extends State<Packages> {
     }
   }
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime currentDate = DateTime.now();
-    final DateTime tomorrow = currentDate.add(const Duration(days: 1));
+  // Future<void> _selectDate(BuildContext context) async {
+  //   final DateTime currentDate = DateTime.now();
+  //   final DateTime tomorrow = currentDate.add(const Duration(days: 1));
 
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _dateFormat.parse(controller.text),
-      firstDate: tomorrow,
-      lastDate: DateTime(tomorrow.year + 1),
-      // lastDate: DateTime(tomorrow.year + 1),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: btnColor,
-            ),
-            textButtonTheme: TextButtonThemeData(
-                style: ButtonStyle(
-              backgroundColor:
-                  WidgetStateProperty.all(btnColor), // Button background
-              foregroundColor:
-                  WidgetStateProperty.all(background), // Button text color
-              shape: WidgetStateProperty.all(
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              ),
-            )),
-            buttonTheme: const ButtonThemeData(
-              textTheme: ButtonTextTheme.primary,
-            ),
-          ),
-          child: Dialog(
-              insetPadding: const EdgeInsets.all(20),
-              backgroundColor: background,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.0), // Border radius here
-              ),
-              child: SingleChildScrollView(
-                  padding: EdgeInsets.zero, child: child!)),
-        );
-      },
-    );
-    if (picked != null && _dateFormat.format(picked) != controller.text) {
-      setState(() {
-        controller.text = _dateFormat.format(picked);
-      });
-      // _fetchPackageList();
-    }
-  }
+  //   final DateTime? picked = await showDatePicker(
+  //     context: context,
+  //     initialDate: _dateFormat.parse(controller.text),
+  //     firstDate: tomorrow,
+  //     lastDate: DateTime(tomorrow.year + 1),
+  //     // lastDate: DateTime(tomorrow.year + 1),
+  //     builder: (BuildContext context, Widget? child) {
+  //       return Theme(
+  //         data: ThemeData.light().copyWith(
+  //           colorScheme: const ColorScheme.light(
+  //             primary: btnColor,
+  //           ),
+  //           textButtonTheme: TextButtonThemeData(
+  //               style: ButtonStyle(
+  //             backgroundColor:
+  //                 WidgetStateProperty.all(btnColor), // Button background
+  //             foregroundColor:
+  //                 WidgetStateProperty.all(background), // Button text color
+  //             shape: WidgetStateProperty.all(
+  //               RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+  //             ),
+  //           )),
+  //           buttonTheme: const ButtonThemeData(
+  //             textTheme: ButtonTextTheme.primary,
+  //           ),
+  //         ),
+  //         child: Dialog(
+  //             insetPadding: const EdgeInsets.all(20),
+  //             backgroundColor: background,
+  //             shape: RoundedRectangleBorder(
+  //               borderRadius: BorderRadius.circular(16.0), // Border radius here
+  //             ),
+  //             child: SingleChildScrollView(
+  //                 padding: EdgeInsets.zero, child: child!)),
+  //       );
+  //     },
+  //   );
+  //   if (picked != null && _dateFormat.format(picked) != controller.text) {
+  //     setState(() {
+  //       controller.text = _dateFormat.format(picked);
+  //     });
+  //     // _fetchPackageList();
+  //   }
+  // }
 
   // Dio? dio;
   String accessToken = '';
@@ -260,7 +261,21 @@ class _PackagesState extends State<Packages> {
                             textAlignVertical: TextAlignVertical.center,
                             readOnly: true,
                             onTap: () async {
-                              await _selectDate(context);
+                              // await _selectDate(context);
+                              final selectedDate = await showCustomDatePicker(
+                                context,
+                                initialDate: _dateFormat.parse(controller.text),
+                                firstDate: tomorrow,
+                                lastDate: DateTime(tomorrow.year + 1),
+                              );
+                              if (selectedDate != null &&
+                                  _dateFormat.format(selectedDate) !=
+                                      controller.text) {
+                                setState(() {
+                                  controller.text =
+                                      _dateFormat.format(selectedDate);
+                                });
+                              }
                             },
                             style: titleTextStyle,
                             decoration: InputDecoration(
@@ -371,7 +386,6 @@ class _PackagesState extends State<Packages> {
                                                           .packageId
                                                 },
                                                 getPackageList[index].packageId,
-                                                widget.ursID,
                                                 controller.text);
                                       }
                                       // ()=> context.push("/package/packageDetails"),

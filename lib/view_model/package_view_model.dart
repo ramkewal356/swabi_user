@@ -8,6 +8,7 @@ import 'package:flutter_cab/respository/package_repository.dart';
 import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view_model/notification_view_model.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
+import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -34,8 +35,7 @@ class GetPackageListViewModel with ChangeNotifier {
   }
 
   Future<void> fetchGetPackageListViewModelApi(
-      {
-      required String date,
+      {required String date,
       required String country,
       required String state,
       required bool isPagination,
@@ -92,16 +92,17 @@ class GetPackageActivityByIdViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchGetPackageActivityByIdViewModelApi(BuildContext context,
-      data, String packID, String uId, String dateBooking) async {
+  Future<void> fetchGetPackageActivityByIdViewModelApi(
+      BuildContext context, data, String packID, String dateBooking) async {
     setDataList(ApiResponse.loading());
     _myRepo
         .getPackageActivityByIdRepositoryApi(context: context, query: data)
         .then((value) async {
+      String? userId = await UserViewModel().getUserId();
       setDataList(ApiResponse.completed(value));
       context.push("/package/packageDetails", extra: {
         "packageID": packID,
-        "userId": uId,
+        "userId": userId,
         "bookDate": dateBooking,
         "venderId": value.data?.vendor?.vendorId.toString()
       });
@@ -219,7 +220,6 @@ class ConfirmPackageBookingViewModel with ChangeNotifier {
           Provider.of<NotificationViewModel>(context, listen: false)
               .getAllNotificationList(
                   context: context,
-                  userId: userId,
                   pageNumber: 0,
                   pageSize: 100,
                   readStatus: 'FALSE');
@@ -346,7 +346,6 @@ class GetPackageHistoryDetailByIdViewModel with ChangeNotifier {
       setDataList(ApiResponse.error(error.toString()));
     }
     return null;
-   
   }
 
   Future<void> fetchPackageHistoryDetailByIdViewModelApi(

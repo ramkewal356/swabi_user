@@ -105,3 +105,4 @@ const String palmJumeirah = "assets/images/palm-img.jpg";
 const String jumeirahBeach = "assets/images/jumirah-img.jpg";
 const String deira = "assets/images/deira-img.jpg";
 const String alFahidi = "assets/images/al-fahidi-img.jpg";
+const String dollorIcon = "assets/images/icon-dollar.png";

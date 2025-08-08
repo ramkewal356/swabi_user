@@ -3,38 +3,92 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/app_url.dart';
-import 'package:flutter_cab/model/get_all_enquiry_model.dart';
+import 'package:flutter_cab/model/get_all_bid_model.dart';
+import 'package:flutter_cab/model/get_bid_by_id_model.dart';
+
 
 import '../view_model/services/http_service.dart';
 
 class BidRepository {
-  Future<GetAllEnquiryModel> getAllBidsApi(
-      {required Map<String, dynamic> query}) async {
+  Future<GetAllBidModel> getAllBidsApi(
+      {required Map<String, dynamic> query, required String? vendorId}) async {
     var http = HttpService(
         isAuthorizeRequest: false,
         baseURL: AppUrl.baseUrl,
-        endURL: AppUrl.getAllEnquiryUrl,
+        endURL: '/bids/vendor/$vendorId/submitted',
         methodType: HttpMethodType.GET,
         bodyType: HttpBodyType.JSON,
         queryParameters: query);
     try {
       Response<dynamic>? response = await http.request<dynamic>();
-      debugPrint("Vendor Resp api success ${response?.data}");
+      debugPrint("Get All Bid Api success ${response?.data}");
 
       if (response?.data is Map<String, dynamic>) {
         // Already JSON decoded
-        return GetAllEnquiryModel.fromJson(
-            response?.data as Map<String, dynamic>);
+        return GetAllBidModel.fromJson(response?.data as Map<String, dynamic>);
       } else if (response?.data is String) {
         // Need to decode
         final decoded = jsonDecode(response?.data as String);
-        return GetAllEnquiryModel.fromJson(decoded);
+        return GetAllBidModel.fromJson(decoded);
       } else {
         throw Exception("Unexpected response format: ${response?.data}");
       }
     } catch (e) {
-      debugPrint("Vendor Resp api not success");
+      debugPrint("Get  Bid Api not success");
 
+      http.handleErrorResponse(error: e);
+      rethrow;
+    }
+  }
+
+  Future<GetBidByIdModel> getBidByIdApi({required String? bidId}) async {
+    var http = HttpService(
+      isAuthorizeRequest: false,
+      baseURL: AppUrl.baseUrl,
+      endURL: '/bids/$bidId',
+      methodType: HttpMethodType.GET,
+      bodyType: HttpBodyType.JSON,
+    );
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("Get Bid By Id Api success ${response?.data}");
+
+      if (response?.data is Map<String, dynamic>) {
+        // Already JSON decoded
+        return GetBidByIdModel.fromJson(
+            response?.data as Map<String, dynamic>);
+      } else if (response?.data is String) {
+        // Need to decode
+        final decoded = jsonDecode(response?.data as String);
+        return GetBidByIdModel.fromJson(decoded);
+      } else {
+        throw Exception("Unexpected response format: ${response?.data}");
+      }
+    } catch (e) {
+      debugPrint("Get Bid By Id api not success");
+
+      http.handleErrorResponse(error: e);
+      rethrow;
+    }
+  }
+
+  Future<bool> updateBidApi(
+      {required Map<String, dynamic> body,
+      required String? vendorId,
+      required int bidId}) async {
+    var http = HttpService(
+        isAuthorizeRequest: true,
+        baseURL: AppUrl.baseUrl,
+        endURL: '${AppUrl.updateBidUrl}/$bidId/$vendorId',
+        methodType: HttpMethodType.PUT,
+        bodyType: HttpBodyType.JSON,
+        body: body);
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("Update Bid Resp api success ${response?.data}");
+      return true;
+    } catch (e) {
+      debugPrint("Update Bid Resp api not success");
       http.handleErrorResponse(error: e);
       rethrow;
     }

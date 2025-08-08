@@ -1,78 +1,16 @@
 // To parse this JSON data, do
 //
-//     final getAllBidModel = getAllBidModelFromJson(jsonString);
+//     final getBidByIdModel = getBidByIdModelFromJson(jsonString);
 
 import 'dart:convert';
 
-GetAllBidModel getAllBidModelFromJson(String str) =>
-    GetAllBidModel.fromJson(json.decode(str));
+GetBidByIdModel getBidByIdModelFromJson(String str) =>
+    GetBidByIdModel.fromJson(json.decode(str));
 
-String getAllBidModelToJson(GetAllBidModel data) => json.encode(data.toJson());
+String getBidByIdModelToJson(GetBidByIdModel data) =>
+    json.encode(data.toJson());
 
-class GetAllBidModel {
-  List<BidContent>? content;
-  Pageable? pageable;
-  int? totalElements;
-  int? totalPages;
-  bool? last;
-  int? number;
-  Sort? sort;
-  int? size;
-  int? numberOfElements;
-  bool? first;
-  bool? empty;
-
-  GetAllBidModel({
-    this.content,
-    this.pageable,
-    this.totalElements,
-    this.totalPages,
-    this.last,
-    this.number,
-    this.sort,
-    this.size,
-    this.numberOfElements,
-    this.first,
-    this.empty,
-  });
-
-  factory GetAllBidModel.fromJson(Map<String, dynamic> json) => GetAllBidModel(
-        content: json["content"] == null
-            ? []
-            : List<BidContent>.from(
-                json["content"]!.map((x) => BidContent.fromJson(x))),
-        pageable: json["pageable"] == null
-            ? null
-            : Pageable.fromJson(json["pageable"]),
-        totalElements: json["totalElements"],
-        totalPages: json["totalPages"],
-        last: json["last"],
-        number: json["number"],
-        sort: json["sort"] == null ? null : Sort.fromJson(json["sort"]),
-        size: json["size"],
-        numberOfElements: json["numberOfElements"],
-        first: json["first"],
-        empty: json["empty"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "content": content == null
-            ? []
-            : List<dynamic>.from(content!.map((x) => x.toJson())),
-        "pageable": pageable?.toJson(),
-        "totalElements": totalElements,
-        "totalPages": totalPages,
-        "last": last,
-        "number": number,
-        "sort": sort?.toJson(),
-        "size": size,
-        "numberOfElements": numberOfElements,
-        "first": first,
-        "empty": empty,
-      };
-}
-
-class BidContent {
+class GetBidByIdModel {
   int? id;
   String? price;
   String? accommodation;
@@ -94,7 +32,7 @@ class BidContent {
   bool? verified;
   bool? expired;
 
-  BidContent({
+  GetBidByIdModel({
     this.id,
     this.price,
     this.accommodation,
@@ -117,7 +55,8 @@ class BidContent {
     this.expired,
   });
 
-  factory BidContent.fromJson(Map<String, dynamic> json) => BidContent(
+  factory GetBidByIdModel.fromJson(Map<String, dynamic> json) =>
+      GetBidByIdModel(
         id: json["id"],
         price: json["price"],
         accommodation: json["accommodation"],
@@ -169,7 +108,7 @@ class BidContent {
 class TravelInquiry {
   int? id;
   String? name;
-  String? country;
+  dynamic country;
   List<String>? destinations;
   String? accommodationPreferences;
   String? meals;
@@ -345,65 +284,3 @@ class User {
         "subscriptionEndDate": subscriptionEndDate,
       };
 }
-
-
-class Pageable {
-  Sort? sort;
-  int? offset;
-  int? pageNumber;
-  int? pageSize;
-  bool? paged;
-  bool? unpaged;
-
-  Pageable({
-    this.sort,
-    this.offset,
-    this.pageNumber,
-    this.pageSize,
-    this.paged,
-    this.unpaged,
-  });
-
-  factory Pageable.fromJson(Map<String, dynamic> json) => Pageable(
-        sort: json["sort"] == null ? null : Sort.fromJson(json["sort"]),
-        offset: json["offset"],
-        pageNumber: json["pageNumber"],
-        pageSize: json["pageSize"],
-        paged: json["paged"],
-        unpaged: json["unpaged"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "sort": sort?.toJson(),
-        "offset": offset,
-        "pageNumber": pageNumber,
-        "pageSize": pageSize,
-        "paged": paged,
-        "unpaged": unpaged,
-      };
-}
-
-class Sort {
-  bool? empty;
-  bool? sorted;
-  bool? unsorted;
-
-  Sort({
-    this.empty,
-    this.sorted,
-    this.unsorted,
-  });
-
-  factory Sort.fromJson(Map<String, dynamic> json) => Sort(
-        empty: json["empty"],
-        sorted: json["sorted"],
-        unsorted: json["unsorted"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "empty": empty,
-        "sorted": sorted,
-        "unsorted": unsorted,
-      };
-}
-

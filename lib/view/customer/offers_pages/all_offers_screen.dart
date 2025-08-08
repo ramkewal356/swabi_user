@@ -171,7 +171,7 @@ class _AlloffersScreenState extends State<AlloffersScreen>
                                                 child: Image.network(
                                                   data?.imageUrl ??
                                                       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS23qSvFQm2bH4nUAwxBk7ZzBQm5Qi__4imxg&s',
-                                                  // fit: BoxFit.fill,
+                                                  fit: BoxFit.cover,
                                                 ),
                                               ),
                                             ),

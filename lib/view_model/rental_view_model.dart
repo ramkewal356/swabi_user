@@ -6,6 +6,7 @@ import 'package:flutter_cab/model/rental_booking_model.dart';
 import 'package:flutter_cab/respository/rental_repository.dart';
 import 'package:flutter_cab/view_model/notification_view_model.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
+import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../utils/utils.dart';
@@ -29,7 +30,8 @@ class RentalViewModel with ChangeNotifier {
   }
 
   Future<void> fetchRentalViewModelApi(BuildContext context, data,
-      String myUserId, double lati, double logi) async {
+      double lati, double logi) async {
+    String? userId = await UserViewModel().getUserId();
     setLoading(true);
     setDataList(ApiResponse.loading());
     _myRepo
@@ -44,7 +46,7 @@ class RentalViewModel with ChangeNotifier {
           : null;
       (dataList.data?.data.body ?? []).isNotEmpty
           ? context.push('/rentalForm/carsDetails',
-              extra: {'id': myUserId, 'logitude': logi, "latitude": lati})
+              extra: {'id': userId, 'logitude': logi, "latitude": lati})
           : null;
       // (DataList.data?.data.body ?? []).isEmpty ? Utils.flushBarErrorMessage(DataList.data?.data.errorMessage ?? "Something went wrong", context, redColor) : null;
     }).onError((error, stackTrace) {
@@ -150,7 +152,7 @@ class ConfirmRentalBookingViewModel with ChangeNotifier {
           Provider.of<NotificationViewModel>(context, listen: false)
               .getAllNotificationList(
                   context: context,
-                  userId: userId,
+               
                   pageNumber: 0,
                   pageSize: 100,
                   readStatus: 'FALSE');
@@ -195,7 +197,7 @@ class RentalBookingCancelViewModel with ChangeNotifier {
       String paymentId) async {
     try {
       setDataList(ApiResponse.loading());
- 
+
       await _myRepo
           .rentalBookingCancelRepositoryApi(context: context, query: data)
           .then((onValue) {

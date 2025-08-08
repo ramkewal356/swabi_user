@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
-
-import 'package:flutter_cab/model/get_all_enquiry_model.dart';
+import 'package:flutter_cab/model/get_all_bid_model.dart';
+import 'package:flutter_cab/model/get_bid_by_id_model.dart';
 import 'package:flutter_cab/respository/bid_repository.dart';
+import 'package:flutter_cab/utils/utils.dart';
+import 'package:flutter_cab/view_model/user_view_model.dart';
 
 class BidViewModel with ChangeNotifier {
   int page = 0; // Track the current page
@@ -11,9 +13,21 @@ class BidViewModel with ChangeNotifier {
   bool isLoadingMore = false; // Track if more data is being loaded
 
   final _myRepo = BidRepository();
-  ApiResponse<List<EnquiryContent>> bidData = ApiResponse.initial();
-  setBidData(ApiResponse<List<EnquiryContent>> response) {
+  ApiResponse<List<BidContent>> bidData = ApiResponse.initial();
+  setBidData(ApiResponse<List<BidContent>> response) {
     bidData = response;
+    notifyListeners();
+  }
+
+  ApiResponse<GetBidByIdModel> bidByIdData = ApiResponse.initial();
+  setBidByIdData(ApiResponse<GetBidByIdModel> response) {
+    bidByIdData = response;
+    notifyListeners();
+  }
+
+  ApiResponse<bool> updateBid = ApiResponse.initial();
+  updateBidData(ApiResponse<bool> response) {
+    updateBid = response;
     notifyListeners();
   }
 
@@ -28,33 +42,88 @@ class BidViewModel with ChangeNotifier {
     if (!isPagination && newSearch) {
       page = 0; // Reset page if not paginating
       isLastPage = false; // Reset last page status
-      bidData.data?.clear(); // Clear existing data
+      // bidData.data?.clear(); // Clear existing data
       setBidData(ApiResponse.loading());
     }
+    String? vendorId = await UserViewModel().getUserId();
     Map<String, dynamic> query = {
       "page": page,
       "query": searchText,
-      "status": filterText
+      "bidStatus": filterText
     };
 
     if (isLastPage) return;
     isLoadingMore = true;
     try {
-      var resp = await _myRepo.getAllBidsApi(query: query);
-      List<EnquiryContent> newBids = resp.data?.content ?? [];
-      List<EnquiryContent> allBids =
+      var resp = await _myRepo.getAllBidsApi(query: query, vendorId: vendorId);
+      List<BidContent> newBids = resp.content ?? [];
+      List<BidContent> allBids =
           (page == 0) ? newBids : [...bidData.data ?? [], ...newBids];
 
-      isLastPage = resp.data?.last ?? false; // Check if it's the last page
+      isLastPage = resp.last ?? false; // Check if it's the last page
       page++; // Increment page for next request
       setBidData(ApiResponse.completed(allBids));
 
-      debugPrint("Bid Resp api success ${resp.data}");
+      // debugPrint("Bid Resp api success ${resp.content}");
     } catch (e) {
       debugPrint('error $e');
       setBidData(ApiResponse.error(e.toString()));
     } finally {
       isLoadingMore = false; // Reset loading state after request
+    }
+  }
+
+  Future<void> getBidByIdApi({required String? bidId}) async {
+    if (bidId == null || bidId.isEmpty) {
+      setBidByIdData(ApiResponse.error("Bid ID cannot be null or empty"));
+      return;
+    }
+    try {
+      setBidByIdData(ApiResponse.loading());
+      var resp = await _myRepo.getBidByIdApi(bidId: bidId);
+      setBidByIdData(ApiResponse.completed(resp));
+      debugPrint("Get Bid By Id Api success ${resp.toJson()}");
+    } catch (e) {
+      debugPrint('error $e');
+      setBidByIdData(ApiResponse.error(e.toString()));
+    }
+  }
+
+  Future<void> updateBidApi(
+      {required String price,
+      required String accommodation,
+      required String meals,
+      required String transportation,
+      required String extra,
+      required String itinerary,
+      required int bidId}) async {
+    String? vendorId = await UserViewModel().getUserId();
+    Map<String, dynamic> body = {
+      "price": price,
+      "accommodation": accommodation,
+      "meals": meals,
+      "transportation": transportation,
+      "extras": extra,
+      "itinerary": itinerary,
+      "bidId": bidId,
+      "vendorId": vendorId
+    };
+    updateBidData(ApiResponse.loading());
+    try {
+      var resp = await _myRepo.updateBidApi(
+          body: body, vendorId: vendorId, bidId: bidId);
+      if (resp == true) {
+        updateBidData(ApiResponse.completed(resp));
+        debugPrint("Update Bid Api success");
+        Utils.toastSuccessMessage(
+          "Bid updated successfully",
+        );
+      } else {
+        updateBidData(ApiResponse.error(resp.toString()));
+      }
+    } catch (e) {
+      debugPrint('error $e');
+      updateBidData(ApiResponse.error(e.toString()));
     }
   }
 }

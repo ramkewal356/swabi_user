@@ -1,8 +1,10 @@
 // routes.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter_cab/model/get_all_bid_model.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPageLayout.dart';
 import 'package:flutter_cab/view/auth_screens/change_password.dart';
+import 'package:flutter_cab/view/customer/enquiry/my_enquiry_screen.dart';
 import 'package:flutter_cab/view/help_and_support/contact.dart';
 import 'package:flutter_cab/view/help_and_support/help&support_screen.dart';
 import 'package:flutter_cab/view/notification/notification.dart';
@@ -36,10 +38,12 @@ import 'package:flutter_cab/view/auth_screens/registration_screen.dart';
 import 'package:flutter_cab/view/starting_screen/landing_screen.dart';
 import 'package:flutter_cab/view/starting_screen/splash_screen.dart';
 import 'package:flutter_cab/view/auth_screens/reset_password_screen.dart';
+import 'package:flutter_cab/view/vendor/enquiry_management/bid_now_screen.dart';
 import 'package:flutter_cab/view/vendor/enquiry_management/enquiry_management_screen.dart';
 import 'package:flutter_cab/view/vendor/vendor_dashboard_screen.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../model/get_all_enquiry_model.dart';
 import '../../view/customer/my_package/packageHistory/package_booking_details.dart';
 import '../../view/vendor/bid_management_screen/bid_management_screen.dart';
 
@@ -82,10 +86,7 @@ final GoRouter myRouter = GoRouter(
     GoRoute(
       path: '/notification',
       builder: (BuildContext context, GoRouterState state) {
-        var data = state.extra as Map<String, dynamic>;
-        return NotificationPage(
-          userId: data['userId'],
-        );
+        return const NotificationPage();
       },
     ),
     GoRoute(
@@ -182,7 +183,7 @@ final GoRouter myRouter = GoRouter(
       path: '/issueDetailsbyId',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (BuildContext context, GoRouterState state) {
-        return const Issueviewdetails();
+        return const IssueViewDetails();
       },
     ),
     GoRoute(
@@ -200,6 +201,12 @@ final GoRouter myRouter = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       builder: (BuildContext context, GoRouterState state) {
         return const OfferdetailsScreen();
+      },
+    ),
+    GoRoute(
+      path: '/my_enquiry',
+      builder: (context, state) {
+        return const MyEnquiryScreen();
       },
     ),
     GoRoute(
@@ -253,10 +260,7 @@ final GoRouter myRouter = GoRouter(
         path: '/package',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (BuildContext context, GoRouterState state) {
-          final uid = state.extra as Map<String, dynamic>;
-          return Packages(
-            ursID: uid['user'],
-          );
+          return const Packages();
         },
         routes: [
           GoRoute(
@@ -320,8 +324,7 @@ final GoRouter myRouter = GoRouter(
         path: '/rentalForm',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (BuildContext context, GoRouterState state) {
-          final data = state.extra as Map<String, dynamic>;
-          return RentalForm(userId: data['userId']);
+          return const RentalForm();
         },
         routes: [
           GoRoute(
@@ -405,12 +408,13 @@ final GoRouter myRouter = GoRouter(
               );
             },
           ),
+         
         ]),
 
     /// vendor routes
     GoRoute(
-      path: '/vendor_dashboard',
-      builder: (context, state) => const VendorDashboardScreen(),
+        path: '/vendor_dashboard',
+        builder: (context, state) => const VendorDashboardScreen(),
         routes: [
           GoRoute(
             path: 'bidManagement',
@@ -420,7 +424,22 @@ final GoRouter myRouter = GoRouter(
             path: 'enquiryManagement',
             builder: (context, state) => const EnquiryManagementScreen(),
           ),
-        ]
-    )
+          GoRoute(
+            path: 'bidNow',
+            builder: (context, state) {
+              final extra = state.extra;
+
+              if (extra is EnquiryContent) {
+                return BidNowScreen(enquiryData: extra);
+              } else if (extra is BidContent) {
+                return BidNowScreen(bidData: extra);
+              } else {
+                return const Scaffold(
+                  body: Center(child: Text("Invalid navigation data")),
+                );
+              }
+            },
+          ),
+        ])
   ],
 );

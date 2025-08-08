@@ -34,8 +34,8 @@ class GetAllEnquiryModel {
 class EnquiryData {
   List<EnquiryContent>? content;
   Pageable? pageable;
-  int? totalPages;
   int? totalElements;
+  int? totalPages;
   bool? last;
   int? number;
   Sort? sort;
@@ -47,8 +47,8 @@ class EnquiryData {
   EnquiryData({
     this.content,
     this.pageable,
-    this.totalPages,
     this.totalElements,
+    this.totalPages,
     this.last,
     this.number,
     this.sort,
@@ -66,8 +66,8 @@ class EnquiryData {
         pageable: json["pageable"] == null
             ? null
             : Pageable.fromJson(json["pageable"]),
-        totalPages: json["totalPages"],
         totalElements: json["totalElements"],
+        totalPages: json["totalPages"],
         last: json["last"],
         number: json["number"],
         sort: json["sort"] == null ? null : Sort.fromJson(json["sort"]),
@@ -82,8 +82,8 @@ class EnquiryData {
             ? []
             : List<dynamic>.from(content!.map((x) => x.toJson())),
         "pageable": pageable?.toJson(),
-        "totalPages": totalPages,
         "totalElements": totalElements,
+        "totalPages": totalPages,
         "last": last,
         "number": number,
         "sort": sort?.toJson(),
@@ -97,6 +97,7 @@ class EnquiryData {
 class EnquiryContent {
   int? id;
   String? name;
+  String? email;
   String? country;
   List<String>? destinations;
   String? accommodationPreferences;
@@ -106,11 +107,14 @@ class EnquiryContent {
   String? specialRequests;
   String? travelDates;
   dynamic tentativeDates;
+  int? createdAt;
+  User? user;
   bool? bidPlacedByVendor;
 
   EnquiryContent({
     this.id,
     this.name,
+    this.email,
     this.country,
     this.destinations,
     this.accommodationPreferences,
@@ -120,12 +124,15 @@ class EnquiryContent {
     this.specialRequests,
     this.travelDates,
     this.tentativeDates,
+    this.createdAt,
+    this.user,
     this.bidPlacedByVendor,
   });
 
   factory EnquiryContent.fromJson(Map<String, dynamic> json) => EnquiryContent(
         id: json["id"],
         name: json["name"],
+        email: json["email"],
         country: json["country"],
         destinations: json["destinations"] == null
             ? []
@@ -137,12 +144,15 @@ class EnquiryContent {
         specialRequests: json["specialRequests"],
         travelDates: json["travelDates"],
         tentativeDates: json["tentativeDates"],
+        createdAt: json["createdAt"],
+        user: json["user"] == null ? null : User.fromJson(json["user"]),
         bidPlacedByVendor: json["bidPlacedByVendor"],
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "name": name,
+        "email": email,
         "country": country,
         "destinations": destinations == null
             ? []
@@ -154,7 +164,105 @@ class EnquiryContent {
         "specialRequests": specialRequests,
         "travelDates": travelDates,
         "tentativeDates": tentativeDates,
+        "createdAt": createdAt,
+        "user": user?.toJson(),
         "bidPlacedByVendor": bidPlacedByVendor,
+      };
+}
+
+
+
+
+
+class User {
+  int? userId;
+  String? firstName;
+  String? lastName;
+  String? mobile;
+  String? address;
+  String? email;
+  String? gender;
+  DateTime? createdDate;
+  DateTime? modifiedDate;
+  bool? status;
+  dynamic otp;
+  dynamic isOtpVerified;
+  String? userType;
+  String? profileImageUrl;
+  String? countryCode;
+  String? notificationToken;
+  String? lastLogin;
+  String? country;
+  String? state;
+
+  User({
+    this.userId,
+    this.firstName,
+    this.lastName,
+    this.mobile,
+    this.address,
+    this.email,
+    this.gender,
+    this.createdDate,
+    this.modifiedDate,
+    this.status,
+    this.otp,
+    this.isOtpVerified,
+    this.userType,
+    this.profileImageUrl,
+    this.countryCode,
+    this.notificationToken,
+    this.lastLogin,
+    this.country,
+    this.state,
+  });
+
+  factory User.fromJson(Map<String, dynamic> json) => User(
+        userId: json["userId"],
+        firstName: json["firstName"],
+        lastName: json["lastName"],
+        mobile: json["mobile"],
+        address: json["address"],
+        email: json["email"],
+        gender: json["gender"],
+        createdDate: json["createdDate"] == null
+            ? null
+            : DateTime.parse(json["createdDate"]),
+        modifiedDate: json["modifiedDate"] == null
+            ? null
+            : DateTime.parse(json["modifiedDate"]),
+        status: json["status"],
+        otp: json["otp"],
+        isOtpVerified: json["isOtpVerified"],
+        userType: json["userType"],
+        profileImageUrl: json["profileImageUrl"],
+        countryCode: json["countryCode"],
+        notificationToken: json["notificationToken"],
+        lastLogin: json["lastLogin"],
+        country: json["country"],
+        state: json["state"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "userId": userId,
+        "firstName": firstName,
+        "lastName": lastName,
+        "mobile": mobile,
+        "address": address,
+        "email": email,
+        "gender": gender,
+        "createdDate": createdDate?.toIso8601String(),
+        "modifiedDate": modifiedDate?.toIso8601String(),
+        "status": status,
+        "otp": otp,
+        "isOtpVerified": isOtpVerified,
+        "userType": userType,
+        "profileImageUrl": profileImageUrl,
+        "countryCode": countryCode,
+        "notificationToken": notificationToken,
+        "lastLogin": lastLogin,
+        "country": country,
+        "state": state,
       };
 }
 

@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_cab/utils/color.dart';
 import 'package:intl/intl.dart';
 
 class Validation {
@@ -53,4 +55,43 @@ class Validation {
     String formattedTime = DateFormat('hh:mm a').format(dateTime);
     return formattedTime;
   }
+}
+Future<DateTime?> showCustomDatePicker(BuildContext context,
+    {DateTime? initialDate, DateTime? firstDate, DateTime? lastDate}) async {
+  return await showDatePicker(
+    context: context,
+    initialDate: initialDate ?? DateTime.now(),
+    firstDate: firstDate ?? DateTime(2000),
+    lastDate: lastDate ?? DateTime(2100),
+    builder: (BuildContext context, Widget? child) {
+      return Theme(
+        data: ThemeData.light().copyWith(
+          colorScheme: const ColorScheme.light(
+            primary: btnColor,
+          ),
+          textButtonTheme: TextButtonThemeData(
+              style: ButtonStyle(
+            backgroundColor:
+                WidgetStateProperty.all(btnColor), // Button background
+            foregroundColor:
+                WidgetStateProperty.all(background), // Button text color
+            shape: WidgetStateProperty.all(
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+          )),
+          buttonTheme: const ButtonThemeData(
+            textTheme: ButtonTextTheme.primary,
+          ),
+        ),
+        child: Dialog(
+            insetPadding: const EdgeInsets.all(20),
+            backgroundColor: background,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16.0), // Border radius here
+            ),
+            child:
+                SingleChildScrollView(padding: EdgeInsets.zero, child: child!)),
+      );
+    },
+  );
 }

@@ -66,7 +66,7 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                   return InkWell(
                     onTap: () {
                       Provider.of<NotificationViewModel>(context, listen: false)
-                          .updateNotification(context: context, userId: '')
+                          .updateNotification(context: context)
                           .then((onValue) {
                         if (onValue?.status?.httpCode == '200') {
                           // context.push('/notification',
@@ -117,7 +117,7 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                 }
               },
               {
-                "imgUrl": transaction,
+                "imgUrl": dollorIcon,
                 "label": "Bid Management",
                 "onTap": () {
                   context.push("/vendor_dashboard/bidManagement");

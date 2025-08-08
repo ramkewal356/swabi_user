@@ -1,16 +1,17 @@
 // To parse this JSON data, do
 //
-//     final getAllBidModel = getAllBidModelFromJson(jsonString);
+//     final getMyEnquiryModel = getMyEnquiryModelFromJson(jsonString);
 
 import 'dart:convert';
 
-GetAllBidModel getAllBidModelFromJson(String str) =>
-    GetAllBidModel.fromJson(json.decode(str));
+GetMyEnquiryModel getMyEnquiryModelFromJson(String str) =>
+    GetMyEnquiryModel.fromJson(json.decode(str));
 
-String getAllBidModelToJson(GetAllBidModel data) => json.encode(data.toJson());
+String getMyEnquiryModelToJson(GetMyEnquiryModel data) =>
+    json.encode(data.toJson());
 
-class GetAllBidModel {
-  List<BidContent>? content;
+class GetMyEnquiryModel {
+  List<MyEnquiryContent>? content;
   Pageable? pageable;
   int? totalElements;
   int? totalPages;
@@ -22,7 +23,7 @@ class GetAllBidModel {
   bool? first;
   bool? empty;
 
-  GetAllBidModel({
+  GetMyEnquiryModel({
     this.content,
     this.pageable,
     this.totalElements,
@@ -36,11 +37,12 @@ class GetAllBidModel {
     this.empty,
   });
 
-  factory GetAllBidModel.fromJson(Map<String, dynamic> json) => GetAllBidModel(
+  factory GetMyEnquiryModel.fromJson(Map<String, dynamic> json) =>
+      GetMyEnquiryModel(
         content: json["content"] == null
             ? []
-            : List<BidContent>.from(
-                json["content"]!.map((x) => BidContent.fromJson(x))),
+            : List<MyEnquiryContent>.from(
+                json["content"]!.map((x) => MyEnquiryContent.fromJson(x))),
         pageable: json["pageable"] == null
             ? null
             : Pageable.fromJson(json["pageable"]),
@@ -72,7 +74,34 @@ class GetAllBidModel {
       };
 }
 
-class BidContent {
+class MyEnquiryContent {
+  TravelInquiry? travelInquiry;
+  List<Bid>? bids;
+
+  MyEnquiryContent({
+    this.travelInquiry,
+    this.bids,
+  });
+
+  factory MyEnquiryContent.fromJson(Map<String, dynamic> json) =>
+      MyEnquiryContent(
+        travelInquiry: json["travelInquiry"] == null
+            ? null
+            : TravelInquiry.fromJson(json["travelInquiry"]),
+        bids: json["bids"] == null
+            ? []
+            : List<Bid>.from(json["bids"]!.map((x) => Bid.fromJson(x))),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "travelInquiry": travelInquiry?.toJson(),
+        "bids": bids == null
+            ? []
+            : List<dynamic>.from(bids!.map((x) => x.toJson())),
+      };
+}
+
+class Bid {
   int? id;
   String? price;
   String? accommodation;
@@ -91,10 +120,10 @@ class BidContent {
   bool? submitted;
   bool? rejected;
   bool? paid;
-  bool? verified;
   bool? expired;
+  bool? verified;
 
-  BidContent({
+  Bid({
     this.id,
     this.price,
     this.accommodation,
@@ -113,11 +142,11 @@ class BidContent {
     this.submitted,
     this.rejected,
     this.paid,
-    this.verified,
     this.expired,
+    this.verified,
   });
 
-  factory BidContent.fromJson(Map<String, dynamic> json) => BidContent(
+  factory Bid.fromJson(Map<String, dynamic> json) => Bid(
         id: json["id"],
         price: json["price"],
         accommodation: json["accommodation"],
@@ -138,8 +167,8 @@ class BidContent {
         submitted: json["submitted"],
         rejected: json["rejected"],
         paid: json["paid"],
-        verified: json["verified"],
         expired: json["expired"],
+        verified: json["verified"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -161,8 +190,8 @@ class BidContent {
         "submitted": submitted,
         "rejected": rejected,
         "paid": paid,
-        "verified": verified,
         "expired": expired,
+        "verified": verified,
       };
 }
 
@@ -179,8 +208,8 @@ class TravelInquiry {
   String? travelDates;
   dynamic tentativeDates;
   User? user;
-  int? createdAt;
-  int? updatedAt;
+  dynamic createdAt;
+  dynamic updatedAt;
 
   TravelInquiry({
     this.id,
@@ -250,7 +279,7 @@ class User {
   DateTime? modifiedDate;
   bool? status;
   dynamic otp;
-  bool? isOtpVerified;
+  dynamic isOtpVerified;
   String? userType;
   String? profileImageUrl;
   String? countryCode;
@@ -258,10 +287,6 @@ class User {
   String? lastLogin;
   String? country;
   String? state;
-  int? vendorId;
-  String? vendorProfileImageUrl;
-  dynamic subscriptionStartDate;
-  dynamic subscriptionEndDate;
 
   User({
     this.userId,
@@ -283,10 +308,6 @@ class User {
     this.lastLogin,
     this.country,
     this.state,
-    this.vendorId,
-    this.vendorProfileImageUrl,
-    this.subscriptionStartDate,
-    this.subscriptionEndDate,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
@@ -313,10 +334,6 @@ class User {
         lastLogin: json["lastLogin"],
         country: json["country"],
         state: json["state"],
-        vendorId: json["vendorId"],
-        vendorProfileImageUrl: json["vendorProfileImageUrl"],
-        subscriptionStartDate: json["subscriptionStartDate"],
-        subscriptionEndDate: json["subscriptionEndDate"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -339,13 +356,8 @@ class User {
         "lastLogin": lastLogin,
         "country": country,
         "state": state,
-        "vendorId": vendorId,
-        "vendorProfileImageUrl": vendorProfileImageUrl,
-        "subscriptionStartDate": subscriptionStartDate,
-        "subscriptionEndDate": subscriptionEndDate,
       };
 }
-
 
 class Pageable {
   Sort? sort;
@@ -406,4 +418,3 @@ class Sort {
         "unsorted": unsorted,
       };
 }
-

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cab/res/Custom%20%20Button/gradient_button.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPageLayout.dart';
 import 'package:flutter_cab/res/custom_filter_popup_widget.dart';
 import 'package:flutter_cab/res/custom_search_field.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view_model/enquiry_view_model.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../data/response/status.dart';
@@ -22,11 +24,11 @@ class _EnquiryManagementScreenState extends State<EnquiryManagementScreen> {
   final FocusNode _searchFocus = FocusNode();
   final ScrollController _scrollController = ScrollController();
   Map<String, String> bidFilter = {
-    "All Status": '',
-    "Sent Bid": 'true',
-    "Not Sent Bid": 'false',
+    "All": '',
+    "Bid Sent": 'true',
+    "Not Bid Sent": 'false',
   };
-  String title = "All Status";
+  String title = "All";
   String? _selectedbidding;
   String searchText = '';
   bool isExpanded = false;
@@ -123,7 +125,7 @@ class _EnquiryManagementScreenState extends State<EnquiryManagementScreen> {
                 if (vm.bidData.status == Status.loading) {
                   return const Center(
                       child: CircularProgressIndicator(
-                    color: btnColor,
+                    color: greenColor,
                   ));
                 } else if (vm.bidData.status == Status.error) {
                   return Center(
@@ -153,7 +155,9 @@ class _EnquiryManagementScreenState extends State<EnquiryManagementScreen> {
                           return const Center(
                             child: Padding(
                               padding: EdgeInsets.all(8.0),
-                              child: CircularProgressIndicator(),
+                              child: CircularProgressIndicator(
+                                color: greenColor,
+                              ),
                             ),
                           );
                         } else {
@@ -180,24 +184,25 @@ class _EnquiryManagementScreenState extends State<EnquiryManagementScreen> {
                                 vertical: VisualDensity.maximumDensity),
                             tilePadding: const EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 5),
-                            leading: const CircleAvatar(
+                            leading: CircleAvatar(
                               radius: 28,
                               backgroundColor: btnColor,
-                              child: Icon(
-                                Icons.business_center,
-                                color: background,
-                              ),
-                              // child: bidData?.user?.profileImageUrl == null
-                              //     ? const Icon(Icons.business_center)
-                              //     : ClipOval(
-                              //         child: Image.network(
-                              //           // imageAssets.bidManagement!,
-                              //           '${bidData?.user?.profileImageUrl}',
-                              //           // width: double.infinity,
-                              //           height: double.infinity,
-                              //           fit: BoxFit.cover,
-                              //         ),
-                              //       ),
+                              // child: Icon(
+                              //   Icons.business_center,
+                              //   color: background,
+                              // ),
+                              child: enquiryData?.user?.profileImageUrl == null
+                                  ? const Icon(Icons.business_center,
+                                      color: background)
+                                  : ClipOval(
+                                      child: Image.network(
+                                        // imageAssets.bidManagement!,
+                                        '${enquiryData?.user?.profileImageUrl}',
+                                        // width: double.infinity,
+                                        height: double.infinity,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
                             ),
                             title: Text('${enquiryData?.name} ',
                                 style: const TextStyle(
@@ -218,13 +223,36 @@ class _EnquiryManagementScreenState extends State<EnquiryManagementScreen> {
                             ),
                             trailing: Column(children: [
                               enquiryData?.bidPlacedByVendor == true
-                                  ? actionButton(
-                                      title: 'Sent Bid', color: greenColor)
-                                  : actionButton(
-                                      title: 'Bid Now',
+                                  ? GradientButton(
+                                      icon: Icons.done_all_rounded,
+                                      onPressed: () {},
+                                      label: 'Bid Sent',
+                                      colors: [
+                                        Colors.green.shade700,
+                                        Colors.green.shade900
+                                      ],
+                                    )
+                                  : GradientButton(
+                                      icon: Icons.monetization_on_outlined,
+                                      onPressed: () {
+                                        context
+                                            .push(
+                                          '/vendor_dashboard/bidNow',
+                                          extra: enquiryData,
+                                        )
+                                            .then((onValue) {
+                                          // Refresh the enquiry list after bid creation
+                                          _getAllEnquirys(
+                                            isFilter: true,
+                                            isSearch: false,
+                                            isPagination: false,
+                                          );
+                                        });
+                                      },
+                                      label: 'Bid Now',
                                     ),
-                              const SizedBox(height: 10),
-                              Icon(Icons.expand_circle_down_outlined,
+                              const SizedBox(height: 5),
+                              Icon(Icons.keyboard_arrow_down,
                                   color: Colors.grey.shade600)
                             ]),
                             children: [
@@ -290,32 +318,4 @@ class _EnquiryManagementScreenState extends State<EnquiryManagementScreen> {
     );
   }
 
-  Widget actionButton(
-      {void Function()? onTap,
-      Color? color,
-      required String title,
-      IconData icon = Icons.check}) {
-    if (title.isEmpty) {
-      return const SizedBox.shrink();
-    }
-    return InkWell(
-      onTap: onTap ??
-          () {
-            // Handle bid action
-            debugPrint("Bid action tapped");
-          },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-        decoration: BoxDecoration(
-          color: color ?? btnColor,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Text(title,
-            style: const TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.w500)),
-      ),
-    );
-  }
 }

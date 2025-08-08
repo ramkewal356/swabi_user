@@ -175,7 +175,7 @@ class _CommonOfferContainerState extends State<CommonOfferContainer> {
                                           : Image.network(
                                         data?.imageUrl ??
                                             'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTePpXbUcvlhV4a1px1UFFfXeZWZANowRWZXw&s',
-                                        fit: BoxFit.fill,
+                                              fit: BoxFit.cover,
                                       ),
                                     ),
                                   )),

@@ -9,8 +9,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class NotificationPage extends StatefulWidget {
-  final String userId;
-  const NotificationPage({super.key, required this.userId});
+
+  const NotificationPage({super.key});
 
   @override
   State<NotificationPage> createState() => _NotificationPageState();
@@ -48,14 +48,13 @@ class _NotificationPageState extends State<NotificationPage> {
           await Provider.of<NotificationViewModel>(context, listen: false)
               .getAllNotificationList(
                   context: context,
-                  userId: widget.userId,
+                 
                   pageNumber: currentPage,
                   pageSize: pageSize,
                   readStatus: 'all');
       var content = resp?.data?.content ?? [];
       List<Content> today = [];
       List<Content> earlier = [];
-
       DateTime todayStart = DateTime.now();
       for (var notification in content) {
         // Convert notification date
