@@ -6,7 +6,6 @@ import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/validation.dart';
 import 'package:flutter_cab/view_model/enquiry_view_model.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class SendEnquiryScreen extends StatefulWidget {
@@ -23,7 +22,6 @@ class _SendEnquiryScreenState extends State<SendEnquiryScreen> {
   bool hasSpecialRequest = false;
   AutovalidateMode _autoValidateMode = AutovalidateMode.disabled;
   final _formKey = GlobalKey<FormState>();
-  final DateFormat _dateFormat = DateFormat('dd-MM-yyyy');
   TextEditingController fullNametController = TextEditingController();
   TextEditingController specialRequestController = TextEditingController();
   TextEditingController dateController = TextEditingController();
@@ -358,11 +356,11 @@ class _SendEnquiryScreenState extends State<SendEnquiryScreen> {
                                 color: Colors.grey),
                           ),
                           onTap: () async {
-                            final selectedDate =
-                                await showCustomDatePicker(context);
+                            final selectedDate = await pickSfDateRange(context);
+                            debugPrint('selected date $selectedDate');
                             if (selectedDate != null) {
                               dateController.text =
-                                  _dateFormat.format(selectedDate);
+                                  selectedDate;
                             }
                           },
                           validator: (value) {
@@ -448,8 +446,11 @@ class _SendEnquiryScreenState extends State<SendEnquiryScreen> {
                             specialRequest: hasSpecialRequest
                                 ? specialRequestController.text
                                 : "",
-                            travelDate: dateController.text,
-                            tentativeDays: selectedDuration)
+                            travelDate:
+                                selectedToggle == 0 ? dateController.text : "",
+                            tentativeDays: selectedToggle == 1
+                                ? selectedDuration.toString()
+                                : "")
                         .then((onValue) {
                       _resetForm();
                     });

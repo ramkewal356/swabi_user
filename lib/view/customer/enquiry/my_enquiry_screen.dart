@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/status.dart';
+import 'package:flutter_cab/res/Custom%20%20Button/gradient_button.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPageLayout.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view_model/enquiry_view_model.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class MyEnquiryScreen extends StatefulWidget {
@@ -23,9 +25,11 @@ class _MyEnquiryScreenState extends State<MyEnquiryScreen> {
   }
 
   void getEnquiry({bool isPagination = false}) {
-    context
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context
         .read<EnquiryViewModel>()
         .getMyEnquiryApi(isPagination: isPagination);
+    });
   }
 
   void _onScroll() {
@@ -105,18 +109,42 @@ class _MyEnquiryScreenState extends State<MyEnquiryScreen> {
                           ],
                         ),
                         children: [
-                          const Text('Enquiry Details',
-                              style: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.w600)),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('Enquiry Details',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600)),
+                              GradientButton(
+                                  icon: Icons.remove_red_eye,
+                                  onPressed: () {
+                                    context.push('/my_enquiry/view_bid',
+                                        extra: {
+                                          "enquiryId":
+                                              enquiryData?.travelInquiry?.id
+                                        });
+                                  },
+                                  label: 'View Bid')
+                            ],
+                          ),
                           const SizedBox(height: 10),
-                          textItem(
-                              label: "Travel Start Date",
+                          (enquiryData?.travelInquiry?.travelDates ?? '')
+                                  .isEmpty
+                              ? const SizedBox.shrink()
+                              : textItem(
+                                  label: "Travel Date",
                               value: enquiryData?.travelInquiry?.travelDates ??
                                   'NA'),
-                          textItem(
-                              label: "Travel End Date",
+                          (enquiryData?.travelInquiry?.tentativeDays ?? '')
+                                  .isEmpty
+                              ? const SizedBox.shrink()
+                              : textItem(
+                                  label: "Tantative Days",
                               value:
-                                  "${enquiryData?.travelInquiry?.tentativeDates ?? 'NA'}"),
+                                      enquiryData
+                                          ?.travelInquiry?.tentativeDays ??
+                                      'NA'),
                           textItem(
                               label: "Accommodation",
                               value: enquiryData?.travelInquiry

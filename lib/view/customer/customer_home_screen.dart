@@ -55,19 +55,17 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen>
   }
 
   void getUser() async {
-  
+    // ignore: use_build_context_synchronously
+    final userProfile = await context
+        .read<UserProfileViewModel>()
+        .fetchUserProfileViewModelApi();
 
-      // ignore: use_build_context_synchronously
-      final userProfile = await context
-          .read<UserProfileViewModel>()
-          .fetchUserProfileViewModelApi();
-
-      if (userProfile != null) {
-        setState(() {
-          userdata = userProfile.data;
-        });
-        getNotification();
-      }
+    if (userProfile != null) {
+      setState(() {
+        userdata = userProfile.data;
+      });
+      getNotification();
+    }
     // }
   }
 
@@ -75,7 +73,6 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen>
     Provider.of<NotificationViewModel>(context, listen: false)
         .getAllNotificationList(
             context: context,
-         
             pageNumber: 0,
             pageSize: 100,
             readStatus: 'FALSE');
@@ -106,6 +103,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen>
       _selectedIndex = index;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     userdata = context.watch<UserProfileViewModel>().dataList.data?.data;
@@ -113,23 +111,25 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen>
     // ignore: deprecated_member_use
     return WillPopScope(
         onWillPop: () async {
-          bool shouldExit = await showDialog(
-            context: context,
-            builder: (context) => exitContainer(),
-          );
+          debugPrint('exziiiiiiiiii');
+          final shouldExit = await showDialog<bool>(
+                context: context,
+                builder: (context) => exitContainer(context),
+              ) ??
+              false;
           return shouldExit;
         },
         child: Scaffold(
-            backgroundColor: background,
-            onDrawerChanged: (isOpened) {
-              getNotification();
-            },
-            appBar: AppBar(
-              backgroundColor: Colors.white,
-              // automaticallyImplyLeading: false,
-            
-              scrolledUnderElevation: 0,
-              titleSpacing: 0,
+          backgroundColor: background,
+          onDrawerChanged: (isOpened) {
+            getNotification();
+          },
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            // automaticallyImplyLeading: false,
+
+            scrolledUnderElevation: 0,
+            titleSpacing: 0,
             leading: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: CircleAvatar(
@@ -158,29 +158,29 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen>
             //   },
             // ),
 
-              centerTitle: true,
+            centerTitle: true,
             title: _selectedIndex == 0
                 ? InkWell(
-                  onTap: () {
-                    setState(() {
-                      _tabcontroller?.index = 0;
-                    });
+                    onTap: () {
+                      setState(() {
+                        _tabcontroller?.index = 0;
+                      });
 
-                    context.go('/user_dashboard');
-                    debugPrint("Custom Appbar");
-                  },
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
-                    child: Image.asset(
-                      // appIcon1,
-                      appLogo1,
-                      height: 24,
-                      // width: 50,
-                      fit: BoxFit.cover,
-                    ),
-                  )
-                  // child: Image.asset(appLogo1)
+                      context.go('/user_dashboard');
+                      debugPrint("Custom Appbar");
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 0, horizontal: 0),
+                      child: Image.asset(
+                        // appIcon1,
+                        appLogo1,
+                        height: 24,
+                        // width: 50,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                    // child: Image.asset(appLogo1)
                     )
                 : _selectedIndex == 1
                     ? const Text('Rental booking')
@@ -190,212 +190,43 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen>
                             ? const Text('My Account')
                             : const Text('Dashboard'),
 
-              actions: [
-                Consumer<NotificationViewModel>(
-                  builder: (context, value, child) {
-                    unReadItem = value.totalUnreadNotification ?? 0;
-                    return InkWell(
-                      onTap: () {
-                        Provider.of<NotificationViewModel>(context,
-                                listen: false)
+            actions: [
+              Consumer<NotificationViewModel>(
+                builder: (context, value, child) {
+                  unReadItem = value.totalUnreadNotification ?? 0;
+                  return InkWell(
+                    onTap: () {
+                      Provider.of<NotificationViewModel>(context, listen: false)
                           .updateNotification(
                         context: context,
                       )
-                            .then((onValue) {
-                          if (onValue?.status?.httpCode == '200') {
-                            context.push('/notification',
+                          .then((onValue) {
+                        if (onValue?.status?.httpCode == '200') {
+                          context
+                              .push(
+                            '/notification',
                           )
                               .then((onValue) {
-                              getNotification();
-                            });
-                          }
-                        });
-                      },
-                      child: Badge(
-                        backgroundColor: btnColor,
-                        isLabelVisible: unReadItem == 0 ? false : true,
-                        label: Text(unReadItem.toString()),
-                        child: const Icon(
-                          Icons.notifications_none_outlined,
-                          size: 30,
-                        ),
+                            getNotification();
+                          });
+                        }
+                      });
+                    },
+                    child: Badge(
+                      backgroundColor: btnColor,
+                      isLabelVisible: unReadItem == 0 ? false : true,
+                      label: Text(unReadItem.toString()),
+                      child: const Icon(
+                        Icons.notifications_none_outlined,
+                        size: 30,
                       ),
-                    );
-                  },
-                ),
-                const SizedBox(width: 10)
-              ],
-            ),
-          // drawer: CustomDrawer(
-          //   userName:
-          //       '${userdata?.firstName ?? ""} ${userdata?.lastName ?? ''}',
-          //   emailAddress: userdata?.email ?? '',
-          //   lastLogin: (userdata?.lastLogin ?? '').isEmpty
-          //       ? ''
-          //       : 'Last login : ${userdata?.lastLogin}',
-          //   profileUrl: userdata?.profileImageUrl ?? '',
-          //   menuItems: [
-          //     {
-          //       "imgUrl": profile,
-          //       "label": "My Profile",
-          //       "onTap": () {
-          //         context.push("/profilePage", extra: {
-          //           "userId": userdata?.userId ?? "",
-          //           "userType": 'USER'
-          //         }).then((onValue) {
-          //           getUser();
-          //         });
-          //       }
-          //     },
-          //     {
-          //       "imgUrl": transaction,
-          //       "label": "My Enquiries",
-          //       "onTap": () {}
-          //     },
-          //     {
-          //       "imgUrl": rentalbooking,
-          //       "label": "My Rental",
-          //       "onTap": () {
-          //         context.push("/rentalForm/rentalHistory",
-          //             extra: {"myIdNo": userdata?.userId});
-          //       }
-          //     },
-          //     {
-          //       "imgUrl": package,
-          //       "label": "My Package",
-          //       "onTap": () {
-          //         context.push("/package/packageHistoryManagement",
-          //             extra: {"userID": userdata?.userId});
-          //       }
-          //     },
-          //     {
-          //       "imgUrl": offers,
-          //       "label": "All Offers",
-          //       "onTap": () {
-          //         context.push("/allOffer", extra: {'initialIndex': 0});
-          //       }
-          //     },
-          //     {
-          //       "imgUrl": moneyTransaction,
-          //       "label": "My Trasaction",
-          //       "onTap": () {
-          //         context.push("/myTransaction",
-          //             extra: {"userId": userdata?.userId});
-          //       }
-          //     },
-          //     {
-          //       "imgUrl": myWallet,
-          //       "label": "My Wallet",
-          //       "onTap": () {
-          //         context
-          //             .push("/myWallet", extra: {"userId": userdata?.userId});
-          //       }
-          //     },
-          //     {
-          //       "imgUrl": helpSupport,
-          //       "label": "Help & Support",
-          //       "onTap": () {
-          //         context.push("/help&support");
-          //       }
-          //     },
-          //     {
-          //       "imgUrl": logout,
-          //       "label": "Logout",
-          //       "onTap": () {
-          //         Future.delayed(const Duration(milliseconds: 200), () {
-          //           _confirmLogout(context);
-          //         });
-          //       }
-          //     },
-          //   ],
-          // ),
-
-          //   body: Container(
-          //     color: bgGreyColor,
-          //     child: Column(
-          //       children: [
-          //         const SizedBox(height: 10),
-          //         Container(
-          //           margin: const EdgeInsets.symmetric(horizontal: 10),
-          //           decoration: BoxDecoration(
-          //               color: background,
-          //               borderRadius: BorderRadius.circular(10),
-          //               border: Border.all(
-          //                   color: naturalGreyColor.withOpacity(0.3))),
-          //           child: TabBar(
-          //               onTap: (value) {},
-          //               controller: _tabcontroller,
-          //               splashBorderRadius: BorderRadius.circular(20),
-          //               unselectedLabelColor: Colors.black87,
-          //               labelColor: btnColor,
-          //               indicatorColor: Colors.transparent,
-          //               dividerColor: Colors.transparent,
-          //               indicatorPadding:
-          //                   const EdgeInsets.symmetric(horizontal: 10),
-          //               indicatorSize: TabBarIndicatorSize.tab,
-          //               tabs: [
-          //               // Padding(
-          //               //   padding: const EdgeInsets.symmetric(vertical: 10),
-          //               //   child: Column(
-          //               //     children: [
-          //               //       Center(
-          //               //           child: Image.asset(
-          //               //         holidays,
-          //               //         height: 35,
-          //               //         color: _initialIndex == 0
-          //               //             ? btnColor
-          //               //             : blackColor,
-          //               //       )),
-          //               //       const SizedBox(height: 5),
-          //               //       Text(
-          //               //         "Holiday Packages",
-          //               //         style: GoogleFonts.lato(
-          //               //             fontSize: 16,
-          //               //             fontWeight: FontWeight.w600),
-          //               //         textAlign: TextAlign.center,
-          //               //         // style: titleTextStyle,
-          //               //       ),
-          //               //     ],
-          //               //   ),
-          //               // ),
-          //               // Padding(
-          //               //   padding: const EdgeInsets.symmetric(vertical: 10),
-          //               //   child: Column(
-          //               //     children: [
-          //               //       Image.asset(
-          //               //         carRental,
-          //               //         height: 35,
-          //               //         color: _initialIndex == 1
-          //               //             ? btnColor
-          //               //             : blackColor,
-          //               //       ),
-          //               //       const SizedBox(height: 5),
-          //               //       Text(
-          //               //         'Rental Vehicle',
-          //               //         style: GoogleFonts.lato(
-          //               //             fontSize: 16,
-          //               //             fontWeight: FontWeight.w600),
-          //               //       ),
-          //               //     ],
-          //               //   ),
-          //               // )
-          //               Tab(icon: Icon(Icons.card_travel), text: "Holiday"),
-          //               Tab(icon: Icon(Icons.car_rental), text: "Rental"),
-          //               Tab(icon: Icon(Icons.email), text: "Enquiry"),
-          //               ]),
-          //         ),
-          //         Expanded(
-          //           child: TabBarView(controller: _tabcontroller, children: [
-          //             Packages(
-          //               ursID: uId,
-          //             ),
-          //           RentalForm(userId: uId),
-          //           Text('data')
-          //           ]),
-          //         )
-          //       ],
-          //     ),
-          // ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(width: 10)
+            ],
+          ),
           body: _pages[_selectedIndex],
           bottomNavigationBar: Container(
             decoration: const BoxDecoration(
@@ -435,7 +266,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen>
   }
 
   ///Exit Container Dialog Box
-  Widget exitContainer() {
+  Widget exitContainer(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.transparent,
@@ -480,5 +311,4 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen>
       ),
     );
   }
-
 }

@@ -9,7 +9,7 @@ import 'package:flutter_cab/respository/payment_gateway_repository.dart';
 /// Rental Booking View Model
 class PaymentCreateOrderIdViewModel with ChangeNotifier {
   final _myRepo = PaymentCreateOrderIDRepository();
-  ApiResponse<PaymentCreateOderIdModel> paymentOrderID = ApiResponse.loading();
+  ApiResponse<PaymentCreateOderIdModel> paymentOrderID = ApiResponse.initial();
   setDataList(ApiResponse<PaymentCreateOderIdModel> response) {
     paymentOrderID = response;
     notifyListeners();
@@ -29,7 +29,7 @@ class PaymentCreateOrderIdViewModel with ChangeNotifier {
       "userId": userId,
       "taxPercentage": taxPercentage,
       "discountAmount": discountAmount.toStringAsFixed(2),
-      "totalPayableAmount": totalPayableAmount.ceil()
+      "totalPayableAmount": totalPayableAmount
     };
     try {
       setDataList(ApiResponse.loading());

@@ -115,12 +115,14 @@ class _CommonOfferContainerState extends State<CommonOfferContainer> {
                                     bookingType: widget.bookingType);
                           });
                         },
-                        elevation: 0,
-                        borderRadius: BorderRadius.circular(0),
+                        elevation: 1,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 2),
+                        borderRadius: BorderRadius.circular(15),
                         child: const CustomText(
                           content: "View all",
                           textColor: greenColor,
-                          fontSize: 17,
+                          fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
                       )

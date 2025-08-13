@@ -89,7 +89,11 @@ class AppUrl {
   static var sendEnquiryUrl = '/travel/sendInquiry';
   static var getAllEnquiryUrl = '/travel/inquiries';
   static var getAllMyEnquiryUrl = '/bids/user/bids';
+  static var getEnquiryById = '/travel/get_inquiry';
   static var createBidUrl = '/bids/create';
   static var getAllBidUrl = '/bids/vendor/1/submitted';
   static var updateBidUrl = '/bids/vendor/update';
+  static var bidBookUrl = '/bids/book';
+  static var bidAcceptUrl = '/bids/accept';
+  static var bidRejectUrl = '/bids/reject';
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
 import 'package:flutter_cab/model/get_all_enquiry_model.dart';
+import 'package:flutter_cab/model/get_enquiry_by_id_model.dart';
 import 'package:flutter_cab/model/get_my_enquiry_model.dart';
 import 'package:flutter_cab/respository/enquiry_repository.dart';
 import 'package:flutter_cab/utils/utils.dart';
@@ -34,6 +35,12 @@ class EnquiryViewModel with ChangeNotifier {
   ApiResponse<List<MyEnquiryContent>> myEnquiryResponse = ApiResponse.initial();
   setEnquiry(ApiResponse<List<MyEnquiryContent>> response) {
     myEnquiryResponse = response;
+    notifyListeners();
+  }
+
+  ApiResponse<GetEnquiryByIdModel> getEnquiryById = ApiResponse.initial();
+  setEnquiryById(ApiResponse<GetEnquiryByIdModel> response) {
+    getEnquiryById = response;
     notifyListeners();
   }
 
@@ -157,6 +164,17 @@ class EnquiryViewModel with ChangeNotifier {
     }
   }
 
+  Future<void> getEnquiryByIdApi({required int enquiryId}) async {
+    Map<String, dynamic> query = {"inquiryId": enquiryId};
+    try {
+      setEnquiryById(ApiResponse.loading());
+      var resp = await _myRepo.getEnquiryByIdApi(query: query);
+      setEnquiryById(ApiResponse.completed(resp));
+    } catch (e) {
+      setEnquiryById(ApiResponse.error(e.toString()));
+    }
+  }
+
   Future<void> sendEnquiryApi(
       {required String fullName,
       required String country,
@@ -167,7 +185,7 @@ class EnquiryViewModel with ChangeNotifier {
       required String transportation,
       required String specialRequest,
       required String travelDate,
-      required int tentativeDays}) async {
+      required String tentativeDays}) async {
     String? userId = await UserViewModel().getUserId();
     Map<String, dynamic> body = {
       "accommodationPreferences": accommodation,
@@ -180,7 +198,7 @@ class EnquiryViewModel with ChangeNotifier {
       "tentativeDays": tentativeDays,
       "transportation": transportation,
       "travelDates": travelDate,
-      "user": {"userId": userId}
+      "userId": userId
     };
     sendEnquiry(ApiResponse.loading());
     try {

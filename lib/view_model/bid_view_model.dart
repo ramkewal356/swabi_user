@@ -4,6 +4,7 @@ import 'package:flutter_cab/model/get_all_bid_model.dart';
 import 'package:flutter_cab/model/get_bid_by_id_model.dart';
 import 'package:flutter_cab/respository/bid_repository.dart';
 import 'package:flutter_cab/utils/utils.dart';
+import 'package:flutter_cab/view_model/bid_accept_or_reject_model.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 
 class BidViewModel with ChangeNotifier {
@@ -28,6 +29,18 @@ class BidViewModel with ChangeNotifier {
   ApiResponse<bool> updateBid = ApiResponse.initial();
   updateBidData(ApiResponse<bool> response) {
     updateBid = response;
+    notifyListeners();
+  }
+
+  ApiResponse<bool> confirmBookingBid = ApiResponse.initial();
+  bookBid(ApiResponse<bool> response) {
+    confirmBookingBid = response;
+    notifyListeners();
+  }
+
+  ApiResponse<BidAcceptOrRejectModel> acceptOrRejectBid = ApiResponse.initial();
+  acceptOrRejectBids(ApiResponse<BidAcceptOrRejectModel> response) {
+    acceptOrRejectBid = response;
     notifyListeners();
   }
 
@@ -124,6 +137,49 @@ class BidViewModel with ChangeNotifier {
     } catch (e) {
       debugPrint('error $e');
       updateBidData(ApiResponse.error(e.toString()));
+    }
+  }
+
+  Future<bool?> confirmBookingBidApi(
+      {required int bidId,
+      required String paymentId,
+      required String orderId,
+      required String signature,
+      required String transactionStatus,
+      required int vendorId}) async {
+    Map<String, dynamic> body = {
+      "bidId": bidId,
+      "paymentId": paymentId,
+      "razorpayOrderId": orderId,
+      "razorpaySignature": signature,
+      "transactionStatus": transactionStatus,
+      "vendorId": vendorId
+    };
+    try {
+      bookBid(ApiResponse.loading());
+      var resp = await _myRepo.confirmBookingBidApi(body: body);
+      bookBid(ApiResponse.completed(resp));
+      return resp;
+    } catch (e) {
+      bookBid(ApiResponse.error(e.toString()));
+    }
+    return null;
+  }
+
+  Future<void> acceptOrRejectBidApi(
+      {required int bidId, required bool accept}) async {
+    try {
+      acceptOrRejectBids(ApiResponse.loading());
+      var resp =
+          await _myRepo.acceptOrRejectBidApi(bidId: bidId, accept: accept);
+      acceptOrRejectBids(ApiResponse.completed(resp));
+      if (resp.status?.message == 'Bid Accepted') {
+        Utils.toastSuccessMessage(resp.status?.message ?? '');
+      } else {
+        Utils.toastMessage(resp.status?.message ?? '');
+      }
+    } catch (e) {
+      acceptOrRejectBids(ApiResponse.error(e.toString()));
     }
   }
 }

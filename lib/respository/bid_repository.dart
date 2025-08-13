@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/app_url.dart';
 import 'package:flutter_cab/model/get_all_bid_model.dart';
 import 'package:flutter_cab/model/get_bid_by_id_model.dart';
+import 'package:flutter_cab/view_model/bid_accept_or_reject_model.dart';
 
 
 import '../view_model/services/http_service.dart';
@@ -93,4 +94,58 @@ class BidRepository {
       rethrow;
     }
   }
+  Future<bool> confirmBookingBidApi({
+    required Map<String, dynamic> body,
+  }) async {
+    var http = HttpService(
+        isAuthorizeRequest: true,
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.bidBookUrl,
+        methodType: HttpMethodType.POST,
+        bodyType: HttpBodyType.JSON,
+        body: body);
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("book Bid Resp api success ${response?.data}");
+      return true;
+    } catch (e) {
+      debugPrint("book Bid Resp api not success");
+      http.handleErrorResponse(error: e);
+      rethrow;
+    }
+  }
+
+  Future<BidAcceptOrRejectModel> acceptOrRejectBidApi(
+      {required int bidId, required bool accept}) async {
+    var http = HttpService(
+      isAuthorizeRequest: true,
+      baseURL: AppUrl.baseUrl,
+      endURL: accept
+          ? '${AppUrl.bidAcceptUrl}/$bidId'
+          : '${AppUrl.bidRejectUrl}/$bidId',
+      methodType: HttpMethodType.POST,
+      bodyType: HttpBodyType.JSON,
+    );
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("Accept or Reject Bid Resp api success ${response?.data}");
+      if (response?.data is Map<String, dynamic>) {
+        // Already JSON decoded
+        return BidAcceptOrRejectModel.fromJson(
+            response?.data as Map<String, dynamic>);
+      } else if (response?.data is String) {
+        // Need to decode
+        final decoded = jsonDecode(response?.data as String);
+        return BidAcceptOrRejectModel.fromJson(decoded);
+      } else {
+        throw Exception("Unexpected response format: ${response?.data}");
+      }
+    } catch (e) {
+      debugPrint("Accept or Reject Bid Resp api not success");
+      http.handleErrorResponse(error: e);
+      rethrow;
+    }
+  }
+  
+  
 }

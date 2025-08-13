@@ -2,9 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/get_all_bid_model.dart';
+import 'package:flutter_cab/model/get_my_enquiry_model.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPageLayout.dart';
 import 'package:flutter_cab/view/auth_screens/change_password.dart';
 import 'package:flutter_cab/view/customer/enquiry/my_enquiry_screen.dart';
+import 'package:flutter_cab/view/customer/enquiry/view_bid_screen.dart';
 import 'package:flutter_cab/view/help_and_support/contact.dart';
 import 'package:flutter_cab/view/help_and_support/help&support_screen.dart';
 import 'package:flutter_cab/view/notification/notification.dart';
@@ -204,11 +206,19 @@ final GoRouter myRouter = GoRouter(
       },
     ),
     GoRoute(
-      path: '/my_enquiry',
-      builder: (context, state) {
-        return const MyEnquiryScreen();
-      },
-    ),
+        path: '/my_enquiry',
+        builder: (context, state) {
+          return const MyEnquiryScreen();
+        },
+        routes: [
+          GoRoute(
+            path: 'view_bid',
+            builder: (context, state) {
+              var data = state.extra as Map<String, dynamic>;
+              return ViewBidScreen(enquiryId: data["enquiryId"]);
+            },
+          )
+        ]),
     GoRoute(
       path: '/myTransaction',
       parentNavigatorKey: _rootNavigatorKey,
@@ -408,7 +418,6 @@ final GoRouter myRouter = GoRouter(
               );
             },
           ),
-         
         ]),
 
     /// vendor routes

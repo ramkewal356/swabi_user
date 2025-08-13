@@ -206,7 +206,7 @@ class TravelInquiry {
   String? budget;
   String? specialRequests;
   String? travelDates;
-  dynamic tentativeDates;
+  String? tentativeDays;
   User? user;
   dynamic createdAt;
   dynamic updatedAt;
@@ -222,7 +222,7 @@ class TravelInquiry {
     this.budget,
     this.specialRequests,
     this.travelDates,
-    this.tentativeDates,
+    this.tentativeDays,
     this.user,
     this.createdAt,
     this.updatedAt,
@@ -241,7 +241,7 @@ class TravelInquiry {
         budget: json["budget"],
         specialRequests: json["specialRequests"],
         travelDates: json["travelDates"],
-        tentativeDates: json["tentativeDates"],
+        tentativeDays: json["tentativeDays"],
         user: json["user"] == null ? null : User.fromJson(json["user"]),
         createdAt: json["createdAt"],
         updatedAt: json["updatedAt"],
@@ -260,7 +260,7 @@ class TravelInquiry {
         "budget": budget,
         "specialRequests": specialRequests,
         "travelDates": travelDates,
-        "tentativeDates": tentativeDates,
+        "tentativeDays": tentativeDays,
         "user": user?.toJson(),
         "createdAt": createdAt,
         "updatedAt": updatedAt,
@@ -287,7 +287,10 @@ class User {
   String? lastLogin;
   String? country;
   String? state;
-
+  int? vendorId;
+  String? vendorProfileImageUrl;
+  dynamic subscriptionStartDate;
+  dynamic subscriptionEndDate;
   User({
     this.userId,
     this.firstName,
@@ -308,6 +311,10 @@ class User {
     this.lastLogin,
     this.country,
     this.state,
+      this.vendorId,
+      this.vendorProfileImageUrl,
+      this.subscriptionStartDate,
+      this.subscriptionEndDate
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
@@ -334,6 +341,10 @@ class User {
         lastLogin: json["lastLogin"],
         country: json["country"],
         state: json["state"],
+        vendorId: json["vendorId"],
+        vendorProfileImageUrl: json["vendorProfileImageUrl"],
+        subscriptionStartDate: json["subscriptionStartDate"],
+        subscriptionEndDate: json["subscriptionEndDate"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -356,6 +367,10 @@ class User {
         "lastLogin": lastLogin,
         "country": country,
         "state": state,
+        "vendorId": vendorId,
+        "vendorProfileImageUrl": vendorProfileImageUrl,
+        "subscriptionStartDate": subscriptionStartDate,
+        "subscriptionEndDate": subscriptionEndDate,
       };
 }
 

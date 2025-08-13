@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/app_url.dart';
 import 'package:flutter_cab/model/get_all_enquiry_model.dart';
+import 'package:flutter_cab/model/get_enquiry_by_id_model.dart';
 import 'package:flutter_cab/model/get_my_enquiry_model.dart';
 import 'package:flutter_cab/view_model/services/http_service.dart';
 
@@ -71,7 +72,37 @@ class EnquiryRepository {
       rethrow;
     }
   }
+  Future<GetEnquiryByIdModel> getEnquiryByIdApi(
+      {required Map<String, dynamic> query}) async {
+    var http = HttpService(
+        isAuthorizeRequest: false,
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.getEnquiryById,
+        methodType: HttpMethodType.GET,
+        bodyType: HttpBodyType.JSON,
+        queryParameters: query);
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("User Enquiry  By Id Resp api success ${response?.data}");
 
+      if (response?.data is Map<String, dynamic>) {
+        // Already JSON decoded
+        return GetEnquiryByIdModel.fromJson(
+            response?.data as Map<String, dynamic>);
+      } else if (response?.data is String) {
+        // Need to decode
+        final decoded = jsonDecode(response?.data as String);
+        return GetEnquiryByIdModel.fromJson(decoded);
+      } else {
+        throw Exception("Unexpected response format: ${response?.data}");
+      }
+    } catch (e) {
+      debugPrint("User Enquiry By Id Resp api not success");
+
+      http.handleErrorResponse(error: e);
+      rethrow;
+    }
+  }
   Future<bool> createBidApi({required Map<String, dynamic> body}) async {
     var http = HttpService(
         isAuthorizeRequest: true,

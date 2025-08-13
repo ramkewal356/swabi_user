@@ -40,7 +40,7 @@ class _AccountScreenState extends State<AccountScreen> {
               name: '${userdata?.firstName ?? ''} ${userdata?.lastName ?? ''}',
               email: userdata?.email ?? '',
               lastLogin: (userdata?.lastLogin ?? '').isNotEmpty
-                  ? 'Last Login:- ${userdata?.lastLogin ?? ''}'
+                  ? 'Last Login :- ${userdata?.lastLogin ?? ''}'
                   : ''),
           const SizedBox(height: 10),
           Expanded(
