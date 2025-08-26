@@ -1,4 +1,4 @@
-// ignore_for_file: camel_case_types, depend_on_referenced_packages
+// ignore_for_file: camel_case_types, depend_on_referenced_packages, use_build_context_synchronously
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -442,7 +442,7 @@ class _registration_screenState extends State<registration_screen> {
         ));
   }
 
-  lableText(String title) {
+  Widget lableText(String title) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 5.0),
       child: Text.rich(TextSpan(children: [

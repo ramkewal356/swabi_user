@@ -1,5 +1,7 @@
 // Rental Booking View Model
 
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
 import 'package:flutter_cab/model/changepassword_model.dart';
@@ -15,7 +17,7 @@ class UserProfileViewModel with ChangeNotifier {
   final _myRepo = UserProfileRepository();
   ApiResponse<UserProfileModel> dataList = ApiResponse.initial();
 
-  setDataList(ApiResponse<UserProfileModel> response) {
+  void setDataList(ApiResponse<UserProfileModel> response) {
     dataList = response;
     notifyListeners();
   }
@@ -51,7 +53,7 @@ class ProfileImageViewModel with ChangeNotifier {
   final _myRepo = ProfileImageRepository();
   ApiResponse<CommonModel> dataList = ApiResponse.initial();
 
-  setDataList(ApiResponse<CommonModel> response) {
+  void setDataList(ApiResponse<CommonModel> response) {
     dataList = response;
     notifyListeners();
   }
@@ -77,7 +79,7 @@ class UserProfileUpdateViewModel with ChangeNotifier {
   final _myRepo = UserProfileUpdateRepository();
   ApiResponse<bool> dataList = ApiResponse.initial();
   bool isLoading = false;
-  setDataList(ApiResponse<bool> response) {
+  void setDataList(ApiResponse<bool> response) {
     dataList = response;
     notifyListeners();
   }
@@ -109,7 +111,7 @@ class ChangePasswordViewModel with ChangeNotifier {
   final _myRepo = UserProfileUpdateRepository();
   ApiResponse<ChangePasswordModel> dataList = ApiResponse.initial();
 
-  setDataList(ApiResponse<ChangePasswordModel> response) {
+  void setDataList(ApiResponse<ChangePasswordModel> response) {
     dataList = response;
     notifyListeners();
   }
@@ -202,7 +204,7 @@ class ResetPasswordViewModel with ChangeNotifier {
       var resp = await _myRepo.resetPasswordApi(context: context, query: query);
       if (resp?.status?.httpCode == '200') {
         Utils.toastSuccessMessage(resp?.data?.body ?? '');
-        // ignore: use_build_context_synchronously
+    
         context.push('/login');
         isLoading2 = false;
         notifyListeners();

@@ -48,7 +48,7 @@ class HttpService<T> {
   }
 
  
-  authorizeRequest() async {
+  Future<void> authorizeRequest() async {
     if (this.headers == null) {
       this.headers = <String, String>{};
     }
@@ -185,7 +185,7 @@ class HttpService<T> {
     }
   }
 
-  handleErrorResponse({
+  void handleErrorResponse({
     // required BuildContext context,
     dynamic error,
     BaseResponseModel? errorResponse,

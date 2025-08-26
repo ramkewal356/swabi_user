@@ -1,9 +1,11 @@
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/get_issue_by_booking_id_model.dart';
 import 'package:flutter_cab/model/payment_details_model.dart';
 import 'package:flutter_cab/model/payment_refund_model.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
-import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPageLayout.dart';
+import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_paymentdetails_container.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/multi_image_slider_container_widget.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/refund_payment_container.dart';
@@ -76,7 +78,7 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
   void getissueDetail() {
     Provider.of<RaiseissueViewModel>(context, listen: false)
         .getIssueByBookingId(
-            context: context,
+          
             bookingId: widget.bookedId,
             userId: widget.useriD,
             bookingType: 'RENTAL_BOOKING');
@@ -711,7 +713,7 @@ class _RentalBookingContainerState extends State<RentalBookingContainer> {
     );
   }
 
-  bookingItem({required String lable, required String value}) {
+Widget bookingItem({required String lable, required String value}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -814,7 +816,7 @@ class VechicleDetailsContainer extends StatelessWidget {
     );
   }
 
-  vehicleItem({required String lable, required String value}) {
+Widget vehicleItem({required String lable, required String value}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,

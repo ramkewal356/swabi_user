@@ -22,7 +22,7 @@ class _AccountScreenState extends State<AccountScreen> {
     getUser();
   }
 
-  getUser() {
+  void getUser() {
     context.read<UserProfileViewModel>().fetchUserProfileViewModelApi();
   }
 
@@ -116,6 +116,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     title: 'Logout',
                     onTap: () {
                       Future.delayed(const Duration(milliseconds: 200), () {
+                        // ignore: use_build_context_synchronously
                         _confirmLogout(context);
                       });
                     }),

@@ -30,7 +30,7 @@ class NotificationRepository {
   }
 
   Future<UpdateNotificationStatusModel?> updateNotificationStatusApi(
-      {required BuildContext context,
+      {
       required Map<String, dynamic> query}) async {
     var http = HttpService(
         baseURL: AppUrl.baseUrl,
@@ -52,7 +52,7 @@ class NotificationRepository {
   }
 
   Future<GetAllNotificationModel?> getAllNotificationApi(
-      {required BuildContext context,
+      {
       required Map<String, dynamic> query}) async {
     var http = HttpService(
         baseURL: AppUrl.baseUrl,

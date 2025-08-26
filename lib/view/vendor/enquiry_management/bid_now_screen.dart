@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/status.dart';
 import 'package:flutter_cab/model/get_all_bid_model.dart';
@@ -324,7 +326,7 @@ class _BidNowScreenState extends State<BidNowScreen> {
     );
   }
 
-  travelItem(IconData? icon, String title) {
+Widget travelItem(IconData? icon, String title) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

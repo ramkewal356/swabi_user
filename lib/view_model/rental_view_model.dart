@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
@@ -19,12 +21,12 @@ class RentalViewModel with ChangeNotifier {
   bool get loading => _loading;
   ApiResponse<RentalCarListStatusModel> dataList = ApiResponse.initial();
 
-  setLoading(bool value) {
+  void setLoading(bool value) {
     _loading = value;
     notifyListeners();
   }
 
-  setDataList(ApiResponse<RentalCarListStatusModel> response) {
+  void setDataList(ApiResponse<RentalCarListStatusModel> response) {
     dataList = response;
     notifyListeners();
   }
@@ -62,7 +64,7 @@ class GetRentalRangeListViewModel with ChangeNotifier {
   ApiResponse<GetRentalRangeListModel> getRentalRangeList =
       ApiResponse.loading();
 
-  setDataList(ApiResponse<GetRentalRangeListModel> response) {
+  void setDataList(ApiResponse<GetRentalRangeListModel> response) {
     getRentalRangeList = response;
     notifyListeners();
   }
@@ -88,7 +90,7 @@ class RentalBookingViewModel with ChangeNotifier {
   final _myRepo = RentalBookingRepository();
   ApiResponse<RentalCarBookingModel> dataList = ApiResponse.initial();
   bool isLoading = false;
-  setDataList(ApiResponse<RentalCarBookingModel> response) {
+  void setDataList(ApiResponse<RentalCarBookingModel> response) {
     dataList = response;
     notifyListeners();
   }
@@ -125,7 +127,7 @@ class ConfirmRentalBookingViewModel with ChangeNotifier {
   final _myRepo = RentalBookingRepository();
   ApiResponse<RentalCarBookingModel> rentalDataList = ApiResponse.initial();
   bool isLoading = false;
-  setDataList(ApiResponse<RentalCarBookingModel> response) {
+  void setDataList(ApiResponse<RentalCarBookingModel> response) {
     rentalDataList = response;
     notifyListeners();
   }
@@ -184,7 +186,7 @@ class RentalBookingCancelViewModel with ChangeNotifier {
   ApiResponse<RentalCarBookingCancelModel> cancelldataList =
       ApiResponse.initial();
 
-  setDataList(ApiResponse<RentalCarBookingCancelModel> response) {
+  void setDataList(ApiResponse<RentalCarBookingCancelModel> response) {
     cancelldataList = response;
     notifyListeners();
   }
@@ -237,7 +239,7 @@ class RentalBookingListViewModel with ChangeNotifier {
   List<Content> _rentalBookingData = [];
   ApiResponse<List<Content>> rentalBookingList = ApiResponse.initial();
   List<Content> get items => _rentalBookingData;
-  setDataList(ApiResponse<List<Content>> response) {
+  void setDataList(ApiResponse<List<Content>> response) {
     rentalBookingList = response;
     notifyListeners();
   }
@@ -309,15 +311,15 @@ class RentalBookingListViewModel with ChangeNotifier {
 // Rental View Detail View Model
 class RentalViewDetailViewModel with ChangeNotifier {
   final _myRepo = RentalViewDetailsRepository();
-  ApiResponse<RentalDetailsSingleModel> dataList = ApiResponse.loading();
-  ApiResponse<RentalDetailsSingleModel> dataList1 = ApiResponse.loading();
+  ApiResponse<RentalDetailsSingleModel> dataList = ApiResponse.initial();
+  ApiResponse<RentalDetailsSingleModel> dataList1 = ApiResponse.initial();
 
-  setDataList(ApiResponse<RentalDetailsSingleModel> response) {
+  void setDataList(ApiResponse<RentalDetailsSingleModel> response) {
     dataList = response;
     notifyListeners();
   }
 
-  setDataList1(ApiResponse<RentalDetailsSingleModel> response) {
+  void setDataList1(ApiResponse<RentalDetailsSingleModel> response) {
     dataList1 = response;
     notifyListeners();
   }
@@ -380,7 +382,7 @@ class RentalPaymentDetailsViewModel with ChangeNotifier {
   final _myRepo = RentalViewPaymentDetailsRepository();
   ApiResponse<PaymentDetailsModel> rentalPaymentDetails = ApiResponse.initial();
 
-  setDataList(ApiResponse<PaymentDetailsModel> response) {
+  void setDataList(ApiResponse<PaymentDetailsModel> response) {
     rentalPaymentDetails = response;
     notifyListeners();
   }
@@ -409,7 +411,7 @@ class RentalValidationViewModel with ChangeNotifier {
   final _myRepo = RentalValidationRepository();
   ApiResponse<RentalCarBookingValidationModel> dataList = ApiResponse.initial();
 
-  setDataList(ApiResponse<RentalCarBookingValidationModel> response) {
+  void setDataList(ApiResponse<RentalCarBookingValidationModel> response) {
     dataList = response;
     notifyListeners();
   }

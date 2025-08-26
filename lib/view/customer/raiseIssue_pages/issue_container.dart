@@ -119,6 +119,7 @@ class IssueContainer extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
+        // ignore: deprecated_member_use
         color: bgColor.withOpacity(0.15),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: bgColor, width: 1),

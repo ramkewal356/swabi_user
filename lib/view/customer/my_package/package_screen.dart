@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/status.dart';
@@ -19,6 +21,7 @@ import 'package:flutter_cab/view_model/package_view_model.dart';
 import 'package:flutter_cab/view_model/user_profile_view_model.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -37,12 +40,12 @@ class _PackagesState extends State<Packages> {
   UserViewModel userViewModel = UserViewModel();
 
   DateTime tomorrow = DateTime.now().add(const Duration(days: 1));
- 
+
   final DateFormat _dateFormat = DateFormat('dd-MM-yyyy');
   final ScrollController _scrollController = ScrollController();
 
   bool isLastPage = false;
-
+  String? userId;
   String countryName = 'United Arab Emirates';
   String selectedStateName = 'Dubai';
 
@@ -67,6 +70,7 @@ class _PackagesState extends State<Packages> {
   void fetchState() async {
     try {
       final String userState = await userViewModel.getState();
+      userId = await userViewModel.getUserId();
       if (userState.isNotEmpty) {
         setState(() {
           selectedStateName = userState; // Update local state
@@ -113,56 +117,6 @@ class _PackagesState extends State<Packages> {
     }
   }
 
-  // Future<void> _selectDate(BuildContext context) async {
-  //   final DateTime currentDate = DateTime.now();
-  //   final DateTime tomorrow = currentDate.add(const Duration(days: 1));
-
-  //   final DateTime? picked = await showDatePicker(
-  //     context: context,
-  //     initialDate: _dateFormat.parse(controller.text),
-  //     firstDate: tomorrow,
-  //     lastDate: DateTime(tomorrow.year + 1),
-  //     // lastDate: DateTime(tomorrow.year + 1),
-  //     builder: (BuildContext context, Widget? child) {
-  //       return Theme(
-  //         data: ThemeData.light().copyWith(
-  //           colorScheme: const ColorScheme.light(
-  //             primary: btnColor,
-  //           ),
-  //           textButtonTheme: TextButtonThemeData(
-  //               style: ButtonStyle(
-  //             backgroundColor:
-  //                 WidgetStateProperty.all(btnColor), // Button background
-  //             foregroundColor:
-  //                 WidgetStateProperty.all(background), // Button text color
-  //             shape: WidgetStateProperty.all(
-  //               RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-  //             ),
-  //           )),
-  //           buttonTheme: const ButtonThemeData(
-  //             textTheme: ButtonTextTheme.primary,
-  //           ),
-  //         ),
-  //         child: Dialog(
-  //             insetPadding: const EdgeInsets.all(20),
-  //             backgroundColor: background,
-  //             shape: RoundedRectangleBorder(
-  //               borderRadius: BorderRadius.circular(16.0), // Border radius here
-  //             ),
-  //             child: SingleChildScrollView(
-  //                 padding: EdgeInsets.zero, child: child!)),
-  //       );
-  //     },
-  //   );
-  //   if (picked != null && _dateFormat.format(picked) != controller.text) {
-  //     setState(() {
-  //       controller.text = _dateFormat.format(picked);
-  //     });
-  //     // _fetchPackageList();
-  //   }
-  // }
-
-  // Dio? dio;
   String accessToken = '';
   void getCountry() async {
     try {
@@ -344,52 +298,69 @@ class _PackagesState extends State<Packages> {
                                   List<PackageActivity> activityData =
                                       getPackageList[index].packageActivities;
                                   return PackageContainer(
-                                      packageImg: getPackageList[index]
-                                          .packageActivities
-                                          .expand((e) =>
-                                              e.activity.activityImageUrl)
-                                          .toList(),
-                                      packageName:
-                                          getPackageList[index].packageName,
-                                      noOfDays: getPackageList[index].noOfDays,
-                                      // noOfNights: "0",
-                                      country: getPackageList[index].country,
-                                      state: getPackageList[index].state,
-                                      location: getPackageList[index].location,
-                                      total: getPackageList[index].totalPrice,
-                                      activityList: List.generate(
-                                          activityData.length,
-                                          (index) =>
-                                              activityData[index].activity),
-                                      activity: getPackageList[index]
-                                          .packageActivities
-                                          .length
-                                          .toString(),
-                                      discountPrice: getPackageList[index]
-                                          .packageDiscountedAmount,
-                                      loader: statusDetails == Status.loading &&
-                                          loader &&
-                                          selectedIndex == index,
-                                      ontap: () {
-                                        setState(() {
-                                          selectedIndex = index;
-                                          loader = true;
-                                        });
-                                        Provider.of<GetPackageActivityByIdViewModel>(
-                                                context,
-                                                listen: false)
-                                            .fetchGetPackageActivityByIdViewModelApi(
-                                                context,
-                                                {
-                                                  "packageId":
-                                                      getPackageList[index]
-                                                          .packageId
-                                                },
-                                                getPackageList[index].packageId,
-                                                controller.text);
-                                      }
-                                      // ()=> context.push("/package/packageDetails"),
-                                      );
+                                    packageImg: getPackageList[index]
+                                        .packageActivities
+                                        .expand(
+                                            (e) => e.activity.activityImageUrl)
+                                        .toList(),
+                                    packageName:
+                                        getPackageList[index].packageName,
+                                    noOfDays: getPackageList[index].noOfDays,
+                                    // noOfNights: "0",
+                                    country: getPackageList[index].country,
+                                    state: getPackageList[index].state,
+                                    location: getPackageList[index].location,
+                                    total: getPackageList[index].totalPrice,
+                                    activityList: List.generate(
+                                        activityData.length,
+                                        (index) =>
+                                            activityData[index].activity),
+                                    activity: getPackageList[index]
+                                        .packageActivities
+                                        .length
+                                        .toString(),
+                                    discountPrice: getPackageList[index]
+                                        .packageDiscountedAmount,
+                                    loader: statusDetails == Status.loading &&
+
+                                        selectedIndex == index,
+                               
+                                    ontap: () {
+                                      setState(() {
+                                        selectedIndex = index;
+
+                                      });
+                                      debugPrint('onclickpage.....');
+                                      context.push('/package_view', extra: {
+                                        "packageId":
+                                            getPackageList[index].packageId,
+                                        "userType": 'Customer',
+                                        "userId": userId ?? '',
+                                        "bookingDate": controller.text
+                                      }).then((onValue) {
+                                        fetchPackageList(isPagination: true);
+                                      });
+                                    },
+                                    // ontap: () {
+                                    //   setState(() {
+                                    //     selectedIndex = index;
+                                    //     loader = true;
+                                    //   });
+                                    //   Provider.of<GetPackageActivityByIdViewModel>(
+                                    //           context,
+                                    //           listen: false)
+                                    //       .fetchGetPackageActivityByIdViewModelApi(
+                                    //           context,
+                                    //           {
+                                    //             "packageId":
+                                    //                 getPackageList[index]
+                                    //                     .packageId
+                                    //           },
+                                    //           getPackageList[index].packageId,
+                                    //           controller.text);
+                                    // }
+                                    // ()=> context.push("/package/packageDetails"),
+                                  );
                                 },
                               )
                             : Center(

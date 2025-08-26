@@ -107,8 +107,10 @@ class _CommonOfferContainerState extends State<CommonOfferContainer> {
                             "initialIndex":
                                 widget.bookingType == 'PACKAGE_BOOKING' ? 1 : 0
                           }).then((onValue) {
+                            // ignore: use_build_context_synchronously
                             Provider.of<OfferViewModel>(context, listen: false)
                                 .getOfferList(
+                                    // ignore: use_build_context_synchronously
                                     context: context,
                                     date: DateFormat('dd-MM-yyyy')
                                         .format(dateTime),
@@ -197,6 +199,7 @@ class _CommonOfferContainerState extends State<CommonOfferContainer> {
                                         horizontal: 8),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(20),
+                                      // ignore: deprecated_member_use
                                       color: Colors.white.withOpacity(0.5),
                                     ),
                                     child: Text(

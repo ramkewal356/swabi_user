@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -131,7 +133,9 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
               {
                 "imgUrl": package,
                 "label": "Package Management",
-                "onTap": () {}
+                "onTap": () {
+                  context.push('/vendor_dashboard/package_management');
+                }
               },
               {"imgUrl": offers, "label": "Offers Management", "onTap": () {}},
               {

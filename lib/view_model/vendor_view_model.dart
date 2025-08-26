@@ -9,7 +9,7 @@ class VendorViewModel with ChangeNotifier {
   final _myRepo = VendorRepository();
 
   ApiResponse<GetVendorByIdModel> vendorData = ApiResponse.initial();
-  setVendorData(ApiResponse<GetVendorByIdModel> response) {
+  void setVendorData(ApiResponse<GetVendorByIdModel> response) {
     vendorData = response;
     notifyListeners();
   }

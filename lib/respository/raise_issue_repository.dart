@@ -10,7 +10,7 @@ import 'package:flutter_cab/view_model/services/http_service.dart';
 
 class RaiseissueRepository {
   Future<RaiseIssueModel?> requestRaiseIssueApi(
-      {required BuildContext context,
+      {
       required Map<String, dynamic> body}) async {
     var http = HttpService(
         baseURL: AppUrl.baseUrl,
@@ -94,7 +94,7 @@ class RaiseissueRepository {
   }
 
   Future<GetIssueByBookingIdModel?> getRaiseIssueByBookingIdApi(
-      {required BuildContext context,
+      {
       required Map<String, dynamic> query}) async {
     var http = HttpService(
         baseURL: AppUrl.baseUrl,

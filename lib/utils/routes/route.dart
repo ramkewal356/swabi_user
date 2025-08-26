@@ -2,13 +2,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/get_all_bid_model.dart';
-import 'package:flutter_cab/model/get_my_enquiry_model.dart';
-import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPageLayout.dart';
+import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/view/auth_screens/change_password.dart';
 import 'package:flutter_cab/view/customer/enquiry/my_enquiry_screen.dart';
 import 'package:flutter_cab/view/customer/enquiry/view_bid_screen.dart';
+import 'package:flutter_cab/view/customer/my_package/package_view_screen.dart';
 import 'package:flutter_cab/view/help_and_support/contact.dart';
-import 'package:flutter_cab/view/help_and_support/help&support_screen.dart';
+import 'package:flutter_cab/view/help_and_support/help_and_support_screen.dart';
 import 'package:flutter_cab/view/notification/notification.dart';
 import 'package:flutter_cab/view/profile/profile_page_screen.dart';
 import 'package:flutter_cab/view/help_and_support/raiseissue_details_screen.dart';
@@ -42,6 +42,8 @@ import 'package:flutter_cab/view/starting_screen/splash_screen.dart';
 import 'package:flutter_cab/view/auth_screens/reset_password_screen.dart';
 import 'package:flutter_cab/view/vendor/enquiry_management/bid_now_screen.dart';
 import 'package:flutter_cab/view/vendor/enquiry_management/enquiry_management_screen.dart';
+import 'package:flutter_cab/view/vendor/package_management/add_and_edit_package_screen.dart';
+import 'package:flutter_cab/view/vendor/package_management/package_management_screen.dart';
 import 'package:flutter_cab/view/vendor/vendor_dashboard_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -89,6 +91,18 @@ final GoRouter myRouter = GoRouter(
       path: '/notification',
       builder: (BuildContext context, GoRouterState state) {
         return const NotificationPage();
+      },
+    ),
+    GoRoute(
+      path: '/package_view',
+      builder: (context, state) {
+        var data = state.extra as Map<String, dynamic>;
+        return PackageViewScreen(
+          packageId: data["packageId"],
+          userType: data["userType"],
+          bookingDate: data["bookingDate"],
+          userId: data["userId"],
+        );
       },
     ),
     GoRoute(
@@ -449,6 +463,23 @@ final GoRouter myRouter = GoRouter(
               }
             },
           ),
+          GoRoute(
+              path: 'package_management',
+              builder: (context, state) {
+                return PackageManagementScreen();
+              },
+              routes: [
+                GoRoute(
+                  path: 'add_edit_package',
+                  builder: (context, state) {
+                    var data = state.extra as Map<String, dynamic>?;
+                    return AddAndEditPackageScreen(
+                      isEdit: data?["isEdit"] ?? false,
+                      packageId: data?["packageId"],
+                    );
+                  },
+                )
+              ])
         ])
   ],
 );

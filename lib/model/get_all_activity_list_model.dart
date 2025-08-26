@@ -65,9 +65,12 @@ class Data {
             ? []
             : List<ActivityContent>.from(
                 json["content"]!.map((x) => ActivityContent.fromJson(x))),
-        pageable: json["pageable"] == null
-            ? null
-            : Pageable.fromJson(json["pageable"]),
+        // pageable: json["pageable"] == null
+        //     ? null
+        //     : Pageable.fromJson(json["pageable"]),
+        pageable: (json["pageable"] is Map<String, dynamic>)
+            ? Pageable.fromJson(json["pageable"])
+            : null, // if string → ignore
         totalPages: json["totalPages"],
         totalElements: json["totalElements"],
         last: json["last"],
@@ -98,6 +101,8 @@ class Data {
 
 class ActivityContent {
   int? activityId;
+  int? packageActivityId;
+
   Country? country;
   String? state;
   String? city;
@@ -121,7 +126,9 @@ class ActivityContent {
   String? activityCategory;
 
   ActivityContent({
+
     this.activityId,
+    this.packageActivityId,
     this.country,
     this.state,
     this.city,
@@ -148,6 +155,7 @@ class ActivityContent {
   factory ActivityContent.fromJson(Map<String, dynamic> json) =>
       ActivityContent(
         activityId: json["activityId"],
+        packageActivityId: json["packageActivityId"],
         country: countryValues.map[json["country"]]!,
         state: json["state"],
         city: json["city"],
@@ -192,6 +200,7 @@ class ActivityContent {
 
   Map<String, dynamic> toJson() => {
         "activityId": activityId,
+        "packageActivityId": packageActivityId,
         "country": countryValues.reverse[country],
         "state": state,
         "city": city,

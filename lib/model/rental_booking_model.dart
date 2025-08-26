@@ -1,4 +1,4 @@
-// ignore_for_file: constant_identifier_names
+// ignore_for_file: constant_identifier_names, collection_methods_unrelated_type
 
 class RentalCarListStatusModel {
   Status status;
@@ -660,13 +660,13 @@ class Content {
         "pickupTime": pickupTime,
         "locationLongitude": locationLongitude,
         "locationLatitude": locationLatitude,
-        "bookingStatus": bookingStatusValues.reverse[bookingStatus],
+        "bookingStatus": bookingStatus,
         "totalRentTime": totalRentTime,
         "kilometers": kilometers,
         "paidStatus": paidStatus,
         "userId": userId,
         "rentalCharge": rentalCharge,
-        "carType": carTypeValues.reverse[carType],
+        "carType": carType,
         "extraMinutes": extraMinutes,
         "extraKilometers": extraKilometers,
         "createdDate": createdDate,

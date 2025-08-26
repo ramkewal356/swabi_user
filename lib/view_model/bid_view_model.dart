@@ -15,31 +15,31 @@ class BidViewModel with ChangeNotifier {
 
   final _myRepo = BidRepository();
   ApiResponse<List<BidContent>> bidData = ApiResponse.initial();
-  setBidData(ApiResponse<List<BidContent>> response) {
+  void setBidData(ApiResponse<List<BidContent>> response) {
     bidData = response;
     notifyListeners();
   }
 
   ApiResponse<GetBidByIdModel> bidByIdData = ApiResponse.initial();
-  setBidByIdData(ApiResponse<GetBidByIdModel> response) {
+  void setBidByIdData(ApiResponse<GetBidByIdModel> response) {
     bidByIdData = response;
     notifyListeners();
   }
 
   ApiResponse<bool> updateBid = ApiResponse.initial();
-  updateBidData(ApiResponse<bool> response) {
+  void updateBidData(ApiResponse<bool> response) {
     updateBid = response;
     notifyListeners();
   }
 
   ApiResponse<bool> confirmBookingBid = ApiResponse.initial();
-  bookBid(ApiResponse<bool> response) {
+  void bookBid(ApiResponse<bool> response) {
     confirmBookingBid = response;
     notifyListeners();
   }
 
   ApiResponse<BidAcceptOrRejectModel> acceptOrRejectBid = ApiResponse.initial();
-  acceptOrRejectBids(ApiResponse<BidAcceptOrRejectModel> response) {
+  void acceptOrRejectBids(ApiResponse<BidAcceptOrRejectModel> response) {
     acceptOrRejectBid = response;
     notifyListeners();
   }
@@ -53,9 +53,9 @@ class BidViewModel with ChangeNotifier {
     if (isLoadingMore) return; // Prevent multiple calls
     bool newSearch = (isFilter || isSearch);
     if (!isPagination && newSearch) {
-      page = 0; // Reset page if not paginating
-      isLastPage = false; // Reset last page status
-      // bidData.data?.clear(); // Clear existing data
+      page = 0;
+      isLastPage = false; 
+    
       setBidData(ApiResponse.loading());
     }
     String? vendorId = await UserViewModel().getUserId();

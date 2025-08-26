@@ -44,7 +44,7 @@ class _CustomBottomsheetImageModalState
         // Step 2: Crop the image
         final croppedFile = await ImageCropper().cropImage(
           sourcePath: pickedFile.path,
-          cropStyle: CropStyle.rectangle,
+          // cropStyle: CropStyle.rectangle,
           aspectRatio:
               const CropAspectRatio(ratioX: 1, ratioY: 1), // Square crop
           compressQuality: 100, // Max quality during cropping

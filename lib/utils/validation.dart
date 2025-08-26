@@ -134,7 +134,10 @@ Future<String?> pickDateRange(BuildContext context) async {
   }
   return null;
 }
-
+String timeFormate(int? date) {
+  return DateFormat('h:mm a')
+      .format(DateTime.fromMillisecondsSinceEpoch(date ?? 0));
+}
 String formatDateRange(DateTimeRange range) {
   final DateFormat formatter = DateFormat('dd/MM/yyyy'); // or 'yyyy-MM-dd'
   return "${formatter.format(range.start)} - ${formatter.format(range.end)}";
@@ -155,66 +158,57 @@ Future<String?> pickSfDateRange(BuildContext context) async {
           padding: const EdgeInsets.all(16),
           width: 350,
           height: 400,
-          child: Theme(
-            data: Theme.of(context).copyWith(
-              // Ensure the theme supports circle shapes
-              cardTheme: CardTheme(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
+          child: SfDateRangePicker(
+            view: DateRangePickerView.month,
+            selectionMode: DateRangePickerSelectionMode.range,
+            showActionButtons: true,
+            selectionShape: DateRangePickerSelectionShape.circle,
+            selectionColor: btnColor,
+            startRangeSelectionColor: btnColor,
+            endRangeSelectionColor: btnColor,
+            // ignore: deprecated_member_use
+            rangeSelectionColor: btnColor.withOpacity(0.2),
+            todayHighlightColor: btnColor,
+            monthCellStyle: DateRangePickerMonthCellStyle(
+              todayCellDecoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: btnColor, width: 1.5),
               ),
+              todayTextStyle: const TextStyle(color: Colors.black),
+              cellDecoration: const BoxDecoration(shape: BoxShape.circle),
+              textStyle: const TextStyle(fontSize: 14, color: Colors.black),
+              disabledDatesTextStyle: const TextStyle(color: Colors.grey),
             ),
-            child: SfDateRangePicker(
-              view: DateRangePickerView.month,
-              selectionMode: DateRangePickerSelectionMode.range,
-              showActionButtons: true,
-              selectionShape: DateRangePickerSelectionShape.circle,
-              selectionColor: btnColor,
-              startRangeSelectionColor: btnColor,
-              endRangeSelectionColor: btnColor,
-              rangeSelectionColor: btnColor.withOpacity(0.2),
-              todayHighlightColor: btnColor,
-              monthCellStyle: DateRangePickerMonthCellStyle(
-                todayCellDecoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: btnColor, width: 1.5),
-                ),
-                todayTextStyle: const TextStyle(color: Colors.black),
-                cellDecoration: const BoxDecoration(shape: BoxShape.circle),
-                textStyle: const TextStyle(fontSize: 14, color: Colors.black),
-                disabledDatesTextStyle: const TextStyle(color: Colors.grey),
-              ),
 
-              monthViewSettings: const DateRangePickerMonthViewSettings(
-                firstDayOfWeek: 1, // Monday
-                viewHeaderStyle: DateRangePickerViewHeaderStyle(),
-              ),
-              initialSelectedRange: null, // No preselection
-              onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
-                if (args.value is PickerDateRange) {
-                  startDate = args.value.startDate;
-                  endDate = args.value.endDate ?? args.value.startDate;
-                }
-              },
-              onCancel: () {
-                Navigator.pop(context); // Close without selection
-              },
-              onSubmit: (val) {
-                if (startDate != null && endDate != null) {
-                  if (startDate == endDate) {
-                    Navigator.pop(context,
-                        DateFormat('dd/MM/yyyy').format(startDate!)); // single
-                  } else {
-                    Navigator.pop(
-                        context,
-                        "${DateFormat('dd/MM/yyyy').format(startDate!)} - "
-                        "${DateFormat('dd/MM/yyyy').format(endDate!)}"); // range
-                  }
-                } else {
-                  Navigator.pop(context); // No selection
-                }
-              },
+            monthViewSettings: const DateRangePickerMonthViewSettings(
+              firstDayOfWeek: 1, // Monday
+              viewHeaderStyle: DateRangePickerViewHeaderStyle(),
             ),
+            initialSelectedRange: null, // No preselection
+            onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
+              if (args.value is PickerDateRange) {
+                startDate = args.value.startDate;
+                endDate = args.value.endDate ?? args.value.startDate;
+              }
+            },
+            onCancel: () {
+              Navigator.pop(context); // Close without selection
+            },
+            onSubmit: (val) {
+              if (startDate != null && endDate != null) {
+                if (startDate == endDate) {
+                  Navigator.pop(context,
+                      DateFormat('dd/MM/yyyy').format(startDate!)); // single
+                } else {
+                  Navigator.pop(
+                      context,
+                      "${DateFormat('dd/MM/yyyy').format(startDate!)} - "
+                      "${DateFormat('dd/MM/yyyy').format(endDate!)}"); // range
+                }
+              } else {
+                Navigator.pop(context); // No selection
+              }
+            },
           ),
         ),
       );

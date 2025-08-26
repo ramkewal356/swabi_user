@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/app_excaptions.dart';
 
 class ErrorHandler {
+  // ignore: strict_top_level_inference
   static void handleError(e) {
     if (e is NetworkException) {
       // Handle network issues

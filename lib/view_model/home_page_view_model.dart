@@ -10,7 +10,7 @@ class GetActivityCategoryListViewModel with ChangeNotifier {
   final _myRepo = HomePageRepository();
   ApiResponse<GetActivityCategoryModel> getActivityList = ApiResponse.initial();
 
-  setDataList(ApiResponse<GetActivityCategoryModel> response) {
+  void setDataList(ApiResponse<GetActivityCategoryModel> response) {
     getActivityList = response;
     notifyListeners();
   }
@@ -36,13 +36,13 @@ class GetAllPackageListViewModel with ChangeNotifier {
   final _myRepo = HomePageRepository();
   ApiResponse<GetPackageListModel> getAllPackageList = ApiResponse.initial();
 
-  setDataList(ApiResponse<GetPackageListModel> response) {
+  void setDataList(ApiResponse<GetPackageListModel> response) {
     getAllPackageList = response;
     notifyListeners();
   }
 
   Future<GetPackageListModel?> getAllPackageListApi(
-       data) async {
+      Map<String, dynamic> data) async {
     try {
       setDataList(ApiResponse.loading());
       var resp = await _myRepo.getPackageListApi(query: data);
@@ -63,7 +63,7 @@ class GetAllActivityViewModel with ChangeNotifier {
   ApiResponse<GetAllActivityListModel> getAllActivityList =
       ApiResponse.loading();
 
-  setDataList(ApiResponse<GetAllActivityListModel> response) {
+  void setDataList(ApiResponse<GetAllActivityListModel> response) {
     getAllActivityList = response;
     notifyListeners();
   }
@@ -91,7 +91,7 @@ class GetStateWithImageListViewModel with ChangeNotifier {
   ApiResponse<GetStateWithImageListModel> getStateWithImageList =
       ApiResponse.loading();
 
-  setDataList(ApiResponse<GetStateWithImageListModel> response) {
+  void setDataList(ApiResponse<GetStateWithImageListModel> response) {
     getStateWithImageList = response;
     notifyListeners();
   }

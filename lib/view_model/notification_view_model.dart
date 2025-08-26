@@ -37,7 +37,7 @@ class NotificationViewModel with ChangeNotifier {
     Map<String, dynamic> query = {"receiverId": userId};
     try {
       var resp = await _myRepo.updateNotificationStatusApi(
-          context: context, query: query);
+         query: query);
       return resp;
     } catch (e) {
       debugPrint('error $e');
@@ -63,7 +63,7 @@ class NotificationViewModel with ChangeNotifier {
       notifyListeners();
       if (readStatus == 'FALSE') {
         await _myRepo
-            .getAllNotificationApi(context: context, query: query)
+            .getAllNotificationApi(query: query)
             .then((onValue) {
           if (onValue?.status?.httpCode == '200') {
             totalUnreadNotification = onValue?.data?.totalElements;
@@ -71,7 +71,7 @@ class NotificationViewModel with ChangeNotifier {
         });
       } else {
         var resp =
-            await _myRepo.getAllNotificationApi(context: context, query: query);
+            await _myRepo.getAllNotificationApi(query: query);
 
         return resp;
       }

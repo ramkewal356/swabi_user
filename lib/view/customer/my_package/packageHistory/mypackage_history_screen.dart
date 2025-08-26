@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_tabbar.dart';
@@ -359,7 +361,7 @@ class PackageHistoryContainer extends StatelessWidget {
     );
   }
 
-  textTile({
+Widget textTile({
     required String lable1,
     required String value1,
     required String lable2,
@@ -375,7 +377,7 @@ class PackageHistoryContainer extends StatelessWidget {
     );
   }
 
-  _builtText({required String lable, required String value}) {
+Widget _builtText({required String lable, required String value}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

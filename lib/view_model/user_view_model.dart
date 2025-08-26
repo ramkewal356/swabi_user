@@ -1,3 +1,5 @@
+// ignore_for_file: strict_top_level_inference
+
 import 'package:flutter/material.dart';
 import '../utils/utils.dart';
 
@@ -8,7 +10,7 @@ class UserViewModel with ChangeNotifier {
   bool _loading = false;
   bool get loading => _loading;
   String filename = '';
-  setLoading(bool value) {
+  void setLoading(bool value) {
     _loading = value;
     notifyListeners();
   }

@@ -1,6 +1,8 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPageLayout.dart';
+import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/res/custom_appbar_widget.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
@@ -208,7 +210,7 @@ class _OfferdetailsScreenState extends State<OfferdetailsScreen> {
     );
   }
 
-  offerTile({required String lable, required String value}) {
+Widget offerTile({required String lable, required String value}) {
     return Row(
       children: [
         Text(

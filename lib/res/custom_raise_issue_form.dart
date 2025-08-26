@@ -38,20 +38,12 @@ class _RaiseIssueDialogState extends State<RaiseIssueDialog> {
     'Cab is not moving in my direction',
     'My reason is not listed',
   ];
-  String? userId;
+
   @override
   void initState() {
   
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      userViewModel.getUserId().then((value) async {
-        setState(() {
-          if (value != null && value == '') {
-            userId = value;
-          }
-        });
-      });
-    });
+   
   }
 
   @override
@@ -146,35 +138,31 @@ class _RaiseIssueDialogState extends State<RaiseIssueDialog> {
                     if (_formKey.currentState!.validate()) {
                       Provider.of<RaiseissueViewModel>(context, listen: false)
                           .requestRaiseIssue(
-                              context: context,
+                             
                               bookingId: widget.bookingId,
                               bookingType: widget.bookingType,
-                              raisedById: userId.toString(),
+                              // raisedById: userId.toString(),
                               issueDescription:
                                   _selectedIssue == 'My reason is not listed'
                                       ? _descriptionController.text
                                       : _selectedIssue ?? '',
                               vendorId: widget.venderId);
-                      // Utils.toastSuccessMessage(
-                      //   'Raise Request Successfully',
-                      // );
+                     
                       Navigator.of(context).pop();
                     }
                   } else {
                     Provider.of<RaiseissueViewModel>(context, listen: false)
                         .requestRaiseIssue(
-                            context: context,
+                          
                             bookingId: widget.bookingId,
                             bookingType: widget.bookingType,
-                            raisedById: userId.toString(),
+                            // raisedById: userId.toString(),
                             issueDescription:
                                 _selectedIssue == 'My reason is not listed'
                                     ? _descriptionController.text
                                     : _selectedIssue ?? '',
                             vendorId: widget.venderId);
-                    // Utils.toastSuccessMessage(
-                    //   'Raise Request Successfully',
-                    // );
+                 
                     Navigator.of(context).pop();
                   }
                 } else {

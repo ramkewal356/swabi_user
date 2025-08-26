@@ -84,7 +84,7 @@ class _CustomButtonState extends State<CustomButton> {
       children: [
         ...widget.options.map((option) {
           return _buildButton(option['value'], option['name']);
-        }).toList(),
+        }),
         const SizedBox(height: 10.0),
         CustomButtonSmall(
           width: AppDimension.getWidth(context) * .4,
@@ -148,10 +148,10 @@ class RadioField extends StatefulWidget {
   final bool isSelected;
 
   const RadioField({
-    Key? key,
+    super.key,
     required this.title,
     this.isSelected = false,
-  }) : super(key: key);
+  });
 
   @override
   State<RadioField> createState() => _RadioFieldState();

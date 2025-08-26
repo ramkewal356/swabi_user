@@ -12,27 +12,28 @@ class VendorDashboardViewModel with ChangeNotifier {
   final _myRepo = VendorDashboardRepository();
 
   ApiResponse<GetAllVehicleModel> allVehicleData = ApiResponse.initial();
-  setVendorData(ApiResponse<GetAllVehicleModel> response) {
+  void setVendorData(ApiResponse<GetAllVehicleModel> response) {
     allVehicleData = response;
     notifyListeners();
   }
 
   ApiResponse<GetAllDriverModel> allDriverData = ApiResponse.initial();
-  setDriverData(ApiResponse<GetAllDriverModel> response) {
+  void setDriverData(ApiResponse<GetAllDriverModel> response) {
     allDriverData = response;
     notifyListeners();
   }
 
   ApiResponse<GetAllRentalBookingModel> allRentalBookingData =
       ApiResponse.initial();
-  setAllRentalBookingData(ApiResponse<GetAllRentalBookingModel> response) {
+  void setAllRentalBookingData(ApiResponse<GetAllRentalBookingModel> response) {
     allRentalBookingData = response;
     notifyListeners();
   }
 
   ApiResponse<GetAllPackageBookingModel> allPackageBookingData =
       ApiResponse.initial();
-  setAllPackageBookingData(ApiResponse<GetAllPackageBookingModel> response) {
+  void setAllPackageBookingData(
+      ApiResponse<GetAllPackageBookingModel> response) {
     allPackageBookingData = response;
     notifyListeners();
   }

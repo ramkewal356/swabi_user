@@ -10,7 +10,7 @@ import 'package:flutter_cab/respository/payment_gateway_repository.dart';
 class PaymentCreateOrderIdViewModel with ChangeNotifier {
   final _myRepo = PaymentCreateOrderIDRepository();
   ApiResponse<PaymentCreateOderIdModel> paymentOrderID = ApiResponse.initial();
-  setDataList(ApiResponse<PaymentCreateOderIdModel> response) {
+  void setDataList(ApiResponse<PaymentCreateOderIdModel> response) {
     paymentOrderID = response;
     notifyListeners();
   }
@@ -52,8 +52,8 @@ class PaymentCreateOrderIdViewModel with ChangeNotifier {
 /// Rental Booking View Model
 class PaymentVerifyViewModel with ChangeNotifier {
   final _myRepo = PaymentVerifyRepository();
-  ApiResponse<PaymentVerifyModel> paymentVerify = ApiResponse.loading();
-  setDataList(ApiResponse<PaymentVerifyModel> response) {
+  ApiResponse<PaymentVerifyModel> paymentVerify = ApiResponse.initial();
+  void setDataList(ApiResponse<PaymentVerifyModel> response) {
     paymentVerify = response;
     notifyListeners();
   }
@@ -91,8 +91,8 @@ class PaymentVerifyViewModel with ChangeNotifier {
 
 class GetTranactionViewModel with ChangeNotifier {
   final _myRepo = PaymentTrasactionRespository();
-  ApiResponse<GetTransactionByIdModel> getTrasaction = ApiResponse.loading();
-  setDataList(ApiResponse<GetTransactionByIdModel> response) {
+  ApiResponse<GetTransactionByIdModel> getTrasaction = ApiResponse.initial();
+  void setDataList(ApiResponse<GetTransactionByIdModel> response) {
     getTrasaction = response;
     notifyListeners();
   }
@@ -134,8 +134,8 @@ class GetTranactionViewModel with ChangeNotifier {
 
 class GetPaymentRefundViewModel with ChangeNotifier {
   final _myRepo = PaymentRefundRespository();
-  ApiResponse<PaymentRefundModel> getPaymentRefund = ApiResponse.loading();
-  setDataList(ApiResponse<PaymentRefundModel> response) {
+  ApiResponse<PaymentRefundModel> getPaymentRefund = ApiResponse.initial();
+  void setDataList(ApiResponse<PaymentRefundModel> response) {
     getPaymentRefund = response;
     notifyListeners();
   }

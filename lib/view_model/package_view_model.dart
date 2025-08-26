@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
 import 'package:flutter_cab/model/calculate_price_model.dart';
@@ -8,7 +10,6 @@ import 'package:flutter_cab/respository/package_repository.dart';
 import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view_model/notification_view_model.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
-import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -22,7 +23,7 @@ class GetPackageListViewModel with ChangeNotifier {
   final _myRepo = GetPackageListRepository();
   ApiResponse<List<Content>> getPackageList = ApiResponse.initial();
   List<Content> get items => _packageList;
-  setDataList(ApiResponse<List<Content>> response) {
+  void setDataList(ApiResponse<List<Content>> response) {
     getPackageList = response;
     notifyListeners();
   }
@@ -85,43 +86,54 @@ class GetPackageListViewModel with ChangeNotifier {
 class GetPackageActivityByIdViewModel with ChangeNotifier {
   final _myRepo = GetPackageActivityByIdRepository();
   ApiResponse<GetPackageDetailByIdModel> getPackageActivityById =
-      ApiResponse.loading();
+      ApiResponse.initial();
 
-  setDataList(ApiResponse<GetPackageDetailByIdModel> response) {
+  void setDataList(ApiResponse<GetPackageDetailByIdModel> response) {
     getPackageActivityById = response;
     notifyListeners();
   }
 
-  Future<void> fetchGetPackageActivityByIdViewModelApi(
-      BuildContext context, data, String packID, String dateBooking) async {
-    setDataList(ApiResponse.loading());
-    _myRepo
-        .getPackageActivityByIdRepositoryApi(context: context, query: data)
-        .then((value) async {
-      String? userId = await UserViewModel().getUserId();
-      setDataList(ApiResponse.completed(value));
-      context.push("/package/packageDetails", extra: {
-        "packageID": packID,
-        "userId": userId,
-        "bookDate": dateBooking,
-        "venderId": value.data?.vendor?.vendorId.toString()
-      });
-      debugPrint('Get Package Activity By Id ViewModel Success');
-    }).onError((error, stackTrace) {
-      debugPrint(error.toString());
-      debugPrint('Get Package Activity By Id ViewModel Failed');
-      setDataList(ApiResponse.error(error.toString()));
-    });
+  Future<void> getPackageByIdApi({required String packageId}) async {
+    Map<String, dynamic> query = {"packageId": packageId};
+    try {
+      setDataList(ApiResponse.loading());
+      var resp =
+          await _myRepo.getPackageActivityByIdRepositoryApi(query: query);
+      setDataList(ApiResponse.completed(resp));
+    } catch (e) {
+      setDataList(ApiResponse.error(e.toString()));
+    }
   }
+  // Future<void> fetchGetPackageActivityByIdViewModelApi(
+  //     BuildContext context, data, String packID, String dateBooking) async {
+  //   setDataList(ApiResponse.loading());
+  //   _myRepo
+  //       .getPackageActivityByIdRepositoryApi(context: context, query: data)
+  //       .then((value) async {
+  //     String? userId = await UserViewModel().getUserId();
+  //     setDataList(ApiResponse.completed(value));
+  //     context.push("/package/packageDetails", extra: {
+  //       "packageID": packID,
+  //       "userId": userId,
+  //       "bookDate": dateBooking,
+  //       "venderId": value.data?.vendor?.vendorId.toString()
+  //     });
+  //     debugPrint('Get Package Activity By Id ViewModel Success');
+  //   }).onError((error, stackTrace) {
+  //     debugPrint(error.toString());
+  //     debugPrint('Get Package Activity By Id ViewModel Failed');
+  //     setDataList(ApiResponse.error(error.toString()));
+  //   });
+  // }
 }
 
 // Get Package BOOKING By Id View Model
 class GetPackageBookingByIdViewModel with ChangeNotifier {
   final _myRepo = GetPackageBookedByIdRepository();
   ApiResponse<BookPackageByMemberModel> getPackageBookingById =
-      ApiResponse.loading();
+      ApiResponse.initial();
   bool isLoading = false;
-  setDataList(ApiResponse<BookPackageByMemberModel> response) {
+  void setDataList(ApiResponse<BookPackageByMemberModel> response) {
     getPackageBookingById = response;
     notifyListeners();
   }
@@ -153,9 +165,9 @@ class GetPackageBookingByIdViewModel with ChangeNotifier {
 
 class GetCalculatePackagePriceViewModel with ChangeNotifier {
   final _myRepo = CalculatePriceRepository();
-  ApiResponse<CalculatePriceModel> getCalculatePrice = ApiResponse.loading();
+  ApiResponse<CalculatePriceModel> getCalculatePrice = ApiResponse.initial();
   bool isLoading = false;
-  setDataList(ApiResponse<CalculatePriceModel> response) {
+  void setDataList(ApiResponse<CalculatePriceModel> response) {
     getCalculatePrice = response;
     notifyListeners();
   }
@@ -186,9 +198,9 @@ class GetCalculatePackagePriceViewModel with ChangeNotifier {
 class ConfirmPackageBookingViewModel with ChangeNotifier {
   final _myRepo = GetPackageBookedByIdRepository();
   ApiResponse<BookPackageByMemberModel> getConfirmPackageBooking =
-      ApiResponse.loading();
+      ApiResponse.initial();
   bool isLoading = false;
-  setDataList(ApiResponse<BookPackageByMemberModel> response) {
+  void setDataList(ApiResponse<BookPackageByMemberModel> response) {
     getConfirmPackageBooking = response;
     notifyListeners();
   }
@@ -249,8 +261,8 @@ class GetPackageHistoryViewModel with ChangeNotifier {
   List<PackageHistoryContent> _packageList = [];
   final _myRepo = GetPackageHistoryRepository();
   ApiResponse<List<PackageHistoryContent>> getBookedHistory =
-      ApiResponse.loading();
-  setDataList(ApiResponse<List<PackageHistoryContent>> response) {
+      ApiResponse.initial();
+  void setDataList(ApiResponse<List<PackageHistoryContent>> response) {
     getBookedHistory = response;
     notifyListeners();
   }
@@ -325,9 +337,9 @@ class GetPackageHistoryViewModel with ChangeNotifier {
 class GetPackageHistoryDetailByIdViewModel with ChangeNotifier {
   final _myRepo = GetPackageHistoryDetailByIdRepository();
   ApiResponse<GetPackageHIstoryDetailsModel> getPackageHistoryDetailById =
-      ApiResponse.loading();
+      ApiResponse.initial();
 
-  setDataList(ApiResponse<GetPackageHIstoryDetailsModel> response) {
+  void setDataList(ApiResponse<GetPackageHIstoryDetailsModel> response) {
     getPackageHistoryDetailById = response;
     notifyListeners();
   }
@@ -369,9 +381,9 @@ class GetPackageHistoryDetailByIdViewModel with ChangeNotifier {
 /// Get Package List View Model
 class PackageCancelViewModel with ChangeNotifier {
   final _myRepo = PackageCancelRepository();
-  ApiResponse<PackageCancelModel> packageCancel = ApiResponse.loading();
+  ApiResponse<PackageCancelModel> packageCancel = ApiResponse.initial();
   bool isLoading = false;
-  setDataList(ApiResponse<PackageCancelModel> response) {
+  void setDataList(ApiResponse<PackageCancelModel> response) {
     packageCancel = response;
     notifyListeners();
   }
@@ -431,9 +443,9 @@ class PackageCancelViewModel with ChangeNotifier {
 class AddPickUpLocationPackageViewModel with ChangeNotifier {
   final _myRepo = AddPickUpLocationPackageRepository();
   ApiResponse<AddPickUpLocationModel> addPickUpLocationPackage =
-      ApiResponse.loading();
+      ApiResponse.initial();
   bool isLoading = false;
-  setDataList(ApiResponse<AddPickUpLocationModel> response) {
+  void setDataList(ApiResponse<AddPickUpLocationModel> response) {
     addPickUpLocationPackage = response;
     notifyListeners();
   }
@@ -475,9 +487,9 @@ class AddPickUpLocationPackageViewModel with ChangeNotifier {
 class GetPackageItineraryViewModel with ChangeNotifier {
   final _myRepo = GetPackageItineraryRepository();
   ApiResponse<GetPackageItineraryModel> getPackageItineraryList =
-      ApiResponse.loading();
+      ApiResponse.initial();
 
-  setDataList(ApiResponse<GetPackageItineraryModel> response) {
+  void setDataList(ApiResponse<GetPackageItineraryModel> response) {
     getPackageItineraryList = response;
     notifyListeners();
   }
@@ -500,9 +512,9 @@ class GetPackageItineraryViewModel with ChangeNotifier {
 
 class ChangeMobileViewModel with ChangeNotifier {
   final _myRepo = ChangeMobileRepository();
-  ApiResponse<ChangeMobileModel> changeMobile = ApiResponse.loading();
+  ApiResponse<ChangeMobileModel> changeMobile = ApiResponse.initial();
   bool isLoading = false;
-  setDataList(ApiResponse<ChangeMobileModel> response) {
+  void setDataList(ApiResponse<ChangeMobileModel> response) {
     changeMobile = response;
     notifyListeners();
   }

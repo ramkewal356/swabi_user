@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPageLayout.dart';
+import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/res/custom_appbar_widget.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
@@ -59,6 +59,7 @@ class CustomContainer extends StatelessWidget {
         decoration: BoxDecoration(
             color: background,
             border: Border.all(
+              // ignore: deprecated_member_use
               color: naturalGreyColor.withOpacity(0.3),
             ),
             borderRadius: BorderRadius.circular(10)),

@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/get_activity_category_list_model.dart';
@@ -991,7 +993,7 @@ class _LandingScreenState extends State<LandingScreen> {
     );
   }
 
-  chooseUs({required String icon, required String title}) {
+Widget chooseUs({required String icon, required String title}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: SizedBox(

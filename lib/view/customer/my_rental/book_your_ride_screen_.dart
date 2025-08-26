@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use, strict_top_level_inference
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/rental_booking_model.dart';
 import 'package:flutter_cab/model/user_profile_model.dart';

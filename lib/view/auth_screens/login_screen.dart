@@ -45,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
     savecredential();
   }
 
-  savecredential() async {
+  Future<void> savecredential() async {
     final prefsData = await SharedPreferences.getInstance();
 
     setState(() {

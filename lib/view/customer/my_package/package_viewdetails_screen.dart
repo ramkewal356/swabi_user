@@ -1,8 +1,10 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/get_package_details_by_id_model.dart';
 // import 'package:flutter_cab/model/package_models.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
-import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPageLayout.dart';
+import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_viewmore_viewless.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/multi_image_slider_container_widget.dart';
 import 'package:flutter_cab/res/custom_appbar_widget.dart';
@@ -355,7 +357,7 @@ class _PackageDetailsState extends State<PackageDetails> {
     );
   }
 
-  detailItem({required String lable, required String value}) {
+Widget detailItem({required String lable, required String value}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
@@ -629,7 +631,29 @@ class _ActivityContainerState extends State<ActivityContainer> {
     );
   }
 
-  discountTile({required String lable, required String value}) {
+Widget discountTile({required String lable, required String value}) {
+    return Row(
+      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          lable,
+          style: titleText,
+        ),
+        const SizedBox(width: 5),
+        Text(
+          ':',
+          style: titleTextStyle,
+        ),
+        const SizedBox(width: 5),
+        Text(
+          value,
+          style: valueText,
+        )
+      ],
+    );
+  }
+
+  Widget textItem({required String lable, required String value}) {
     return Row(
       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

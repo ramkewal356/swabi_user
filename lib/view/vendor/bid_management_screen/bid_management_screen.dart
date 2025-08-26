@@ -8,7 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../data/response/status.dart';
-import '../../../res/Custom Page Layout/commonPageLayout.dart';
+import '../../../res/Custom Page Layout/common_page_layout.dart';
 import '../../../res/custom_filter_popup_widget.dart';
 import '../../../res/custom_search_field.dart';
 
@@ -275,7 +275,7 @@ class _BidManagementScreenState extends State<BidManagementScreen> {
     );
   }
 
-  textItem({String label = 'Label', String value = 'Value'}) {
+Widget textItem({String label = 'Label', String value = 'Value'}) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
 import 'package:flutter_cab/model/registration_model.dart';
@@ -12,12 +14,12 @@ class PostSignUpViewModel with ChangeNotifier {
   bool _loading = false;
   bool get loading => _loading;
   ApiResponse<SignUpModel> dataList = ApiResponse.initial();
-  setDataList(ApiResponse<SignUpModel> response) {
+  void setDataList(ApiResponse<SignUpModel> response) {
     dataList = response;
     notifyListeners();
   }
 
-  setLoading(bool value) {
+  void setLoading(bool value) {
     _loading = value;
     notifyListeners();
   }

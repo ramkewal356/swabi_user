@@ -3,7 +3,8 @@ import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:google_maps_webservice/places.dart';
+import 'package:flutter_google_maps_webservices/places.dart';
+
 
 class CustomSearchLocation extends StatefulWidget {
   final TextEditingController? controller;
@@ -188,6 +189,7 @@ class _SearchLocationPageState extends State<SearchLocationPage> {
       appBar: AppBar(
         elevation: 1,
         backgroundColor: background,
+        // ignore: deprecated_member_use
         shadowColor: greyColor1.withOpacity(0.5),
         title: TextField(
           controller: _searchController,

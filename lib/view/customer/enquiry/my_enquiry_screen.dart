@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/status.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/gradient_button.dart';
-import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPageLayout.dart';
+import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view_model/enquiry_view_model.dart';
@@ -173,7 +173,7 @@ class _MyEnquiryScreenState extends State<MyEnquiryScreen> {
         ));
   }
 
-  textItem({String label = 'Label', String value = 'Value'}) {
+Widget textItem({String label = 'Label', String value = 'Value'}) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,

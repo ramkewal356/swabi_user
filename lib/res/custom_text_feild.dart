@@ -64,6 +64,7 @@ class ValidationForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
+          // ignore: deprecated_member_use
           border: Border.all(color: naturalGreyColor.withOpacity(0.3))),
       child: TextFormField(
         controller: emailController,

@@ -1,10 +1,12 @@
+// ignore_for_file: use_build_context_synchronously, strict_top_level_inference
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cab/model/calculate_price_model.dart';
 import 'package:flutter_cab/model/get_package_details_by_id_model.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/customdropdown_button.dart';
-import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPageLayout.dart';
+import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/res/custom_appbar_widget.dart';
 import 'package:flutter_cab/res/custom_mobile_number.dart';
@@ -93,10 +95,10 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
     checkParticipantTypes(widget.participantTypes);
   }
 
-  getData() async {
+  Future<void> getData() async {
     await Future.delayed(const Duration(seconds: 2));
     final userProfile =
-        // ignore: use_build_context_synchronously
+     
         Provider.of<UserProfileViewModel>(context, listen: false)
             .dataList
             .data
@@ -800,6 +802,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                 borderRadius:
                                     const BorderRadius.all(Radius.circular(10)),
                                 border: Border.all(
+                                    // ignore: deprecated_member_use
                                     color: naturalGreyColor.withOpacity(.3))),
                             child: Form(
                               key: _formCouponKey,

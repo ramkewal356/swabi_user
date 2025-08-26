@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
@@ -16,12 +18,12 @@ class AuthViewModel with ChangeNotifier {
   bool _signUpLoading = false;
   bool get signUpLoading => _signUpLoading;
 
-  setLoading(bool value) {
+  void setLoading(bool value) {
     _loading = value;
     notifyListeners();
   }
 
-  setSignUpLoading(bool value) {
+  void setSignUpLoading(bool value) {
     _signUpLoading = value;
     notifyListeners();
   }

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
 import 'package:flutter_cab/data/response/error_handler.dart';
@@ -21,28 +23,29 @@ class RaiseissueViewModel with ChangeNotifier {
   GetIssueModel? _getIssueModel;
   GetIssueModel? get getIssue => _getIssueModel;
 
-  ApiResponse<IssueDetailsModel> issueDetail = ApiResponse.loading();
+  ApiResponse<IssueDetailsModel> issueDetail = ApiResponse.initial();
 
-  setDataList(ApiResponse<IssueDetailsModel> response) {
+  void setDataList(ApiResponse<IssueDetailsModel> response) {
     issueDetail = response;
     notifyListeners();
   }
 
   ApiResponse<GetIssueByBookingIdModel> getIssueBybookingId =
-      ApiResponse.loading();
+      ApiResponse.initial();
 
-  setDataList1(ApiResponse<GetIssueByBookingIdModel> response) {
+  void setDataList1(ApiResponse<GetIssueByBookingIdModel> response) {
     getIssueBybookingId = response;
     notifyListeners();
   }
 
   Future<void> requestRaiseIssue(
-      {required BuildContext context,
+      {
       required String bookingId,
       required String bookingType,
-      required String raisedById,
+     
       required String issueDescription,
       required String vendorId}) async {
+    String raisedById = await UserViewModel().getUserId() ?? '';
     Map<String, dynamic> body = {
       "bookingId": bookingId,
       "bookingType": bookingType,
@@ -56,11 +59,11 @@ class RaiseissueViewModel with ChangeNotifier {
       raisedloading = true;
       notifyListeners();
       await _myRepo
-          .requestRaiseIssueApi(context: context, body: body)
+          .requestRaiseIssueApi(body: body)
           .then((onValue) {
         if (onValue?.status?.httpCode == '200') {
           getIssueByBookingId(
-              context: context,
+           
               bookingId: bookingId,
               userId: raisedById,
               bookingType: bookingType);
@@ -99,7 +102,7 @@ class RaiseissueViewModel with ChangeNotifier {
         "pageSize": pageSize.toString()
       };
       GetIssueModel? issueModel =
-          // ignore: use_build_context_synchronously
+        
           await _myRepo.getRaiseIssueApi(context: context, query: query);
       _getIssueModel = issueModel;
       notifyListeners();
@@ -145,7 +148,7 @@ class RaiseissueViewModel with ChangeNotifier {
   }
 
   Future<void> getIssueByBookingId(
-      {required BuildContext context,
+      {
       required String bookingId,
       required String userId,
       required String bookingType}) async {
@@ -159,7 +162,7 @@ class RaiseissueViewModel with ChangeNotifier {
       setDataList1(ApiResponse.loading());
 
       await _myRepo
-          .getRaiseIssueByBookingIdApi(context: context, query: query)
+          .getRaiseIssueByBookingIdApi(query: query)
           .then((onValue) {
         if (onValue?.status?.httpCode == '200') {
           setDataList1(ApiResponse.completed(onValue));

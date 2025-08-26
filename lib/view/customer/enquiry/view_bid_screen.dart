@@ -1,7 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/status.dart';
 
-import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPageLayout.dart';
+import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/utils/validation.dart';
@@ -365,7 +367,7 @@ class _ViewBidScreenState extends State<ViewBidScreen> {
         ));
   }
 
-  travelItem(IconData? icon, String title) {
+Widget travelItem(IconData? icon, String title) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

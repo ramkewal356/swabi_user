@@ -24,6 +24,7 @@ class RefundPaymentContainer extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
               border: Border.all(
+                // ignore: deprecated_member_use
                 color: naturalGreyColor.withOpacity(0.3),
               ),
               borderRadius: BorderRadius.circular(10),
@@ -71,7 +72,7 @@ class RefundPaymentContainer extends StatelessWidget {
     );
   }
 
-  textItem({required String lable, required String value}) {
+Widget textItem({required String lable, required String value}) {
     return Padding(
       padding:
           const EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 5.0),

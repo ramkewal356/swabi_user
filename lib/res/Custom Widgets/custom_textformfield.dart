@@ -110,6 +110,7 @@ class _CustomtextformfieldState extends State<Customtextformfield> {
               : widget.prefixIcon,
           suffixIcon: widget.suffixIcons,
           fillColor: widget.readOnly == true
+              // ignore: deprecated_member_use
               ? greyColor1.withOpacity(.2)
               : widget.fillColor,
           filled: widget.fillColor != null,

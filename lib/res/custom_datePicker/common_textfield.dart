@@ -292,14 +292,14 @@ class FormDatePickerExpense extends StatefulWidget {
   final TextEditingController controller;
   final VoidCallback? onfocusTap;
   const FormDatePickerExpense({
-    Key? key,
+    super.key,
     required this.title,
     this.width,
     this.headingReq = true,
     required this.controller,
     this.onfocusTap,
     this.hint = '',
-  }) : super(key: key);
+  });
 
   @override
   // ignore: library_private_types_in_public_api
@@ -331,10 +331,10 @@ class _FormDatePickerExpenseState extends State<FormDatePickerExpense> {
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
-            dialogTheme: DialogTheme(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5)),
-                actionsPadding: const EdgeInsets.all(10)),
+            // dialogTheme: DialogTheme(
+            //     shape: RoundedRectangleBorder(
+            //         borderRadius: BorderRadius.circular(5)),
+            //     actionsPadding: const EdgeInsets.all(10)),
             colorScheme: const ColorScheme.light(
               primary: btnColor, // Change this to the desired color
             ),
@@ -432,6 +432,7 @@ class _FormDatePickerExpenseState extends State<FormDatePickerExpense> {
               padding: const EdgeInsets.only(left: 12),
               decoration: BoxDecoration(
                 color: background,
+                // ignore: deprecated_member_use
                 border: Border.all(color: naturalGreyColor.withOpacity(0.3)),
                 borderRadius: BorderRadius.circular(5),
               ),

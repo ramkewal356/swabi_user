@@ -7,6 +7,7 @@ import 'package:flutter_cab/view_model/enquiry_view_model.dart';
 import 'package:flutter_cab/view_model/home_page_view_model.dart';
 import 'package:flutter_cab/view_model/notification_view_model.dart';
 import 'package:flutter_cab/view_model/offer_view_model.dart';
+import 'package:flutter_cab/view_model/package_management_view_model.dart';
 import 'package:flutter_cab/view_model/package_view_model.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:flutter_cab/view_model/raise_issue_view_model.dart';
@@ -95,7 +96,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (create) => VendorDashboardViewModel()),
         ChangeNotifierProvider(create: (create) => BidViewModel()),
         ChangeNotifierProvider(create: (create) => EnquiryViewModel()),
-
+        ChangeNotifierProvider(create: (create) => PackageManagementViewModel())
 
       ],
       child: const MyApp(),

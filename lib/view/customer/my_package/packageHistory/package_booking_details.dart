@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/get_issue_by_booking_id_model.dart';
@@ -5,7 +7,7 @@ import 'package:flutter_cab/model/package_models.dart';
 import 'package:flutter_cab/model/payment_details_model.dart';
 import 'package:flutter_cab/model/payment_refund_model.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
-import 'package:flutter_cab/res/Custom%20Page%20Layout/commonPageLayout.dart';
+import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_search_location.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_viewmore_viewless.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/multi_image_slider_container_widget.dart';
@@ -77,7 +79,7 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
         getPaymentDetail(paymentId: onValue?.data.paymentId ?? '');
         Provider.of<RaiseissueViewModel>(context, listen: false)
             .getIssueByBookingId(
-                context: context,
+              
                 bookingId: widget.packageBookID,
                 userId: widget.userId,
                 bookingType: 'PACKAGE_BOOKING');
@@ -1275,6 +1277,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                   elevation: 0,
                   borderRadius: BorderRadius.circular(5),
                   borderReq: true,
+             
                   borderColor: naturalGreyColor.withOpacity(0.3),
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
@@ -1362,6 +1365,8 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
                   elevation: 0,
                   borderRadius: BorderRadius.circular(5),
                   borderReq: true,
+                  // ignore: duplicate_ignore
+                  // ignore: deprecated_member_use
                   borderColor: naturalGreyColor.withOpacity(0.3),
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
@@ -1477,7 +1482,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
     );
   }
 
-  textItem({required String lable, required String value}) {
+Widget textItem({required String lable, required String value}) {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Row(
@@ -1508,7 +1513,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
     );
   }
 
-  bookingItem({required String lable, required String value}) {
+Widget bookingItem({required String lable, required String value}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 5),
       child: Row(
@@ -1544,7 +1549,7 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
     );
   }
 
-  contactTile(
+Widget contactTile(
       {required String title,
       required String value,
       required Widget iconButton}) {
@@ -1587,8 +1592,8 @@ class ItineraryActivityContainer extends StatefulWidget {
   const ItineraryActivityContainer({
     required this.itineraryDataList,
     required this.isPackageItinerary,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<ItineraryActivityContainer> createState() =>

@@ -50,6 +50,13 @@ TextStyle utilsTextStyle = GoogleFonts.lato(
     color: background, fontSize: 16, fontWeight: FontWeight.w700);
 TextStyle titleText = GoogleFonts.lato(
     color: blackColor, fontSize: 14, fontWeight: FontWeight.w600);
+TextStyle valueText1 = GoogleFonts.lato(
+    // ignore: deprecated_member_use
+    color: blackColor.withOpacity(0.8),
+    fontSize: 14,
+    fontWeight: FontWeight.w500);
+TextStyle activityPrice = GoogleFonts.lato(
+    color: blackColor, fontSize: 10, fontWeight: FontWeight.w500);
 TextStyle buttonText = GoogleFonts.lato(
     color: btnColor, fontSize: 17, fontWeight: FontWeight.w600);
 

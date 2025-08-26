@@ -15,31 +15,31 @@ class EnquiryViewModel with ChangeNotifier {
 
   final _myRepo = EnquiryRepository();
   ApiResponse<List<EnquiryContent>> bidData = ApiResponse.initial();
-  setBidData(ApiResponse<List<EnquiryContent>> response) {
+  void setBidData(ApiResponse<List<EnquiryContent>> response) {
     bidData = response;
     notifyListeners();
   }
 
   ApiResponse<bool> createBid = ApiResponse.initial();
-  createBidResponse(ApiResponse<bool> response) {
+  void createBidResponse(ApiResponse<bool> response) {
     createBid = response;
     notifyListeners();
   }
 
   ApiResponse<bool> sendEnquiryResponse = ApiResponse.initial();
-  sendEnquiry(ApiResponse<bool> response) {
+  void sendEnquiry(ApiResponse<bool> response) {
     sendEnquiryResponse = response;
     notifyListeners();
   }
 
   ApiResponse<List<MyEnquiryContent>> myEnquiryResponse = ApiResponse.initial();
-  setEnquiry(ApiResponse<List<MyEnquiryContent>> response) {
+  void setEnquiry(ApiResponse<List<MyEnquiryContent>> response) {
     myEnquiryResponse = response;
     notifyListeners();
   }
 
   ApiResponse<GetEnquiryByIdModel> getEnquiryById = ApiResponse.initial();
-  setEnquiryById(ApiResponse<GetEnquiryByIdModel> response) {
+  void setEnquiryById(ApiResponse<GetEnquiryByIdModel> response) {
     getEnquiryById = response;
     notifyListeners();
   }

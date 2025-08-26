@@ -1,3 +1,4 @@
+// ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/utils/assets.dart';
@@ -18,7 +19,9 @@ class _SplashSreenState extends State<SplashSreen> {
   void initState() {
     super.initState();
     // Timer(Duration(seconds: 4), ()=> context.pushReplacement("/login"));
-   splashServices.login(context);
+    Future.delayed(const Duration(seconds: 2), () {
+      splashServices.login(context);
+    });
   }
 
   @override

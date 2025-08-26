@@ -35,7 +35,7 @@ class GetPackageListRepository {
 ///Get Package Activity By Id Repo
 class GetPackageActivityByIdRepository {
   Future<GetPackageDetailByIdModel> getPackageActivityByIdRepositoryApi(
-      {required BuildContext context,
+      {
       required Map<String, dynamic> query}) async {
     var http = HttpService(
         baseURL: AppUrl.baseUrl,

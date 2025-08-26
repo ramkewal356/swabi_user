@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
@@ -69,7 +71,7 @@ class Custompaymentdetailscontainer extends StatelessWidget {
     );
   }
 
-  textItem({required String lable, required String value}) {
+Widget textItem({required String lable, required String value}) {
     return Padding(
       padding:
           const EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 5.0),

@@ -1,4 +1,4 @@
-// ignore_for_file: constant_identifier_names
+// ignore_for_file: constant_identifier_names, collection_methods_unrelated_type
 
 class GetPackageListModel {
   Status status;

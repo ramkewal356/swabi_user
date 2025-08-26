@@ -132,7 +132,7 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
                   iconDisabledColor: Colors.grey,
                 ),
                 dropdownStyleData: DropdownStyleData(
-                  maxHeight: 200,
+                  maxHeight: 250,
                   // width: 160,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
