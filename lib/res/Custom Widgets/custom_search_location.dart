@@ -97,7 +97,7 @@ class _CustomSearchLocationState extends State<CustomSearchLocation> {
               )
             : OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5.0),
-                borderSide: const BorderSide(color: redColor),
+                borderSide: const BorderSide(color: Color(0xFFCDCDCD)),
               ),
         errorBorder: widget.withoutBorder
             ? const UnderlineInputBorder(
@@ -105,7 +105,7 @@ class _CustomSearchLocationState extends State<CustomSearchLocation> {
               )
             : OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5.0),
-                borderSide: const BorderSide(color: redColor),
+                borderSide: const BorderSide(color: Color(0xFFCDCDCD)),
               ),
         errorStyle: const TextStyle(
           color: redColor, // Change error text color

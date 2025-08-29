@@ -15,6 +15,7 @@ class Customtextformfield extends StatefulWidget {
   final int? maxLines;
   final int? minLines;
   final int? textLength;
+  final Widget? prefix;
   final String? obscuringCharacter;
   final TextInputType? keyboardType;
   final TextAlignVertical? textAlignVertical;
@@ -38,6 +39,7 @@ class Customtextformfield extends StatefulWidget {
       this.validator,
       this.obscureText,
       this.readOnly,
+      this.prefix,
       this.maxLines = 1,
       this.minLines = 1,
       this.textLength,
@@ -98,9 +100,10 @@ class _CustomtextformfieldState extends State<Customtextformfield> {
           labelText: widget.lable,
           labelStyle: widget.lableStyle ?? textTitleHint,
           errorText: widget.errorText,
+          prefix: widget.prefix,
           prefixIcon: widget.prefixiconvisible == true
               ? Padding(
-                  padding: const EdgeInsets.all(10.0),
+                  padding: const EdgeInsets.all(8.0),
                   child: Image.asset(
                     widget.img ?? '',
                     width: 15,

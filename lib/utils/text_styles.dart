@@ -56,7 +56,7 @@ TextStyle valueText1 = GoogleFonts.lato(
     fontSize: 14,
     fontWeight: FontWeight.w500);
 TextStyle activityPrice = GoogleFonts.lato(
-    color: blackColor, fontSize: 10, fontWeight: FontWeight.w500);
+    color: blackColor, fontSize: 12, fontWeight: FontWeight.w500);
 TextStyle buttonText = GoogleFonts.lato(
     color: btnColor, fontSize: 17, fontWeight: FontWeight.w600);
 

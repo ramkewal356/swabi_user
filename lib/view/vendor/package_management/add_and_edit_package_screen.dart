@@ -7,6 +7,7 @@ import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/utils/utils.dart';
+import 'package:flutter_cab/view_model/activity_management_view_model.dart';
 import 'package:flutter_cab/view_model/package_management_view_model.dart';
 import 'package:flutter_cab/view_model/package_view_model.dart';
 import 'package:provider/provider.dart';
@@ -355,13 +356,13 @@ class _AddActivityModalState extends State<AddActivityModal> {
   }
 
   void getAllActivity() {
-    context.read<PackageManagementViewModel>().getAllActivityApi();
+    context.read<ActivityManagementViewModel>().getAllActivityApi();
   }
 
   @override
   Widget build(BuildContext context) {
     final sampleActivities = context
-            .watch<PackageManagementViewModel>()
+            .watch<ActivityManagementViewModel>()
             .getAllActivityList
             .data
             ?.data

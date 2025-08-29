@@ -96,9 +96,16 @@ class AppUrl {
   static var bidBookUrl = '/bids/book';
   static var bidAcceptUrl = '/bids/accept';
   static var bidRejectUrl = '/bids/reject';
-  //
+  //package mangement
   static var addPackageUrl = '/package/create_package';
   static var updatePackageUrl = '/package/update_package';
   static var activePackageUrl = '/package/activate_package';
   static var deactivepackageUrl = '/package/deactivate_package';
+  static var activateAcitivityUrl = '/activity/activate_activity';
+  static var deActivateAcitivityUrl = '/activity/deactivate_activity';
+  //acivity offer
+  static var activityOfferUrl = '/offer/get_activity_offer';
+  static var getActivityByIdUrl = '/activity/get_activity_by_id';
+  static var addActivityUrl = '/activity/add_activity';
+  static var updateActivityUrl = '/activity/update_activity';
 }

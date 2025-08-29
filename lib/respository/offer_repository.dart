@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/app_url.dart';
+import 'package:flutter_cab/model/get_activity_offer_model.dart';
 import 'package:flutter_cab/model/offer_detail_by_id_model.dart';
 import 'package:flutter_cab/model/offer_list_model.dart';
 import 'package:flutter_cab/view_model/services/http_service.dart';
@@ -67,6 +68,24 @@ class OfferRepository {
       return resp;
     } catch (error) {
       // ignore: use_build_context_synchronously
+      http.handleErrorResponse(error: error);
+    }
+    return null;
+  }
+
+  Future<GetActivityOfferModel?> getActivityOfferApi() async {
+    var http = HttpService(
+      baseURL: AppUrl.baseUrl,
+      endURL: AppUrl.activityOfferUrl,
+      methodType: HttpMethodType.GET,
+      bodyType: HttpBodyType.JSON,
+      isAuthorizeRequest: false,
+    );
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint('response ${response?.data}');
+      return GetActivityOfferModel.fromJson(response?.data);
+    } catch (error) {
       http.handleErrorResponse(error: error);
     }
     return null;

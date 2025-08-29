@@ -5,19 +5,19 @@ import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/res/custom_filter_popup_widget.dart';
 import 'package:flutter_cab/res/custom_search_field.dart';
 import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/view_model/package_management_view_model.dart';
+import 'package:flutter_cab/view_model/activity_management_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-class PackageManagementScreen extends StatefulWidget {
-  const PackageManagementScreen({super.key});
+class ActivityManagementScreen extends StatefulWidget {
+  const ActivityManagementScreen({super.key});
 
   @override
-  State<PackageManagementScreen> createState() =>
-      _PackageManagementScreenState();
+  State<ActivityManagementScreen> createState() =>
+      _ActivityManagementScreenState();
 }
 
-class _PackageManagementScreenState extends State<PackageManagementScreen> {
+class _ActivityManagementScreenState extends State<ActivityManagementScreen> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocus = FocusNode();
   final ScrollController _scrollController = ScrollController();
@@ -33,7 +33,7 @@ class _PackageManagementScreenState extends State<PackageManagementScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getAllPackageList(
+      _getAllActivityList(
         isFilter: true,
         isSearch: false,
         isPagination: false,
@@ -42,23 +42,23 @@ class _PackageManagementScreenState extends State<PackageManagementScreen> {
     _scrollController.addListener(_onScroll);
   }
 
-  void _getAllPackageList({
+  void _getAllActivityList({
     bool isFilter = false,
     bool isSearch = false,
     bool isPagination = false,
   }) {
-    context.read<PackageManagementViewModel>().getPackageListApi(
+    context.read<ActivityManagementViewModel>().getAllActivityListApi(
         isFilter: isFilter,
         isSearch: isSearch,
         isPagination: isPagination,
-        packageStatus: selectedStatus,
+        activityStatus: selectedStatus,
         searchText: searchText);
   }
 
   void _onSearchChanged(String value) {
     setState(() {
       searchText = value;
-      _getAllPackageList(isSearch: true, isFilter: false, isPagination: false);
+      _getAllActivityList(isSearch: true, isFilter: false, isPagination: false);
     });
     // Handle search logic here
     debugPrint("Search value: $value");
@@ -70,13 +70,13 @@ class _PackageManagementScreenState extends State<PackageManagementScreen> {
       // Handle filter logic here
       debugPrint("Selected bid: $selectedStatus");
     });
-    _getAllPackageList(isFilter: true, isSearch: false, isPagination: false);
+    _getAllActivityList(isFilter: true, isSearch: false, isPagination: false);
   }
 
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
-      _getAllPackageList(
+      _getAllActivityList(
         isFilter: false,
         isSearch: false,
         isPagination: true,
@@ -87,10 +87,10 @@ class _PackageManagementScreenState extends State<PackageManagementScreen> {
   @override
   Widget build(BuildContext context) {
     final statuss =
-        context.watch<PackageManagementViewModel>().activeOrDeactive.status;
+        context.watch<ActivityManagementViewModel>().activeOrDeactive.status;
     return PageLayoutPage(
       appBar: AppBar(
-        title: const Text("Package Management"),
+        title: const Text("Acivity Management"),
         backgroundColor: background,
       ),
       child: Column(
@@ -122,18 +122,18 @@ class _PackageManagementScreenState extends State<PackageManagementScreen> {
                   onPressed: () {
                     context
                         .push(
-                            '/vendor_dashboard/package_management/add_edit_package')
+                            '/vendor_dashboard/activity_management/add_edit_activity')
                         .then((onValue) {
-                      _getAllPackageList(isFilter: true);
+                      _getAllActivityList(isFilter: true);
                     });
                   },
                   icon: Icon(Icons.add))
             ],
           ),
           SizedBox(height: 5),
-          Expanded(child: Consumer<PackageManagementViewModel>(
+          Expanded(child: Consumer<ActivityManagementViewModel>(
             builder: (context, value, child) {
-              if (value.getPackageLists.status == Status.loading) {
+              if (value.getAllActivityListData.status == Status.loading) {
                 return Center(
                   child: CircularProgressIndicator(
                     color: greenColor,
@@ -142,52 +142,61 @@ class _PackageManagementScreenState extends State<PackageManagementScreen> {
               } else {
                 return ListView.builder(
                   controller: _scrollController,
-                  itemCount: (value.getPackageLists.data ?? []).length +
+                  itemCount: (value.getAllActivityListData.data ?? []).length +
                       (value.isLastPage ? 0 : 1),
                   itemBuilder: (context, index) {
-                    if (index == value.getPackageLists.data?.length) {
+                    if (index == value.getAllActivityListData.data?.length) {
                       return Center(
                         child: CircularProgressIndicator(
                           color: greenColor,
                         ),
                       );
                     }
-                    var packageList = value.getPackageLists.data?[index];
+                    var activityList =
+                        value.getAllActivityListData.data?[index];
                     return Card(
                       color: background,
-                      margin: EdgeInsets.symmetric(horizontal: 2, vertical: 6),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(16),
                       ),
                       elevation: 4,
+                      margin: const EdgeInsets.symmetric(vertical: 8),
                       child: Padding(
-                        padding: const EdgeInsets.all(10.0),
+                        padding: const EdgeInsets.all(14),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            // Title & Status
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    packageList?.packageName ?? '',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15),
+                                    activityList?.activityName ?? '',
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
                                   ),
+
+                                  // Details
                                   Text(
-                                      'Package Id : ${packageList?.packageId}'),
-                                  Text('Country : ${packageList?.country}'),
+                                      "Activity Id : ${activityList?.activityId}"),
+                                  Text("Country : ${activityList?.country}"),
                                   Text(
-                                      'Activities : ${packageList?.packageActivities?.length}, Days : ${packageList?.noOfDays}'),
+                                      "Season : ${activityList?.bestTimeToVisit}"),
                                   Text(
-                                      "Price : AED ${packageList?.totalPrice?.toInt()}",
+                                      "Time : ${activityList?.startTime} - ${activityList?.endTime}"),
+                                  Text(
+                                      "Price : AED ${activityList?.activityPrice?.toInt()}",
                                       style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           color: btnColor)),
+                                  const SizedBox(height: 10),
                                 ],
                               ),
                             ),
+
+                            // Action buttons
                             Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               mainAxisSize: MainAxisSize.min,
@@ -196,13 +205,14 @@ class _PackageManagementScreenState extends State<PackageManagementScreen> {
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 10, vertical: 6),
                                   decoration: BoxDecoration(
-                                    color: packageList?.packageStatus == "TRUE"
-                                        ? Colors.green
-                                        : Colors.red,
+                                    color:
+                                        activityList?.activityStatus == "TRUE"
+                                            ? Colors.green
+                                            : Colors.red,
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Text(
-                                    packageList?.packageStatus == "TRUE"
+                                    activityList?.activityStatus == "TRUE"
                                         ? 'ACTIVE'
                                         : "INACTIVE",
                                     style: TextStyle(
@@ -214,24 +224,25 @@ class _PackageManagementScreenState extends State<PackageManagementScreen> {
                                   color: background,
                                   onSelected: (value) {
                                     if (value == "View") {
-                                      context.push('/package_view', extra: {
-                                        "packageId":
-                                            packageList?.packageId.toString(),
-                                        "userType": 'Vendor',
-                                        "userId": '',
-                                        "bookingDate": ''
-                                      }).then((onValue) {
-                                        _getAllPackageList(isFilter: true);
-                                      });
+                                      // context.push('/package_view', extra: {
+                                      //   "packageId":
+                                      //       packageList?.packageId.toString(),
+                                      //   "userType": 'Vendor',
+                                      //   "userId": '',
+                                      //   "bookingDate": ''
+                                      // }).then((onValue) {
+                                      //   _getAllPackageList(isFilter: true);
+                                      // });
                                     } else if (value == "Edit") {
                                       context.push(
-                                          '/vendor_dashboard/package_management/add_edit_package',
+                                          '/vendor_dashboard/activity_management/add_edit_activity',
                                           extra: {
                                             "isEdit": true,
-                                            "packageId": packageList?.packageId
+                                            "activityId": activityList
+                                                ?.activityId
                                                 .toString()
                                           }).then((onValue) {
-                                        _getAllPackageList(isFilter: true);
+                                        _getAllActivityList(isFilter: true);
                                       });
                                     } else if (value == "Deactivate" ||
                                         value == "Activate") {
@@ -244,28 +255,28 @@ class _PackageManagementScreenState extends State<PackageManagementScreen> {
                                           if (value == "Deactivate") {
                                             context
                                                 .read<
-                                                    PackageManagementViewModel>()
-                                                .activeDeactiveApi(
-                                                    packageId: packageList
-                                                            ?.packageId
+                                                    ActivityManagementViewModel>()
+                                                .activeDeactiveActivityApi(
+                                                    activityId: activityList
+                                                            ?.activityId
                                                             .toString() ??
                                                         '')
                                                 .then((onValue) {
-                                              _getAllPackageList(
+                                              _getAllActivityList(
                                                   isFilter: true);
                                             });
                                           } else {
                                             context
                                                 .read<
-                                                    PackageManagementViewModel>()
-                                                .activeDeactiveApi(
-                                                    packageId: packageList
-                                                            ?.packageId
+                                                    ActivityManagementViewModel>()
+                                                .activeDeactiveActivityApi(
+                                                    activityId: activityList
+                                                            ?.activityId
                                                             .toString() ??
                                                         '',
                                                     isActive: true)
                                                 .then((onValue) {
-                                              _getAllPackageList(
+                                              _getAllActivityList(
                                                   isFilter: true);
                                             });
                                           }
@@ -276,28 +287,26 @@ class _PackageManagementScreenState extends State<PackageManagementScreen> {
                                   itemBuilder: (context) => [
                                     PopupMenuItem(
                                         value: "View", child: Text("View")),
-                                    if (packageList?.packageStatus == 'TRUE')
+                                    if (activityList?.activityStatus == 'TRUE')
                                       PopupMenuItem(
                                           value: "Edit", child: Text("Edit")),
-                                       
                                     PopupMenuItem(
-                                        value:
-                                            packageList?.packageStatus == 'TRUE'
-                                                ? "Deactivate"
-                                                : "Activate",
+                                        value: activityList?.activityStatus ==
+                                                'TRUE'
+                                            ? "Deactivate"
+                                            : "Activate",
                                         child: Text(
-                                            packageList?.packageStatus == 'TRUE'
+                                            activityList?.activityStatus ==
+                                                    'TRUE'
                                                 ? "Deactivate"
                                                 : "Activate")),
                                   ],
-                              ),
+                                ),
                               ],
                             ),
                           ],
                         ),
                       ),
-                       
-                    
                     );
                   },
                 );
@@ -317,8 +326,8 @@ class _PackageManagementScreenState extends State<PackageManagementScreen> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text("$action Package"),
-        content: Text("Are you sure you want to $action this package?"),
+        title: Text("$action Activity"),
+        content: Text("Are you sure you want to $action this Activity?"),
         actions: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -40,6 +40,8 @@ import 'package:flutter_cab/view/auth_screens/registration_screen.dart';
 import 'package:flutter_cab/view/starting_screen/landing_screen.dart';
 import 'package:flutter_cab/view/starting_screen/splash_screen.dart';
 import 'package:flutter_cab/view/auth_screens/reset_password_screen.dart';
+import 'package:flutter_cab/view/vendor/activity_management_screen/activity_management_screen.dart';
+import 'package:flutter_cab/view/vendor/activity_management_screen/add_and_edit_activity_screen.dart';
 import 'package:flutter_cab/view/vendor/enquiry_management/bid_now_screen.dart';
 import 'package:flutter_cab/view/vendor/enquiry_management/enquiry_management_screen.dart';
 import 'package:flutter_cab/view/vendor/package_management/add_and_edit_package_screen.dart';
@@ -463,6 +465,23 @@ final GoRouter myRouter = GoRouter(
               }
             },
           ),
+          GoRoute(
+              path: 'activity_management',
+              builder: (context, state) {
+                return ActivityManagementScreen();
+              },
+              routes: [
+                GoRoute(
+                  path: 'add_edit_activity',
+                  builder: (context, state) {
+                    var data = state.extra as Map<String, dynamic>?;
+                    return AddAndEditActivityScreen(
+                      isEdit: data?["isEdit"] ?? false,
+                      activityId: data?["activityId"],
+                    );
+                  },
+                )
+              ]),
           GoRoute(
               path: 'package_management',
               builder: (context, state) {

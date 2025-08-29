@@ -132,6 +132,13 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
               },
               {
                 "imgUrl": package,
+                "label": "Activity Management",
+                "onTap": () {
+                  context.push('/vendor_dashboard/activity_management');
+                }
+              },
+              {
+                "imgUrl": package,
                 "label": "Package Management",
                 "onTap": () {
                   context.push('/vendor_dashboard/package_management');

@@ -215,3 +215,104 @@ Future<String?> pickSfDateRange(BuildContext context) async {
     },
   );
 }
+Future<List<String>?> selectMultipleSfDate(BuildContext context) async {
+  List<DateTime> selectedDates = [];
+
+  return await showDialog<List<String>>(
+    context: context,
+    builder: (context) {
+      return Dialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        child: Container(
+          // width: MediaQuery.of(context).size.width * 0.9,
+          padding: const EdgeInsets.all(16),
+          width: 350,
+          height: 400,
+          child: SfDateRangePicker(
+            view: DateRangePickerView.month,
+            selectionMode: DateRangePickerSelectionMode.multiple,
+            showActionButtons: true,
+            selectionShape: DateRangePickerSelectionShape.circle,
+            selectionColor: btnColor,
+            startRangeSelectionColor: btnColor,
+            endRangeSelectionColor: btnColor,
+            // ignore: deprecated_member_use
+            rangeSelectionColor: btnColor.withOpacity(0.2),
+            todayHighlightColor: btnColor,
+            monthCellStyle: DateRangePickerMonthCellStyle(
+              todayCellDecoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: btnColor, width: 1.5),
+              ),
+              todayTextStyle: const TextStyle(color: Colors.black),
+              cellDecoration: const BoxDecoration(shape: BoxShape.circle),
+              textStyle: const TextStyle(fontSize: 14, color: Colors.black),
+              disabledDatesTextStyle: const TextStyle(color: Colors.grey),
+            ),
+
+            monthViewSettings: const DateRangePickerMonthViewSettings(
+              firstDayOfWeek: 1, // Monday
+              viewHeaderStyle: DateRangePickerViewHeaderStyle(),
+            ),
+            initialSelectedRange: null, // No preselection
+            onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
+              if (args.value is List<DateTime>) {
+                selectedDates = args.value;
+              }
+            },
+            onCancel: () {
+              Navigator.pop(context); // Close without selection
+            },
+            onSubmit: (val) {
+              if (selectedDates.isNotEmpty) {
+                // Format selected dates into string list
+                final formattedDates = selectedDates
+                    .map((d) => DateFormat('dd/MM/yyyy').format(d))
+                    .toList();
+                Navigator.pop(context, formattedDates);
+              } else {
+                Navigator.pop(context); // No selection
+              }
+            },
+          ),
+        ),
+      );
+    },
+  );
+}
+
+String mapDropdownToApi(String dropdownValue) {
+  // "1 hours" -> "1.0"
+  return "${dropdownValue.split(" ").first}.0";
+}
+
+String mapApiHoursToDropdown(dynamic apiValue) {
+  // apiValue might be double or string, e.g., "1.0"
+  String value = apiValue.toString().replaceAll(".0", ""); // "1.0" -> "1"
+  return "$value hours"; // "1 hours"
+}
+
+double mapDiscountToDouble(String discount) {
+  if (discount == "No discount") {
+    return -1.0; // special case (or you can use null instead)
+  } else if (discount == "Free") {
+    return 0.0; // free = 0
+  } else {
+    // extract the number part (remove % and spaces)
+    return double.tryParse(discount.replaceAll("%", "").trim()) ?? -1.0;
+  }
+}
+
+String mapDoubleToDiscount(double? value) {
+  if (value == null || value == -1.0) {
+    return "No discount";
+  } else if (value == 0.0) {
+    return "Free";
+  } else {
+    return "${value.toInt()} %"; // if API always gives whole numbers
+    // or use value.toString() if decimals are possible
+  }
+}
+
+

@@ -14,6 +14,7 @@ class CustomMultiselectDropdown extends StatefulWidget {
   final GlobalKey<FormFieldState>? fieldKey;
   final String? Function(List<dynamic>?)? validator;
   final AutovalidateMode? autovalidateMode;
+  final Color? bgColor;
   const CustomMultiselectDropdown(
       {super.key,
       required this.title,
@@ -24,7 +25,8 @@ class CustomMultiselectDropdown extends StatefulWidget {
       required this.onChanged,
       required this.selectedItems,
       this.autovalidateMode,
-      this.validator});
+      this.validator,
+      this.bgColor});
 
   @override
   State<CustomMultiselectDropdown> createState() =>
@@ -53,8 +55,10 @@ class _CustomMultiselectDropdownState extends State<CustomMultiselectDropdown> {
               searchable: false,
               buttonText: const Text(""),
               buttonIcon: const Icon(Icons.arrow_drop_down),
+              backgroundColor: background,
               decoration: BoxDecoration(
-                color: Colors.grey[100],
+                color: widget.bgColor ?? Colors.grey[100],
+               
                 borderRadius: BorderRadius.circular(5),
                 border: Border.all(color: Colors.grey),
               ),
@@ -74,12 +78,16 @@ class _CustomMultiselectDropdownState extends State<CustomMultiselectDropdown> {
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                   
                     children: [
                       if (widget.icon != null) ...[
                         Icon(widget.icon, color: Colors.grey),
                         const SizedBox(width: 8),
                       ],
-                      Text(widget.hintText)
+                      Text(
+                        widget.hintText,
+                        style: TextStyle(color: greyColor1),
+                      )
                       // Expanded(
                       //   child: Text(
                       //     widget.selectedItems.isEmpty

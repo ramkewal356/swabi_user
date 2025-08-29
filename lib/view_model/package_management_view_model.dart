@@ -4,7 +4,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/common_model.dart';
-import 'package:flutter_cab/model/get_all_activity_list_model.dart';
 import 'package:flutter_cab/model/get_package_list_model.dart';
 import 'package:flutter_cab/respository/package_management_repository.dart';
 import 'package:flutter_cab/utils/utils.dart';
@@ -26,13 +25,7 @@ class PackageManagementViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  ApiResponse<GetAllActivityListModel> getAllActivityList =
-      ApiResponse.initial();
-
-  void setActivityList(ApiResponse<GetAllActivityListModel> response) {
-    getAllActivityList = response;
-    notifyListeners();
-  }
+ 
 
   ApiResponse<bool> addedPackage = ApiResponse.initial();
 
@@ -97,28 +90,7 @@ class PackageManagementViewModel with ChangeNotifier {
     }
   }
 
-  Future<GetAllActivityListModel?> getAllActivityApi() async {
-    String? vendorId = await UserViewModel().getUserId();
-    Map<String, dynamic> query = {
-      "pageNumber": -1,
-      "pageSize": -1,
-      "activityStatus": "TRUE",
-      "vendorId": vendorId,
-      "search": ""
-    };
-    try {
-      setActivityList(ApiResponse.loading());
-      var resp = await _myRepo.getAllActivityApi(query: query);
-      setActivityList(ApiResponse.completed(resp));
-      debugPrint('Get Activity List Api Success');
-      return resp;
-    } catch (error) {
-      debugPrint(error.toString());
-      debugPrint('Get Activity List Api Failed');
-      setActivityList(ApiResponse.error(error.toString()));
-    }
-    return null;
-  }
+
 
   Future<void> addPackageApi(
       {required BuildContext context,

@@ -103,7 +103,7 @@ class ActivityContent {
   int? activityId;
   int? packageActivityId;
 
-  Country? country;
+  String? country;
   String? state;
   String? city;
   String? address;
@@ -117,7 +117,7 @@ class ActivityContent {
   List<ParticipantType>? participantType;
   List<String>? weeklyOff;
   List<String>? activityImageUrl;
-  ActivityStatus? activityStatus;
+  String? activityStatus;
   DateTime? createdDate;
   DateTime? modifiedDate;
   List<ActivityReligiousOffDate>? activityReligiousOffDates;
@@ -156,7 +156,7 @@ class ActivityContent {
       ActivityContent(
         activityId: json["activityId"],
         packageActivityId: json["packageActivityId"],
-        country: countryValues.map[json["country"]]!,
+        country: json["country"],
         state: json["state"],
         city: json["city"],
         address: json["address"],
@@ -177,7 +177,7 @@ class ActivityContent {
         activityImageUrl: json["activityImageUrl"] == null
             ? []
             : List<String>.from(json["activityImageUrl"]!.map((x) => x)),
-        activityStatus: activityStatusValues.map[json["activityStatus"]]!,
+        activityStatus: json["activityStatus"],
         createdDate: json["createdDate"] == null
             ? null
             : DateTime.parse(json["createdDate"]),
@@ -201,7 +201,7 @@ class ActivityContent {
   Map<String, dynamic> toJson() => {
         "activityId": activityId,
         "packageActivityId": packageActivityId,
-        "country": countryValues.reverse[country],
+        "country": country,
         "state": state,
         "city": city,
         "address": address,
@@ -222,7 +222,7 @@ class ActivityContent {
         "activityImageUrl": activityImageUrl == null
             ? []
             : List<dynamic>.from(activityImageUrl!.map((x) => x)),
-        "activityStatus": activityStatusValues.reverse[activityStatus],
+        "activityStatus": activityStatus,
         "createdDate": createdDate?.toIso8601String(),
         "modifiedDate": modifiedDate?.toIso8601String(),
         "activityReligiousOffDates": activityReligiousOffDates == null
@@ -401,9 +401,7 @@ class ActivityReligiousOffDate {
       };
 }
 
-enum ActivityStatus { TRUE }
 
-final activityStatusValues = EnumValues({"TRUE": ActivityStatus.TRUE});
 
 class AgeGroupDiscountPercent {
   double? infant;
@@ -430,10 +428,7 @@ class AgeGroupDiscountPercent {
       };
 }
 
-enum Country { UNITED_ARAB_EMIRATES }
 
-final countryValues =
-    EnumValues({"United Arab Emirates": Country.UNITED_ARAB_EMIRATES});
 
 enum ParticipantType { ADULT, CHILD, INFANT, SENIOR }
 

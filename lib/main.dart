@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cab/utils/routes/route.dart';
+import 'package:flutter_cab/view_model/activity_management_view_model.dart';
 import 'package:flutter_cab/view_model/auth_view_model.dart';
 import 'package:flutter_cab/view_model/bid_view_model.dart';
 import 'package:flutter_cab/view_model/enquiry_view_model.dart';
@@ -96,7 +97,10 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (create) => VendorDashboardViewModel()),
         ChangeNotifierProvider(create: (create) => BidViewModel()),
         ChangeNotifierProvider(create: (create) => EnquiryViewModel()),
-        ChangeNotifierProvider(create: (create) => PackageManagementViewModel())
+        ChangeNotifierProvider(
+            create: (create) => PackageManagementViewModel()),
+        ChangeNotifierProvider(
+            create: (create) => ActivityManagementViewModel())
 
       ],
       child: const MyApp(),

@@ -59,6 +59,8 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
     return FormField<String>(
         autovalidateMode: AutovalidateMode.onUserInteraction,
         validator: widget.validator,
+        initialValue:
+            widget.controller.text.isNotEmpty ? widget.controller.text : null,
         builder: (FormFieldState<String> field) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,6 +85,7 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
                           ),
                         ))
                     .toList(),
+                    
                 value: widget.controller.text == ''
                     ? null
                     : widget.controller.text,

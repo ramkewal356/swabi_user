@@ -1,10 +1,13 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:flutter_cab/model/get_activity_offer_model.dart';
 import 'package:flutter_cab/model/offer_detail_by_id_model.dart';
 import 'package:flutter_cab/model/offer_list_model.dart';
 import 'package:flutter_cab/respository/offer_repository.dart';
 import 'package:go_router/go_router.dart';
+
+import '../data/response/api_response.dart';
 
 class OfferViewModel with ChangeNotifier {
   final _myRepo = OfferRepository();
@@ -12,6 +15,13 @@ class OfferViewModel with ChangeNotifier {
   OfferDetailByIdModel? offerDetailByIdModel;
   bool isLoading = false;
   bool isLoading1 = false;
+  ApiResponse<GetActivityOfferModel> getActivityOffer = ApiResponse.initial();
+
+  void setActivityOffer(ApiResponse<GetActivityOfferModel> response) {
+    getActivityOffer = response;
+    notifyListeners();
+  }
+
   Future<void> getOfferList(
       {required BuildContext context,
       required String date,
@@ -89,5 +99,15 @@ class OfferViewModel with ChangeNotifier {
       notifyListeners();
     }
     return null;
+  }
+
+  Future<void> getActivityOfferApi() async {
+    try {
+      setActivityOffer(ApiResponse.loading());
+      var resp = await _myRepo.getActivityOfferApi();
+      setActivityOffer(ApiResponse.completed(resp));
+    } catch (e) {
+      setActivityOffer(ApiResponse.error(e.toString()));
+    }
   }
 }
