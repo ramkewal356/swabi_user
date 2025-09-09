@@ -1,16 +1,15 @@
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/model/get_issue_by_booking_id_model.dart';
-import 'package:flutter_cab/model/package_models.dart';
-import 'package:flutter_cab/model/payment_details_model.dart';
-import 'package:flutter_cab/model/payment_refund_model.dart';
+import 'package:flutter_cab/model/get_issue_by_booking_id_model.dart'
+    hide Status;
+import 'package:flutter_cab/model/package_models.dart' hide Status;
+import 'package:flutter_cab/model/payment_details_model.dart' hide Status;
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_search_location.dart';
-import 'package:flutter_cab/res/Custom%20Widgets/custom_viewmore_viewless.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/multi_image_slider_container_widget.dart';
+import 'package:flutter_cab/res/activity_container.dart';
 import 'package:flutter_cab/res/custom_appbar_widget.dart';
 import 'package:flutter_cab/res/custom_container.dart';
 import 'package:flutter_cab/res/custom_raise_issue_form.dart';
@@ -21,29 +20,30 @@ import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/string_extenstion.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
+import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view/customer/my_rental/cancel_booking.dart';
-import 'package:flutter_cab/view/customer/my_package/package_viewdetails_screen.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:flutter_cab/view_model/raise_issue_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
 import 'package:go_router/go_router.dart';
 // import 'package:google_api_headers/google_api_headers.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:intl/intl.dart';
-import 'package:intl_phone_field/countries.dart';
-import 'package:marqueer/marqueer.dart';
 import 'package:provider/provider.dart';
+import '../../../../data/response/status.dart';
 import '../../../../view_model/package_view_model.dart';
 
 class PackagePageViewDetails extends StatefulWidget {
-  final String userId;
+  // final String userId;
   final String packageBookID;
   final String paymentId;
+  final String bookingStatus;
   const PackagePageViewDetails(
       {super.key,
-      required this.userId,
+      // required this.userId,
       required this.packageBookID,
-      required this.paymentId});
+      required this.paymentId,
+      required this.bookingStatus});
 
   @override
   State<PackagePageViewDetails> createState() => _PackagePageViewDetailsState();
@@ -52,10 +52,25 @@ class PackagePageViewDetails extends StatefulWidget {
 class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
   TextEditingController cancelController = TextEditingController();
   TextEditingController alertController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  TextEditingController pickupLocationController = TextEditingController();
+  TextEditingController primaryContactController = TextEditingController();
+  TextEditingController secondaryContactController = TextEditingController();
+  TextEditingController changeContactController = TextEditingController();
+  TextEditingController issueController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  TextEditingController searchLocationController = TextEditingController();
+
   GetIssueByBookingIdModel? getIssueByBookingId;
   bool loading = false;
   int? day;
+  List<String> allParticipantTypes = [];
+  List<dynamic> imageList = [];
+  List<PackageActivity> packageActivityList = [];
+  List<String> sutableFor = [];
   PaymentDetailsModel? paymentDetails;
+  String countryCode = '971';
+  String primaryCountryCode = '971';
   String? selectedText;
   FocusNode? focusNode;
   @override
@@ -63,6 +78,9 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       getPackageDetails();
+      if (widget.bookingStatus == "CANCELLED") {
+        getrefund();
+      }
     });
   }
 
@@ -70,38 +88,78 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
     context
         .read<GetPackageHistoryDetailByIdViewModel>()
         .fetchGetPackageHistoryDetailByIdViewModelApi(
-            context: context, bookingId: widget.packageBookID)
-        .then((onValue) {
-      if (onValue?.status.httpCode == '200') {
-        Provider.of<GetPackageItineraryViewModel>(context, listen: false)
-            .fetchGetPackageItineraryViewModelApi(
-                context, {"packageBookingId": widget.packageBookID});
-        getPaymentDetail(paymentId: onValue?.data.paymentId ?? '');
-        Provider.of<RaiseissueViewModel>(context, listen: false)
-            .getIssueByBookingId(
-              
-                bookingId: widget.packageBookID,
-                userId: widget.userId,
-                bookingType: 'PACKAGE_BOOKING');
-        if (onValue?.data.bookingStatus == 'CANCELLED') {
-          Provider.of<GetPaymentRefundViewModel>(context, listen: false)
-              .getPaymentRefundApi(
-                  context: context, paymentId: onValue?.data.paymentId ?? "");
+            bookingId: widget.packageBookID);
+    getItenery();
+    getIssue();
+    getPaymentDetail();
+  }
+
+  void getItenery() {
+    context
+        .read<GetPackageItineraryViewModel>()
+        .fetchGetPackageItineraryViewModelApi(
+            context, {"packageBookingId": widget.packageBookID});
+  }
+
+  void getrefund() {
+    context
+        .read<GetPaymentRefundViewModel>()
+        .getPaymentRefundApi(context: context, paymentId: widget.paymentId);
+  }
+
+  void getIssue() {
+    context.read<RaiseissueViewModel>().getIssueByBookingId(
+        bookingId: widget.packageBookID,
+        // userId: widget.userId,
+        bookingType: 'PACKAGE_BOOKING');
+  }
+
+  void changeContact() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ChangeMobileViewModel>().changeMobileApi(
+        body: {
+          "packageBookingId": widget.packageBookID,
+          "mobile": primaryContactController.text,
+          "countryCode": primaryCountryCode,
+          "alternateMobile": countryCode,
+          "alternateMobileCountryCode": secondaryContactController.text
+        },
+      ).then((onValue) {
+        if (onValue?.status?.httpCode == "200") {
+          Navigator.pop(context); // close bottom sheet safely
+          Utils.toastSuccessMessage(onValue?.data?.body ?? '');
+          getPackageDetails(); // refresh safely
+        } else {
+          Navigator.pop(context);
+          getPackageDetails();
         }
+      });
+    });
+  }
+
+  void getAddPickUpLocation() {
+    context
+        .read<AddPickUpLocationPackageViewModel>()
+        .fetchAddPickUpLocationPackageViewModelApi(
+      context,
+      {
+        "packageBookingId": widget.packageBookID,
+        "pickupLocation": searchLocationController.text
+      },
+    ).then((onValue) {
+      if (onValue?.status?.httpCode == "200") {
+        debugPrint('locationbnkjjlklkl....${searchLocationController.text}');
+        Utils.toastSuccessMessage(onValue?.data?.body ?? '');
+        context.pop(context);
+        getPackageDetails();
       }
     });
   }
 
-  Future<void> getPaymentDetail({required String paymentId}) async {
-    await Provider.of<RentalPaymentDetailsViewModel>(context, listen: false)
-        .rentalPaymentDetail(context: context, paymentId: paymentId)
-        .then((onValue) {
-      if (onValue?.status?.httpCode == '200') {
-        setState(() {
-          paymentDetails = onValue;
-        });
-      }
-    });
+  void getPaymentDetail() {
+    context
+        .read<RentalPaymentDetailsViewModel>()
+        .rentalPaymentDetail(paymentId: widget.paymentId);
   }
 
   @override
@@ -112,6 +170,22 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
 
   @override
   Widget build(BuildContext context) {
+    final paymentDetails = context
+        .watch<RentalPaymentDetailsViewModel>()
+        .rentalPaymentDetails
+        .data
+        ?.data;
+    final paymentRefund =
+        context.watch<GetPaymentRefundViewModel>().getPaymentRefund.data?.data;
+    final getIssueByBookingId =
+        context.watch<RaiseissueViewModel>().getIssueBybookingId.data;
+    final getItenaryData = context
+        .watch<GetPackageItineraryViewModel>()
+        .getPackageItineraryList
+        .data
+        ?.data;
+
+    DateTime dateTime = DateTime.now();
     return Scaffold(
       backgroundColor: bgGreyColor,
       appBar: const CustomAppBar(
@@ -120,247 +194,773 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
       body: PageLayoutPage(child:
           Consumer<GetPackageHistoryDetailByIdViewModel>(
               builder: (context, viewModel, snapshot) {
-        if (viewModel.getPackageHistoryDetailById.status.toString() ==
-            'Status.loading') {
+        if (viewModel.getPackageHistoryDetailById.status == Status.loading) {
           return const Center(
             child: CircularProgressIndicator(
               color: Colors.green,
             ),
           );
-        } else if (viewModel.getPackageHistoryDetailById.status.toString() ==
-            'Status.error') {
+        } else if (viewModel.getPackageHistoryDetailById.status ==
+            Status.error) {
           return Center(
             child: Text(
               'No Data Found',
               style: nodataTextStyle,
             ),
           );
-        } else if (viewModel.getPackageHistoryDetailById.status.toString() ==
-            'Status.completed') {
+        } else if (viewModel.getPackageHistoryDetailById.status ==
+            Status.completed) {
           var data = viewModel.getPackageHistoryDetailById.data?.data;
-          var memberListDetails = data?.memberList ?? [];
-          var packageDriverDetails =
-              data?.assignedDriverOnPackageBookings ?? [];
-          var packageVehicleDetail =
-              data?.assignedVehicleOnPackageBookings ?? [];
-          var packageHistoryActivityList = data?.pkg.packageActivities ?? [];
-          List<ItineraryDetail> getPackageItineraryList = context
-                  .watch<GetPackageItineraryViewModel>()
-                  .getPackageItineraryList
-                  .data
-                  ?.data
-                  ?.itineraryDetails ??
-              [];
-          getIssueByBookingId =
-              context.watch<RaiseissueViewModel>().getIssueBybookingId.data;
+          primaryCountryCode = data?.countryCode ?? '971';
+          countryCode = data?.alternateMobileCountryCode ?? '971';
+          primaryContactController.text = data?.mobile ?? '';
+
           return ListView(
             children: [
-              viewModel.getPackageHistoryDetailById.data?.data != null
-                  ? PackageDetailsContainer(
-                      getIssueByBookingId: getIssueByBookingId,
-                      vendorId: data?.pkg.vendor?.vendorId.toString() ?? '',
-                      id: widget.packageBookID,
-                      pkgImage: data?.pkg.packageActivities
-                              .expand((e) => e.activity.activityImageUrl)
-                              .toList() ??
-                          [],
-                      packageName: data?.pkg.packageName ?? '',
-                      bookingStatus: data?.bookingStatus ?? '',
-                      location: data?.pickupLocation ?? '',
-                      primaryCountryCode: data?.countryCode ?? '',
-                      primaryMobileNo: data?.mobile ?? '',
-                      secondaryCountryCode:
-                          data?.alternateMobileCountryCode ?? '',
-                      secondaryMobileNo: data?.alternateMobile ?? '',
-                      country: data?.pkg.country ?? '',
-                      startTime: data?.bookingDate ?? '',
-                      endTime: data?.endDate ?? '',
-                      totalMembers: data?.memberList.length.toString() ?? '',
-                      days: data?.pkg.noOfDays ?? '',
-                      cancelReason: data?.cancellationReason ?? '',
-                      cancelledBy: data?.cancelledBy ?? '',
-                      pickUpLocation: data?.pickupLocation ?? '',
-                      controllerWidget: alertController,
-                      taxAmount: data?.taxAmount ?? '',
-                      discountAmount: data?.discountAmount ?? '',
-                      packageAmount: data?.packagePrice ?? '',
-                      iteneryList: getPackageItineraryList,
-
-                      alertOnTap: () {
-                        Provider.of<AddPickUpLocationPackageViewModel>(context,
-                                listen: false)
-                            .fetchAddPickUpLocationPackageViewModelApi(
-                                context,
-                                {
-                                  "packageBookingId": widget.packageBookID,
-                                  "pickupLocation": alertController.text
-                                },
-                                widget.packageBookID);
-                      },
-
-                      totalAmt: data?.totalPayableAmount ?? '',
-                      paymentDetails: paymentDetails,
-                      memberList: List.generate(
-                          memberListDetails.length,
-                          (index) => PackageHIstoryDetailsMemberList(
-                              memberId: memberListDetails[index].memberId,
-                              name: memberListDetails[index].name,
-                              ageUnit: memberListDetails[index].ageUnit,
-                              age: memberListDetails[index].age,
-                              gender: memberListDetails[index].gender)),
-                      driverDetails: List.generate(
-                          packageDriverDetails.length,
-                          (index) => AssignedDriverOnPackageBooking(
-                              date: packageDriverDetails[index].date,
-                              driverAssignedId: "",
-                              isCancelled: false,
-                              driver: Driver(
-                                  driverId: packageDriverDetails[index]
-                                      .driverAssignedId,
-                                  firstName: packageDriverDetails[index]
-                                      .driver
-                                      .firstName,
-                                  lastName: packageDriverDetails[index]
-                                      .driver
-                                      .lastName,
-                                  driverAddress: "",
-                                  emiratesId: "",
-                                  mobile:
-                                      packageDriverDetails[index].driver.mobile,
-                                  countryCode: "",
-                                  email: "",
-                                  gender:
-                                      packageDriverDetails[index].driver.gender,
-                                  licenceNumber: "",
-                                  createdDate: "",
-                                  modifiedDate: "",
-                                  profileImageUrl: "",
-                                  userType: "",
-                                  vendorId: "",
-                                  driverStatus: ""))),
-                      vehicleDetails: List.generate(
-                          packageVehicleDetail.length,
-                          (index) => AssignedVehicleOnPackageBooking(
-                                vehicle: Vehicle(
-                                    vehicleId: "",
-                                    carName: packageVehicleDetail[index]
-                                        .vehicle
-                                        .carName,
-                                    year: "",
-                                    carType: "",
-                                    brandName: "",
-                                    fuelType: "",
-                                    seats: "",
-                                    color: "",
-                                    vehicleNumber: packageVehicleDetail[index]
-                                        .vehicle
-                                        .vehicleNumber,
-                                    modelNo: "",
-                                    createdDate: "",
-                                    modifiedDate: "",
-                                    images: [],
-                                    vehicleStatus: ""),
-                                date: packageVehicleDetail[index].date,
-                                assignedId: "",
-                                isCancelled: false,
-                              )),
-
-                      ///Activity Details List
-                      child: getPackageItineraryList.isNotEmpty
-                          ? ItineraryActivityContainer(
-                              itineraryDataList:
-                                  getPackageItineraryList.isNotEmpty
-                                      ? getPackageItineraryList
-                                      : packageHistoryActivityList,
-                              isPackageItinerary:
-                                  getPackageItineraryList.isNotEmpty,
-                            )
-                          : ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: packageHistoryActivityList.length,
-                              itemBuilder: (context, index) {
-                                final data = packageHistoryActivityList[index];
-                                final List image =
-                                    packageHistoryActivityList[index]
-                                        .activity
-                                        .activityImageUrl;
-                                return ActivityContainer(
-                                  days:
-                                      "Activity ${data.day == "null" ? index + 1 : data.day}",
-                                  actyImage: List.generate(
-                                      image.length, (index) => image[index]),
-                                  activityName: data.activity.activityName,
-                                  description: data.activity.description,
-                                  activityHour: data.activity.activityHours,
-                                  activityVisit: data.activity.bestTimeToVisit,
-                                  openTime: data.activity.startTime,
-                                  closeTime: data.activity.endTime,
-                                  suitableFor: data.activity.participantType,
-                                  address: data.activity.address,
-                                  // activityPrice: data.activity.activityPrice ?? "",
-                                  // discountPrice:
-                                  //     data.activity.discountedAmount ?? 0,
-                                );
-                              },
+              CommonContainer(
+                  height: 220,
+                  elevation: 0,
+                  width: double.infinity,
+                  borderRadius: BorderRadius.circular(5),
+                  borderReq: true,
+                  borderColor: naturalGreyColor.withOpacity(0.3),
+                  child: MultiImageSlider(
+                    images: data?.pkg.packageActivities
+                            .expand((e) => e.activity.activityImageUrl)
+                            .toList() ??
+                        [],
+                  )),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    titleText(title: 'Booking Details'),
+                    Row(
+                      children: [
+                        Text(
+                          'Price :',
+                          style: titleTextStyle,
+                        ),
+                        RichText(
+                            text: TextSpan(children: [
+                          const TextSpan(
+                              text: ' AED ',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600)),
+                          TextSpan(
+                              text:
+                                  '${double.tryParse(data?.packagePrice ?? '')?.round()}',
+                              style: const TextStyle(
+                                  color: btnColor, fontWeight: FontWeight.w600))
+                        ]))
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              CommonContainer(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                width: double.infinity,
+                elevation: 0,
+                borderRadius: BorderRadius.circular(5),
+                borderReq: true,
+                borderColor: naturalGreyColor.withOpacity(0.3),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const CustomTextWidget(
+                              content: "Booking Id : ",
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
                             ),
-                      onTap: () {
-                        showModalBottomSheet(
-                            context: context,
-                            isDismissible: false,
-                            backgroundColor: background,
-                            isScrollControlled: true,
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(10),
-                              ),
+                            CustomTextWidget(
+                              content: data?.packageBookingId ?? '',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
                             ),
-                            builder: (BuildContext context) {
-                              return Padding(
-                                padding: EdgeInsets.only(
-                                  bottom: MediaQuery.of(context)
-                                      .viewInsets
-                                      .bottom, // Adjust modal size when keyboard opens
+                          ],
+                        ),
+                        Container(
+                          height: 25,
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          // width: 90,
+                          decoration: BoxDecoration(
+                              color: data?.bookingStatus == 'CANCELLED'
+                                  ? redColor
+                                  : greenColor,
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Center(
+                              child: Text(
+                            data?.bookingStatus ?? '',
+                            style: const TextStyle(color: background),
+                          )),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    bookingItem(
+                        lable: 'Package Name',
+                        value:
+                            data?.pkg.packageName.capitalizeFirstOfEach ?? ''),
+                    bookingItem(
+                        lable: 'Numbers Of Member',
+                        value: data?.numberOfMembers ?? ''),
+                    bookingItem(
+                        lable: 'Booking Start Date',
+                        value: data?.bookingDate ?? ''),
+                    bookingItem(
+                        lable: 'Booking End Date', value: data?.endDate ?? ''),
+                    bookingItem(
+                        lable: 'Duration',
+                        value:
+                            '${data?.pkg.noOfDays}Days/${int.parse(data?.pkg.noOfDays ?? '') - 1}Nights'),
+                    contactTile(
+                        title: 'Primary Contact',
+                        value: '+${data?.countryCode} ${data?.mobile}',
+                        iconButton: data?.bookingStatus == "BOOKED"
+                            ? data?.alternateMobile.isEmpty == true
+                                ? InkWell(
+                                    onTap: () {
+                                      _showBottomSheetModal(
+                                          context,
+                                          (setState) => _formContainer(
+                                                title: 'Add Secondory Contact',
+                                                onTap: () {
+                                                  debugPrint(
+                                                      'contact....$countryCode...${secondaryContactController.text}');
+                                                  changeContact();
+                                                },
+                                                isChangeContact: true,
+                                              ));
+                                    },
+                                    child: const Icon(
+                                      Icons.add_call,
+                                      size: 20,
+                                      color: btnColor,
+                                      shadows: [
+                                        BoxShadow(
+                                            offset: Offset(
+                                              1,
+                                              2,
+                                            ),
+                                            color: greyColor1)
+                                      ],
+                                    ),
+                                  )
+                                : const SizedBox.shrink()
+                            : const SizedBox.shrink()),
+                    data?.bookingStatus == "BOOKED"
+                        ? data?.alternateMobile.isNotEmpty == true
+                            ? contactTile(
+                                title: 'Secondary Contact',
+                                value:
+                                    '+${data?.alternateMobileCountryCode} ${data?.alternateMobile}',
+                                iconButton: InkWell(
+                                  onTap: () {
+                                    _showBottomSheetModal(
+                                        context,
+                                        (setState) => _formContainer(
+                                              title: 'Change Secondory contact',
+                                              onTap: () {
+                                                changeContact();
+                                              },
+                                              isChangeContact: true,
+                                            ));
+                                  },
+                                  child: const Icon(
+                                    Icons.border_color_outlined,
+                                    color: btnColor,
+                                    shadows: [
+                                      BoxShadow(
+                                          offset: Offset(
+                                            1,
+                                            1,
+                                          ),
+                                          color: greyColor1)
+                                    ],
+                                  ),
+                                ))
+                            : const SizedBox()
+                        : const SizedBox.shrink(),
+                    bookingItem(
+                        lable: 'Country', value: data?.pkg.country ?? ''),
+                    (getIssueByBookingId?.data ?? []).isEmpty
+                        ? Container()
+                        : Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  'Created Issue',
+                                  style: titleTextStyle,
                                 ),
-                                child: SingleChildScrollView(
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    child: StatefulBuilder(builder:
-                                        (BuildContext context,
-                                            StateSetter setstate) {
-                                      bool cancelStatus = context
-                                          .watch<PackageCancelViewModel>()
-                                          .isLoading;
-                                      return CancelContainerDialog(
-                                        loading: cancelStatus,
+                              ),
+                              Text(':', style: titleTextStyle),
+                              const SizedBox(width: 10),
+                              Flexible(
+                                child: GestureDetector(
+                                    onTap: () {
+                                      context.push("/raiseIssueDetail");
+                                    },
+                                    child: const Text(
+                                      'View Issue',
+                                      style: TextStyle(
+                                          color: greenColor,
+                                          fontWeight: FontWeight.w600,
+                                          decoration: TextDecoration.underline,
+                                          decorationColor: greenColor,
+                                          decorationThickness: 1.5),
+                                    )),
+                              ),
+                            ],
+                          ),
+                    contactTile(
+                        title: 'Pickup Location',
+                        value: data?.pickupLocation.isEmpty == true
+                            ? 'N/A'
+                            : data?.pickupLocation ?? 'N/A',
+                        iconButton: data?.bookingStatus == "BOOKED"
+                            ? data?.pickupLocation != "N/A" &&
+                                    data?.pickupLocation.isEmpty == true
+                                ? InkWell(
+                                    onTap: () {
+                                      _showBottomSheetModal(
+                                          context,
+                                          (setState) => _formContainer(
+                                                title: 'Add Pickup Location',
+                                                onTap: () {
+                                                  getAddPickUpLocation();
+                                                },
+                                                isChangeContact: false,
+                                              ));
+                                    },
+                                    child: Material(
+                                      elevation: 2,
+                                      child: Image.asset(
+                                        addLocation,
+                                        height: 22,
+                                        width: 22,
+                                        color: btnColor,
+                                        // filterQuality: FilterQuality.high,
+                                      ),
+                                    ),
+                                  )
+                                : const SizedBox.shrink()
+                            : const SizedBox.shrink()),
+                    data?.bookingStatus == "CANCELLED"
+                        ? bookingItem(
+                            lable: 'Cancelled By',
+                            value: data?.cancelledBy ?? '')
+                        : const SizedBox(),
+                    data?.bookingStatus == "CANCELLED"
+                        ? bookingItem(
+                            lable: 'Cancellation Reason',
+                            value: data?.cancellationReason ?? '')
+                        : const SizedBox(),
+                  ],
+                ),
+              ),
+              paymentDetails != null
+                  ? titleText(title: 'Payment Details')
+                  : Container(),
+              paymentDetails != null
+                  ? CommonContainer(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10),
+                      width: double.infinity,
+                      elevation: 0,
+                      borderRadius: BorderRadius.circular(5),
+                      borderReq: true,
+                      borderColor: naturalGreyColor.withOpacity(0.3),
+                      child: Column(
+                        children: [
+                          textItem(
+                              lable: 'Payment Id',
+                              value: paymentDetails.id ?? ''),
+                          textItem(
+                              lable: 'Package Amount',
+                              value: 'AED ${data?.packagePrice}'),
+                          textItem(
+                              lable: 'Tax Amount (5%)',
+                              value:
+                                  'AED ${double.parse(data?.taxAmount ?? '').toStringAsFixed(2)}'),
+                          data?.discountAmount == '0.0'
+                              ? const SizedBox()
+                              : textItem(
+                                  lable: 'Discount Amount',
+                                  value: 'AED ${data?.discountAmount}'),
+                          textItem(
+                              lable: 'Total Amount',
+                              value:
+                                  'AED ${double.tryParse(paymentDetails.amount.toString()) ?? 0 / 100}'),
+                          textItem(
+                            lable: 'Payment Date',
+                            value: DateFormat('dd-MM-yyyy').format(dateTime),
+                          ),
+                          textItem(
+                              lable: 'Payment Time',
+                              value: paymentDetails.createdAt != null
+                                  ? DateFormat('hh:mm a').format(
+                                      DateTime.fromMicrosecondsSinceEpoch(
+                                          paymentDetails.createdAt! * 1000))
+                                  : ''),
+                        ],
+                      ),
+                    )
+                  : Container(),
+              paymentRefund != null && data?.bookingStatus == "CANCELLED"
+                  ? titleText(title: 'Refund Details')
+                  : Container(),
+              paymentRefund != null && data?.bookingStatus == "CANCELLED"
+                  ? const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5),
+                      child: Text(
+                        'Refund will be processed within 5 working days.',
+                        style: TextStyle(
+                            color: btnColor, fontWeight: FontWeight.w600),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+              paymentRefund != null && data?.bookingStatus == "CANCELLED"
+                  ? CommonContainer(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10),
+                      width: double.infinity,
+                      elevation: 0,
+                      borderRadius: BorderRadius.circular(5),
+                      borderReq: true,
+                      borderColor: naturalGreyColor.withOpacity(0.3),
+                      child: Column(
+                        children: [
+                          textItem(
+                              lable: 'Refund Amount',
+                              value:
+                                  'AED ${paymentRefund.refundedAmount?.toStringAsFixed(2)}'),
+                          textItem(
+                              lable: 'Refund Status',
+                              value: paymentRefund.refundStatus == 'created'
+                                  ? "PENDING"
+                                  : paymentRefund.refundStatus == 'processed'
+                                      ? "PROCESSED"
+                                      : '${paymentRefund.refundStatus}'),
+                        ],
+                      ),
+                    )
+                  : Container(),
+              titleText(title: 'Travellers Details'),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: data?.memberList.length,
+                itemBuilder: (context, index) {
+                  var t = data?.memberList[index];
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 14),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 6,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Header row
+                          Row(
+                            children: [
+                              CircleAvatar(
+                                backgroundColor: Colors.red.shade700,
+                                child: Text(
+                                  (t?.name.isNotEmpty == true)
+                                      ? t?.name[0].toUpperCase() ?? ''
+                                      : '',
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  t?.name ?? '',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.red.shade50,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  t?.ageUnit == 'Month'
+                                      ? 'Infant'
+                                      : (int.parse(t?.age ?? '') < 18)
+                                          ? "Child"
+                                          : (int.parse(t?.age ?? '') < 60)
+                                              ? 'Adult'
+                                              : "Senior*",
+                                  style: TextStyle(
+                                      color: Colors.red.shade700,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const Divider(height: 20),
+
+                          // Details row (grid-like)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              _infoBox("ID", t?.memberId ?? ''),
+                              _infoBox(
+                                  "Age",
+                                  "${t?.age ?? ''} "
+                                      "${t?.ageUnit == 'Month' ? 'M' : 'Y'}"),
+                              _infoBox("Gender", t?.gender ?? ''),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+              titleText(title: 'Package Activities'),
+              if (getItenaryData == null &&
+                  (data?.bookingStatus != 'CANCELLED' &&
+                      data?.bookingStatus != 'COMPLETED'))
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Text(
+                    '*The itinerary will be shared 24 hours before the package start*',
+                    style: nodataTextStyle,
+                  ),
+                ),
+              (getItenaryData != null &&
+                      getItenaryData.itineraryDetails.isNotEmpty)
+                  ? ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: getItenaryData.itineraryDetails.length,
+                      itemBuilder: (context, index) {
+                        final packageActivityList =
+                            getItenaryData.itineraryDetails[index];
+                        // final acticityImage =
+                        //     packageActivityList.activity.activityImageUrl;
+
+                        // for (var activity in getItenaryData.itineraryDetails) {
+                        //   List<String> activityParticipantTypes =
+                        //       activity.activity.participantType;
+                        //   allParticipantTypes.addAll(activityParticipantTypes);
+                        // }
+
+                        // // Remove duplicates if needed
+                        // allParticipantTypes =
+                        //     allParticipantTypes.toSet().toList();
+                        // sutableFor = data?.pkg.packageActivities
+                        //         .expand((activity) => activity
+                        //             .activity.participantType
+                        //             .map((type) => type.toString())
+                        //             .toList())
+                        //         .toSet()
+                        //         .toList() ??
+                        //     [];
+
+                        return ActivityContainer(
+                          days: packageActivityList.day.toString(),
+                          pickupDate: packageActivityList.date,
+                          pickupTime: packageActivityList.pickupTime,
+                          actyImage:
+                              packageActivityList.activity.activityImageUrl,
+                          activityName:
+                              packageActivityList.activity.activityName,
+                          description: packageActivityList.activity.description,
+                          activityHour: packageActivityList
+                              .activity.activityHours
+                              .toString(),
+                          activityVisit:
+                              packageActivityList.activity.bestTimeToVisit,
+                          openTime: packageActivityList.activity.startTime,
+                          closeTime: packageActivityList.activity.endTime,
+                          suitableFor:
+                              packageActivityList.activity.participantType,
+                          address: packageActivityList.activity.address,
+                          activityOfferDate:
+                              packageActivityList.activity.startTime,
+                          activityStatus: packageActivityList.dayStatus,
+                          visible: false,
+                        );
+                      },
+                    )
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: data?.pkg.packageActivities.length,
+                      itemBuilder: (context, index) {
+                        final acticityImage = data?.pkg.packageActivities[index]
+                            .activity.activityImageUrl;
+
+                        for (var activity
+                            in data?.pkg.packageActivities ?? []) {
+                          List<String> activityParticipantTypes =
+                              activity.activity?.participantType ??
+                                  [].map((e) => e.toString()).toList();
+                          allParticipantTypes.addAll(activityParticipantTypes);
+                        }
+
+                        // Remove duplicates if needed
+                        allParticipantTypes =
+                            allParticipantTypes.toSet().toList();
+                        sutableFor = data?.pkg.packageActivities
+                                .expand((activity) => activity
+                                    .activity.participantType
+                                    .map((type) => type.toString())
+                                    .toList())
+                                .toSet()
+                                .toList() ??
+                            [];
+
+                        final packageActivityList =
+                            data?.pkg.packageActivities[index];
+                        return ActivityContainer(
+                          days: getItenaryData == null
+                              ? ''
+                              : packageActivityList?.day,
+                          pickupDate: '',
+                          pickupTime: '',
+                          actyImage: List.generate(acticityImage?.length ?? 0,
+                              (index) => acticityImage![index]),
+                          activityName:
+                              packageActivityList?.activity.activityName ?? '',
+                          description:
+                              packageActivityList?.activity.description ?? '',
+                          activityHour: packageActivityList
+                                  ?.activity.activityHours
+                                  .toString() ??
+                              '',
+                          activityVisit:
+                              packageActivityList?.activity.bestTimeToVisit ??
+                                  "",
+                          openTime:
+                              packageActivityList?.activity.startTime ?? "",
+                          closeTime:
+                              packageActivityList?.activity.endTime ?? '',
+                          suitableFor:
+                              packageActivityList?.activity.participantType ??
+                                  [].map((e) => e.toString()).toList(),
+                          address: packageActivityList?.activity.address ?? "",
+                          activityOfferDate: packageActivityList?.startTime,
+                          activityStatus: '',
+                          visible: false,
+                        );
+                      },
+                    ),
+              titleText(title: 'Vehicle Details'),
+              data?.assignedVehicleOnPackageBookings.isEmpty == true
+                  ? Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 20),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: naturalGreyColor.withOpacity(0.3),
+                      ),
+                      child: Center(
+                          child: Text(
+                        "No Vehicle Assigned",
+                        style: nodataTextStyle,
+                      )))
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return Column(
+                          children: [
+                            _modernCard(
+                              details: [
+                                {
+                                  "label": "Assign ID",
+                                  "value":
+                                      '${data?.assignedVehicleOnPackageBookings[index].assignedId}'
+                                },
+                                {
+                                  "label": "Car Name",
+                                  "value": data
+                                          ?.assignedVehicleOnPackageBookings[
+                                              index]
+                                          .vehicle
+                                          .carName ??
+                                      ''
+                                },
+                                {
+                                  "label": "Vehicle Number",
+                                  "value": data
+                                          ?.assignedVehicleOnPackageBookings[
+                                              index]
+                                          .vehicle
+                                          .vehicleNumber ??
+                                      ''
+                                },
+                                {
+                                  "label": "Date",
+                                  "value": data
+                                          ?.assignedVehicleOnPackageBookings[
+                                              index]
+                                          .date ??
+                                      ''
+                                },
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                          ],
+                        );
+                      },
+                      itemCount:
+                          data?.assignedVehicleOnPackageBookings.length ?? 0,
+                    ),
+              titleText(title: 'Driver Details'),
+              data?.assignedDriverOnPackageBookings.isEmpty == true
+                  ? Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 20),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: naturalGreyColor.withOpacity(0.3),
+                      ),
+                      child: Center(
+                          child: Text(
+                        "No Driver Assigned",
+                        style: nodataTextStyle,
+                      )))
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return Column(
+                          children: [
+                            _modernCard(
+                              details: [
+                                {
+                                  "label": "Driver Name",
+                                  "value":
+                                      '${data?.assignedDriverOnPackageBookings[index].driver.firstName} ${data?.assignedDriverOnPackageBookings[index].driver.lastName}'
+                                },
+                                {
+                                  "label": "Mobile",
+                                  "value":
+                                      '+${data?.assignedDriverOnPackageBookings[index].driver.countryCode} ${data?.assignedDriverOnPackageBookings[index].driver.mobile}'
+                                },
+                                {
+                                  "label": "Date",
+                                  "value": data
+                                          ?.assignedDriverOnPackageBookings[
+                                              index]
+                                          .date ??
+                                      ''
+                                },
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                          ],
+                        );
+                      },
+                      itemCount:
+                          data?.assignedDriverOnPackageBookings.length ?? 0,
+                    ),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  (data?.bookingStatus == "CANCELLED" ||
+                          data?.bookingStatus == "COMPLETED")
+                      ? Container()
+                      : (getIssueByBookingId?.data ?? []).isEmpty
+                          ? CustomButtonSmall(
+                              width: 120,
+                              height: 40,
+                              btnHeading: 'Raised Issue',
+                              onTap: () {
+                                _showBottomSheetModal(
+                                    context,
+                                    (setState) => RaiseIssueDialog(
+                                          bookingId:
+                                              data?.packageBookingId ?? '',
+                                          bookingType: 'PACKAGE_BOOKING',
+                                          venderId: data?.pkg.vendor?.vendorId
+                                                  .toString() ??
+                                              '',
+                                        ));
+                              })
+                          : const SizedBox(),
+                  (data?.bookingStatus == "CANCELLED" ||
+                          data?.bookingStatus == 'COMPLETED')
+                      ? SizedBox.shrink()
+                      : Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          child: CustomButtonSmall(
+                            height: 40,
+                            width: AppDimension.getWidth(context) * .35,
+                            btnHeading: "Cancel Booking",
+                            onTap: () {
+                              _showBottomSheetModal(
+                                  context,
+                                  (setState) => CancelContainerDialog(
+                                        loading: false,
                                         controllerCancel: cancelController,
-                                        onTap: () async {
-                                          await Provider.of<
-                                                      PackageCancelViewModel>(
-                                                  context,
-                                                  listen: false)
+                                        onTap: () {
+                                          context
+                                              .read<PackageCancelViewModel>()
                                               .fetchPackageCancelViewModelApi(
-                                                  context,
-                                                  {
-                                                    "packageBookingId":
-                                                        widget.packageBookID,
-                                                    "cancellationReason":
-                                                        cancelController.text,
-                                                    "cancelledBy": "USER"
-                                                  },
-                                                  widget.userId,
+                                            query: {
+                                              "packageBookingId":
                                                   widget.packageBookID,
-                                                  data?.paymentId ?? '');
+                                              "cancellationReason":
+                                                  cancelController.text,
+                                              "cancelledBy": "USER"
+                                            },
+                                          ).then((onValue) {
+                                            if (onValue?.status?.httpCode ==
+                                                "200") {
+                                              // context.pop();
+                                              context.pop();
+                                              Utils.toastSuccessMessage(
+                                                  onValue?.data?.body ?? '');
+                                              getPackageDetails();
+                                              getrefund();
+                                            }
+                                          });
 
                                           // controller.dispose();
                                         },
-                                      );
-                                    })),
-                              );
-                            });
-                      },
-                    )
-                  : const SizedBox()
+                                      ));
+                            },
+                          ),
+                        )
+                ],
+              ),
             ],
           );
         }
@@ -368,128 +968,9 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
       })),
     );
   }
-}
 
-class PackageDetailsContainer extends StatefulWidget {
-  final GetIssueByBookingIdModel? getIssueByBookingId;
-  final String id;
-  final String bookingStatus;
-  final String packageName;
-  final String location;
-  final List<String> pkgImage;
-  final String startTime;
-  final TextEditingController controllerWidget;
-  final VoidCallback? alertOnTap;
-  final String endTime;
-  final String totalMembers;
-  final String totalAmt;
-  final String primaryCountryCode;
-  final String primaryMobileNo;
-  final String secondaryCountryCode;
-  final String secondaryMobileNo;
-  final String country;
-  final String pickUpLocation;
-  final String days;
-  final String cancelReason;
-  final String cancelledBy;
-  final Widget child;
-  final String vendorId;
-  final List<PackageHIstoryDetailsMemberList> memberList;
-  final List<AssignedVehicleOnPackageBooking> vehicleDetails;
-  final List<AssignedDriverOnPackageBooking> driverDetails;
-  final List<ItineraryDetail> iteneryList;
-  final PaymentDetailsModel? paymentDetails;
-  final VoidCallback? onTap;
-  final String packageAmount;
-  final String taxAmount;
-  final String discountAmount;
-
-  const PackageDetailsContainer(
-      {super.key,
-      required this.getIssueByBookingId,
-      required this.id,
-      required this.bookingStatus,
-      this.onTap,
-      required this.packageName,
-      required this.location,
-      required this.pkgImage,
-      required this.child,
-      required this.pickUpLocation,
-      required this.controllerWidget,
-      this.alertOnTap,
-      required this.totalAmt,
-      required this.vendorId,
-      required this.primaryCountryCode,
-      required this.primaryMobileNo,
-      required this.secondaryCountryCode,
-      required this.secondaryMobileNo,
-      required this.country,
-      required this.startTime,
-      required this.endTime,
-      required this.totalMembers,
-      required this.cancelReason,
-      required this.cancelledBy,
-      required this.memberList,
-      required this.vehicleDetails,
-      required this.driverDetails,
-      required this.paymentDetails,
-      required this.iteneryList,
-      required this.packageAmount,
-      required this.taxAmount,
-      required this.discountAmount,
-      required this.days});
-
-  @override
-  State<PackageDetailsContainer> createState() =>
-      _PackageDetailsContainerState();
-}
-
-class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
-  // String apiKey = 'AIzaSyADRdiTbSYUR8oc6-ryM1F1NDNjkHDr0Yo';
-  String sourceLocation = "Source Location";
-  double logitude = 0.0;
-  double latitude = 0.0;
-  final _formKey = GlobalKey<FormState>();
-  TextEditingController primaryController = TextEditingController();
-  TextEditingController secondaryController = TextEditingController();
-  String initialCountryCode = 'AE';
-  PaymentRefundModel? paymentRefund;
-  @override
-  void initState() {
-    super.initState();
-    locationFocus.addListener(() {
-      setState(() {
-        // Rebuild to adjust padding when focus changes
-      });
-    });
-  }
-
-  String getIsoCode(String countryCode) {
-    var list = countries
-        .where(
-            (code) => code.dialCode == countryCode.replaceAll('+', '').trim())
-        .toList();
-    String countryCode1 = '';
-    if (list.isNotEmpty) {
-      // controllers[4].text = list.first.dialCode;
-      countryCode1 = list.first.code;
-
-      debugPrint('isocode.................... ${list.first.code}');
-    }
-    return countryCode1;
-  }
-
-  /// Add memeber
-  void _changeContact(
-      {required String primaryCode,
-      required String primaryNo,
-      required String secondaryCode,
-      required String secondaryNo}) {
-    FocusNode focusNode2 = FocusNode();
-    String primaryCountryCode = primaryCode;
-    String secondaryCountryCode = secondaryCode;
-    primaryController.text = primaryNo;
-    secondaryController.text = secondaryNo;
+  void _showBottomSheetModal(
+      BuildContext context, Widget Function(StateSetter) childBuilder) {
     showModalBottomSheet(
       context: context,
       isDismissible: false,
@@ -501,988 +982,164 @@ class _PackageDetailsContainerState extends State<PackageDetailsContainer> {
         ),
       ),
       builder: (BuildContext context) {
-        return StatefulBuilder(
-            builder: (BuildContext context, StateSetter setstate) {
-          debugPrint('Country code on dialog open: $secondaryCountryCode');
-          bool changeStatus = context.watch<ChangeMobileViewModel>().isLoading;
-          return LayoutBuilder(builder: (context, constraints) {
-            return Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context)
-                    .viewInsets
-                    .bottom, // Adjust modal size when keyboard opens
-              ),
-              child: SingleChildScrollView(
-                physics: const NeverScrollableScrollPhysics(),
-                child: Container(
-                  margin: const EdgeInsets.all(20),
-                  child: Form(
-                    key: _formKey,
-                    // autovalidateMode: AutovalidateMode.onUserInteraction,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Change Contact',
-                              style: TextStyle(
-                                  color: btnColor,
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                            IconButton(
-                                padding: const EdgeInsets.only(left: 15),
-                                onPressed: () {
-                                  context.pop();
-                                },
-                                icon: const Icon(
-                                  Icons.close,
-                                  color: btnColor,
-                                ))
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 5),
-                          child: Text.rich(TextSpan(children: [
-                            TextSpan(
-                                text: 'Secondary Contact',
-                                style: titleTextStyle),
-                            const TextSpan(
-                                text: ' *', style: TextStyle(color: redColor))
-                          ])),
-                        ),
-                        CustomMobilenumber(
-                            textLength: 9,
-                            focusNode: focusNode2,
-                            controller: secondaryController,
-                            hintText: 'Enter phone number',
-                            countryCode: secondaryCountryCode),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        CustomButtonSmall(
-                          width: double.infinity,
-                          height: 45,
-                          loading: changeStatus,
-                          onTap: () {
-                            if (_formKey.currentState!.validate()) {
-                              debugPrint('succes');
-                              Map<String, dynamic> body = {
-                                "packageBookingId": widget.id,
-                                "mobile": primaryController.text,
-                                // "countryCode": primaryCode,
-                                "countryCode": primaryCountryCode,
-
-                                "alternateMobile": secondaryController.text,
-                                // "alternateMobileCountryCode": secondaryCode
-                                "alternateMobileCountryCode":
-                                    secondaryCountryCode
-                              };
-                              debugPrint(
-                                  'bodyData....//////////////////////.$changeStatus');
-                              Provider.of<ChangeMobileViewModel>(context,
-                                      listen: false)
-                                  .changeMobileApi(
-                                      context: context,
-                                      body: body,
-                                      bookingId: widget.id);
-                            }
-                          },
-                          btnHeading: "Submit",
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            );
-          });
-        });
+        return Padding(
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: SingleChildScrollView(child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setstate) {
+            return childBuilder(setstate);
+          })),
+        );
       },
     );
   }
 
-  final ScrollController _scrollController = ScrollController();
-
-  @override
-  void dispose() {
-    locationFocus.dispose(); // Dispose focus node to avoid memory leaks
-    _scrollController.dispose();
-    // widget.controllerWidget.dispose();
-    super.dispose();
+  Widget _formContainer({
+    required String title,
+    required VoidCallback onTap,
+    required bool isChangeContact,
+  }) {
+    return Container(
+        margin: const EdgeInsets.all(20),
+        child: Form(
+            key: _formKey,
+            // autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                            color: btnColor,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      IconButton(
+                          padding: const EdgeInsets.only(left: 15),
+                          onPressed: () {
+                            context.pop();
+                          },
+                          icon: const Icon(
+                            Icons.close,
+                            color: btnColor,
+                          ))
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 5),
+                    child: Text.rich(TextSpan(children: [
+                      TextSpan(
+                          text: isChangeContact
+                              ? 'Secondary Contact'
+                              : "Location",
+                          style: titleTextStyle),
+                      const TextSpan(
+                          text: ' *', style: TextStyle(color: redColor))
+                    ])),
+                  ),
+                  if (isChangeContact)
+                    CustomMobilenumber(
+                      textLength: 9,
+                      controller: secondaryContactController,
+                      hintText: 'Enter phone number',
+                      countryCode: countryCode,
+                    ),
+                  if (!isChangeContact)
+                    CustomSearchLocation(
+                        controller: searchLocationController,
+                        state: '',
+                        // stateValidation: false,
+                        hintText: 'Search your location'),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  CustomButtonSmall(
+                    loading: context
+                                .watch<AddPickUpLocationPackageViewModel>()
+                                .addPickUpLocationPackage
+                                .status ==
+                            Status.loading ||
+                        context
+                                .watch<ChangeMobileViewModel>()
+                                .changeMobile
+                                .status ==
+                            Status.loading,
+                    height: 45,
+                    width: double.infinity,
+                    btnHeading: 'Submit',
+                    onTap: () {
+                      if (_formKey.currentState!.validate()) {
+                        onTap();
+                      }
+                    },
+                  )
+                ])));
   }
 
-  final marqueeController = MarqueerController();
-  // bool isLoading = false;
-  String? selectedText;
-  FocusNode locationFocus = FocusNode();
-  @override
-  Widget build(BuildContext context) {
-    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
-        (widget.paymentDetails?.data?.createdAt ?? 0) * 1000,
-        isUtc: true);
+  Widget _modernCard({
+    required List<Map<String, String>> details,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: bgGreyColor,
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          )
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: details.map((item) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(item['label']!,
+                        style: const TextStyle(color: Colors.grey)),
+                  ),
+                  Expanded(
+                    child: Text(item['value']!,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 14)),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
 
-    Duration offset = const Duration(hours: 5, minutes: 30);
-    DateTime adjustedTime = dateTime.add(offset);
-
-    String formattedTime =
-        '${DateFormat('HH:mm').format(adjustedTime)} GMT (+05:30)';
-    paymentRefund =
-        context.watch<GetPaymentRefundViewModel>().getPaymentRefund.data;
-
+  Widget _infoBox(String label, String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CommonContainer(
-            height: 220,
-            elevation: 0,
-            width: double.infinity,
-            borderRadius: BorderRadius.circular(5),
-            borderReq: true,
-            borderColor: naturalGreyColor.withOpacity(0.3),
-            child: MultiImageSlider(
-              images: widget.pkgImage,
+        Text(label,
+            style: const TextStyle(
+              color: Colors.grey,
+              fontSize: 12,
             )),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const CustomTextWidget(
-                content: "Booking Details",
-                sideLogo: true,
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-              ),
-              Row(
-                children: [
-                  Text(
-                    'Price :',
-                    style: titleTextStyle,
-                  ),
-                  RichText(
-                      text: TextSpan(children: [
-                    const TextSpan(
-                        text: ' AED ',
-                        style: TextStyle(
-                            color: Colors.black, fontWeight: FontWeight.w600)),
-                    TextSpan(
-                        text: '${double.tryParse(widget.totalAmt)?.round()}',
-                        style: const TextStyle(
-                            color: btnColor, fontWeight: FontWeight.w600))
-                  ]))
-                ],
-              )
-            ],
-          ),
-        ),
-
-        ///Booking Details Container
-        CommonContainer(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          width: double.infinity,
-          elevation: 0,
-          borderRadius: BorderRadius.circular(5),
-          borderReq: true,
-          borderColor: naturalGreyColor.withOpacity(0.3),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      const CustomTextWidget(
-                        content: "Booking Id : ",
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      CustomTextWidget(
-                        content: widget.id,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ],
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      const CustomTextWidget(
-                        content: "Status : ",
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      Container(
-                        height: 25,
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        // width: 90,
-                        decoration: BoxDecoration(
-                            color: widget.bookingStatus == 'CANCELLED'
-                                ? redColor
-                                : greenColor,
-                            borderRadius: BorderRadius.circular(5)),
-                        child: Center(
-                            child: Text(
-                          widget.bookingStatus,
-                          style: const TextStyle(color: background),
-                        )),
-                      )
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              bookingItem(
-                  lable: 'Package Name',
-                  value: widget.packageName.capitalizeFirstOfEach),
-              bookingItem(
-                  lable: 'Numbers Of Member', value: widget.totalMembers),
-              bookingItem(lable: 'Booking Start Date', value: widget.startTime),
-              bookingItem(lable: 'Booking End Date', value: widget.endTime),
-              contactTile(
-                  title: 'Primary Contact',
-                  value:
-                      '+${widget.primaryCountryCode} ${widget.primaryMobileNo}',
-                  iconButton: widget.bookingStatus == "BOOKED"
-                      ? widget.secondaryMobileNo.isEmpty
-                          ? InkWell(
-                              onTap: () {
-                                _changeContact(
-                                    primaryCode: widget.primaryCountryCode,
-                                    primaryNo: widget.primaryMobileNo,
-                                    secondaryCode: '971',
-                                    secondaryNo: widget.secondaryMobileNo);
-                              },
-                              child: const Icon(
-                                Icons.add_call,
-                                size: 20,
-                                color: btnColor,
-                                shadows: [
-                                  BoxShadow(
-                                      offset: Offset(
-                                        1,
-                                        2,
-                                      ),
-                                      color: greyColor1)
-                                ],
-                              ),
-                            )
-                          : const SizedBox.shrink()
-                      : const SizedBox.shrink()),
-              widget.bookingStatus == "BOOKED"
-                  ? widget.secondaryMobileNo.isNotEmpty
-                      // ? bookingItem(
-                      //     lable: 'Secondary Contact',
-                      //     value:
-                      //         '+${widget.secondaryCountryCode} ${widget.secondaryMobileNo}')
-                      ? contactTile(
-                          title: 'Secondary Contact',
-                          value:
-                              '+${widget.secondaryCountryCode} ${widget.secondaryMobileNo}',
-                          iconButton: InkWell(
-                            onTap: () {
-                              _changeContact(
-                                  primaryCode: widget.primaryCountryCode,
-                                  primaryNo: widget.primaryMobileNo,
-                                  secondaryCode: '971',
-                                  secondaryNo: widget.secondaryMobileNo);
-                            },
-                            child: const Icon(
-                              Icons.border_color_outlined,
-                              color: btnColor,
-                              shadows: [
-                                BoxShadow(
-                                    offset: Offset(
-                                      1,
-                                      1,
-                                    ),
-                                    color: greyColor1)
-                              ],
-                            ),
-                          ))
-                      : const SizedBox()
-                  : const SizedBox.shrink(),
-              bookingItem(
-                  lable: 'Duration',
-                  value:
-                      '${widget.days}Days / ${int.parse(widget.days) - 1}Nights'),
-              bookingItem(lable: 'Country', value: widget.country),
-              (widget.getIssueByBookingId?.data ?? []).isEmpty
-                  ? Container()
-                  : Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            'Created Issue',
-                            style: titleTextStyle,
-                          ),
-                        ),
-                        Text(':', style: titleTextStyle),
-                        const SizedBox(width: 10),
-                        Flexible(
-                          child: GestureDetector(
-                              onTap: () {
-                                context.push("/raiseIssueDetail");
-                              },
-                              child: const Text(
-                                'View Issue',
-                                style: TextStyle(
-                                    color: greenColor,
-                                    fontWeight: FontWeight.w600,
-                                    decoration: TextDecoration.underline,
-                                    decorationColor: greenColor,
-                                    decorationThickness: 1.5),
-                              )),
-                        ),
-                      ],
-                    ),
-              contactTile(
-                  title: 'Pickup Location',
-                  value: widget.pickUpLocation.isEmpty
-                      ? 'N/A'
-                      : widget.pickUpLocation,
-                  iconButton: widget.bookingStatus == "BOOKED"
-                      ? widget.pickUpLocation != "N/A" &&
-                              widget.pickUpLocation.isEmpty
-                          ? InkWell(
-                              onTap: () {
-                                showModalBottomSheet(
-                                    context: context,
-                                    isDismissible: false,
-                                    backgroundColor: background,
-                                    isScrollControlled: true,
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(10),
-                                      ),
-                                    ),
-                                    builder: (BuildContext context) {
-                                      return Padding(
-                                        padding: EdgeInsets.only(
-                                          bottom: MediaQuery.of(context)
-                                              .viewInsets
-                                              .bottom, // Adjust modal size when keyboard opens
-                                        ),
-                                        child: SingleChildScrollView(
-                                          // physics:
-                                          //     const NeverScrollableScrollPhysics(),
-                                          child: StatefulBuilder(builder:
-                                              (BuildContext context,
-                                                  StateSetter setstate) {
-                                            bool pickupstatus = context
-                                                .watch<
-                                                    AddPickUpLocationPackageViewModel>()
-                                                .isLoading;
-                                            return Container(
-                                              margin: const EdgeInsets.all(20),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      const Text(
-                                                        'Add PickUp Location',
-                                                        style: TextStyle(
-                                                            color: btnColor,
-                                                            fontSize: 17,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w600),
-                                                      ),
-                                                      IconButton(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  left: 15),
-                                                          onPressed: () {
-                                                            context.pop();
-                                                          },
-                                                          icon: const Icon(
-                                                            Icons.close,
-                                                            color: btnColor,
-                                                          ))
-                                                    ],
-                                                  ),
-                                                  const SizedBox(height: 10),
-                                                  Text.rich(TextSpan(children: [
-                                                    TextSpan(
-                                                        text: 'Pickup Location',
-                                                        style: titleTextStyle),
-                                                    const TextSpan(
-                                                        text: ' *',
-                                                        style: TextStyle(
-                                                            color: redColor))
-                                                  ])),
-                                                  const SizedBox(height: 5),
-                                                  Form(
-                                                    key: _formKey,
-                                                    autovalidateMode:
-                                                        AutovalidateMode
-                                                            .onUserInteraction,
-                                                    child: CustomSearchLocation(
-                                                        controller: widget
-                                                            .controllerWidget,
-                                                        state: '',
-                                                        // stateValidation: false,
-                                                        hintText:
-                                                            'Search your location'),
-                                                  ),
-                                                  const SizedBox(height: 20),
-                                                  CustomButtonSmall(
-                                                      height: 50,
-                                                      loading: pickupstatus,
-                                                      width: double.infinity,
-                                                      btnHeading: "Submit",
-                                                      onTap: () {
-                                                        if (_formKey
-                                                            .currentState!
-                                                            .validate()) {
-                                                          widget.alertOnTap
-                                                              ?.call();
-                                                        }
-                                                      })
-                                                ],
-                                              ),
-                                            );
-                                          }),
-                                        ),
-                                      );
-                                    });
-                              },
-                              child: Material(
-                                elevation: 2,
-                                child: Image.asset(
-                                  addLocation,
-                                  height: 22,
-                                  width: 22,
-                                  color: btnColor,
-                                  // filterQuality: FilterQuality.high,
-                                ),
-                              ),
-                            )
-                          : const SizedBox.shrink()
-                      : const SizedBox.shrink()),
-              widget.bookingStatus == "CANCELLED"
-                  ? bookingItem(
-                      lable: 'Cancelled By', value: widget.cancelledBy)
-                  : const SizedBox(),
-              widget.bookingStatus == "CANCELLED"
-                  ? bookingItem(
-                      lable: 'Cancellation Reason', value: widget.cancelReason)
-                  : const SizedBox(),
-            ],
-          ),
-        ),
-        widget.paymentDetails?.data != null
-            ? const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: CustomTextWidget(
-                  content: "Payment Details",
-                  fontSize: 20,
-                  sideLogo: true,
-                  fontWeight: FontWeight.w600,
-                ),
-              )
-            : Container(),
-        widget.paymentDetails?.data != null
-            ? CommonContainer(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                width: double.infinity,
-                elevation: 0,
-                borderRadius: BorderRadius.circular(5),
-                borderReq: true,
-                borderColor: naturalGreyColor.withOpacity(0.3),
-                child: Column(
-                  children: [
-                    textItem(
-                        lable: 'Payment Id',
-                        value: widget.paymentDetails?.data?.id ?? ''),
-                    textItem(
-                        lable: 'Package Amount',
-                        value: 'AED ${widget.packageAmount}'),
-                    textItem(
-                        lable: 'Tax Amount (5%)',
-                        value:
-                            'AED ${double.parse(widget.taxAmount).toStringAsFixed(2)}'),
-                    widget.discountAmount == '0.0'
-                        ? const SizedBox()
-                        : textItem(
-                            lable: 'Discount Amount',
-                            value: 'AED ${widget.discountAmount}'),
-                    textItem(
-                        lable: 'Total Amount',
-                        value:
-                            'AED ${double.parse(widget.paymentDetails?.data?.amount.toString() ?? '') / 100}'),
-                    textItem(
-                      lable: 'Payment Date',
-                      value: DateFormat('dd-MM-yyyy').format(dateTime),
-                    ),
-                    textItem(lable: 'Payment Time', value: formattedTime)
-                  ],
-                ),
-              )
-            : Container(),
-        paymentRefund?.data != null && widget.bookingStatus == "CANCELLED"
-            ? const Padding(
-                padding: EdgeInsets.only(top: 10),
-                child: CustomTextWidget(
-                  content: "Refund Details",
-                  fontSize: 20,
-                  sideLogo: true,
-                  fontWeight: FontWeight.w600,
-                ),
-              )
-            : Container(),
-        paymentRefund?.data != null && widget.bookingStatus == "CANCELLED"
-            ? const Padding(
-                padding: EdgeInsets.symmetric(vertical: 5),
-                child: Text(
-                  'Refund will be processed within 5 working days.',
-                  style:
-                      TextStyle(color: btnColor, fontWeight: FontWeight.w600),
-                ),
-              )
-            : const SizedBox.shrink(),
-        paymentRefund?.data != null && widget.bookingStatus == "CANCELLED"
-            ? CommonContainer(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                width: double.infinity,
-                elevation: 0,
-                borderRadius: BorderRadius.circular(5),
-                borderReq: true,
-                borderColor: naturalGreyColor.withOpacity(0.3),
-                child: Column(
-                  children: [
-                    textItem(
-                        lable: 'Refund Amount',
-                        value:
-                            'AED ${paymentRefund?.data?.refundedAmount?.toStringAsFixed(2)}'),
-                    textItem(
-                        lable: 'Refund Status',
-                        value: paymentRefund?.data?.refundStatus == 'created'
-                            ? "PENDING"
-                            : paymentRefund?.data?.refundStatus == 'processed'
-                                ? "PROCESSED"
-                                : '${paymentRefund?.data?.refundStatus}'),
-                  ],
-                ),
-              )
-            : Container(),
-        const Padding(
-          padding: EdgeInsets.symmetric(vertical: 10),
-          child: CustomTextWidget(
-            content: "Travellers Details",
-            fontSize: 20,
-            sideLogo: true,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-
-        ///Members Details Container
-        Scrollbar(
-          controller: _scrollController,
-          thumbVisibility: true,
-          radius: const Radius.circular(10),
-          child: CommonContainer(
-            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-            width: double.infinity,
-            elevation: 0,
-            borderRadius: BorderRadius.circular(5),
-            borderReq: true,
-            borderColor: naturalGreyColor.withOpacity(0.3),
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-                  columnSpacing: 18,
-                  headingRowHeight: 40,
-                  dividerThickness: 0,
-                  dataTextStyle: titleTextStyle1,
-                  columns: const [
-                    DataColumn(
-                        label: CustomTextWidget(
-                      content: "Id",
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                    )),
-                    DataColumn(
-                        label: SizedBox(
-                            // width: 60,
-                            child: CustomTextWidget(
-                                content: "Name",
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700))),
-                    DataColumn(
-                        label: CustomTextWidget(
-                            content: "Age",
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700)),
-                    DataColumn(
-                        label: CustomTextWidget(
-                            content: "Type",
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700)),
-                    DataColumn(
-                        label: CustomTextWidget(
-                            content: "Gender",
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700)),
-                  ],
-                  rows: widget.memberList
-                      .map((PackageHIstoryDetailsMemberList members) => DataRow(
-                            cells: [
-                              DataCell(CustomText(
-                                content: members.memberId.toString(),
-                                textEllipsis: true,
-                              )),
-                              DataCell(SizedBox(
-                                  // width: 60,
-                                  child: CustomText(
-                                      // maxline: 2,
-                                      textLenght: 20,
-                                      needTextLenght: true,
-                                      align: TextAlign.start,
-                                      textEllipsis: true,
-                                      content: utf8.decode(
-                                          members.name.runes.toList())))),
-                              DataCell(CustomText(
-                                  content:
-                                      '${members.age} ${members.ageUnit}')),
-                              DataCell(CustomText(
-                                textColor: (() {
-                                  int age = int.parse(members.age.toString());
-                                  return age >= 60
-                                      ? redColor
-                                      : null; // Set color to red for Senior, otherwise use default
-                                })(),
-                                content: (() {
-                                  int age = int.parse(members.age.toString());
-
-                                  if (members.ageUnit == 'Month') {
-                                    return 'Infant';
-                                  }
-                                  if (age < 18) return 'Child';
-                                  if (age < 60) return 'Adult';
-                                  return 'Senior*';
-                                  // return age.toString();  // Display the age as-is for other cases
-                                })(),
-                              )),
-                              DataCell(CustomText(content: members.gender)),
-                            ],
-                          ))
-                      .toList()),
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          child: Column(
-            children: [
-              const CustomTextWidget(
-                content: "Activities Details",
-                fontSize: 20,
-                sideLogo: true,
-                fontWeight: FontWeight.w600,
-              ),
-              // const Text(
-              //   '*The itinerary will be shared 24 hours before the package start *',
-              //   textAlign: TextAlign.start,
-              // ),
-              widget.bookingStatus == "CANCELLED" ||
-                      widget.iteneryList.isNotEmpty
-                  ? const SizedBox()
-                  : SizedBox(
-                      height: 20,
-                      child: Marqueer(
-                        pps: 100,
-                        controller: marqueeController,
-                        direction: MarqueerDirection.rtl,
-                        restartAfterInteractionDuration:
-                            const Duration(seconds: 0),
-                        restartAfterInteraction: true,
-                        onChangeItemInViewPort: (index) {
-                          debugPrint('item index: $index');
-                        },
-                        onInteraction: () {
-                          debugPrint('on interaction callback');
-                        },
-                        onStarted: () {
-                          debugPrint('on started callback');
-                        },
-                        onStopped: () {
-                          debugPrint('on stopped callback');
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal:
-                                  MediaQuery.of(context).size.width / 2),
-                          child: const Text(
-                            '*The itinerary will be shared 24 hours before the package start *',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: btnColor,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-            ],
-          ),
-        ),
-
-        Container(
-          child: widget.child,
-        ),
-
-        widget.driverDetails.isNotEmpty
-            ? const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: CustomTextWidget(
-                  content: "Driver Details",
-                  fontSize: 20,
-                  sideLogo: true,
-                  fontWeight: FontWeight.w600,
-                ),
-              )
-            : const SizedBox(),
-
-        ///Driver Details Container
-        widget.driverDetails.isNotEmpty
-            ? Scrollbar(
-                controller: _scrollController,
-                thumbVisibility: true,
-                radius: const Radius.circular(10),
-                child: CommonContainer(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-                  width: double.infinity,
-                  elevation: 0,
-                  borderRadius: BorderRadius.circular(5),
-                  borderReq: true,
-             
-                  borderColor: naturalGreyColor.withOpacity(0.3),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    controller: _scrollController,
-                    child: DataTable(
-                        horizontalMargin: 10,
-                        columnSpacing: 20,
-                        headingRowHeight: 40,
-                        dividerThickness: 0,
-                        dataTextStyle: titleTextStyle1,
-                        columns: const [
-                          DataColumn(
-                              label: CustomTextWidget(
-                            content: "Date",
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                          )),
-                          DataColumn(
-                              label: SizedBox(
-                                  // width: 60,
-                                  child: CustomTextWidget(
-                                      content: "Name",
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w700))),
-                          DataColumn(
-                              label: CustomTextWidget(
-                                  content: "Gender",
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700)),
-                          DataColumn(
-                              label: CustomTextWidget(
-                                  content: "Contact No",
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700)),
-                        ],
-                        rows: widget.driverDetails
-                            .map((AssignedDriverOnPackageBooking driver) =>
-                                DataRow(
-                                  cells: [
-                                    DataCell(CustomText(
-                                      content: driver.date.toString(),
-                                      textEllipsis: true,
-                                    )),
-                                    DataCell(CustomText(
-                                        // maxline: 2,
-                                        align: TextAlign.start,
-                                        textEllipsis: true,
-                                        content:
-                                            "${driver.driver.firstName.toString()} ${driver.driver.lastName.toString()}")),
-                                    DataCell(CustomText(
-                                        content:
-                                            driver.driver.gender.toString())),
-                                    DataCell(CustomText(
-                                        content:
-                                            '+971 ${driver.driver.mobile}')),
-                                  ],
-                                ))
-                            .toList()),
-                  ),
-                ),
-              )
-            : const SizedBox(),
-        widget.vehicleDetails.isNotEmpty
-            ? const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: CustomTextWidget(
-                  content: "Vehicle Details",
-                  fontSize: 20,
-                  sideLogo: true,
-                  fontWeight: FontWeight.w600,
-                ),
-              )
-            : const SizedBox(),
-
-        ///Vehicle Details Container
-        widget.vehicleDetails.isNotEmpty
-            ? Scrollbar(
-                controller: _scrollController,
-                thumbVisibility: true,
-                radius: const Radius.circular(10),
-                child: CommonContainer(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-                  width: double.infinity,
-                  elevation: 0,
-                  borderRadius: BorderRadius.circular(5),
-                  borderReq: true,
-                  // ignore: duplicate_ignore
-                  // ignore: deprecated_member_use
-                  borderColor: naturalGreyColor.withOpacity(0.3),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: DataTable(
-                        columnSpacing: 30,
-                        headingRowHeight: 40,
-                        dividerThickness: 0,
-                        dataTextStyle: titleTextStyle1,
-                        columns: const [
-                          DataColumn(
-                              label: CustomTextWidget(
-                            content: "Date",
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                          )),
-                          DataColumn(
-                              label: SizedBox(
-                                  width: 100,
-                                  child: CustomTextWidget(
-                                      content: "Name",
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w700))),
-                          DataColumn(
-                              label: CustomTextWidget(
-                                  content: "Number",
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700)),
-                        ],
-                        rows: widget.vehicleDetails
-                            .map((AssignedVehicleOnPackageBooking vehicle) =>
-                                DataRow(
-                                  cells: [
-                                    DataCell(CustomText(
-                                      content: vehicle.date.toString(),
-                                      textEllipsis: true,
-                                    )),
-                                    DataCell(CustomText(
-                                        align: TextAlign.start,
-                                        textLenght: 20,
-                                        needTextLenght: true,
-                                        maxline: 2,
-                                        content: vehicle.vehicle.carName
-                                            .toString())),
-                                    DataCell(CustomText(
-                                        content: vehicle.vehicle.vehicleNumber
-                                            .toString())),
-                                  ],
-                                ))
-                            .toList()),
-                  ),
-                ),
-              )
-            : const SizedBox(),
-        const SizedBox(height: 10),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            (widget.bookingStatus == "CANCELLED" ||
-                    widget.bookingStatus == "COMPLETED")
-                ? Container()
-                : (widget.getIssueByBookingId?.data ?? []).isEmpty
-                    ? CustomButtonSmall(
-                        width: 120,
-                        height: 40,
-                        btnHeading: 'Raised Issue',
-                        onTap: () {
-                          showModalBottomSheet(
-                            context: context,
-                            isDismissible: false,
-                            backgroundColor: background,
-                            isScrollControlled: true,
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(10),
-                              ),
-                            ),
-                            builder: (BuildContext context) {
-                              return Padding(
-                                padding: EdgeInsets.only(
-                                    bottom: MediaQuery.of(context)
-                                        .viewInsets
-                                        .bottom),
-                                child: SingleChildScrollView(child:
-                                    StatefulBuilder(builder:
-                                        (BuildContext context,
-                                            StateSetter setstate) {
-                                  return RaiseIssueDialog(
-                                    bookingId: widget.id,
-                                    bookingType: 'PACKAGE_BOOKING',
-                                    venderId: widget.vendorId,
-                                  );
-                                })),
-                              );
-                            },
-                          );
-                        })
-                    : const SizedBox(),
-            widget.bookingStatus != "CANCELLED"
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5),
-                    child: CustomButtonSmall(
-                      height: 40,
-                      width: AppDimension.getWidth(context) * .35,
-                      btnHeading: "Cancel Booking",
-                      onTap: widget.onTap ??
-                          () => debugPrint("Cancel Button Press"),
-                    ),
-                  )
-                : const SizedBox(),
-          ],
-        ),
+        const SizedBox(height: 2),
+        Text(value,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
       ],
     );
   }
 
-Widget textItem({required String lable, required String value}) {
+  Widget textItem({required String lable, required String value}) {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Row(
@@ -1513,7 +1170,7 @@ Widget textItem({required String lable, required String value}) {
     );
   }
 
-Widget bookingItem({required String lable, required String value}) {
+  Widget bookingItem({required String lable, required String value}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 5),
       child: Row(
@@ -1549,7 +1206,7 @@ Widget bookingItem({required String lable, required String value}) {
     );
   }
 
-Widget contactTile(
+  Widget contactTile(
       {required String title,
       required String value,
       required Widget iconButton}) {
@@ -1583,304 +1240,22 @@ Widget contactTile(
       ],
     );
   }
-}
 
-class ItineraryActivityContainer extends StatefulWidget {
-  final List<dynamic> itineraryDataList;
-  final bool isPackageItinerary;
-
-  const ItineraryActivityContainer({
-    required this.itineraryDataList,
-    required this.isPackageItinerary,
-    super.key,
-  });
-
-  @override
-  State<ItineraryActivityContainer> createState() =>
-      _ItineraryActivityContainerState();
-}
-
-class _ItineraryActivityContainerState
-    extends State<ItineraryActivityContainer> {
-  @override
-  Widget build(BuildContext context) {
-    return widget.isPackageItinerary
-        ? _buildPackageItineraryList()
-        : _buildPackageHistoryList();
-  }
-
-  Widget _buildPackageItineraryList() {
-    return ListView.builder(
-      shrinkWrap: true,
-      padding: const EdgeInsets.only(bottom: 10),
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: widget.itineraryDataList.length,
-      itemBuilder: (context, index) {
-        final itineraryData = widget.itineraryDataList[index];
-        final List image = itineraryData.activity.activityImageUrl;
-
-        if (index == 0 ||
-            itineraryData.day != widget.itineraryDataList[index - 1].day) {
-          return Padding(
-            padding: EdgeInsets.only(
-                bottom: index == 0 ||
-                        itineraryData.day !=
-                            widget.itineraryDataList[index - 1].day
-                    ? 2
-                    : 5),
-            child: CommonContainer(
-              borderReq: true,
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-              borderColor: naturalGreyColor.withOpacity(.3),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10, top: 5),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            CustomTextWidget(
-                              content:
-                                  "Day ${itineraryData.day == "null" ? "" : itineraryData.day} (${itineraryData.date})",
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              sideLogo: true,
-                            ),
-                            CommonContainer(
-                              padding: const EdgeInsets.all(5),
-                              elevation: 0,
-                              borderRadius: BorderRadius.circular(10),
-                              color: itineraryData.dayStatus == "COMPLETED"
-                                  ? greenColor
-                                  : redColor,
-                              child: CustomText(
-                                content: itineraryData.dayStatus,
-                                fontSize: 16,
-                                textColor: background,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        widget.itineraryDataList[index].startTimestamp
-                                .toString()
-                                .isNotEmpty
-                            ? Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 5),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    CustomTextWidget(
-                                      content:
-                                          "Start Time : ${widget.itineraryDataList[index].startTimestamp.toString().isEmpty ? "N/A" : widget.itineraryDataList[index].startTimestamp.toString().split(' ')[1].substring(0, 5)}",
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                    CustomTextWidget(
-                                      content:
-                                          "End Time : ${widget.itineraryDataList[index].endTimestamp.toString().isEmpty ? "N/A" : widget.itineraryDataList[index].endTimestamp.toString().split(' ')[1].substring(0, 5)}",
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : Row(
-                                children: [
-                                  Text(
-                                    'Pickup Time : ',
-                                    style: titleTextStyle,
-                                  ),
-                                  Text(
-                                    widget.itineraryDataList[index].pickupTime
-                                        .toString(),
-                                    style: titleTextStyle1,
-                                  ),
-                                ],
-                              ),
-                      ],
-                    ),
-                  ),
-                  _buildActivityContent(itineraryData, image, "Activity 1"),
-                ],
-              ),
+  Widget titleText({required String title}) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 10),
+      child: Container(
+        padding: EdgeInsets.only(left: 10),
+        decoration: BoxDecoration(
+            border: Border(
+              left: BorderSide(width: 4.0, color: btnColor),
             ),
-          );
-        } else {
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: CommonContainer(
-              borderReq: true,
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-              borderColor: naturalGreyColor.withOpacity(.3),
-              child: _buildActivityContent(
-                  itineraryData, image, "Activity ${index + 1}"),
-            ),
-          );
-        }
-      },
-    );
-  }
-
-  Widget _buildPackageHistoryList() {
-    return ListView.builder(
-      shrinkWrap: true,
-      padding: const EdgeInsets.only(bottom: 10),
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: widget.itineraryDataList.length,
-      itemBuilder: (context, index) {
-        final data = widget.itineraryDataList[index];
-        final List image = data.activity.activityImageUrl;
-        return CommonContainer(
-          borderReq: true,
-          elevation: 0,
-          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-          borderColor: naturalGreyColor.withOpacity(.3),
-          child: _buildActivityContent(
-            data,
-            image,
-            "Activity ${data.day == "null" ? index + 1 : data.day}",
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildActivityContent(dynamic data, List image, String days) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 10),
-
-        CommonContainer(
-          elevation: 0,
-          height: 200,
-          borderRadius: BorderRadius.circular(10),
-          child: MultiImageSlider(
-            images: List.generate(image.length, (index) => image[index]),
-          ),
+            borderRadius: BorderRadius.circular(8)),
+        child: Text(
+          title,
+          style: TextStyle(
+              color: blackColor, fontSize: 20, fontWeight: FontWeight.w600),
         ),
-        const SizedBox(height: 5),
-        CustomText(
-          align: TextAlign.start,
-          content: data.activity.activityName,
-          maxline: 3,
-          fontSize: 16,
-          fontWeight: FontWeight.w700,
-          textColor: btnColor,
-        ),
-        const SizedBox(height: 5),
-        CustomViewmoreViewless(moreText: data.activity.description),
-
-        const SizedBox(height: 5),
-        _buildInfoRow("Activity Hours", data.activity.activityHours,
-            "Time To Visit", data.activity.bestTimeToVisit),
-        const SizedBox(height: 10),
-        _buildInfoRow("Opening Time", data.activity.startTime, "Closing Time",
-            data.activity.endTime),
-        // const SizedBox(height: 10),
-        // _buildInfoRow("Activity Price", data.activity.activityPrice,
-        //     "Activity Offer price", data.activity.discountedAmount),
-        data.activity.participantType.isNotEmpty
-            ? const SizedBox(height: 10)
-            : const SizedBox(),
-        data.activity.participantType.isNotEmpty
-            ? Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    'Suitable For : ',
-                    style: GoogleFonts.lato(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: textColor,
-                    ),
-                  ),
-                  Row(
-                    children: List.generate(
-                        data.activity.participantType.length, (e) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 2),
-                        child: Text(data.activity.participantType[e]),
-                      );
-                    }),
-                  )
-                ],
-              )
-            : const SizedBox(),
-        const SizedBox(height: 10),
-        _buildLocationInfo(data.activity.address),
-        const SizedBox(height: 5),
-      ],
-    );
-  }
-
-  Widget _buildInfoRow(
-      String label1, String value1, String label2, String value2) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _buildRichText(label1, value1),
-        _buildRichText(label2, value2),
-      ],
-    );
-  }
-
-  Widget _buildRichText(String label, String value) {
-    return RichText(
-      text: TextSpan(
-        children: [
-          TextSpan(
-            text: "$label: ",
-            style: GoogleFonts.lato(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: textColor,
-            ),
-          ),
-          TextSpan(
-            text: value,
-            style: GoogleFonts.lato(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              color: textColor,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLocationInfo(String address) {
-    return RichText(
-      textAlign: TextAlign.start,
-      text: TextSpan(
-        children: [
-          TextSpan(
-            text: "Location: ",
-            style: GoogleFonts.lato(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: textColor,
-            ),
-          ),
-          TextSpan(
-            text: address,
-            style: GoogleFonts.lato(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              color: textColor,
-            ),
-          ),
-        ],
       ),
     );
   }

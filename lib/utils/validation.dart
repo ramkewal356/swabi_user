@@ -293,26 +293,85 @@ String mapApiHoursToDropdown(dynamic apiValue) {
   return "$value hours"; // "1 hours"
 }
 
-double mapDiscountToDouble(String discount) {
+int mapDiscountToDouble(String discount) {
   if (discount == "No discount") {
-    return -1.0; // special case (or you can use null instead)
+    return 0; // special case (or you can use null instead)
   } else if (discount == "Free") {
-    return 0.0; // free = 0
+    return 100; // free = 0
   } else {
     // extract the number part (remove % and spaces)
-    return double.tryParse(discount.replaceAll("%", "").trim()) ?? -1.0;
+    return int.tryParse(discount.replaceAll("%", "").trim()) ?? 0;
   }
 }
 
 String mapDoubleToDiscount(double? value) {
-  if (value == null || value == -1.0) {
+  if (value == null || value == 0.0) {
     return "No discount";
-  } else if (value == 0.0) {
+  } else if (value == 100.0) {
     return "Free";
   } else {
     return "${value.toInt()} %"; // if API always gives whole numbers
     // or use value.toString() if decimals are possible
   }
 }
+bool isBestTimeWithinRange({
+  required String bestTime,
+  required String fromHour,
+  required String fromMin,
+  required String toHour,
+  required String toMin,
+}) {
+  final bestParts = bestTime.split(":"); // assuming bestTime like "10:30"
+  final bestHour = int.tryParse(bestParts[0]) ?? 0;
+  final bestMin = int.tryParse(bestParts[1]) ?? 0;
+
+  final fromTime = Duration(
+    hours: int.tryParse(fromHour) ?? 0,
+    minutes: int.tryParse(fromMin) ?? 0,
+  );
+
+  final toTime = Duration(
+    hours: int.tryParse(toHour) ?? 0,
+    minutes: int.tryParse(toMin) ?? 0,
+  );
+
+  final bestTimeDur = Duration(hours: bestHour, minutes: bestMin);
+
+  return bestTimeDur >= fromTime && bestTimeDur <= toTime;
+}
+
+int calculateMinutesDiff({
+  required String fromHour,
+  required String fromMin,
+  required String toHour,
+  required String toMin,
+}) {
+  final from = Duration(
+    hours: int.tryParse(fromHour) ?? 0,
+    minutes: int.tryParse(fromMin) ?? 0,
+  );
+  final to = Duration(
+    hours: int.tryParse(toHour) ?? 0,
+    minutes: int.tryParse(toMin) ?? 0,
+  );
+  return to.inMinutes - from.inMinutes;
+}
+
+String formatToIST(int? epochSeconds) {
+  if (epochSeconds == null || epochSeconds == 0) return '';
+
+  DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
+    epochSeconds * 1000,
+    isUtc: true,
+  );
+
+  // Add IST offset (+05:30)
+  const Duration offset = Duration(hours: 5, minutes: 30);
+  DateTime adjustedTime = dateTime.add(offset);
+
+  // Format time (HH:mm)
+  return '${DateFormat('HH:mm').format(adjustedTime)} GMT (+05:30)';
+}
+
 
 

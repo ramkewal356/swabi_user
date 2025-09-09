@@ -50,9 +50,9 @@ class Data {
   String? activityStatus;
   DateTime? createdDate;
   DateTime? modifiedDate;
-  List<String>? activityReligiousOffDates;
+  List<ActivityReligiousOffDate>? activityReligiousOffDates;
   AgeGroupDiscountPercent? ageGroupDiscountPercent;
-  dynamic activityOfferMapping;
+  ActivityOfferMapping? activityOfferMapping;
   String? activityCategory;
 
   Data({
@@ -111,12 +111,15 @@ class Data {
             : DateTime.parse(json["modifiedDate"]),
         activityReligiousOffDates: json["activityReligiousOffDates"] == null
             ? []
-            : List<String>.from(
-                json["activityReligiousOffDates"]!.map((x) => x)),
+            : List<ActivityReligiousOffDate>.from(
+                json["activityReligiousOffDates"]!
+                    .map((x) => ActivityReligiousOffDate.fromJson(x))),
         ageGroupDiscountPercent: json["ageGroupDiscountPercent"] == null
             ? null
             : AgeGroupDiscountPercent.fromJson(json["ageGroupDiscountPercent"]),
-        activityOfferMapping: json["activityOfferMapping"],
+        activityOfferMapping: json["activityOfferMapping"] == null
+            ? null
+            : ActivityOfferMapping.fromJson(json["activityOfferMapping"]),
         activityCategory: json["activityCategory"],
       );
 
@@ -147,13 +150,179 @@ class Data {
         "modifiedDate": modifiedDate?.toIso8601String(),
         "activityReligiousOffDates": activityReligiousOffDates == null
             ? []
-            : List<dynamic>.from(activityReligiousOffDates!.map((x) => x)),
+            : List<dynamic>.from(
+                activityReligiousOffDates!.map((x) => x.toJson())),
         "ageGroupDiscountPercent": ageGroupDiscountPercent?.toJson(),
-        "activityOfferMapping": activityOfferMapping,
+        "activityOfferMapping": activityOfferMapping?.toJson(),
         "activityCategory": activityCategory,
       };
 }
 
+class ActivityOfferMapping {
+  int? activityOfferMappingId;
+  int? activityId;
+  String? startDate;
+  String? endDate;
+  bool? status;
+  DateTime? createdDate;
+  DateTime? modifiedDate;
+  Offer? offer;
+
+  ActivityOfferMapping({
+    this.activityOfferMappingId,
+    this.activityId,
+    this.startDate,
+    this.endDate,
+    this.status,
+    this.createdDate,
+    this.modifiedDate,
+    this.offer,
+  });
+
+  factory ActivityOfferMapping.fromJson(Map<String, dynamic> json) =>
+      ActivityOfferMapping(
+        activityOfferMappingId: json["activityOfferMappingId"],
+        activityId: json["activityId"],
+        startDate: json["startDate"],
+        endDate: json["endDate"],
+        status: json["status"],
+        createdDate: json["createdDate"] == null
+            ? null
+            : DateTime.parse(json["createdDate"]),
+        modifiedDate: json["modifiedDate"] == null
+            ? null
+            : DateTime.parse(json["modifiedDate"]),
+        offer: json["offer"] == null ? null : Offer.fromJson(json["offer"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "activityOfferMappingId": activityOfferMappingId,
+        "activityId": activityId,
+        "startDate": startDate,
+        "endDate": endDate,
+        "status": status,
+        "createdDate": createdDate?.toIso8601String(),
+        "modifiedDate": modifiedDate?.toIso8601String(),
+        "offer": offer?.toJson(),
+      };
+}
+
+class Offer {
+  int? offerId;
+  String? offerName;
+  String? description;
+  double? discountPercentage;
+  String? offerCode;
+  String? startDate;
+  String? endDate;
+  dynamic minimumBookingAmount;
+  dynamic maxDiscountAmount;
+  dynamic usageLimitPerUser;
+  String? termsAndConditions;
+  DateTime? createdDate;
+  DateTime? modifiedDate;
+  String? offerStatus;
+  String? offerType;
+  dynamic imageUrl;
+
+  Offer({
+    this.offerId,
+    this.offerName,
+    this.description,
+    this.discountPercentage,
+    this.offerCode,
+    this.startDate,
+    this.endDate,
+    this.minimumBookingAmount,
+    this.maxDiscountAmount,
+    this.usageLimitPerUser,
+    this.termsAndConditions,
+    this.createdDate,
+    this.modifiedDate,
+    this.offerStatus,
+    this.offerType,
+    this.imageUrl,
+  });
+
+  factory Offer.fromJson(Map<String, dynamic> json) => Offer(
+        offerId: json["offerId"],
+        offerName: json["offerName"],
+        description: json["description"],
+        discountPercentage: json["discountPercentage"],
+        offerCode: json["offerCode"],
+        startDate: json["startDate"],
+        endDate: json["endDate"],
+        minimumBookingAmount: json["minimumBookingAmount"],
+        maxDiscountAmount: json["maxDiscountAmount"],
+        usageLimitPerUser: json["usageLimitPerUser"],
+        termsAndConditions: json["termsAndConditions"],
+        createdDate: json["createdDate"] == null
+            ? null
+            : DateTime.parse(json["createdDate"]),
+        modifiedDate: json["modifiedDate"] == null
+            ? null
+            : DateTime.parse(json["modifiedDate"]),
+        offerStatus: json["offerStatus"],
+        offerType: json["offerType"],
+        imageUrl: json["imageUrl"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "offerId": offerId,
+        "offerName": offerName,
+        "description": description,
+        "discountPercentage": discountPercentage,
+        "offerCode": offerCode,
+        "startDate": startDate,
+        "endDate": endDate,
+        "minimumBookingAmount": minimumBookingAmount,
+        "maxDiscountAmount": maxDiscountAmount,
+        "usageLimitPerUser": usageLimitPerUser,
+        "termsAndConditions": termsAndConditions,
+        "createdDate": createdDate?.toIso8601String(),
+        "modifiedDate": modifiedDate?.toIso8601String(),
+        "offerStatus": offerStatus,
+        "offerType": offerType,
+        "imageUrl": imageUrl,
+      };
+}
+
+class ActivityReligiousOffDate {
+  int? activityReligiousOffId;
+  String? religiousOffDate;
+  bool? isCancelled;
+  DateTime? createdDate;
+  DateTime? modifiedDate;
+
+  ActivityReligiousOffDate({
+    this.activityReligiousOffId,
+    this.religiousOffDate,
+    this.isCancelled,
+    this.createdDate,
+    this.modifiedDate,
+  });
+
+  factory ActivityReligiousOffDate.fromJson(Map<String, dynamic> json) =>
+      ActivityReligiousOffDate(
+        activityReligiousOffId: json["activityReligiousOffId"],
+        religiousOffDate: json["religiousOffDate"],
+        isCancelled: json["isCancelled"],
+        createdDate: json["createdDate"] == null
+            ? null
+            : DateTime.parse(json["createdDate"]),
+        modifiedDate: json["modifiedDate"] == null
+            ? null
+            : DateTime.parse(json["modifiedDate"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "activityReligiousOffId": activityReligiousOffId,
+        "religiousOffDate": religiousOffDate,
+        "isCancelled": isCancelled,
+        "createdDate": createdDate?.toIso8601String(),
+        "modifiedDate": modifiedDate?.toIso8601String(),
+      };
+}
 class AgeGroupDiscountPercent {
   double? infant;
   double? child;

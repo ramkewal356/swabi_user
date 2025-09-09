@@ -10,6 +10,7 @@ class Customtabbar extends StatefulWidget {
   final bool sortVisiblty;
   final bool isVisible;
   final String? titleHeading;
+  final Widget? titleWidget;
   final void Function(int)? onTap;
   final void Function()? onTapSort;
   const Customtabbar(
@@ -21,6 +22,7 @@ class Customtabbar extends StatefulWidget {
       this.sortVisiblty = false,
       this.isVisible = false,
       this.onTapSort,
+      this.titleWidget,
       this.onTap});
 
   @override
@@ -43,23 +45,18 @@ class _CustomtabbarState extends State<Customtabbar> {
       body: Column(
         children: [
           Container(
-              // width: AppDimension.getWidth(context) * .9,
-              // padding: EdgeInsets.symmetric(vertical: 5),
+             
               decoration: const BoxDecoration(
-                // borderRadius: BorderRadius.circular(10),
+               
                 color: background,
-                // border: Border.all(color: naturalGreyColor.withOpacity(0.3)),
+             
               ),
               child: TabBar(
                 // isScrollable: true,
                 controller: widget.controller,
                 onTap: widget.onTap,
                 indicatorSize: TabBarIndicatorSize.tab,
-                // indicatorPadding: EdgeInsets.symmetric(horizontal: 5),
-                // indicator: BoxDecoration(
-                //     borderRadius: BorderRadius.circular(10),
-                //     // border: Border.all(color: btnColor),
-                //     color: btnColor),
+              
 
                 tabAlignment: TabAlignment.fill,
                 labelPadding:
@@ -115,7 +112,7 @@ class _CustomtabbarState extends State<Customtabbar> {
                     ],
                   ),
                 )
-              : Container(),
+              : widget.titleWidget ?? Container(),
           Expanded(
               child: TabBarView(
                   controller: widget.controller,

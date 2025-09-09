@@ -42,10 +42,14 @@ import 'package:flutter_cab/view/starting_screen/splash_screen.dart';
 import 'package:flutter_cab/view/auth_screens/reset_password_screen.dart';
 import 'package:flutter_cab/view/vendor/activity_management_screen/activity_management_screen.dart';
 import 'package:flutter_cab/view/vendor/activity_management_screen/add_and_edit_activity_screen.dart';
+import 'package:flutter_cab/view/vendor/activity_management_screen/view_activity_screen.dart';
 import 'package:flutter_cab/view/vendor/enquiry_management/bid_now_screen.dart';
 import 'package:flutter_cab/view/vendor/enquiry_management/enquiry_management_screen.dart';
+import 'package:flutter_cab/view/vendor/package_booking_management.dart/package_booking_management.dart';
 import 'package:flutter_cab/view/vendor/package_management/add_and_edit_package_screen.dart';
 import 'package:flutter_cab/view/vendor/package_management/package_management_screen.dart';
+import 'package:flutter_cab/view/vendor/rental_booking_management_screen/rental_booking_details_screen.dart';
+import 'package:flutter_cab/view/vendor/rental_booking_management_screen/rental_booking_management_screen.dart';
 import 'package:flutter_cab/view/vendor/vendor_dashboard_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -283,6 +287,18 @@ final GoRouter myRouter = GoRouter(
       },
     ),
     GoRoute(
+      path: '/rental_booking_details',
+      builder: (context, state) {
+        var data = state.extra as Map<String, dynamic>;
+        return RentalBookingDetailsScreen(
+          bookingId: data["bookingId"],
+          paymentId: data["paymentId"],
+          bookingStatus: data["status"],
+          userType: data["userType"],
+        );
+      },
+    ),
+    GoRoute(
         path: '/package',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (BuildContext context, GoRouterState state) {
@@ -335,13 +351,13 @@ final GoRouter myRouter = GoRouter(
             path: 'packageDetailsPageView',
             parentNavigatorKey: _rootNavigatorKey,
             builder: (BuildContext context, GoRouterState state) {
-              final userID = state.extra as Map<String, dynamic>;
-              final bookID = state.extra as Map<String, dynamic>;
-              final paymentId = state.extra as Map<String, dynamic>;
+              final data = state.extra as Map<String, dynamic>;
+
               return PackagePageViewDetails(
-                userId: userID['user'],
-                packageBookID: bookID['book'],
-                paymentId: paymentId['paymentId'],
+                // userId: data['user'],
+                packageBookID: data['bookingId'],
+                paymentId: data['paymentId'],
+                bookingStatus: data['bookingStatus'],
               );
             },
           ),
@@ -480,7 +496,15 @@ final GoRouter myRouter = GoRouter(
                       activityId: data?["activityId"],
                     );
                   },
-                )
+                ),
+                GoRoute(
+                    path: 'view_activity',
+                    builder: (context, state) {
+                      var data = state.extra as Map<String, dynamic>;
+                      return ViewActivityScreen(
+                        activityId: data["activityId"],
+                      );
+                    })
               ]),
           GoRoute(
               path: 'package_management',
@@ -498,7 +522,16 @@ final GoRouter myRouter = GoRouter(
                     );
                   },
                 )
-              ])
+              ]),
+          GoRoute(
+              path: 'rentalManagement',
+              builder: (context, state) {
+                return const RentalBookingManagementScreen();
+              }),
+          GoRoute(
+            path: 'package_booking_management',
+            builder: (context, state) => PackageBookingManagement(),
+          ),
         ])
   ],
 );

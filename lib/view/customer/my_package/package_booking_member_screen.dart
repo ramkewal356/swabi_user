@@ -2,8 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_cab/model/calculate_price_model.dart';
-import 'package:flutter_cab/model/get_package_details_by_id_model.dart';
+import 'package:flutter_cab/model/calculate_price_model.dart' hide Status;
+import 'package:flutter_cab/model/get_package_details_by_id_model.dart'
+    hide Status;
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/customdropdown_button.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
@@ -12,7 +13,7 @@ import 'package:flutter_cab/res/custom_appbar_widget.dart';
 import 'package:flutter_cab/res/custom_mobile_number.dart';
 import 'package:flutter_cab/utils/assets.dart';
 import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/string_extenstion.dart';
+// import 'package:flutter_cab/utils/string_extenstion.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view_model/offer_view_model.dart';
@@ -25,6 +26,8 @@ import 'package:go_router/go_router.dart';
 import 'package:intl_phone_field/countries.dart';
 import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+
+import '../../../data/response/status.dart';
 
 class PackageBookingMemberPage extends StatefulWidget {
   final String userID;
@@ -62,18 +65,14 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
   TextEditingController couponController = TextEditingController();
   FocusNode focusNode4 = FocusNode();
   FocusNode focusNode5 = FocusNode();
-
   FocusNode focusNode1 = FocusNode();
   FocusNode focusNode2 = FocusNode();
   FocusNode focusNode3 = FocusNode();
   FocusNode couponFocus = FocusNode();
   bool tableIcon = false;
-
-  // String ageUnit = '';
   List<Map<String, dynamic>> members = [];
   double sumAmount = 0.0;
   double payAbleAmount = 0.0;
-  bool loader = false;
   bool isAddAdultDisabled = false;
   bool isAddChildDisabled = false;
   bool isAddInfentDisabled = false;
@@ -81,11 +80,10 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
   String primaryCountryCode = '';
   String secondaryCountryCode = '971';
   String initialCountryCode = 'AE';
-  final ScrollController _scrollController = ScrollController();
+  // final ScrollController _scrollController = ScrollController();
   @override
   void initState() {
     super.initState();
-    // updateButtonStates();
     controller[0].text = widget.bookingDate;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Provider.of<UserProfileViewModel>(context, listen: false)
@@ -98,7 +96,6 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
   Future<void> getData() async {
     await Future.delayed(const Duration(seconds: 2));
     final userProfile =
-     
         Provider.of<UserProfileViewModel>(context, listen: false)
             .dataList
             .data
@@ -114,8 +111,6 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
       if (list.isNotEmpty) {
         // controllers[4].text = list.first.dialCode;
         initialCountryCode = list.first.code;
-        //  = list.first.code;
-        debugPrint('isocode.................... ${list.first.code}');
       }
     });
   }
@@ -579,12 +574,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                             });
                           },
                           hintText: 'Select Gender',
-                          // validator: (p0) {
-                          //   if (p0 == null || p0.isEmpty) {
-                          //     return 'Please select gender';
-                          //   }
-                          //   return null;
-                          // },
+                        
                         )
                       ],
                     ),
@@ -680,25 +670,23 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
     focusNode3.dispose();
   }
 
-  // bool tableIcon = false;
+
   // ignore: prefer_typing_uninitialized_variables
   var profileUser;
   @override
   Widget build(BuildContext context) {
-    bool status = context.watch<ConfirmPackageBookingViewModel>().isLoading;
+    final status = context
+        .watch<ConfirmPackageBookingViewModel>()
+        .getConfirmPackageBooking
+        .status;
 
-    bool bookingStatus =
-        context.watch<GetPackageBookingByIdViewModel>().isLoading;
+    final bookingStatus = context
+        .watch<GetPackageBookingByIdViewModel>()
+        .getPackageBookingById
+        .status;
+    final createStatus =
+        context.watch<PaymentCreateOrderIdViewModel>().paymentOrderID.status;
     profileUser = context.watch<UserProfileViewModel>().dataList.data?.data;
-
-    debugPrint("${widget.userID}User");
-    debugPrint("${widget.packageID}package");
-    debugPrint("${widget.amt}amount");
-    debugPrint('${primaryCountryCode}countrycode,,,,');
-    debugPrint('${primaryNoController.text}primary number,,,,');
-    debugPrint('${status}status      \\\\\\,,,,');
-
-    // final marqueeController = MarqueerController();
     return Scaffold(
       backgroundColor: bgGreyColor,
       resizeToAvoidBottomInset: false,
@@ -714,679 +702,1405 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     const SizedBox(height: 5),
+                    // Travel Info
+                    Card(
+                      color: background,
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      child: ListTile(
+                        leading: const Icon(Icons.date_range, color: btnColor),
+                        title: const Text("Travel Date"),
+                        subtitle: const Text("03-09-2025"),
+                      ),
+                    ),
+
+                    // Primary Contact
+                    Card(
+                      color: background,
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      child: ListTile(
+                        leading: const Icon(Icons.phone_android,
+                            color: Colors.green),
+                        title: const Text("Primary Contact"),
+                        subtitle: const Text("+971 987655343"),
+                      ),
+                    ),
+                    const SizedBox(height: 5),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Column(
+                      child: Row(
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                margin:
-                                    const EdgeInsets.only(bottom: 0, top: 5),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        "Travel Date",
-                                        overflow: TextOverflow.ellipsis,
-                                        style: titleTextStyle,
-                                      ),
-                                    ),
-                                    Text(
-                                      ':',
-                                      style: titleTextStyle,
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      child: Text(
-                                        widget.bookingDate,
-                                        style: titleTextStyle1,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 5),
-                              primaryNoController.text.isEmpty
-                                  ? const SizedBox.shrink()
-                                  : Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            "Primary Contact",
-                                            overflow: TextOverflow.ellipsis,
-                                            style: titleTextStyle,
-                                          ),
-                                        ),
-                                        Text(
-                                          ':',
-                                          style: titleTextStyle,
-                                        ),
-                                        const SizedBox(width: 10),
-                                        Expanded(
-                                          child: Text(
-                                            '+971 ${primaryNoController.text}',
-                                            style: titleTextStyle1,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                              const SizedBox(height: 5),
-                              Row(
-                                children: [
-                                  Text('Secondary Contact ',
-                                      textAlign: TextAlign.start,
-                                      style: titleTextStyle),
-                                  Text('(Optional)',
-                                      textAlign: TextAlign.start,
-                                      style: titleTextStyle1),
-                                ],
-                              ),
-                              const SizedBox(height: 5),
-                              CustomMobilenumber(
-                                  textLength: 9,
-                                  focusNode: focusNode5,
-                                  fillColor: background,
-                                  controller: secondaryNoController,
-                                  hintText: 'Enter number',
-                                  countryCode: secondaryCountryCode)
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                color: background,
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(10)),
-                                border: Border.all(
-                                    // ignore: deprecated_member_use
-                                    color: naturalGreyColor.withOpacity(.3))),
-                            child: Form(
-                              key: _formCouponKey,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Customtextformfield(
-                                          focusNode: couponFocus,
-                                          controller: couponController,
-                                          hintText: 'Coupon code',
-                                          readOnly: offerVisible ? true : false,
-                                          validator: (p0) {
-                                            if (members.isEmpty) {
-                                              return 'Please add members first';
-                                            } else if (p0 == null ||
-                                                p0.isEmpty) {
-                                              return "Please enter offer coupon";
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      offerVisible
-                                          ? CustomButtonSmall(
-                                              height: 45,
-                                              width: 80,
-                                              btnHeading: 'Remove',
-                                              onTap: () {
-                                                FocusScope.of(context)
-                                                    .unfocus();
-
-                                                // Optionally, unfocus specific fields
-                                                couponFocus.unfocus();
-                                                setState(() {
-                                                  offerVisible = false;
-                                                  discountAmount = 0;
-                                                  disAmount = 0;
-                                                });
-                                              },
-                                            )
-                                          : CustomButtonSmall(
-                                              height: 45,
-                                              width: 80,
-                                              btnHeading: 'Apply',
-                                              onTap: () {
-                                                if (_formCouponKey.currentState!
-                                                    .validate()) {
-                                                  Provider.of<OfferViewModel>(
-                                                          context,
-                                                          listen: false)
-                                                      .validateOffer(
-                                                          context: context,
-                                                          offerCode:
-                                                              couponController
-                                                                  .text,
-                                                          bookingType:
-                                                              'PACKAGE_BOOKING',
-                                                          bookigAmount:
-                                                              payAbleAmount)
-                                                      .then((onValue) {
-                                                    if (onValue?.status
-                                                            ?.httpCode ==
-                                                        '200') {
-                                                      Utils.toastSuccessMessage(
-                                                          onValue?.status
-                                                                  ?.message ??
-                                                              '');
-                                                      offerCode = onValue
-                                                          ?.data?.offerCode;
-                                                      disCountPer = onValue
-                                                              ?.data
-                                                              ?.discountPercentage ??
-                                                          0;
-                                                      maxDisAmount = onValue
-                                                              ?.data
-                                                              ?.maxDiscountAmount ??
-                                                          0;
-                                                      setState(() {
-                                                        offerVisible = true;
-                                                        discountAmount =
-                                                            getPercentage();
-                                                        debugPrint(
-                                                            'discountpercentage.....,..,.,$discountAmount');
-                                                      });
-                                                    } else {
-                                                      setState(() {
-                                                        discountAmount = 0;
-                                                      });
-                                                    }
-                                                  });
-                                                }
-                                              },
-                                            )
-                                    ],
-                                  ),
-                                  offerVisible
-                                      ? Text(
-                                          'Congrats!  You have availed discount of AED ${disAmount.toStringAsFixed(2)}.',
-                                          style: const TextStyle(
-                                              color: greenColor),
-                                        )
-                                      : Container(),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Travellers Details',
-                                style: TextStyle(
-                                    color: btnColor,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              const Spacer(),
-                              InkWell(
-                                  onTap: adultType
-                                      ? () {
-                                          FocusScope.of(context).unfocus();
-
-                                          // Optionally, unfocus specific fields
-                                          focusNode4.unfocus();
-                                          focusNode5.unfocus();
-                                          couponFocus.unfocus();
-                                          _addMember(
-                                              title: 'Add Adult',
-                                              ageUnit: 'Year',
-                                              type: 'Adult');
-                                        }
-                                      : null,
-                                  child: Material(
-                                    elevation: 4,
-                                    color: adultType ? bgGreyColor : greyColor1,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.rectangle,
-                                          borderRadius:
-                                              BorderRadius.circular(2),
-                                          border: Border.all(color: btnColor)),
-                                      padding: const EdgeInsets.all(2),
-                                      child: Image.asset(
-                                        adultIcon,
-                                        width: 24,
-                                        height: 24,
-                                        color: btnColor,
-                                      ),
-                                    ),
-                                  )),
-                              const SizedBox(width: 20),
-                              InkWell(
-                                  onTap: childType
-                                      ? () {
-                                          FocusScope.of(context).unfocus();
-
-                                          // Optionally, unfocus specific fields
-                                          focusNode4.unfocus();
-                                          focusNode5.unfocus();
-                                          couponFocus.unfocus();
-                                          _addMember(
-                                              title: 'Add Child',
-                                              ageUnit: 'Year',
-                                              type: 'Child');
-                                        }
-                                      : null,
-                                  child: Material(
-                                    elevation: 4,
-                                    color: childType ? bgGreyColor : greyColor1,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.rectangle,
-                                          borderRadius:
-                                              BorderRadius.circular(2),
-                                          border: Border.all(color: btnColor)),
-                                      padding: const EdgeInsets.all(2),
-                                      child: Image.asset(
-                                        childIcon,
-                                        width: 26,
-                                        height: 26,
-                                        color: btnColor,
-                                        fit: BoxFit.fill,
-                                      ),
-                                    ),
-                                  )),
-                              const SizedBox(width: 20),
-                              InkWell(
-                                  onTap: infantType
-                                      ? () {
-                                          FocusScope.of(context).unfocus();
-
-                                          // Optionally, unfocus specific fields
-                                          focusNode4.unfocus();
-                                          focusNode5.unfocus();
-                                          couponFocus.unfocus();
-                                          _addMember(
-                                              title: 'Add Infant',
-                                              ageUnit: 'Month',
-                                              type: 'Infant');
-                                        }
-                                      : null,
-                                  child: Material(
-                                    elevation: 4,
-                                    color:
-                                        infantType ? bgGreyColor : greyColor1,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.rectangle,
-                                          // boxShadow: [
-                                          //   BoxShadow(offset: Offset(-2, 3))
-                                          // ],
-                                          borderRadius:
-                                              BorderRadius.circular(2),
-                                          border: Border.all(color: btnColor)),
-                                      padding: const EdgeInsets.all(3),
-                                      child: Stack(
-                                        children: [
-                                          Image.asset(
-                                            infantIcon,
-                                            width: 24,
-                                            height: 24,
-                                            color: btnColor,
-                                          ),
-                                          const Positioned(
-                                            right: -4,
-                                            bottom: 0,
-                                            child: Icon(
-                                              Icons.add_circle_outline_sharp,
-                                              color: btnColor,
-                                              size: 12,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  )),
-                            ],
-                          ),
+                          Text('Secondary Contact ',
+                              textAlign: TextAlign.start,
+                              style: titleTextStyle),
+                          Text('(Optional)',
+                              textAlign: TextAlign.start,
+                              style: titleTextStyle1),
                         ],
                       ),
                     ),
+                    const SizedBox(height: 5),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: CustomMobilenumber(
+                          textLength: 9,
+                          focusNode: focusNode5,
+                          fillColor: background,
+                          controller: secondaryNoController,
+                          hintText: 'Enter number',
+                          countryCode: secondaryCountryCode),
+                    ),
                     const SizedBox(height: 10),
-                    Scrollbar(
-                      controller: _scrollController,
-                      // trackVisibility: true,
-                      thumbVisibility: members.isEmpty ? false : true,
-                      child: SingleChildScrollView(
-                        controller: _scrollController,
-                        scrollDirection: Axis.horizontal,
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      margin: EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                          color: background,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
+                          border: Border.all(
+                              // ignore: deprecated_member_use
+                              color: naturalGreyColor.withOpacity(.3))),
+                      child: Form(
+                        key: _formCouponKey,
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Table(
-                              columnWidths: const {
-                                0: FixedColumnWidth(120),
-                                1: FixedColumnWidth(80),
-                                2: FixedColumnWidth(70),
-                                3: FixedColumnWidth(70),
-                                4: FixedColumnWidth(80),
-                                5: FixedColumnWidth(70),
-                              },
-                              // defaultColumnWidth: FixedColumnWidth(100),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                TableRow(
-                                    decoration: const BoxDecoration(
-                                      color: btnColor,
-                                    ),
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 15, bottom: 10, top: 10),
-                                        child: Text(
-                                          'Name',
-                                          style: tableheaderStyle,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 10, bottom: 10, right: 5),
-                                        child: Text(
-                                          'Age',
-                                          style: tableheaderStyle,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 10, bottom: 10),
-                                        child: Text(
-                                          'Gender',
-                                          style: tableheaderStyle,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 5, top: 10, bottom: 10),
-                                        child: Text(
-                                          'Type',
-                                          style: tableheaderStyle,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 5, top: 10, bottom: 10),
-                                        child: Text(
-                                          'Price',
-                                          style: tableheaderStyle,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 10, bottom: 10),
-                                        child: Text(
-                                          'Action',
-                                          style: tableheaderStyle,
-                                        ),
-                                      ),
-                                    ])
+                                Expanded(
+                                  child: Customtextformfield(
+                                    focusNode: couponFocus,
+                                    controller: couponController,
+                                    hintText: 'Coupon code',
+                                    readOnly: offerVisible ? true : false,
+                                    validator: (p0) {
+                                      if (members.isEmpty) {
+                                        return 'Please add members first';
+                                      } else if (p0 == null || p0.isEmpty) {
+                                        return "Please enter offer coupon";
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                offerVisible
+                                    ? CustomButtonSmall(
+                                        height: 45,
+                                        width: 80,
+                                        btnHeading: 'Remove',
+                                        onTap: () {
+                                          FocusScope.of(context).unfocus();
+
+                                          // Optionally, unfocus specific fields
+                                          couponFocus.unfocus();
+                                          setState(() {
+                                            offerVisible = false;
+                                            discountAmount = 0;
+                                            disAmount = 0;
+                                          });
+                                        },
+                                      )
+                                    : CustomButtonSmall(
+                                        height: 45,
+                                        width: 80,
+                                        btnHeading: 'Apply',
+                                        onTap: () {
+                                          if (_formCouponKey.currentState!
+                                              .validate()) {
+                                            Provider.of<OfferViewModel>(context,
+                                                    listen: false)
+                                                .validateOffer(
+                                                    context: context,
+                                                    offerCode:
+                                                        couponController.text,
+                                                    bookingType:
+                                                        'PACKAGE_BOOKING',
+                                                    bookigAmount: payAbleAmount)
+                                                .then((onValue) {
+                                              if (onValue?.status?.httpCode ==
+                                                  '200') {
+                                                Utils.toastSuccessMessage(
+                                                    onValue?.status?.message ??
+                                                        '');
+                                                offerCode =
+                                                    onValue?.data?.offerCode;
+                                                disCountPer = onValue?.data
+                                                        ?.discountPercentage ??
+                                                    0;
+                                                maxDisAmount = onValue?.data
+                                                        ?.maxDiscountAmount ??
+                                                    0;
+                                                setState(() {
+                                                  offerVisible = true;
+                                                  discountAmount =
+                                                      getPercentage();
+                                                  debugPrint(
+                                                      'discountpercentage.....,..,.,$discountAmount');
+                                                });
+                                              } else {
+                                                setState(() {
+                                                  discountAmount = 0;
+                                                });
+                                              }
+                                            });
+                                          }
+                                        },
+                                      )
                               ],
                             ),
-                            members.isEmpty
-                                ? const Center(
-                                    child: Padding(
-                                    padding: EdgeInsets.only(top: 50),
-                                    child: Text(
-                                      'No Travellers Added',
-                                      style: TextStyle(
-                                          color: redColor,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ))
-                                : Table(
-                                    border: const TableBorder(
-                                      horizontalInside: BorderSide(
-                                        width: 1, // Width of the row separator
-                                        color: Colors
-                                            .grey, // Color of the row separator
-                                      ),
-                                      top: BorderSide(
-                                        width: 1,
-                                        color: Colors
-                                            .grey, // Bottom border of the table
-                                      ),
-                                    ),
-
-                                    columnWidths: const {
-                                      0: FixedColumnWidth(120),
-                                      1: FixedColumnWidth(80),
-                                      2: FixedColumnWidth(70),
-                                      3: FixedColumnWidth(70),
-                                      4: FixedColumnWidth(80),
-                                      5: FixedColumnWidth(70),
-                                    },
-                                    // defaultColumnWidth: FixedColumnWidth(100),
-                                    children: members.map((member) {
-                                      int index = members.indexOf(member);
-                                      debugPrint('objectindex$index');
-                                      return TableRow(
-                                          // decoration:
-                                          //     BoxDecoration(color: background),
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 15,
-                                                  bottom: 10,
-                                                  top: 10,
-                                                  right: 10),
-                                              child: Text(
-                                                member['name']
-                                                    .toString()
-                                                    .capitalizeFirstOfEach,
-                                                style: titleTextStyle1,
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                top: 10,
-                                                bottom: 10,
-                                              ),
-                                              child: Text(
-                                                '${member['age']} ${member['ageUnit']}',
-                                                style: titleTextStyle1,
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 10, bottom: 10),
-                                              child: Text(
-                                                member['gender'],
-                                                style: titleTextStyle1,
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 5, top: 10, bottom: 10),
-                                              child: Text(
-                                                member['type'],
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w400,
-                                                    color: member['type'] ==
-                                                            'Senior'
-                                                        ? redColor
-                                                        : blackColor),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 10, bottom: 10),
-                                              child: Text(
-                                                member['price'] == 0
-                                                    ? 'Free'
-                                                    : member['price']
-                                                        .toStringAsFixed(2),
-                                                style: titleTextStyle1,
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 10, bottom: 10),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  InkWell(
-                                                    child: const Icon(
-                                                        Icons.edit,
-                                                        color: greenColor),
-                                                    onTap: () {
-                                                      int age = int.parse(
-                                                          member['age']
-                                                              .toString());
-                                                      String ageunit =
-                                                          member['ageUnit']
-                                                              .toString();
-                                                      if (ageunit == 'Month') {
-                                                        // _editInfantdMember(index);
-                                                        _editMember(
-                                                            title:
-                                                                'Edit Infant',
-                                                            index: index,
-                                                            ageUnit: 'Month',
-                                                            type: 'Infant');
-                                                      } else {
-                                                        if (age >= 18) {
-                                                          // _editAdultMember(index);
-                                                          _editMember(
-                                                              title:
-                                                                  'Edit Adult',
-                                                              index: index,
-                                                              ageUnit: 'Year',
-                                                              type: 'Adult');
-                                                        } else {
-                                                          // _editChildMember(index);
-                                                          _editMember(
-                                                              title:
-                                                                  'Edit Child',
-                                                              index: index,
-                                                              ageUnit: 'Year',
-                                                              type: 'Child');
-                                                          // addedChildCount++;
-                                                        }
-                                                      }
-                                                      setState(() {
-                                                        tableIcon = false;
-                                                        // updateButtonStates();
-                                                      });
-                                                    },
-                                                  ),
-                                                  const SizedBox(width: 10),
-                                                  InkWell(
-                                                    child: const Icon(
-                                                        Icons.delete,
-                                                        color: redColor),
-                                                    onTap: () {
-                                                      showDialog(
-                                                        context: context,
-                                                        barrierDismissible:
-                                                            false,
-                                                        builder: (context) {
-                                                          return Dialog(
-                                                            backgroundColor:
-                                                                background,
-                                                            child:
-                                                                SingleChildScrollView(
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .only(
-                                                                        left:
-                                                                            20,
-                                                                        right:
-                                                                            20,
-                                                                        top: 20,
-                                                                        bottom:
-                                                                            5),
-                                                                child: Column(
-                                                                  children: [
-                                                                    Text(
-                                                                      'Are you sure you want to delete this traveler ?',
-                                                                      // textAlign:
-                                                                      //     TextAlign
-                                                                      //         .center,
-                                                                      style:
-                                                                          titleTextStyle,
-                                                                    ),
-                                                                    const SizedBox(
-                                                                        height:
-                                                                            20),
-                                                                    const Divider(
-                                                                        height:
-                                                                            0),
-                                                                    Row(
-                                                                      mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .center,
-                                                                      children: [
-                                                                        IconButton(
-                                                                            padding: EdgeInsets
-                                                                                .zero,
-                                                                            onPressed:
-                                                                                () {
-                                                                              context.pop();
-                                                                            },
-                                                                            icon:
-                                                                                const Icon(
-                                                                              Icons.close,
-                                                                              color: redColor,
-                                                                              size: 24,
-                                                                            )),
-                                                                        const SizedBox(
-                                                                            width:
-                                                                                10),
-                                                                        IconButton(
-                                                                            padding: EdgeInsets
-                                                                                .zero,
-                                                                            onPressed:
-                                                                                () {
-                                                                              setState(() {
-                                                                                members.removeAt(index);
-                                                                                // addAmount(members);
-                                                                                // member['ageUnit'].toString() == 'Month' ? null : _subAmount();
-                                                                                _shouldDisableButton();
-                                                                                _addAmount();
-                                                                                tableIcon = false;
-                                                                              });
-                                                                              context.pop();
-                                                                            },
-                                                                            icon:
-                                                                                const Icon(
-                                                                              Icons.check,
-                                                                              color: greenColor,
-                                                                              size: 30,
-                                                                            ))
-                                                                      ],
-                                                                    )
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          );
-                                                        },
-                                                      );
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ]);
-                                    }).toList(),
-                                  ),
+                            offerVisible
+                                ? Text(
+                                    'Congrats!  You have availed discount of AED ${disAmount.toStringAsFixed(2)}.',
+                                    style: const TextStyle(color: greenColor),
+                                  )
+                                : Container(),
                           ],
                         ),
                       ),
                     ),
+                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Travellers Details',
+                            style: TextStyle(
+                                color: btnColor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600),
+                          ),
+                          const Spacer(),
+                          InkWell(
+                              onTap: adultType
+                                  ? () {
+                                      FocusScope.of(context).unfocus();
+
+                                      // Optionally, unfocus specific fields
+                                      focusNode4.unfocus();
+                                      focusNode5.unfocus();
+                                      couponFocus.unfocus();
+                                      _addMember(
+                                          title: 'Add Adult',
+                                          ageUnit: 'Year',
+                                          type: 'Adult');
+                                    }
+                                  : null,
+                              child: Material(
+                                elevation: 4,
+                                color: adultType ? bgGreyColor : greyColor1,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.rectangle,
+                                      borderRadius: BorderRadius.circular(2),
+                                      border: Border.all(color: btnColor)),
+                                  padding: const EdgeInsets.all(2),
+                                  child: Image.asset(
+                                    adultIcon,
+                                    width: 24,
+                                    height: 24,
+                                    color: btnColor,
+                                  ),
+                                ),
+                              )),
+                          const SizedBox(width: 20),
+                          InkWell(
+                              onTap: childType
+                                  ? () {
+                                      FocusScope.of(context).unfocus();
+
+                                      // Optionally, unfocus specific fields
+                                      focusNode4.unfocus();
+                                      focusNode5.unfocus();
+                                      couponFocus.unfocus();
+                                      _addMember(
+                                          title: 'Add Child',
+                                          ageUnit: 'Year',
+                                          type: 'Child');
+                                    }
+                                  : null,
+                              child: Material(
+                                elevation: 4,
+                                color: childType ? bgGreyColor : greyColor1,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.rectangle,
+                                      borderRadius: BorderRadius.circular(2),
+                                      border: Border.all(color: btnColor)),
+                                  padding: const EdgeInsets.all(2),
+                                  child: Image.asset(
+                                    childIcon,
+                                    width: 26,
+                                    height: 26,
+                                    color: btnColor,
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                              )),
+                          const SizedBox(width: 20),
+                          InkWell(
+                              onTap: infantType
+                                  ? () {
+                                      FocusScope.of(context).unfocus();
+
+                                      // Optionally, unfocus specific fields
+                                      focusNode4.unfocus();
+                                      focusNode5.unfocus();
+                                      couponFocus.unfocus();
+                                      _addMember(
+                                          title: 'Add Infant',
+                                          ageUnit: 'Month',
+                                          type: 'Infant');
+                                    }
+                                  : null,
+                              child: Material(
+                                elevation: 4,
+                                color: infantType ? bgGreyColor : greyColor1,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.rectangle,
+                                      // boxShadow: [
+                                      //   BoxShadow(offset: Offset(-2, 3))
+                                      // ],
+                                      borderRadius: BorderRadius.circular(2),
+                                      border: Border.all(color: btnColor)),
+                                  padding: const EdgeInsets.all(3),
+                                  child: Stack(
+                                    children: [
+                                      Image.asset(
+                                        infantIcon,
+                                        width: 24,
+                                        height: 24,
+                                        color: btnColor,
+                                      ),
+                                      const Positioned(
+                                        right: -4,
+                                        bottom: 0,
+                                        child: Icon(
+                                          Icons.add_circle_outline_sharp,
+                                          color: btnColor,
+                                          size: 12,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              )),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Divider(
+                      color: btnColor,
+                      indent: 10,
+                      endIndent: 10,
+                    ),
+                    members.isEmpty
+                        ? Center(
+                            child: Text('Not yet added travellers',
+                                style: TextStyle(
+                                    color: redColor,
+                                    fontWeight: FontWeight.bold)),
+                          )
+                        : ListView.builder(
+                            itemCount: members.length,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              final t = members[index];
+                              return Card(
+                                color: background,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16)),
+                                elevation: 3,
+                                margin: const EdgeInsets.symmetric(
+                                    vertical: 6, horizontal: 10),
+                                child: ListTile(
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 5, horizontal: 10),
+                                  horizontalTitleGap: 10,
+                                  leading: const CircleAvatar(
+                                    backgroundColor: btnColor,
+                                    child:
+                                        Icon(Icons.person, color: Colors.white),
+                                  ),
+                                  title: Text("${t['name']} (${t['type']})",
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                  subtitle: Text(
+                                      "Age: ${t['age']} ${t['type'] == 'Infant' ? 'M' : "Y"}  • Gender: ${t['gender']}"),
+                                  trailing: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("AED ${t['price']}",
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.w600)),
+                                      Spacer(),
+                                      Expanded(
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            InkWell(
+                                              onTap: () {
+                                                int age = int.parse(
+                                                    t['age'].toString());
+                                                String ageunit =
+                                                    t['ageUnit'].toString();
+                                                if (ageunit == 'Month') {
+                                                  // _editInfantdMember(index);
+                                                  _editMember(
+                                                      title: 'Edit Infant',
+                                                      index: index,
+                                                      ageUnit: 'Month',
+                                                      type: 'Infant');
+                                                } else {
+                                                  if (age >= 18) {
+                                                    // _editAdultMember(index);
+                                                    _editMember(
+                                                        title: 'Edit Adult',
+                                                        index: index,
+                                                        ageUnit: 'Year',
+                                                        type: 'Adult');
+                                                  } else {
+                                                    // _editChildMember(index);
+                                                    _editMember(
+                                                        title: 'Edit Child',
+                                                        index: index,
+                                                        ageUnit: 'Year',
+                                                        type: 'Child');
+                                                    // addedChildCount++;
+                                                  }
+                                                }
+                                                setState(() {
+                                                  tableIcon = false;
+                                                  // updateButtonStates();
+                                                });
+                                              },
+                                              child: Icon(
+                                                Icons.edit_square,
+                                                color: Colors.green,
+                                                size: 20,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 22,
+                                            ),
+                                            InkWell(
+                                              onTap: () {
+                                                showDialog(
+                                                    context: context,
+                                                    barrierDismissible: false,
+                                                    builder: (context) {
+                                                      return Dialog(
+                                                        backgroundColor:
+                                                            background,
+                                                        child:
+                                                            SingleChildScrollView(
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    left: 20,
+                                                                    right: 20,
+                                                                    top: 20,
+                                                                    bottom: 5),
+                                                            child: Column(
+                                                              children: [
+                                                                Text(
+                                                                  'Are you sure you want to delete this traveler ?',
+                                                                  // textAlign:
+                                                                  //     TextAlign
+                                                                  //         .center,
+                                                                  style:
+                                                                      titleTextStyle,
+                                                                ),
+                                                                const SizedBox(
+                                                                    height: 20),
+                                                                const Divider(
+                                                                    height: 0),
+                                                                Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    IconButton(
+                                                                        padding:
+                                                                            EdgeInsets
+                                                                                .zero,
+                                                                        onPressed:
+                                                                            () {
+                                                                          context
+                                                                              .pop();
+                                                                        },
+                                                                        icon:
+                                                                            const Icon(
+                                                                          Icons
+                                                                              .close,
+                                                                          color:
+                                                                              redColor,
+                                                                          size:
+                                                                              24,
+                                                                        )),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            10),
+                                                                    IconButton(
+                                                                        padding:
+                                                                            EdgeInsets
+                                                                                .zero,
+                                                                        onPressed:
+                                                                            () {
+                                                                          setState(
+                                                                              () {
+                                                                            members.removeAt(index);
+                                                                            // addAmount(members);
+                                                                            // member['ageUnit'].toString() == 'Month' ? null : _subAmount();
+                                                                            _shouldDisableButton();
+                                                                            _addAmount();
+                                                                            tableIcon =
+                                                                                false;
+                                                                          });
+                                                                          context
+                                                                              .pop();
+                                                                        },
+                                                                        icon:
+                                                                            const Icon(
+                                                                          Icons
+                                                                              .check,
+                                                                          color:
+                                                                              greenColor,
+                                                                          size:
+                                                                              30,
+                                                                        ))
+                                                                  ],
+                                                                )
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      );
+                                                    });
+                                              },
+                                              child: Icon(
+                                                Icons.delete,
+                                                color: redColor,
+                                                size: 20,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                    // Padding(
+                    //   padding: const EdgeInsets.symmetric(horizontal: 10),
+                    //   child: Column(
+                    //     children: [
+                    // Column(
+                    //   crossAxisAlignment: CrossAxisAlignment.start,
+                    //   mainAxisSize: MainAxisSize.min,
+                    //   children: [
+                    //     Container(
+                    //       margin:
+                    //           const EdgeInsets.only(bottom: 0, top: 5),
+                    //       child: Row(
+                    //         children: [
+                    //           Expanded(
+                    //             child: Text(
+                    //               "Travel Date",
+                    //               overflow: TextOverflow.ellipsis,
+                    //               style: titleTextStyle,
+                    //             ),
+                    //           ),
+                    //           Text(
+                    //             ':',
+                    //             style: titleTextStyle,
+                    //           ),
+                    //           const SizedBox(width: 10),
+                    //           Expanded(
+                    //             child: Text(
+                    //               widget.bookingDate,
+                    //               style: titleTextStyle1,
+                    //             ),
+                    //           )
+                    //         ],
+                    //       ),
+                    //     ),
+                    //     const SizedBox(height: 5),
+                    //     primaryNoController.text.isEmpty
+                    //         ? const SizedBox.shrink()
+                    //         : Row(
+                    //             children: [
+                    //               Expanded(
+                    //                 child: Text(
+                    //                   "Primary Contact",
+                    //                   overflow: TextOverflow.ellipsis,
+                    //                   style: titleTextStyle,
+                    //                 ),
+                    //               ),
+                    //               Text(
+                    //                 ':',
+                    //                 style: titleTextStyle,
+                    //               ),
+                    //               const SizedBox(width: 10),
+                    //               Expanded(
+                    //                 child: Text(
+                    //                   '+971 ${primaryNoController.text}',
+                    //                   style: titleTextStyle1,
+                    //                 ),
+                    //               )
+                    //             ],
+                    //           ),
+                    // const SizedBox(height: 5),
+                    // Row(
+                    //   children: [
+                    //     Text('Secondary Contact ',
+                    //         textAlign: TextAlign.start,
+                    //         style: titleTextStyle),
+                    //     Text('(Optional)',
+                    //         textAlign: TextAlign.start,
+                    //         style: titleTextStyle1),
+                    //   ],
+                    // ),
+                    // const SizedBox(height: 5),
+                    // CustomMobilenumber(
+                    //     textLength: 9,
+                    //     focusNode: focusNode5,
+                    //     fillColor: background,
+                    //     controller: secondaryNoController,
+                    //     hintText: 'Enter number',
+                    //     countryCode: secondaryCountryCode)
+                    //   ],
+                    // ),
+                    // const SizedBox(height: 10),
+                    // Container(
+                    //   padding: const EdgeInsets.all(10),
+                    //   decoration: BoxDecoration(
+                    //       color: background,
+                    //       borderRadius:
+                    //           const BorderRadius.all(Radius.circular(10)),
+                    //       border: Border.all(
+                    //           // ignore: deprecated_member_use
+                    //           color: naturalGreyColor.withOpacity(.3))),
+                    //   child: Form(
+                    //     key: _formCouponKey,
+                    //     child: Column(
+                    //       crossAxisAlignment: CrossAxisAlignment.start,
+                    //       children: [
+                    //         Row(
+                    //           crossAxisAlignment:
+                    //               CrossAxisAlignment.start,
+                    //           children: [
+                    //             Expanded(
+                    //               child: Customtextformfield(
+                    //                 focusNode: couponFocus,
+                    //                 controller: couponController,
+                    //                 hintText: 'Coupon code',
+                    //                 readOnly: offerVisible ? true : false,
+                    //                 validator: (p0) {
+                    //                   if (members.isEmpty) {
+                    //                     return 'Please add members first';
+                    //                   } else if (p0 == null ||
+                    //                       p0.isEmpty) {
+                    //                     return "Please enter offer coupon";
+                    //                   }
+                    //                   return null;
+                    //                 },
+                    //               ),
+                    //             ),
+                    //             const SizedBox(width: 10),
+                    //             offerVisible
+                    //                 ? CustomButtonSmall(
+                    //                     height: 45,
+                    //                     width: 80,
+                    //                     btnHeading: 'Remove',
+                    //                     onTap: () {
+                    //                       FocusScope.of(context)
+                    //                           .unfocus();
+
+                    //                       // Optionally, unfocus specific fields
+                    //                       couponFocus.unfocus();
+                    //                       setState(() {
+                    //                         offerVisible = false;
+                    //                         discountAmount = 0;
+                    //                         disAmount = 0;
+                    //                       });
+                    //                     },
+                    //                   )
+                    //                 : CustomButtonSmall(
+                    //                     height: 45,
+                    //                     width: 80,
+                    //                     btnHeading: 'Apply',
+                    //                     onTap: () {
+                    //                       if (_formCouponKey.currentState!
+                    //                           .validate()) {
+                    //                         Provider.of<OfferViewModel>(
+                    //                                 context,
+                    //                                 listen: false)
+                    //                             .validateOffer(
+                    //                                 context: context,
+                    //                                 offerCode:
+                    //                                     couponController
+                    //                                         .text,
+                    //                                 bookingType:
+                    //                                     'PACKAGE_BOOKING',
+                    //                                 bookigAmount:
+                    //                                     payAbleAmount)
+                    //                             .then((onValue) {
+                    //                           if (onValue?.status
+                    //                                   ?.httpCode ==
+                    //                               '200') {
+                    //                             Utils.toastSuccessMessage(
+                    //                                 onValue?.status
+                    //                                         ?.message ??
+                    //                                     '');
+                    //                             offerCode = onValue
+                    //                                 ?.data?.offerCode;
+                    //                             disCountPer = onValue
+                    //                                     ?.data
+                    //                                     ?.discountPercentage ??
+                    //                                 0;
+                    //                             maxDisAmount = onValue
+                    //                                     ?.data
+                    //                                     ?.maxDiscountAmount ??
+                    //                                 0;
+                    //                             setState(() {
+                    //                               offerVisible = true;
+                    //                               discountAmount =
+                    //                                   getPercentage();
+                    //                               debugPrint(
+                    //                                   'discountpercentage.....,..,.,$discountAmount');
+                    //                             });
+                    //                           } else {
+                    //                             setState(() {
+                    //                               discountAmount = 0;
+                    //                             });
+                    //                           }
+                    //                         });
+                    //                       }
+                    //                     },
+                    //                   )
+                    //           ],
+                    //         ),
+                    //         offerVisible
+                    //             ? Text(
+                    //                 'Congrats!  You have availed discount of AED ${disAmount.toStringAsFixed(2)}.',
+                    //                 style: const TextStyle(
+                    //                     color: greenColor),
+                    //               )
+                    //             : Container(),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
+                    // const SizedBox(height: 10),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.start,
+                    //   children: [
+                    //     const Text(
+                    //       'Travellers Details',
+                    //       style: TextStyle(
+                    //           color: btnColor,
+                    //           fontSize: 18,
+                    //           fontWeight: FontWeight.w600),
+                    //     ),
+                    //     const Spacer(),
+                    //     InkWell(
+                    //         onTap: adultType
+                    //             ? () {
+                    //                 FocusScope.of(context).unfocus();
+
+                    //                 // Optionally, unfocus specific fields
+                    //                 focusNode4.unfocus();
+                    //                 focusNode5.unfocus();
+                    //                 couponFocus.unfocus();
+                    //                 _addMember(
+                    //                     title: 'Add Adult',
+                    //                     ageUnit: 'Year',
+                    //                     type: 'Adult');
+                    //               }
+                    //             : null,
+                    //         child: Material(
+                    //           elevation: 4,
+                    //           color: adultType ? bgGreyColor : greyColor1,
+                    //           child: Container(
+                    //             decoration: BoxDecoration(
+                    //                 shape: BoxShape.rectangle,
+                    //                 borderRadius:
+                    //                     BorderRadius.circular(2),
+                    //                 border: Border.all(color: btnColor)),
+                    //             padding: const EdgeInsets.all(2),
+                    //             child: Image.asset(
+                    //               adultIcon,
+                    //               width: 24,
+                    //               height: 24,
+                    //               color: btnColor,
+                    //             ),
+                    //           ),
+                    //         )),
+                    //     const SizedBox(width: 20),
+                    //     InkWell(
+                    //         onTap: childType
+                    //             ? () {
+                    //                 FocusScope.of(context).unfocus();
+
+                    //                 // Optionally, unfocus specific fields
+                    //                 focusNode4.unfocus();
+                    //                 focusNode5.unfocus();
+                    //                 couponFocus.unfocus();
+                    //                 _addMember(
+                    //                     title: 'Add Child',
+                    //                     ageUnit: 'Year',
+                    //                     type: 'Child');
+                    //               }
+                    //             : null,
+                    //         child: Material(
+                    //           elevation: 4,
+                    //           color: childType ? bgGreyColor : greyColor1,
+                    //           child: Container(
+                    //             decoration: BoxDecoration(
+                    //                 shape: BoxShape.rectangle,
+                    //                 borderRadius:
+                    //                     BorderRadius.circular(2),
+                    //                 border: Border.all(color: btnColor)),
+                    //             padding: const EdgeInsets.all(2),
+                    //             child: Image.asset(
+                    //               childIcon,
+                    //               width: 26,
+                    //               height: 26,
+                    //               color: btnColor,
+                    //               fit: BoxFit.fill,
+                    //             ),
+                    //           ),
+                    //         )),
+                    //     const SizedBox(width: 20),
+                    //     InkWell(
+                    //         onTap: infantType
+                    //             ? () {
+                    //                 FocusScope.of(context).unfocus();
+
+                    //                 // Optionally, unfocus specific fields
+                    //                 focusNode4.unfocus();
+                    //                 focusNode5.unfocus();
+                    //                 couponFocus.unfocus();
+                    //                 _addMember(
+                    //                     title: 'Add Infant',
+                    //                     ageUnit: 'Month',
+                    //                     type: 'Infant');
+                    //               }
+                    //             : null,
+                    //         child: Material(
+                    //           elevation: 4,
+                    //           color:
+                    //               infantType ? bgGreyColor : greyColor1,
+                    //           child: Container(
+                    //             decoration: BoxDecoration(
+                    //                 shape: BoxShape.rectangle,
+                    //                 // boxShadow: [
+                    //                 //   BoxShadow(offset: Offset(-2, 3))
+                    //                 // ],
+                    //                 borderRadius:
+                    //                     BorderRadius.circular(2),
+                    //                 border: Border.all(color: btnColor)),
+                    //             padding: const EdgeInsets.all(3),
+                    //             child: Stack(
+                    //               children: [
+                    //                 Image.asset(
+                    //                   infantIcon,
+                    //                   width: 24,
+                    //                   height: 24,
+                    //                   color: btnColor,
+                    //                 ),
+                    //                 const Positioned(
+                    //                   right: -4,
+                    //                   bottom: 0,
+                    //                   child: Icon(
+                    //                     Icons.add_circle_outline_sharp,
+                    //                     color: btnColor,
+                    //                     size: 12,
+                    //                   ),
+                    //                 )
+                    //               ],
+                    //             ),
+                    //           ),
+                    //         )),
+                    //   ],
+                    // ),
+                    //     ],
+                    //   ),
+                    // ),
+                    // const SizedBox(height: 10),
+                    // Divider(
+                    //   color: btnColor,
+                    //   indent: 10,
+                    //   endIndent: 10,
+                    // ),
+                    // members.isEmpty
+                    //     ? Center(
+                    //         child: Text('Not yet added travellers',
+                    //             style: TextStyle(
+                    //                 color: redColor,
+                    //                 fontWeight: FontWeight.bold)),
+                    //       )
+                    //     : ListView.builder(
+                    //         itemCount: members.length,
+                    //         shrinkWrap: true,
+                    //         physics: const NeverScrollableScrollPhysics(),
+                    //         itemBuilder: (context, index) {
+                    //           final t = members[index];
+                    //           return Card(
+                    //             color: background,
+                    //             shape: RoundedRectangleBorder(
+                    //                 borderRadius: BorderRadius.circular(16)),
+                    //             elevation: 3,
+                    //             margin: const EdgeInsets.symmetric(
+                    //                 vertical: 6, horizontal: 10),
+                    //             child: ListTile(
+                    //               contentPadding: const EdgeInsets.symmetric(
+                    //                   vertical: 5, horizontal: 10),
+                    //               horizontalTitleGap: 10,
+                    //               leading: const CircleAvatar(
+                    //                 backgroundColor: btnColor,
+                    //                 child:
+                    //                     Icon(Icons.person, color: Colors.white),
+                    //               ),
+                    //               title: Text("${t['name']} (${t['type']})",
+                    //                   style: const TextStyle(
+                    //                       fontWeight: FontWeight.bold)),
+                    //               subtitle: Text(
+                    //                   "Age: ${t['age']} • Gender: ${t['gender']}"),
+                    //               trailing: Column(
+                    //                 crossAxisAlignment: CrossAxisAlignment.end,
+                    //                 mainAxisAlignment:
+                    //                     MainAxisAlignment.spaceBetween,
+                    //                 children: [
+                    //                   Text("AED ${t['price']}",
+                    //                       style: const TextStyle(
+                    //                           fontWeight: FontWeight.w600)),
+                    //                   Spacer(),
+                    //                   Expanded(
+                    //                     child: Row(
+                    //                       mainAxisSize: MainAxisSize.min,
+                    //                       children: [
+                    //                         InkWell(
+                    //                           onTap: () {
+                    //                             int age = int.parse(
+                    //                                 t['age'].toString());
+                    //                             String ageunit =
+                    //                                 t['ageUnit'].toString();
+                    //                             if (ageunit == 'Month') {
+                    //                               // _editInfantdMember(index);
+                    //                               _editMember(
+                    //                                   title: 'Edit Infant',
+                    //                                   index: index,
+                    //                                   ageUnit: 'Month',
+                    //                                   type: 'Infant');
+                    //                             } else {
+                    //                               if (age >= 18) {
+                    //                                 // _editAdultMember(index);
+                    //                                 _editMember(
+                    //                                     title: 'Edit Adult',
+                    //                                     index: index,
+                    //                                     ageUnit: 'Year',
+                    //                                     type: 'Adult');
+                    //                               } else {
+                    //                                 // _editChildMember(index);
+                    //                                 _editMember(
+                    //                                     title: 'Edit Child',
+                    //                                     index: index,
+                    //                                     ageUnit: 'Year',
+                    //                                     type: 'Child');
+                    //                                 // addedChildCount++;
+                    //                               }
+                    //                             }
+                    //                             setState(() {
+                    //                               tableIcon = false;
+                    //                               // updateButtonStates();
+                    //                             });
+                    //                           },
+                    //                           child: Icon(
+                    //                             Icons.edit_square,
+                    //                             color: Colors.green,
+                    //                             size: 20,
+                    //                           ),
+                    //                         ),
+                    //                         SizedBox(
+                    //                           width: 22,
+                    //                         ),
+                    //                         InkWell(
+                    //                           onTap: () {
+                    //                             showDialog(
+                    //                                 context: context,
+                    //                                 barrierDismissible: false,
+                    //                                 builder: (context) {
+                    //                                   return Dialog(
+                    //                                     backgroundColor:
+                    //                                         background,
+                    //                                     child:
+                    //                                         SingleChildScrollView(
+                    //                                       child: Padding(
+                    //                                         padding:
+                    //                                             const EdgeInsets
+                    //                                                 .only(
+                    //                                                 left: 20,
+                    //                                                 right: 20,
+                    //                                                 top: 20,
+                    //                                                 bottom: 5),
+                    //                                         child: Column(
+                    //                                           children: [
+                    //                                             Text(
+                    //                                               'Are you sure you want to delete this traveler ?',
+                    //                                               // textAlign:
+                    //                                               //     TextAlign
+                    //                                               //         .center,
+                    //                                               style:
+                    //                                                   titleTextStyle,
+                    //                                             ),
+                    //                                             const SizedBox(
+                    //                                                 height: 20),
+                    //                                             const Divider(
+                    //                                                 height: 0),
+                    //                                             Row(
+                    //                                               mainAxisAlignment:
+                    //                                                   MainAxisAlignment
+                    //                                                       .center,
+                    //                                               children: [
+                    //                                                 IconButton(
+                    //                                                     padding:
+                    //                                                         EdgeInsets
+                    //                                                             .zero,
+                    //                                                     onPressed:
+                    //                                                         () {
+                    //                                                       context
+                    //                                                           .pop();
+                    //                                                     },
+                    //                                                     icon:
+                    //                                                         const Icon(
+                    //                                                       Icons
+                    //                                                           .close,
+                    //                                                       color:
+                    //                                                           redColor,
+                    //                                                       size:
+                    //                                                           24,
+                    //                                                     )),
+                    //                                                 const SizedBox(
+                    //                                                     width:
+                    //                                                         10),
+                    //                                                 IconButton(
+                    //                                                     padding:
+                    //                                                         EdgeInsets
+                    //                                                             .zero,
+                    //                                                     onPressed:
+                    //                                                         () {
+                    //                                                       setState(
+                    //                                                           () {
+                    //                                                         members.removeAt(index);
+                    //                                                         // addAmount(members);
+                    //                                                         // member['ageUnit'].toString() == 'Month' ? null : _subAmount();
+                    //                                                         _shouldDisableButton();
+                    //                                                         _addAmount();
+                    //                                                         tableIcon =
+                    //                                                             false;
+                    //                                                       });
+                    //                                                       context
+                    //                                                           .pop();
+                    //                                                     },
+                    //                                                     icon:
+                    //                                                         const Icon(
+                    //                                                       Icons
+                    //                                                           .check,
+                    //                                                       color:
+                    //                                                           greenColor,
+                    //                                                       size:
+                    //                                                           30,
+                    //                                                     ))
+                    //                                               ],
+                    //                                             )
+                    //                                           ],
+                    //                                         ),
+                    //                                       ),
+                    //                                     ),
+                    //                                   );
+                    //                                 });
+                    //                           },
+                    //                           child: Icon(
+                    //                             Icons.delete,
+                    //                             color: redColor,
+                    //                             size: 20,
+                    //                           ),
+                    //                         ),
+                    //                         // IconButton(
+                    //                         //   iconSize: 20,
+                    //                         //   icon: const Icon(Icons.edit_square,
+                    //                         //       color: Colors.green),
+                    //                         //   onPressed: () {},
+                    //                         // ),
+                    //                         // IconButton(
+                    //                         //   alignment: Alignment.centerRight,
+                    //                         //   iconSize: 20,
+                    //                         //   icon: const Icon(Icons.delete,
+                    //                         //       color: Colors.red),
+                    //                         //   onPressed: () {},
+                    //                         // ),
+                    //                       ],
+                    //                     ),
+                    //                   )
+                    //                 ],
+                    //               ),
+                    //             ),
+                    //           );
+                    //         },
+                    //       ),
+                    // Scrollbar(
+                    //   controller: _scrollController,
+                    //   // trackVisibility: true,
+                    //   thumbVisibility: members.isEmpty ? false : true,
+                    //   child: SingleChildScrollView(
+                    //     controller: _scrollController,
+                    //     scrollDirection: Axis.horizontal,
+                    //     child: Column(
+                    //       children: [
+                    //         Table(
+                    //           columnWidths: const {
+                    //             0: FixedColumnWidth(120),
+                    //             1: FixedColumnWidth(80),
+                    //             2: FixedColumnWidth(70),
+                    //             3: FixedColumnWidth(70),
+                    //             4: FixedColumnWidth(80),
+                    //             5: FixedColumnWidth(70),
+                    //           },
+                    //           // defaultColumnWidth: FixedColumnWidth(100),
+                    //           children: [
+                    //             TableRow(
+                    //                 decoration: const BoxDecoration(
+                    //                   color: btnColor,
+                    //                 ),
+                    //                 children: [
+                    //                   Padding(
+                    //                     padding: const EdgeInsets.only(
+                    //                         left: 15, bottom: 10, top: 10),
+                    //                     child: Text(
+                    //                       'Name',
+                    //                       style: tableheaderStyle,
+                    //                     ),
+                    //                   ),
+                    //                   Padding(
+                    //                     padding: const EdgeInsets.only(
+                    //                         top: 10, bottom: 10, right: 5),
+                    //                     child: Text(
+                    //                       'Age',
+                    //                       style: tableheaderStyle,
+                    //                     ),
+                    //                   ),
+                    //                   Padding(
+                    //                     padding: const EdgeInsets.only(
+                    //                         top: 10, bottom: 10),
+                    //                     child: Text(
+                    //                       'Gender',
+                    //                       style: tableheaderStyle,
+                    //                     ),
+                    //                   ),
+                    //                   Padding(
+                    //                     padding: const EdgeInsets.only(
+                    //                         left: 5, top: 10, bottom: 10),
+                    //                     child: Text(
+                    //                       'Type',
+                    //                       style: tableheaderStyle,
+                    //                     ),
+                    //                   ),
+                    //                   Padding(
+                    //                     padding: const EdgeInsets.only(
+                    //                         left: 5, top: 10, bottom: 10),
+                    //                     child: Text(
+                    //                       'Price',
+                    //                       style: tableheaderStyle,
+                    //                     ),
+                    //                   ),
+                    //                   Padding(
+                    //                     padding: const EdgeInsets.only(
+                    //                         top: 10, bottom: 10),
+                    //                     child: Text(
+                    //                       'Action',
+                    //                       style: tableheaderStyle,
+                    //                     ),
+                    //                   ),
+                    //                 ])
+                    //           ],
+                    //         ),
+                    //         members.isEmpty
+                    //             ? const Center(
+                    //                 child: Padding(
+                    //                 padding: EdgeInsets.only(top: 50),
+                    //                 child: Text(
+                    //                   'No Travellers Added',
+                    //                   style: TextStyle(
+                    //                       color: redColor,
+                    //                       fontWeight: FontWeight.bold),
+                    //                 ),
+                    //               ))
+                    //             : Table(
+                    //                 border: const TableBorder(
+                    //                   horizontalInside: BorderSide(
+                    //                     width: 1, // Width of the row separator
+                    //                     color: Colors
+                    //                         .grey, // Color of the row separator
+                    //                   ),
+                    //                   top: BorderSide(
+                    //                     width: 1,
+                    //                     color: Colors
+                    //                         .grey, // Bottom border of the table
+                    //                   ),
+                    //                 ),
+
+                    //                 columnWidths: const {
+                    //                   0: FixedColumnWidth(120),
+                    //                   1: FixedColumnWidth(80),
+                    //                   2: FixedColumnWidth(70),
+                    //                   3: FixedColumnWidth(70),
+                    //                   4: FixedColumnWidth(80),
+                    //                   5: FixedColumnWidth(70),
+                    //                 },
+                    //                 // defaultColumnWidth: FixedColumnWidth(100),
+                    //                 children: members.map((member) {
+                    //                   int index = members.indexOf(member);
+                    //                   debugPrint('objectindex$index');
+                    //                   return TableRow(
+                    //                       // decoration:
+                    //                       //     BoxDecoration(color: background),
+                    //                       children: [
+                    //                         Padding(
+                    //                           padding: const EdgeInsets.only(
+                    //                               left: 15,
+                    //                               bottom: 10,
+                    //                               top: 10,
+                    //                               right: 10),
+                    //                           child: Text(
+                    //                             member['name']
+                    //                                 .toString()
+                    //                                 .capitalizeFirstOfEach,
+                    //                             style: titleTextStyle1,
+                    //                           ),
+                    //                         ),
+                    //                         Padding(
+                    //                           padding: const EdgeInsets.only(
+                    //                             top: 10,
+                    //                             bottom: 10,
+                    //                           ),
+                    //                           child: Text(
+                    //                             '${member['age']} ${member['ageUnit']}',
+                    //                             style: titleTextStyle1,
+                    //                           ),
+                    //                         ),
+                    //                         Padding(
+                    //                           padding: const EdgeInsets.only(
+                    //                               top: 10, bottom: 10),
+                    //                           child: Text(
+                    //                             member['gender'],
+                    //                             style: titleTextStyle1,
+                    //                           ),
+                    //                         ),
+                    //                         Padding(
+                    //                           padding: const EdgeInsets.only(
+                    //                               left: 5, top: 10, bottom: 10),
+                    //                           child: Text(
+                    //                             member['type'],
+                    //                             style: TextStyle(
+                    //                                 fontSize: 16,
+                    //                                 fontWeight: FontWeight.w400,
+                    //                                 color: member['type'] ==
+                    //                                         'Senior'
+                    //                                     ? redColor
+                    //                                     : blackColor),
+                    //                           ),
+                    //                         ),
+                    //                         Padding(
+                    //                           padding: const EdgeInsets.only(
+                    //                               top: 10, bottom: 10),
+                    //                           child: Text(
+                    //                             member['price'] == 0
+                    //                                 ? 'Free'
+                    //                                 : member['price']
+                    //                                     .toStringAsFixed(2),
+                    //                             style: titleTextStyle1,
+                    //                           ),
+                    //                         ),
+                    //                         Padding(
+                    //                           padding: const EdgeInsets.only(
+                    //                               top: 10, bottom: 10),
+                    //                           child: Row(
+                    //                             mainAxisSize: MainAxisSize.min,
+                    //                             children: [
+                    //                               InkWell(
+                    //                                 child: const Icon(
+                    //                                     Icons.edit,
+                    //                                     color: greenColor),
+                    //                                 onTap: () {
+                    //                                   int age = int.parse(
+                    //                                       member['age']
+                    //                                           .toString());
+                    //                                   String ageunit =
+                    //                                       member['ageUnit']
+                    //                                           .toString();
+                    //                                   if (ageunit == 'Month') {
+                    //                                     // _editInfantdMember(index);
+                    //                                     _editMember(
+                    //                                         title:
+                    //                                             'Edit Infant',
+                    //                                         index: index,
+                    //                                         ageUnit: 'Month',
+                    //                                         type: 'Infant');
+                    //                                   } else {
+                    //                                     if (age >= 18) {
+                    //                                       // _editAdultMember(index);
+                    //                                       _editMember(
+                    //                                           title:
+                    //                                               'Edit Adult',
+                    //                                           index: index,
+                    //                                           ageUnit: 'Year',
+                    //                                           type: 'Adult');
+                    //                                     } else {
+                    //                                       // _editChildMember(index);
+                    //                                       _editMember(
+                    //                                           title:
+                    //                                               'Edit Child',
+                    //                                           index: index,
+                    //                                           ageUnit: 'Year',
+                    //                                           type: 'Child');
+                    //                                       // addedChildCount++;
+                    //                                     }
+                    //                                   }
+                    //                                   setState(() {
+                    //                                     tableIcon = false;
+                    //                                     // updateButtonStates();
+                    //                                   });
+                    //                                 },
+                    //                               ),
+                    //                               const SizedBox(width: 10),
+                    //                               InkWell(
+                    //                                 child: const Icon(
+                    //                                     Icons.delete,
+                    //                                     color: redColor),
+                    //                                 onTap: () {
+                    //                                   showDialog(
+                    //                                     context: context,
+                    //                                     barrierDismissible:
+                    //                                         false,
+                    //                                     builder: (context) {
+                    //                                       return Dialog(
+                    //                                         backgroundColor:
+                    //                                             background,
+                    //                                         child:
+                    //                                             SingleChildScrollView(
+                    //                                           child: Padding(
+                    //                                             padding:
+                    //                                                 const EdgeInsets
+                    //                                                     .only(
+                    //                                                     left:
+                    //                                                         20,
+                    //                                                     right:
+                    //                                                         20,
+                    //                                                     top: 20,
+                    //                                                     bottom:
+                    //                                                         5),
+                    //                                             child: Column(
+                    //                                               children: [
+                    //                                                 Text(
+                    //                                                   'Are you sure you want to delete this traveler ?',
+                    //                                                   // textAlign:
+                    //                                                   //     TextAlign
+                    //                                                   //         .center,
+                    //                                                   style:
+                    //                                                       titleTextStyle,
+                    //                                                 ),
+                    //                                                 const SizedBox(
+                    //                                                     height:
+                    //                                                         20),
+                    //                                                 const Divider(
+                    //                                                     height:
+                    //                                                         0),
+                    //                                                 Row(
+                    //                                                   mainAxisAlignment:
+                    //                                                       MainAxisAlignment
+                    //                                                           .center,
+                    //                                                   children: [
+                    //                                                     IconButton(
+                    //                                                         padding: EdgeInsets
+                    //                                                             .zero,
+                    //                                                         onPressed:
+                    //                                                             () {
+                    //                                                           context.pop();
+                    //                                                         },
+                    //                                                         icon:
+                    //                                                             const Icon(
+                    //                                                           Icons.close,
+                    //                                                           color: redColor,
+                    //                                                           size: 24,
+                    //                                                         )),
+                    //                                                     const SizedBox(
+                    //                                                         width:
+                    //                                                             10),
+                    //                                                     IconButton(
+                    //                                                         padding: EdgeInsets
+                    //                                                             .zero,
+                    //                                                         onPressed:
+                    //                                                             () {
+                    //                                                           setState(() {
+                    //                                                             members.removeAt(index);
+                    //                                                             // addAmount(members);
+                    //                                                             // member['ageUnit'].toString() == 'Month' ? null : _subAmount();
+                    //                                                             _shouldDisableButton();
+                    //                                                             _addAmount();
+                    //                                                             tableIcon = false;
+                    //                                                           });
+                    //                                                           context.pop();
+                    //                                                         },
+                    //                                                         icon:
+                    //                                                             const Icon(
+                    //                                                           Icons.check,
+                    //                                                           color: greenColor,
+                    //                                                           size: 30,
+                    //                                                         ))
+                    //                                                   ],
+                    //                                                 )
+                    //                                               ],
+                    //                                             ),
+                    //                                           ),
+                    //                                         ),
+                    //                                       );
+                    //                                     },
+                    //                                   );
+                    //                                 },
+                    //                               ),
+                    //                             ],
+                    //                           ),
+                    //                         ),
+                    //                       ]);
+                    //                 }).toList(),
+                    //               ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                     const SizedBox(height: 80)
                   ],
                 ),
               ),
-              status
+              status == Status.loading
                   ? Center(
                       child: Container(
                         height: 200,
@@ -1435,11 +2149,6 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                         fontWeight: FontWeight.w600),
                   ),
                 ),
-                // const Flexible(
-                //   child: Text('(Inclusive of taxes)',
-                //       style: TextStyle(color: blackColor)),
-                // ),
-
                 InkWell(
                   onTap: _showPaymentDailog,
                   child: const Text(
@@ -1458,22 +2167,21 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                 borderRadius: BorderRadius.circular(5),
                 btnHeading: "BOOK NOW",
                 elevation: 5,
-                loading: bookingStatus,
+                loading: bookingStatus == Status.loading ||
+                    createStatus == Status.loading,
+                    
                 elevationReq: true,
                 buttonColor: btnColor,
                 disable: _shouldDisableButton(),
                 // disable: amount == 0.0 ?  true : false,
                 onTap: () {
-                  debugPrint('ghjkjhjkj$primaryCountryCode');
                   if (members.isEmpty) {
                     Utils.toastMessage('Please add Members First');
                   } else if (controller[0].text.isEmpty) {
                     Utils.toastMessage('Please select date');
-                    // Utils.flushBarErrorMessage("Please select date", context);
+                   
                   } else {
-                    setState(() {
-                      loader = true;
-                    });
+                   
                     String razorpayId = '';
                     String bookingId = '';
                     Provider.of<PaymentCreateOrderIdViewModel>(context,
@@ -1526,7 +2234,6 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                             .then((onValue) {
                           setState(() {
                             bookingId = onValue?.data.packageBookingId ?? '';
-                            debugPrint(',,,,,,,,,,,,,,,,,,,,,,,,,,,$bookingId');
                           });
                           if (onValue?.status.httpCode == '200') {
                             setState(() {
@@ -1536,16 +2243,10 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                               context: context,
                               onPaymentError:
                                   (PaymentFailureResponse response) {
-                                setState(() {
-                                  loader = false;
-                                  debugPrint(
-                                      'onpaymentfail status  ,,,,,,,,,,${response.message}${response.code}');
-                                });
+                              
                               },
                               onPaymentSuccess:
                                   (PaymentSuccessResponse response) {
-                                debugPrint(
-                                    'paymentResponse#${response.orderId}');
                                 Provider.of<PaymentVerifyViewModel>(context,
                                         listen: false)
                                     .paymentVerifyViewModelApi(
@@ -1558,13 +2259,6 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                     .then(
                                   (value) {
                                     if (value?.status.httpCode == '200') {
-                                      debugPrint(
-                                          'payment verification is successfull${value?.data.transactionId}');
-                                      debugPrint(response.orderId);
-                                      debugPrint(
-                                        response.paymentId,
-                                      );
-                                      debugPrint(response.signature);
                                       Provider.of<ConfirmPackageBookingViewModel>(
                                               context,
                                               listen: false)
@@ -1575,12 +2269,9 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                                   value?.data.transactionId ??
                                                       '',
                                               userId: widget.userID);
-                                     
                                     }
                                   },
                                 );
-                                // Call verify payment function after successful payment
-                                // _verifyPayment(context, response);
                               },
                             );
                             paymentService.openCheckout(

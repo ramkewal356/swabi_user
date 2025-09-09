@@ -90,6 +90,10 @@ class _CustomtextformfieldState extends State<Customtextformfield> {
           ),
           ...?widget.inputFormatters
         ],
+        onTapOutside: (event) {
+          FocusScope.of(context).unfocus();
+          widget.focusNode?.unfocus();
+        },
         maxLines: widget.maxLines,
         minLines: widget.minLines,
         maxLength: widget.textLength,

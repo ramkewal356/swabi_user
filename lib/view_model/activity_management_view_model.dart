@@ -161,6 +161,7 @@ class ActivityManagementViewModel with ChangeNotifier {
       } else {
         Utils.toastSuccessMessage('Activity added successfully');
       }
+      // ignore: use_build_context_synchronously
       context.pop();
     } catch (e) {
       debugPrint('error $e');

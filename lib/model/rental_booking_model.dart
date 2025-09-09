@@ -582,7 +582,7 @@ class Content {
   String rideEndTime;
   String pickupLocation;
   String cancellationReason;
-  String userDetails;
+  User userDetails;
   String paymentId;
   String discountAmount;
   String taxAmount;
@@ -646,7 +646,7 @@ class Content {
       rideEndTime: json["rideEndTime"].toString(),
       pickupLocation: json["pickupLocation"].toString(),
       cancellationReason: json["cancellationReason"].toString(),
-      userDetails: json["userDetails"].toString(),
+      userDetails: User.fromJson(json["userDetails"]),
       paymentId: json["paymentId"]?.toString() ?? '',
       discountAmount: json["discountAmount"]?.toString() ?? '',
       taxAmount: json["taxAmount"]?.toString() ?? '',
@@ -678,7 +678,7 @@ class Content {
         "rideEndTime": rideEndTime,
         "pickupLocation": pickupLocation,
         "cancellationReason": cancellationReason,
-        "userDetails": userDetails,
+        "userDetails": userDetails.toJson(),
         "paymentId": paymentId,
         "discountAmount": discountAmount,
         "taxAmount": taxAmount,
@@ -1049,7 +1049,7 @@ class RentalDetailsSingleData {
   String carType;
   String extraMinutes;
   String extraKilometers;
-  String createdDate;
+  int createdDate;
   String modifiedDate;
   String rentalManagement;
   RentalDetialsSingleVehicle vehicle;
@@ -1061,7 +1061,7 @@ class RentalDetailsSingleData {
   String bookerId;
   String bookingForId;
   User user;
-  Guest guest;
+  Guest? guest;
   String cancelledBy;
   String paymentId;
   String discountAmount;
@@ -1123,7 +1123,7 @@ class RentalDetailsSingleData {
           carType: json["carType"] ?? "",
           extraMinutes: json["extraMinutes"]?.toString() ?? '',
           extraKilometers: json["extraKilometers"]?.toString() ?? '',
-          createdDate: json["createdDate"].toString(),
+        createdDate: json["createdDate"],
           modifiedDate: json["modifiedDate"].toString(),
           rentalManagement: json["rentalManagement"].toString(),
           vehicle: RentalDetialsSingleVehicle.fromJson(json["vehicle"] ?? {}),
@@ -1135,7 +1135,7 @@ class RentalDetailsSingleData {
           bookerId: json["bookerId"].toString(),
           bookingForId: json["bookingForId"].toString(),
           user: User.fromJson(json["user"] ?? {}),
-          guest: Guest.fromJson(json["guest"] ?? {}),
+        guest: json["guest"] == null ? null : Guest.fromJson(json["guest"]),
           cancelledBy: json["cancelledBy"].toString(),
           paymentId: json["paymentId"].toString(),
           discountAmount: json["discountAmount"]?.toString() ?? '',
@@ -1173,7 +1173,7 @@ class RentalDetailsSingleData {
         "bookerId": bookerId,
         "bookingForId": bookingForId,
         "user": user,
-        "guest": guest,
+        "guest": guest?.toJson(),
         "cancelledBy": cancelledBy,
         "paymentId": paymentId,
         "discountAmount": discountAmount,

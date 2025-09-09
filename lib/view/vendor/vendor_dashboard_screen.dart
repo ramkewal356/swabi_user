@@ -127,11 +127,35 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
               },
               {
                 "imgUrl": rentalbooking,
-                "label": "Booking Management",
+                "label": "Rental Management",
+                "onTap": () {
+                  context.push("/vendor_dashboard/rentalManagement");
+                }
+              },
+              {
+                "imgUrl": rentalbooking,
+                "label": "Package booking Management",
+                "onTap": () {
+                  context.push("/vendor_dashboard/package_booking_management");
+                }
+              },
+              {
+                "imgUrl": vehicleImage,
+                "label": "Vehicle Management",
                 "onTap": () {}
               },
               {
-                "imgUrl": package,
+                "imgUrl": user,
+                "label": "Vehicle Owner Management",
+                "onTap": () {}
+              },
+              {
+                "imgUrl": driverImage,
+                "label": "Driver Management",
+                "onTap": () {}
+              },
+              {
+                "imgUrl": advanceBookingIcon,
                 "label": "Activity Management",
                 "onTap": () {
                   context.push('/vendor_dashboard/activity_management');
@@ -144,13 +168,14 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                   context.push('/vendor_dashboard/package_management');
                 }
               },
-              {"imgUrl": offers, "label": "Offers Management", "onTap": () {}},
+              
               {
                 "imgUrl": moneyTransaction,
                 "label": "Payment Management",
                 "onTap": () {}
               },
-              {"imgUrl": myWallet, "label": "My Wallet", "onTap": () {}},
+              {"imgUrl": offers, "label": "Offers Management", "onTap": () {}},
+             
               {
                 "imgUrl": helpSupport,
                 "label": "Help & Support",

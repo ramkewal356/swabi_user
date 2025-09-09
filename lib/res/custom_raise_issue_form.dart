@@ -1,4 +1,7 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+import 'package:flutter_cab/data/response/status.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/utils/color.dart';
@@ -13,12 +16,11 @@ class RaiseIssueDialog extends StatefulWidget {
   final String bookingId;
   final String bookingType;
   final String venderId;
-  const RaiseIssueDialog({
-    super.key,
-    required this.bookingId,
-    required this.bookingType,
-      required this.venderId
-  });
+  const RaiseIssueDialog(
+      {super.key,
+      required this.bookingId,
+      required this.bookingType,
+      required this.venderId});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -41,14 +43,12 @@ class _RaiseIssueDialogState extends State<RaiseIssueDialog> {
 
   @override
   void initState() {
-  
     super.initState();
-   
   }
 
   @override
   Widget build(BuildContext context) {
-    bool raisedLoading = context.watch<RaiseissueViewModel>().raisedloading;
+    final status = context.watch<RaiseissueViewModel>().requestRaised.status;
     return Container(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -127,7 +127,7 @@ class _RaiseIssueDialogState extends State<RaiseIssueDialog> {
           CustomButtonSmall(
               width: double.infinity,
               height: 45,
-              loading: raisedLoading,
+              loading: status == Status.loading,
               btnHeading: 'Submit',
               onTap: () {
                 if (_selectedIssue != null) {
@@ -136,9 +136,9 @@ class _RaiseIssueDialogState extends State<RaiseIssueDialog> {
                   if (_selectedIssue == 'My reason is not listed') {
                     debugPrint('Description: ${_descriptionController.text}');
                     if (_formKey.currentState!.validate()) {
-                      Provider.of<RaiseissueViewModel>(context, listen: false)
+                      context
+                          .read<RaiseissueViewModel>()
                           .requestRaiseIssue(
-                             
                               bookingId: widget.bookingId,
                               bookingType: widget.bookingType,
                               // raisedById: userId.toString(),
@@ -146,14 +146,19 @@ class _RaiseIssueDialogState extends State<RaiseIssueDialog> {
                                   _selectedIssue == 'My reason is not listed'
                                       ? _descriptionController.text
                                       : _selectedIssue ?? '',
-                              vendorId: widget.venderId);
-                     
+                              vendorId: widget.venderId)
+                          .then((onValue) {
+                    
                       Navigator.of(context).pop();
+                   
+                      });
+
+                    
                     }
                   } else {
-                    Provider.of<RaiseissueViewModel>(context, listen: false)
+                    context
+                        .read<RaiseissueViewModel>()
                         .requestRaiseIssue(
-                          
                             bookingId: widget.bookingId,
                             bookingType: widget.bookingType,
                             // raisedById: userId.toString(),
@@ -161,9 +166,12 @@ class _RaiseIssueDialogState extends State<RaiseIssueDialog> {
                                 _selectedIssue == 'My reason is not listed'
                                     ? _descriptionController.text
                                     : _selectedIssue ?? '',
-                            vendorId: widget.venderId);
-                 
-                    Navigator.of(context).pop();
+                            vendorId: widget.venderId)
+                        .then((onValue) {
+                      Navigator.of(context).pop();
+                    
+                    });
+                  
                   }
                 } else {
                   Utils.toastMessage('Please select an issue.');

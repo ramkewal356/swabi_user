@@ -72,8 +72,7 @@ class _MultiImageUploadWidgetState extends State<MultiImageUploadWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print("images,,,,,${_apiImages}");
-    print("images333333,,,,,${widget.initialImageUrls}");
+    
 
     return Wrap(
       spacing: 10,

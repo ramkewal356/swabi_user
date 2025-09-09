@@ -1,26 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_tabbar.dart';
+import 'package:flutter_cab/res/custom_search_field.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view/customer/my_rental/history/rental_listing_container.dart';
-import 'package:flutter_cab/view_model/rental_view_model.dart';
+import 'package:flutter_cab/view_model/rental_management_view_model.dart';
+
 import 'package:go_router/go_router.dart';
+
+// import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-class RentalHistoryManagment extends StatefulWidget {
-  final String myId;
+import '../../../data/response/status.dart';
 
-  const RentalHistoryManagment({super.key, required this.myId});
+class RentalBookingManagementScreen extends StatefulWidget {
+  const RentalBookingManagementScreen({super.key});
 
   @override
-  State<RentalHistoryManagment> createState() => _RentalHistoryManagmentState();
+  State<RentalBookingManagementScreen> createState() =>
+      _RentalBookingManagementScreenState();
 }
 
-class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
+class _RentalBookingManagementScreenState
+    extends State<RentalBookingManagementScreen>
     with SingleTickerProviderStateMixin {
   ScrollController scrollController = ScrollController();
   ScrollController scrollController1 = ScrollController();
-  String status = 'ALL';
+  final TextEditingController _searchController = TextEditingController();
+
   List<String> tabList = [
     'All Booking',
     'Upcoming',
@@ -33,26 +40,22 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
   bool isVisibleIcon = false;
   String sortText = 'desc';
   final ScrollController _scrollController = ScrollController();
-
-  Future<void> getRentalHistoryList(
+  String searchText = '';
+  String sortDirection = 'desc';
+  String bookingStatus = 'ALL';
+  void getAllRentalList(
       {bool isPagination = false,
       bool isfilter = false,
-      bool isSort = false}) async {
-    try {
-      context
-          .read<RentalBookingListViewModel>()
-          .fetchRentalBookingListBookedViewModelApi(
-            context: context,
-            userId: widget.myId,
-            filterText: status,
-            isFilter: isfilter,
-            isPagination: isPagination,
-            isSort: isSort,
-            sortText: sortText,
-          );
-    } catch (e) {
-      // Handle error, e.g., show a toast or error message
-    }
+      bool isSort = false,
+      bool isSearch = false}) {
+    context.read<RentalManagementViewModel>().getAllRentalApi(
+        isFilter: isfilter,
+        isSearch: isSearch,
+        isPagination: isPagination,
+        searchText: searchText,
+        sortDirection: sortDirection,
+        bookingStatus: bookingStatus,
+        isSort: isSort);
   }
 
   @override
@@ -61,7 +64,7 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
 
     _tabController = TabController(length: tabList.length, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      getRentalHistoryList(isSort: true);
+      getAllRentalList(isSort: true);
     });
     _tabController?.addListener(() {
       if (_tabController!.indexIsChanging) return;
@@ -77,9 +80,9 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
   void _onSort() {
     setState(() {
       isVisibleIcon = !isVisibleIcon;
-      sortText = isVisibleIcon ? 'asc' : 'desc';
+      sortDirection = isVisibleIcon ? 'asc' : 'desc';
     });
-    getRentalHistoryList(isSort: true);
+    getAllRentalList(isSort: true);
   }
 
   void _onFilter(int index) {
@@ -92,51 +95,82 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
     };
 
     setState(() {
-      status = statusMap[tabList[index]] ?? 'ALL';
-      debugPrint('vvnbvbnvb,,,,,, $status');
+      bookingStatus = statusMap[tabList[index]] ?? 'ALL';
+      debugPrint('vvnbvbnvb,,,,,, $bookingStatus');
     });
-    getRentalHistoryList(isfilter: true);
+    getAllRentalList(isfilter: true);
   }
 
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
-      getRentalHistoryList(isPagination: true);
+      getAllRentalList(isPagination: true);
     }
+  }
+
+  void onSearchChanged(String val) {
+    setState(() {
+      searchText = val;
+    });
+    getAllRentalList(isSearch: true);
   }
 
   int intialloadingIndex = -1;
   bool sortVisiblty = true;
   @override
   Widget build(BuildContext context) {
-    // var status =
-    //     context.watch<RentalViewDetailViewModel>().dataList.status.toString();
-
     return Customtabbar(
-        titleHeading: 'My Rental Trips',
-        sortVisiblty: sortVisiblty,
-        isVisible: isVisibleIcon,
+        titleHeading: 'Rental Booking Management',
         controller: _tabController,
         tabs: tabList,
         onTap: _onFilter,
-        onTapSort: _onSort,
+        titleWidget: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          child: Row(
+            children: [
+              Expanded(
+                child: CustomSearchField(
+                  controller: _searchController,
+                  serchHintText: 'Search',
+                  onChanged: onSearchChanged,
+                ),
+              ),
+              SizedBox(width: 10),
+              const Text(
+                'Sort by:',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+              IconButton(
+                  onPressed: _onSort,
+                  icon: isVisibleIcon
+                      ? const Icon(
+                          Icons.arrow_upward,
+                          color: greenColor,
+                        )
+                      : const Icon(
+                          Icons.arrow_downward,
+                          color: greenColor,
+                        ))
+            ],
+          ),
+        ),
         viewchildren: List.generate(tabList.length, (index) {
-          return Consumer<RentalBookingListViewModel>(
+          return Consumer<RentalManagementViewModel>(
             builder: (context, viewModel, child) {
-              final response = viewModel.rentalBookingList;
+              final response = viewModel.getRentalData;
 
-              if (response.status.toString() == "Status.loading") {
+              if (response.status == Status.loading) {
                 return const Center(
                     child: CircularProgressIndicator(
                   color: greenColor,
                 ));
-              } else if (response.status.toString() == "Status.error") {
+              } else if (response.status == Status.error) {
                 return Center(
                     child: Text(
                   'No Data Found',
                   style: nodataTextStyle,
                 ));
-              } else if (response.status.toString() == "Status.completed") {
+              } else if (response.status == Status.completed) {
                 final rentalData = response.data ?? [];
 
                 if (rentalData.isEmpty) {
@@ -166,38 +200,34 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
                       padding:
                           const EdgeInsets.only(bottom: 5, left: 5, right: 5),
                       child: RentalCarListingContainer(
-                        onTapContainer: () {
+                        onTapContainer: () async {
                           context.push('/rental_booking_details', extra: {
                             "bookingId": data.id.toString(),
-                            "paymentId": data.paymentId.toString(),
+                            "paymentId": data.paymentId,
                             "status": data.bookingStatus,
-                            "userType": "USER"
+                            "userType": "VENDOR"
                           }).then((onValue) {
-                              getRentalHistoryList(isSort: true);
-                            });
+                            getAllRentalList(isSort: true);
+                          });
+                          // String? userId =
+                          //     await UserViewModel().getUserId() ?? '';
                           // context.push('/rentalForm/rentalBookedPageView',
                           //     extra: {
                           //       "bookedId": data.id,
-                          //       "useriD": widget.myId,
+                          //       "useriD": userId,
                           //       "paymentId": data.paymentId
-
                           //     }).then((onValue) {
-                          //   getRentalHistoryList(isSort: true);
+                          //   getAllRentalList(isSort: true);
                           // });
-                         
                         },
-                        // loader: data.id == index.toString() &&
-                        //     intialloadingIndex == index,
                         time: data.pickupTime ?? '',
                         bookingID: data.id.toString(),
-                        // images: data.vehicle.images,
                         pickUplocation: data.pickupLocation ?? '',
-                        carOrCustomerName: data.carType ?? '',
+                        carOrCustomerName:
+                            '${data.user?.firstName} ${data.user?.lastName}',
                         status: data.bookingStatus ?? '',
                         date: data.date ?? '',
-                        chargeOrCarTpe: data.totalPayableAmount == 0
-                            ? 'AED ${data.rentalCharge}'
-                            : 'AED ${data.totalPayableAmount}',
+                        chargeOrCarTpe: '${data.carType}',
                       ),
                     );
                   },

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -158,8 +160,13 @@ class _AddAndEditActivityScreenState extends State<AddAndEditActivityScreen> {
       _visitfromminsController.text = startParts?[1] ?? '';
       _visitToHoursController.text = endParts?[0] ?? '';
       _visitToMinsController.text = endParts?[1] ?? '';
-      selectedDate = activity.activityReligiousOffDates ?? [];
-      _offerController.text = activity.activityOfferMapping ?? '';
+      selectedDate = activity.activityReligiousOffDates
+              ?.map((e) => e.religiousOffDate.toString())
+              .toList() ??
+          [];
+      dateController.text = selectedDate?.join(', ') ?? '';
+      _offerController.text =
+          activity.activityOfferMapping?.offer?.offerName ?? '';
       selectedWeeklyOff = activity.weeklyOff ?? [];
       _activityCategoryController.text = activity.activityCategory ?? '';
       _descriptionController.text = activity.description ?? '';
@@ -428,17 +435,46 @@ class _AddAndEditActivityScreenState extends State<AddAndEditActivityScreen> {
                       CustomLableText(lable: 'Local Visit Time From'),
                       selectTime(
                         hoursController: _visitfromHoursController,
-                        onHoursChanged: (p0) {},
+                        onHoursChanged: (val) => setState(() {}),
                         minsController: _visitfromminsController,
-                        onMinsChanged: (p0) {},
+                        onMinsChanged: (val) => setState(() {}),
+                       
                       ),
                       SizedBox(height: 10),
                       CustomLableText(lable: 'Local Visit Time To'),
                       selectTime(
                         hoursController: _visitToHoursController,
-                        onHoursChanged: (p0) {},
+                        onHoursChanged: (val) => setState(() {}),
                         minsController: _visitToMinsController,
-                        onMinsChanged: (p0) {},
+                        onMinsChanged: (val) => setState(() {}),
+                        extraValidator: () {
+                          if (_activityHourController.text.isNotEmpty &&
+                              _visitfromHoursController.text.isNotEmpty &&
+                              _visitfromminsController.text.isNotEmpty &&
+                              _visitToHoursController.text.isNotEmpty &&
+                              _visitToMinsController.text.isNotEmpty) {
+                            final diffMinutes = calculateMinutesDiff(
+                              fromHour: _visitfromHoursController.text,
+                              fromMin: _visitfromminsController.text,
+                              toHour: _visitToHoursController.text,
+                              toMin: _visitToMinsController.text,
+                            );
+
+                            final activityHours = int.tryParse(
+                                    _activityHourController.text
+                                        .split(" ")
+                                        .first) ??
+                                0;
+                            debugPrint('diffMinutes $diffMinutes');
+                            debugPrint('activityHours $activityHours');
+                            debugPrint(
+                                'entered hours ${_activityHourController.text.split(" ").first}');
+                            if (diffMinutes < activityHours * 60) {
+                              return 'Visit duration must be at least $activityHours hours';
+                            }
+                          }
+                          return null;
+                        },
                       ),
                       SizedBox(height: 10),
                       Text(
@@ -469,12 +505,7 @@ class _AddAndEditActivityScreenState extends State<AddAndEditActivityScreen> {
                             dateController.text = selectedDate?.join(',') ?? '';
                           }
                         },
-                        // validator: (value) {
-                        //   if (value == null || value.isEmpty) {
-                        //     return 'Please select date';
-                        //   }
-                        //   return null;
-                        // },
+                       
                       ),
                       SizedBox(height: 10),
                       Text(
@@ -510,7 +541,7 @@ class _AddAndEditActivityScreenState extends State<AddAndEditActivityScreen> {
                       ),
                       SizedBox(height: 5),
                       CustomMultiselectDropdown(
-                        title: 'Suitable For',
+                        title: 'Weekly Off',
                         hintText: 'Select weekly off',
                         bgColor: background,
                         items: weeklyOffList,
@@ -609,16 +640,7 @@ class _AddAndEditActivityScreenState extends State<AddAndEditActivityScreen> {
                             ? 'Update Activity'
                             : 'Create Activity',
                         onTap: () async {
-                          // List<String> uploadedUrls = [];
-                          // for (File file in selectedImages) {
-                          //   uploadedUrls.add(file.path);
-                          // }
-
-                          // // Step 2: Merge with initial API images
-                          // List<String> finalImageUrls = [
-                          //   ...initialImages, // old ones
-                          //   ...uploadedUrls, // newly uploaded ones
-                          // ];
+                          
                           String? vendorId =
                               await UserViewModel().getUserId() ?? '';
                           if (_formKey.currentState!.validate()) {
@@ -660,13 +682,16 @@ class _AddAndEditActivityScreenState extends State<AddAndEditActivityScreen> {
                                           _descriptionController.text,
                                       "ageGroupDiscountPercent": {
                                         "INFANT":
-                                            _infantDiscountController.text,
-                                        "CHILD": _childDiscountController.text,
+                                            mapDiscountToDouble(
+                                            _infantDiscountController.text),
+                                        "CHILD": mapDiscountToDouble(
+                                            _childDiscountController.text),
                                         "SENIOR":
-                                            _seniorDiscountController.text,
-                                        "vendorId": vendorId,
-                                      }
-                                      // "activityImageUrl": finalImageUrls
+                                            mapDiscountToDouble(
+                                            _seniorDiscountController.text),
+                                      },
+                                      "vendorId": vendorId,
+                                     
                                     },
                                     images: selectedImages,
                                     isEdit: widget.isEdit);
@@ -685,7 +710,9 @@ class _AddAndEditActivityScreenState extends State<AddAndEditActivityScreen> {
       {required TextEditingController hoursController,
       dynamic Function(String?)? onHoursChanged,
       required TextEditingController minsController,
-      dynamic Function(String?)? onMinsChanged}) {
+    dynamic Function(String?)? onMinsChanged,
+    String? Function()? extraValidator,
+  }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -705,7 +732,8 @@ class _AddAndEditActivityScreenState extends State<AddAndEditActivityScreen> {
                 if (p0 == null || p0.isEmpty) {
                   return 'Please select hours';
                 }
-                return null;
+                // return null;
+                return extraValidator?.call(); 
               },
             ),
           ),
@@ -731,7 +759,8 @@ class _AddAndEditActivityScreenState extends State<AddAndEditActivityScreen> {
                 if (p0 == null || p0.isEmpty) {
                   return 'Please select mins';
                 }
-                return null;
+                // return null;
+                return extraValidator?.call(); 
               },
             ),
           ),

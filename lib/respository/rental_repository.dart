@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/app_url.dart';
 import 'package:flutter_cab/model/payment_details_model.dart';
 import 'package:flutter_cab/model/rental_booking_model.dart';
+import 'package:flutter_cab/model/rental_model.dart';
 import 'package:flutter_cab/view_model/services/http_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -116,7 +117,7 @@ class RentalBookingCancelRepository {
 
 ///Rental Booking List Repo
 class RentalBookingListRepository {
-  Future<RentalCarBookingListModel> rentalBookingListRepositoryApi(
+  Future<RentalModel> rentalBookingListRepositoryApi(
       {required BuildContext context,
       required Map<String, dynamic> query}) async {
     var http = HttpService(
@@ -130,7 +131,7 @@ class RentalBookingListRepository {
       Response<dynamic>? response = await http.request<dynamic>();
       debugPrint("rentalBooking Repo api success${response?.data}");
 
-      var resp = RentalCarBookingListModel.fromJson(response?.data);
+      var resp = RentalModel.fromJson(response?.data);
       return resp;
     } catch (e) {
       // ignore: use_build_context_synchronously
@@ -144,7 +145,7 @@ class RentalBookingListRepository {
 ///Rental View Single Detail Repo
 class RentalViewDetailsRepository {
   Future<RentalDetailsSingleModel> rentalViewDetailsRepositoryApi(
-      {required BuildContext context,
+      {
       required Map<String, dynamic> query}) async {
     var http = HttpService(
         baseURL: AppUrl.baseUrl,
@@ -174,7 +175,7 @@ class RentalViewDetailsRepository {
 ///Rental View Single payment Detail Repo
 class RentalViewPaymentDetailsRepository {
   Future<PaymentDetailsModel?> paymentDetailsApi(
-      {required BuildContext context,
+      {
       required Map<String, dynamic> query}) async {
     var http = HttpService(
         baseURL: AppUrl.baseUrl,

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/app_url.dart';
 import 'package:flutter_cab/model/calculate_price_model.dart';
 import 'package:flutter_cab/model/change_mobile_model.dart';
+import 'package:flutter_cab/model/common_model.dart';
 import 'package:flutter_cab/model/get_package_details_by_id_model.dart';
 import 'package:flutter_cab/model/package_models.dart';
 import 'package:flutter_cab/view_model/services/http_service.dart';
@@ -10,8 +11,7 @@ import 'package:flutter_cab/view_model/services/http_service.dart';
 ///Get Package List Repo
 class GetPackageListRepository {
   Future<GetPackageListModel> getPackageListRepositoryApi(
-      {
-      required Map<String, dynamic> query}) async {
+      {required Map<String, dynamic> query}) async {
     var http = HttpService(
         baseURL: AppUrl.baseUrl,
         endURL: AppUrl.getAllPackageListUrl,
@@ -35,8 +35,7 @@ class GetPackageListRepository {
 ///Get Package Activity By Id Repo
 class GetPackageActivityByIdRepository {
   Future<GetPackageDetailByIdModel> getPackageActivityByIdRepositoryApi(
-      {
-      required Map<String, dynamic> query}) async {
+      {required Map<String, dynamic> query}) async {
     var http = HttpService(
         baseURL: AppUrl.baseUrl,
         endURL: AppUrl.getPackageByIdUrl,
@@ -57,6 +56,7 @@ class GetPackageActivityByIdRepository {
     }
   }
 }
+
 class CalculatePriceRepository {
   Future<CalculatePriceModel> getCalculatePriceApi(
       {required BuildContext context,
@@ -81,6 +81,7 @@ class CalculatePriceRepository {
     }
   }
 }
+
 ///Post Package Booking By Id Repo
 class GetPackageBookedByIdRepository {
   Future<BookPackageByMemberModel> getPackageBookedByIdRepositoryApi(
@@ -94,7 +95,6 @@ class GetPackageBookedByIdRepository {
         bodyType: HttpBodyType.JSON,
         isAuthorizeRequest: false);
     try {
-    
       Response<dynamic>? response = await http.request<dynamic>();
       debugPrint("Get Package Booked By Id Repo Success ${response?.data}");
       var resp = BookPackageByMemberModel.fromJson(response?.data);
@@ -118,7 +118,6 @@ class GetPackageBookedByIdRepository {
         bodyType: HttpBodyType.JSON,
         isAuthorizeRequest: false);
     try {
-     
       Response<dynamic>? response = await http.request<dynamic>();
       debugPrint("Get Package Booked By Id Repo Success ${response?.data}");
       var resp = BookPackageByMemberModel.fromJson(response?.data);
@@ -149,7 +148,6 @@ class GetPackageHistoryRepository {
       debugPrint('Get Package History Repo Success ${response?.data}');
       var resp = GetPackageHistoryModel.fromJson(response?.data);
       return resp;
-    
     } catch (e) {
       debugPrint("Get Package History Repo Field $e");
       // ignore: use_build_context_synchronously
@@ -163,8 +161,7 @@ class GetPackageHistoryRepository {
 class GetPackageHistoryDetailByIdRepository {
   Future<GetPackageHIstoryDetailsModel?>
       getPackageHistoryDetailByIdRepositoryApi(
-          {required BuildContext context,
-          required Map<String, dynamic> query}) async {
+          {required Map<String, dynamic> query}) async {
     var http = HttpService(
         baseURL: AppUrl.baseUrl,
         endURL: AppUrl.getpackageBookingByIdUrl,
@@ -194,8 +191,8 @@ class GetPackageHistoryDetailByIdRepository {
 
 ///Package Cancel Repo
 class PackageCancelRepository {
-  Future<PackageCancelModel?> packageCancelRepositoryApi(
-      {required BuildContext context,
+  Future<CommonModel?> packageCancelRepositoryApi(
+      {
       required Map<String, dynamic> query}) async {
     var http = HttpService(
         baseURL: AppUrl.baseUrl,
@@ -208,7 +205,7 @@ class PackageCancelRepository {
       Response<dynamic>? response = await http.request<dynamic>();
 
       debugPrint("Package Cancel Repo Success");
-      var resp = PackageCancelModel.fromJson(response?.data);
+      var resp = CommonModel.fromJson(response?.data);
       return resp;
     } catch (e) {
       debugPrint("Package Cancel Repo Field");
@@ -222,7 +219,7 @@ class PackageCancelRepository {
 
 ///Add PickUp Location Repo
 class AddPickUpLocationPackageRepository {
-  Future<dynamic> addPickUpLocationPackageRepositoryApi(
+  Future<CommonModel> addPickUpLocationPackageRepositoryApi(
       {required BuildContext context,
       required Map<String, dynamic> query}) async {
     var http = HttpService(
@@ -233,15 +230,11 @@ class AddPickUpLocationPackageRepository {
         bodyType: HttpBodyType.JSON,
         isAuthorizeRequest: false);
     try {
-      // dynamic response = await _apiServices.getGetApiResponse(AppUrl.getPackageList);
-      // dynamic response = await _apiServices.patchApiResponseWithData(
-      //     "http://swabi.ap-south-1.elasticbeanstalk.com"
-      //     "/package_booking/add_pickup_location?packageBookingId=${data["packageBookingId"]}&pickupLocation=${data["pickupLocation"]}",
-      //     data);
+    
       Response<dynamic>? response = await http.request<dynamic>();
       debugPrint("Add PickUp Location Package Repo Success ${response?.data}");
-      return response;
-      // return response = AddPickUpLocationModel.fromJson(response);
+     
+      return CommonModel.fromJson(response?.data);
     } catch (e) {
       debugPrint("Add PickUp Location Package Repo Fieldb$e");
       // ignore: use_build_context_synchronously
@@ -281,8 +274,7 @@ class GetPackageItineraryRepository {
 ///Get Package Itinerary Repo
 class ChangeMobileRepository {
   Future<ChangeMobileModel?> changeMobile(
-      {required BuildContext context,
-      required Map<String, dynamic> body}) async {
+      {required Map<String, dynamic> body}) async {
     var http = HttpService(
         baseURL: AppUrl.baseUrl,
         endURL: AppUrl.changeMobileUrl,
@@ -298,7 +290,8 @@ class ChangeMobileRepository {
     } catch (error) {
       // ignore: use_build_context_synchronously
       http.handleErrorResponse(error: error);
+      rethrow;
     }
-    return null;
+  
   }
 }

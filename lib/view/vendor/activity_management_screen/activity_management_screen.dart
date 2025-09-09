@@ -224,15 +224,15 @@ class _ActivityManagementScreenState extends State<ActivityManagementScreen> {
                                   color: background,
                                   onSelected: (value) {
                                     if (value == "View") {
-                                      // context.push('/package_view', extra: {
-                                      //   "packageId":
-                                      //       packageList?.packageId.toString(),
-                                      //   "userType": 'Vendor',
-                                      //   "userId": '',
-                                      //   "bookingDate": ''
-                                      // }).then((onValue) {
-                                      //   _getAllPackageList(isFilter: true);
-                                      // });
+                                      context.push(
+                                          '/vendor_dashboard/activity_management/view_activity',
+                                          extra: {
+                                            "activityId": activityList
+                                                ?.activityId
+                                                .toString()
+                                          }).then((onValue) {
+                                        _getAllActivityList(isFilter: true);
+                                      });
                                     } else if (value == "Edit") {
                                       context.push(
                                           '/vendor_dashboard/activity_management/add_edit_activity',

@@ -108,4 +108,9 @@ class AppUrl {
   static var getActivityByIdUrl = '/activity/get_activity_by_id';
   static var addActivityUrl = '/activity/add_activity';
   static var updateActivityUrl = '/activity/update_activity';
+  // rental management
+  static var getAllRentalListUrl = '/rental/get_all_rental_booking';
+  //package booking management
+  static var getAllpackageBookingListUrl =
+      '/package_booking/get_package_booking_list';
 }

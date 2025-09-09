@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/model/common_model.dart';
 import 'package:flutter_cab/model/get_package_list_model.dart';
+import 'package:flutter_cab/model/get_package_model.dart';
 import 'package:flutter_cab/respository/package_management_repository.dart';
 import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
@@ -24,9 +25,13 @@ class PackageManagementViewModel with ChangeNotifier {
     getPackageLists = response;
     notifyListeners();
   }
+  ApiResponse<List<PackageListContent>> getPackageDataLists =
+      ApiResponse.initial();
 
- 
-
+  void setPackageDataList(ApiResponse<List<PackageListContent>> response) {
+    getPackageDataLists = response;
+    notifyListeners();
+  }
   ApiResponse<bool> addedPackage = ApiResponse.initial();
 
   void addPackage(ApiResponse<bool> response) {
@@ -90,7 +95,51 @@ class PackageManagementViewModel with ChangeNotifier {
     }
   }
 
+  Future<void> getAllPackageListApi(
+      {required bool isFilter,
+      required bool isSearch,
+      required bool isPagination,
+      required String packageStatus,
+      required bool isSort,
+      required String sortDirection,
+      required String searchText}) async {
+    if (isLoadingMore) return;
+    bool newSearch = (isFilter || isSearch || isSort);
+    if (!isPagination && newSearch) {
+      pageNumber = 0;
+      isLastPage = false;
+      setPackageDataList(ApiResponse.loading());
+    }
+    String? vendorId = await UserViewModel().getUserId();
+    Map<String, dynamic> query = {
+      "pageNumber": pageNumber,
+      "pageSize": pageSize,
+      "bookingStatus": packageStatus,
+      "sortBy": "bookingId",
+      "sortDirection": sortDirection,
+      "search": searchText,
+      "vendorId": vendorId
+    };
+    if (isLastPage) return;
+    isLoadingMore = true;
+    try {
+      var resp = await _myRepo.getAllPackageListApi(query: query);
+      List<PackageListContent> newData = resp.data?.content ?? [];
+      List<PackageListContent> allData = (pageNumber == 0)
+          ? newData
+          : [...getPackageDataLists.data ?? [], ...newData];
 
+      isLastPage = resp.data?.last ?? false;
+      pageNumber++;
+      setPackageDataList(ApiResponse.completed(allData));
+    } catch (e) {
+      debugPrint('Get Package pice Booking By Id ViewModel Failed $e');
+      setPackageDataList(ApiResponse.error(e.toString()));
+    } finally {
+      isLoadingMore = false;
+      // notifyListeners();
+    }
+  }
 
   Future<void> addPackageApi(
       {required BuildContext context,

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
 import 'package:flutter_cab/model/payment_details_model.dart';
 import 'package:flutter_cab/model/rental_booking_model.dart';
+import 'package:flutter_cab/model/rental_model.dart';
 import 'package:flutter_cab/respository/rental_repository.dart';
 import 'package:flutter_cab/view_model/notification_view_model.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
@@ -31,8 +32,8 @@ class RentalViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchRentalViewModelApi(BuildContext context, data,
-      double lati, double logi) async {
+  Future<void> fetchRentalViewModelApi(
+      BuildContext context, data, double lati, double logi) async {
     String? userId = await UserViewModel().getUserId();
     setLoading(true);
     setDataList(ApiResponse.loading());
@@ -154,7 +155,6 @@ class ConfirmRentalBookingViewModel with ChangeNotifier {
           Provider.of<NotificationViewModel>(context, listen: false)
               .getAllNotificationList(
                   context: context,
-               
                   pageNumber: 0,
                   pageSize: 100,
                   readStatus: 'FALSE');
@@ -205,7 +205,7 @@ class RentalBookingCancelViewModel with ChangeNotifier {
           .then((onValue) {
         if (onValue.status.httpCode == '200') {
           Provider.of<RentalViewDetailViewModel>(context, listen: false)
-              .fetchRentalBookedViewDetialViewModelApi1(context, {
+              .fetchRentalBookedViewDetialViewModelApi(context, {
             "id": bookingId,
           });
 
@@ -236,10 +236,10 @@ class RentalBookingListViewModel with ChangeNotifier {
   bool isLastPage = false; // Assuming true at the start
   int pageSize = 10;
   final _myRepo = RentalBookingListRepository();
-  List<Content> _rentalBookingData = [];
-  ApiResponse<List<Content>> rentalBookingList = ApiResponse.initial();
-  List<Content> get items => _rentalBookingData;
-  void setDataList(ApiResponse<List<Content>> response) {
+  // List<Content> _rentalBookingData = [];
+  ApiResponse<List<RentalContent>> rentalBookingList = ApiResponse.initial();
+  // List<Content> get items => _rentalBookingData;
+  void setDataList(ApiResponse<List<RentalContent>> response) {
     rentalBookingList = response;
     notifyListeners();
   }
@@ -247,7 +247,7 @@ class RentalBookingListViewModel with ChangeNotifier {
   void updateDayStatus({required String newStatus, required String bookingId}) {
     if (rentalBookingList.data != null) {
       var booking =
-          rentalBookingList.data?.firstWhere((e) => e.id == bookingId);
+          rentalBookingList.data?.firstWhere((e) => e.id.toString() == bookingId);
       debugPrint('bookingStatus>>>>>>>>>2222 ${booking?.bookingStatus}');
       if (booking != null) {
         booking.bookingStatus = newStatus;
@@ -271,7 +271,7 @@ class RentalBookingListViewModel with ChangeNotifier {
     bool isNewSort = (isSort || isFilter);
     if (isNewSort && !isPagination) {
       currentPage = 0;
-      _rentalBookingData.clear();
+      // _rentalBookingData.clear();
       isLastPage = false;
       setDataList(ApiResponse.loading());
     }
@@ -291,14 +291,15 @@ class RentalBookingListViewModel with ChangeNotifier {
       // setDataList(ApiResponse.loading());
       var resp = await _myRepo.rentalBookingListRepositoryApi(
           context: context, query: query);
-      List<Content> newData = resp.data.content;
-      List<Content> allData =
-          (currentPage == 0) ? newData : [..._rentalBookingData, ...newData];
+      List<RentalContent> newData = resp.data?.content ?? [];
+      List<RentalContent> allData = (currentPage == 0)
+          ? newData
+          : [...rentalBookingList.data ?? [], ...newData];
 
       isLastPage = newData.length < pageSize;
-      _rentalBookingData = allData;
+      rentalBookingList.data = allData;
       currentPage++;
-      setDataList(ApiResponse.completed(_rentalBookingData));
+      setDataList(ApiResponse.completed(allData));
     } catch (error) {
       setDataList(ApiResponse.error(error.toString()));
     } finally {
@@ -324,57 +325,53 @@ class RentalViewDetailViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<RentalDetailsSingleModel?> fetchRentalBookedViewDetialViewModelApi(
-    BuildContext context,
-    data,
-  ) async {
+  // Future<RentalDetailsSingleModel?> fetchRentalBookedViewDetialViewModelApi(
+  //   BuildContext context,
+  //   data,
+  // ) async {
+  //   try {
+  //     setDataList(ApiResponse.loading());
+  //     // debugPrint(bookid);
+  //     var resp = await _myRepo.rentalViewDetailsRepositoryApi(
+  //         context: context, query: data);
+  //     setDataList(ApiResponse.completed(resp));
+  //     return resp;
+  //   } catch (error) {
+  //     setDataList(ApiResponse.error(error.toString()));
+  //   }
+
+  //   return null;
+  // }
+
+  Future<void> fetchRentalBookedViewDetialViewModelApi(
+      BuildContext context, Map<String, dynamic> query) async {
     try {
       setDataList(ApiResponse.loading());
-      // debugPrint(bookid);
+      debugPrint('bookingId,,,,$query');
       var resp = await _myRepo.rentalViewDetailsRepositoryApi(
-          context: context, query: data);
+           query: query);
       setDataList(ApiResponse.completed(resp));
-      return resp;
-    } catch (error) {
-      setDataList(ApiResponse.error(error.toString()));
+    } catch (e) {
+      setDataList(ApiResponse.error(e.toString()));
     }
-
-    return null;
   }
 
-  Future<void> fetchRentalBookedViewDetialViewModelApi1(
-      BuildContext context, data) async {
-    setDataList(ApiResponse.loading());
-    debugPrint('bookingId,,,,$data');
-    _myRepo
-        .rentalViewDetailsRepositoryApi(context: context, query: data)
-        .then((value) async {
-      setDataList(ApiResponse.completed(value));
-
-      // Utils.toastMessage("Rental Car View Detail Booking");
-    }).onError((error, stackTrace) {
-      debugPrint(error.toString());
-      // Utils.flushBarErrorMessage(error.toString(), context);
-      setDataList(ApiResponse.error(error.toString()));
-    });
-  }
-
-  Future<void> fetchRentalCancelledViewDetialViewModelApi(
-      BuildContext context, data, String cancelId) async {
-    setDataList1(ApiResponse.loading());
-    _myRepo
-        .rentalViewDetailsRepositoryApi(context: context, query: data)
-        .then((value) async {
-      setDataList1(ApiResponse.completed(value));
-      context.push('/rentalForm/rentalCancelledPageView',
-          extra: {"cancelledId": cancelId});
-      // Utils.toastMessage("Rental Car View Detail Booking");
-    }).onError((error, stackTrace) {
-      debugPrint(error.toString());
-      // Utils.flushBarErrorMessage(error.toString(), context);
-      setDataList1(ApiResponse.error(error.toString()));
-    });
-  }
+  // Future<void> fetchRentalCancelledViewDetialViewModelApi(
+  //     BuildContext context, data, String cancelId) async {
+  //   setDataList1(ApiResponse.loading());
+  //   _myRepo
+  //       .rentalViewDetailsRepositoryApi( query: data)
+  //       .then((value) async {
+  //     setDataList1(ApiResponse.completed(value));
+  //     context.push('/rentalForm/rentalCancelledPageView',
+  //         extra: {"cancelledId": cancelId});
+  //     // Utils.toastMessage("Rental Car View Detail Booking");
+  //   }).onError((error, stackTrace) {
+  //     debugPrint(error.toString());
+  //     // Utils.flushBarErrorMessage(error.toString(), context);
+  //     setDataList1(ApiResponse.error(error.toString()));
+  //   });
+  // }
 }
 
 ///Rental booking payment  detail view model
@@ -387,22 +384,17 @@ class RentalPaymentDetailsViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<PaymentDetailsModel?> rentalPaymentDetail(
-      {required BuildContext context, required String paymentId}) async {
+  Future<void> rentalPaymentDetail({required String paymentId}) async {
     Map<String, dynamic> query = {"paymentId": paymentId};
     try {
       setDataList(ApiResponse.loading());
-      var resp =
-          await _myRepo.paymentDetailsApi(context: context, query: query);
-      if (resp?.status?.httpCode == '200') {
-        setDataList(ApiResponse.completed(resp));
-        debugPrint('Rental payment Api ViewModel Success');
-      }
-      return resp;
+      var resp = await _myRepo.paymentDetailsApi(query: query);
+      setDataList(ApiResponse.completed(resp));
+      debugPrint('Rental payment Api ViewModel Success');
     } catch (e) {
       debugPrint('error $e');
+      setDataList(ApiResponse.error(e.toString()));
     }
-    return null;
   }
 }
 

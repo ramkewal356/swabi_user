@@ -72,6 +72,10 @@ class _CustomMobilenumberState extends State<CustomMobilenumber> {
           LengthLimitingTextInputFormatter(widget.textLength),
           FilteringTextInputFormatter.digitsOnly
         ],
+        onTapOutside: (event) {
+          FocusScope.of(context).unfocus();
+          widget.focusNode?.unfocus();
+        },
         maxLines: widget.maxLines ?? 1,
         minLines: widget.minLines,
         keyboardType: widget.keyboardType ?? TextInputType.number,

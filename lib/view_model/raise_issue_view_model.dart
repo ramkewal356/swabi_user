@@ -22,6 +22,11 @@ class RaiseissueViewModel with ChangeNotifier {
 
   GetIssueModel? _getIssueModel;
   GetIssueModel? get getIssue => _getIssueModel;
+  ApiResponse<RaiseIssueModel> requestRaised = ApiResponse.initial();
+  void setRaisedRequest(ApiResponse<RaiseIssueModel> response) {
+    requestRaised = response;
+    notifyListeners();
+  }
 
   ApiResponse<IssueDetailsModel> issueDetail = ApiResponse.initial();
 
@@ -39,10 +44,8 @@ class RaiseissueViewModel with ChangeNotifier {
   }
 
   Future<void> requestRaiseIssue(
-      {
-      required String bookingId,
+      {required String bookingId,
       required String bookingType,
-     
       required String issueDescription,
       required String vendorId}) async {
     String raisedById = await UserViewModel().getUserId() ?? '';
@@ -56,29 +59,26 @@ class RaiseissueViewModel with ChangeNotifier {
       "vendor": {"vendorId": vendorId}
     };
     try {
-      raisedloading = true;
-      notifyListeners();
-      await _myRepo
-          .requestRaiseIssueApi(body: body)
-          .then((onValue) {
+     
+      setRaisedRequest(ApiResponse.loading());
+      Future.delayed(Duration(minutes: 1));
+      await _myRepo.requestRaiseIssueApi(body: body).then((onValue) {
         if (onValue?.status?.httpCode == '200') {
           getIssueByBookingId(
-           
               bookingId: bookingId,
-              userId: raisedById,
+              // userId: raisedById,
               bookingType: bookingType);
-          _raiseIssueModel = onValue;
-          raisedloading = false;
-          notifyListeners();
+      
+          setRaisedRequest(ApiResponse.completed(onValue));
           Utils.toastSuccessMessage(
             'Raise Request Successfully',
           );
+          
         }
       });
     } catch (e) {
-      raisedloading = false;
-      notifyListeners();
-      ErrorHandler.handleError(e);
+      setRaisedRequest(ApiResponse.error(e.toString()));
+   
     }
   }
 
@@ -102,7 +102,6 @@ class RaiseissueViewModel with ChangeNotifier {
         "pageSize": pageSize.toString()
       };
       GetIssueModel? issueModel =
-        
           await _myRepo.getRaiseIssueApi(context: context, query: query);
       _getIssueModel = issueModel;
       notifyListeners();
@@ -148,10 +147,11 @@ class RaiseissueViewModel with ChangeNotifier {
   }
 
   Future<void> getIssueByBookingId(
-      {
-      required String bookingId,
-      required String userId,
+      {required String bookingId,
+      // required String userId,
       required String bookingType}) async {
+    String? userId = await UserViewModel().getUserId() ?? '';
+    
     Map<String, dynamic> query = {
       "bookingId": bookingId,
       "userId": userId,
@@ -161,9 +161,7 @@ class RaiseissueViewModel with ChangeNotifier {
     try {
       setDataList1(ApiResponse.loading());
 
-      await _myRepo
-          .getRaiseIssueByBookingIdApi(query: query)
-          .then((onValue) {
+      await _myRepo.getRaiseIssueByBookingIdApi(query: query).then((onValue) {
         if (onValue?.status?.httpCode == '200') {
           setDataList1(ApiResponse.completed(onValue));
         }

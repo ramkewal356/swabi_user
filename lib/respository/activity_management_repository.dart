@@ -51,7 +51,7 @@ class ActivityManagementRepository {
         isAuthorizeRequest: false);
     try {
       Response<dynamic>? response = await http.request<dynamic>();
-      debugPrint("Get Activity List Repo Success ${response?.data}");
+      debugPrint("Get Activity by ID Repo Success ${response?.data}");
       if (response?.data is Map<String, dynamic>) {
         // Already JSON decoded
         return GetActivityByIdModel.fromJson(
@@ -64,7 +64,7 @@ class ActivityManagementRepository {
         throw Exception("Unexpected response format: ${response?.data}");
       }
     } catch (e) {
-      debugPrint("Get Activity List Repo Field $e");
+      debugPrint("Get Activity By Id Repo Field $e");
 
       http.handleErrorResponse(error: e);
       rethrow;

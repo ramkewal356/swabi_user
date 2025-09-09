@@ -11,10 +11,13 @@ import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/utils/utils.dart';
+import 'package:flutter_cab/view_model/package_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+
+import '../../../data/response/status.dart';
 
 class RentalCarBooking extends StatefulWidget {
   final String data;
@@ -443,6 +446,9 @@ class _CancelContainerDialogState extends State<CancelContainerDialog> {
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
+    bool cancelStatus =
+        context.watch<PackageCancelViewModel>().packageCancel.status ==
+            Status.loading;
     return Container(
       padding: const EdgeInsets.all(20),
       width: double.infinity,
@@ -503,7 +509,7 @@ class _CancelContainerDialogState extends State<CancelContainerDialog> {
                 ),
                 const SizedBox(height: 10),
                 CustomButtonSmall(
-                    loading: widget.loading,
+                    loading: cancelStatus,
                     height: 50,
                     width: double.infinity,
                     // widht: AppDimension.getWidth(context) * .25,

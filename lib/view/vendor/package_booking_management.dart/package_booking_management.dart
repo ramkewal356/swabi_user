@@ -1,64 +1,64 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_tabbar.dart';
-
+import 'package:flutter_cab/res/custom_search_field.dart';
 import 'package:flutter_cab/res/page_history_container.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
+import 'package:flutter_cab/view_model/package_management_view_model.dart';
 import 'package:flutter_cab/view_model/package_view_model.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:provider/provider.dart';
 
-import '../../../../data/response/status.dart';
+import '../../../data/response/status.dart';
+import 'dart:isolate';
 
-class PackageHistoryManagement extends StatefulWidget {
-  final String userID;
-
-  const PackageHistoryManagement({super.key, required this.userID});
+class PackageBookingManagement extends StatefulWidget {
+  const PackageBookingManagement({super.key});
+  void heavyTask(SendPort sendPort) {
+    // A CPU-heavy calculation (example)
+    int sum = 0;
+    for (int i = 0; i < 500000000; i++) {
+      sum += i;
+    }
+    // Send result back to main isolate
+    sendPort.send(sum);
+  }
 
   @override
-  State<PackageHistoryManagement> createState() =>
-      _PackageHistoryManagementState();
+  State<PackageBookingManagement> createState() =>
+      _PackageBookingManagementState();
 }
 
-class _PackageHistoryManagementState extends State<PackageHistoryManagement>
+class _PackageBookingManagementState extends State<PackageBookingManagement>
     with SingleTickerProviderStateMixin {
-  int pageLength = 40;
+  final TextEditingController _searchController = TextEditingController();
+
+  // int pageLength = 40;
   ScrollController bookedPkgController = ScrollController();
   List<String> tabList = ['ALL BOOKING', 'UPCOMING', 'COMPLETED', 'CANCELLED'];
   TabController? _tabController;
   int initialIndex = 0;
-  int currentPage = 0;
-  bool isLoadingMore = false;
+
   bool isVisibleIcon = false;
-  bool lastPage = false; // Assuming true at the start
-  final int pageSize = 10; // Set your page size
+
   final ScrollController _scrollController = ScrollController();
-  // List<PackageHistoryContent> bookedHistory = [];
-  String status = 'ALL';
-  String sortText = 'desc';
-  Future<void> getPackageHistoryList(
+
+  String packageStatus = 'ALL';
+  String sortDirection = 'desc';
+  String searchText = '';
+  void getAllPackageList(
       {bool isSort = false,
       bool isPagination = false,
-      bool isfilter = false}) async {
-    try {
-      context
-          .read<GetPackageHistoryViewModel>()
-          .fetchGetPackageHistoryBookedViewModelApi(
-            context: context,
-            userId: widget.userID,
-            isFilter: isfilter,
-            filterText: status,
-            isPagination: isPagination,
-            isSort: isSort,
-            sortText: sortText,
-          );
-    } catch (e) {
-      debugPrint('Error fetching data: $e');
-      // Handle error, e.g., show a toast or error message
-    }
+      bool isFilter = false,
+      bool isSearch = false}) {
+    context.read<PackageManagementViewModel>().getAllPackageListApi(
+        isFilter: isFilter,
+        isSearch: isSearch,
+        isPagination: isPagination,
+        packageStatus: packageStatus,
+        isSort: isSort,
+        sortDirection: sortDirection,
+        searchText: searchText);
   }
 
   @override
@@ -67,7 +67,7 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
     _tabController = TabController(length: tabList.length, vsync: this);
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      getPackageHistoryList(isSort: true);
+      getAllPackageList(isSort: true);
     });
     _tabController?.addListener(() {
       if (_tabController!.indexIsChanging) return;
@@ -83,9 +83,9 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
   void _onSort() {
     setState(() {
       isVisibleIcon = !isVisibleIcon;
-      sortText = isVisibleIcon ? 'asc' : 'desc';
+      sortDirection = isVisibleIcon ? 'asc' : 'desc';
     });
-    getPackageHistoryList(isSort: true);
+    getAllPackageList(isSort: true);
   }
 
   void _onFilter(int index) {
@@ -97,17 +97,24 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
     };
 
     setState(() {
-      status = statusMap[tabList[index]] ?? 'ALL';
-      debugPrint('vvnbvbnvb,,,,,, $status');
+      packageStatus = statusMap[tabList[index]] ?? 'ALL';
+      debugPrint('vvnbvbnvb,,,,,, $packageStatus');
     });
-    getPackageHistoryList(isfilter: true);
+    getAllPackageList(isFilter: true);
   }
 
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
-      getPackageHistoryList(isPagination: true);
+      getAllPackageList(isPagination: true);
     }
+  }
+
+  void onSearchChanged(String val) {
+    setState(() {
+      searchText = val;
+    });
+    getAllPackageList(isSearch: true);
   }
 
   @override
@@ -128,17 +135,44 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
     debugPrint('status $status');
 
     return Customtabbar(
-        titleHeading: 'My Packages',
+        titleHeading: 'Package Management',
         controller: _tabController,
         tabs: tabList,
-        sortVisiblty: true,
-        isVisible: isVisibleIcon,
         onTap: _onFilter,
-        onTapSort: _onSort,
+        titleWidget: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          child: Row(
+            children: [
+              Expanded(
+                child: CustomSearchField(
+                  controller: _searchController,
+                  serchHintText: 'Search',
+                  onChanged: onSearchChanged,
+                ),
+              ),
+              SizedBox(width: 10),
+              const Text(
+                'Sort by:',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+              IconButton(
+                  onPressed: _onSort,
+                  icon: isVisibleIcon
+                      ? const Icon(
+                          Icons.arrow_upward,
+                          color: greenColor,
+                        )
+                      : const Icon(
+                          Icons.arrow_downward,
+                          color: greenColor,
+                        ))
+            ],
+          ),
+        ),
         viewchildren: List.generate(tabList.length, (index) {
-          return Consumer<GetPackageHistoryViewModel>(
+          return Consumer<PackageManagementViewModel>(
             builder: (context, viewModel, child) {
-              final response = viewModel.getBookedHistory;
+              final response = viewModel.getPackageDataLists;
 
               if (response.status == Status.loading) {
                 return const Center(
@@ -177,34 +211,36 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
                                 bottom: 10, right: 10, left: 10),
                             child: PackageHistoryContainer(
                               status: data?.bookingStatus ?? '',
-                              pkgID: data?.packageBookingId ?? '',
+                              pkgID: data?.packageBookingId.toString() ?? '',
                               bookingDate: data?.bookingDate ?? '',
-                              members: data?.numberOfMembers ?? '',
-                              price: (data?.totalPayableAmount ?? '').isNotEmpty
-                                  ? data?.totalPayableAmount ?? ''
-                                  : data?.packagePrice == 'null'
+                              customerName:
+                                  '${data?.user?.firstName} ${data?.user?.lastName}',
+                              price: (data?.totalPayableAmount.toString() ?? '')
+                                      .isNotEmpty
+                                  ? data?.totalPayableAmount.toString() ?? ''
+                                  : data?.packagePrice == 0
                                       ? '0'
-                                      : data?.packagePrice ?? "",
-                              pkgName: data?.pkg.packageName ?? '',
-                              location: data?.pkg.country ?? '',
-                              imageList: data?.pkg.packageActivities
-                                      .expand(
-                                          (e) => e.activity.activityImageUrl)
-                                      .toList() ??
-                                  [],
+                                      : data?.packagePrice.toString() ?? "",
+                              pkgName: data?.pkg?.packageName ?? '',
+                              location: data?.pkg?.country ?? '',
+                              imageList: (data?.pkg?.packageActivities ?? [])
+                                  .expand((val) =>
+                                      (val.activity?.activityImageUrl ?? [])
+                                          .cast<String>())
+                                  .toList(),
                               loader: status == 'Status.loading' &&
                                   selectIndex == index,
                               onTap: () {
                                 context.push("/package/packageDetailsPageView",
                                     extra: {
-                                      // "user": widget.userID,
-                                      "bookingId": data?.packageBookingId,
+                                      // "user": '',
+                                      "bookingId":
+                                          data?.packageBookingId.toString(),
                                       "paymentId": data?.paymentId,
                                       "bookingStatus": data?.bookingStatus
                                     }).then((onValue) {
-                                  getPackageHistoryList(isSort: true);
+                                  getAllPackageList(isSort: true);
                                 });
-                               
                               },
                             ),
                           );

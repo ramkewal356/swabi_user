@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
 import 'package:flutter_cab/model/calculate_price_model.dart';
 import 'package:flutter_cab/model/change_mobile_model.dart';
+import 'package:flutter_cab/model/common_model.dart';
 import 'package:flutter_cab/model/get_package_details_by_id_model.dart';
 import 'package:flutter_cab/model/package_models.dart';
 import 'package:flutter_cab/respository/package_repository.dart';
 import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view_model/notification_view_model.dart';
-import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -104,27 +104,6 @@ class GetPackageActivityByIdViewModel with ChangeNotifier {
       setDataList(ApiResponse.error(e.toString()));
     }
   }
-  // Future<void> fetchGetPackageActivityByIdViewModelApi(
-  //     BuildContext context, data, String packID, String dateBooking) async {
-  //   setDataList(ApiResponse.loading());
-  //   _myRepo
-  //       .getPackageActivityByIdRepositoryApi(context: context, query: data)
-  //       .then((value) async {
-  //     String? userId = await UserViewModel().getUserId();
-  //     setDataList(ApiResponse.completed(value));
-  //     context.push("/package/packageDetails", extra: {
-  //       "packageID": packID,
-  //       "userId": userId,
-  //       "bookDate": dateBooking,
-  //       "venderId": value.data?.vendor?.vendorId.toString()
-  //     });
-  //     debugPrint('Get Package Activity By Id ViewModel Success');
-  //   }).onError((error, stackTrace) {
-  //     debugPrint(error.toString());
-  //     debugPrint('Get Package Activity By Id ViewModel Failed');
-  //     setDataList(ApiResponse.error(error.toString()));
-  //   });
-  // }
 }
 
 // Get Package BOOKING By Id View Model
@@ -132,7 +111,7 @@ class GetPackageBookingByIdViewModel with ChangeNotifier {
   final _myRepo = GetPackageBookedByIdRepository();
   ApiResponse<BookPackageByMemberModel> getPackageBookingById =
       ApiResponse.initial();
-  bool isLoading = false;
+
   void setDataList(ApiResponse<BookPackageByMemberModel> response) {
     getPackageBookingById = response;
     notifyListeners();
@@ -142,21 +121,17 @@ class GetPackageBookingByIdViewModel with ChangeNotifier {
       BuildContext context, data, String urId) async {
     try {
       setDataList(ApiResponse.loading());
-      isLoading = true;
-      notifyListeners();
+
       var rsep = await _myRepo.getPackageBookedByIdRepositoryApi(
           context: context, body: data);
       setDataList(ApiResponse.completed(rsep));
-      isLoading = false;
-      notifyListeners();
+
       return rsep;
     } catch (e) {
       debugPrint(e.toString());
 
       debugPrint('Get Package Booking By Id ViewModel Failed');
       setDataList(ApiResponse.error(e.toString()));
-      isLoading = false;
-      notifyListeners();
     }
 
     return null;
@@ -199,7 +174,7 @@ class ConfirmPackageBookingViewModel with ChangeNotifier {
   final _myRepo = GetPackageBookedByIdRepository();
   ApiResponse<BookPackageByMemberModel> getConfirmPackageBooking =
       ApiResponse.initial();
-  bool isLoading = false;
+  // bool isLoading = false;
   void setDataList(ApiResponse<BookPackageByMemberModel> response) {
     getConfirmPackageBooking = response;
     notifyListeners();
@@ -217,8 +192,7 @@ class ConfirmPackageBookingViewModel with ChangeNotifier {
     };
     try {
       setDataList(ApiResponse.loading());
-      isLoading = true;
-      notifyListeners();
+
       await _myRepo
           .confirmPackageBookingRepositoryApi(context: context, query: query)
           .then((onValue) {
@@ -235,19 +209,13 @@ class ConfirmPackageBookingViewModel with ChangeNotifier {
                   pageNumber: 0,
                   pageSize: 100,
                   readStatus: 'FALSE');
-          isLoading = false;
-          notifyListeners();
         }
       });
     } catch (e) {
       debugPrint(e.toString());
-      isLoading = false;
-      notifyListeners();
+
       debugPrint('Get Package Booking By Id ViewModel Failed');
       setDataList(ApiResponse.error(e.toString()));
-    } finally {
-      isLoading = false;
-      notifyListeners();
     }
   }
 }
@@ -344,96 +312,47 @@ class GetPackageHistoryDetailByIdViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<GetPackageHIstoryDetailsModel?>
-      fetchGetPackageHistoryDetailByIdViewModelApi(
-          {required BuildContext context, required String bookingId}) async {
+  Future<void> fetchGetPackageHistoryDetailByIdViewModelApi(
+      {required String bookingId}) async {
     Map<String, dynamic> query = {"packageBookingId": bookingId};
     try {
       setDataList(ApiResponse.loading());
-      var resp = await _myRepo.getPackageHistoryDetailByIdRepositoryApi(
-          context: context, query: query);
+      var resp =
+          await _myRepo.getPackageHistoryDetailByIdRepositoryApi(query: query);
       setDataList(ApiResponse.completed(resp));
-      return resp;
+      // return resp;
     } catch (error) {
       setDataList(ApiResponse.error(error.toString()));
     }
-    return null;
-  }
-
-  Future<void> fetchPackageHistoryDetailByIdViewModelApi(
-      BuildContext context, data, String bookingID) async {
-    setDataList(ApiResponse.loading());
-    _myRepo
-        .getPackageHistoryDetailByIdRepositoryApi(context: context, query: data)
-        .then((value) async {
-      setDataList(ApiResponse.completed(value));
-      // context.push("/package/packageDetails",extra: {"packageID":packID,"userId":uId,"bookDate":dateBooking});
-
-      debugPrint('Get Package History Detail By Id ViewModel Success');
-    }).onError((error, stackTrace) {
-      debugPrint(error.toString());
-      debugPrint('Get Package History Detail By Id ViewModel Failed');
-      setDataList(ApiResponse.error(error.toString()));
-    });
+    // return null;
   }
 }
 
 /// Get Package List View Model
 class PackageCancelViewModel with ChangeNotifier {
   final _myRepo = PackageCancelRepository();
-  ApiResponse<PackageCancelModel> packageCancel = ApiResponse.initial();
-  bool isLoading = false;
-  void setDataList(ApiResponse<PackageCancelModel> response) {
+  ApiResponse<CommonModel> packageCancel = ApiResponse.initial();
+  // bool isLoading = false;
+  void setDataList(ApiResponse<CommonModel> response) {
     packageCancel = response;
     notifyListeners();
   }
 
-  Future<PackageCancelModel?> fetchPackageCancelViewModelApi(
-      BuildContext context,
-      data,
-      String urId,
-      String bookingId,
-      String paymentId) async {
+  Future<CommonModel?> fetchPackageCancelViewModelApi({
+    required Map<String, dynamic> query,
+  }) async {
     try {
       setDataList(ApiResponse.loading());
-      // setDataList(ApiResponse.error(''));
-      isLoading = true;
-      notifyListeners();
-      // return null;
-      await _myRepo
-          .packageCancelRepositoryApi(context: context, query: data)
-          .then((onValue) {
-        if (onValue?.status.httpCode == '200') {
-          Provider.of<GetPackageItineraryViewModel>(context, listen: false)
-              .fetchGetPackageItineraryViewModelApi(
-                  context, {"packageBookingId": bookingId});
 
-          Provider.of<GetPaymentRefundViewModel>(context, listen: false)
-              .getPaymentRefundApi(context: context, paymentId: paymentId);
-          Provider.of<GetPackageHistoryDetailByIdViewModel>(context,
-                  listen: false)
-              .fetchPackageHistoryDetailByIdViewModelApi(
-                  context, {"packageBookingId": bookingId}, bookingId);
-          Provider.of<GetPackageHistoryViewModel>(context, listen: false)
-              .updateDayStatus(newStatus: "CANCELLED", bookingId: bookingId);
-          setDataList(ApiResponse.completed(onValue));
-
-          // context.pop();
-          Navigator.pop(context);
-          Utils.toastSuccessMessage(packageCancel.data?.data.body ?? '');
-          isLoading = false;
-          notifyListeners();
-        }
-      });
+      var resp = await _myRepo.packageCancelRepositoryApi(query: query);
+      setDataList(ApiResponse.completed(resp));
+      return resp;
     } catch (e) {
       debugPrint(e.toString());
       debugPrint('Get Package Cancel Api Failed');
-      isLoading = false;
-      notifyListeners();
+      // isLoading = false;
+      // notifyListeners();
       setDataList(ApiResponse.error(e.toString()));
-    } finally {
-      isLoading = false;
-      notifyListeners();
     }
     return null;
   }
@@ -442,44 +361,26 @@ class PackageCancelViewModel with ChangeNotifier {
 // Add PickUp Location Package View Model
 class AddPickUpLocationPackageViewModel with ChangeNotifier {
   final _myRepo = AddPickUpLocationPackageRepository();
-  ApiResponse<AddPickUpLocationModel> addPickUpLocationPackage =
-      ApiResponse.initial();
-  bool isLoading = false;
-  void setDataList(ApiResponse<AddPickUpLocationModel> response) {
+  ApiResponse<CommonModel> addPickUpLocationPackage = ApiResponse.initial();
+  // bool isLoading = false;
+  void setDataList(ApiResponse<CommonModel> response) {
     addPickUpLocationPackage = response;
     notifyListeners();
   }
 
-  Future<void> fetchAddPickUpLocationPackageViewModelApi(
-      BuildContext context, data, String bookingId) async {
-    setDataList(ApiResponse.loading());
-    // setDataList(ApiResponse.error(''));
-    // return null;
-    isLoading = true;
-    notifyListeners();
-    _myRepo
-        .addPickUpLocationPackageRepositoryApi(context: context, query: data)
-        .then((value) async {
-      Provider.of<GetPackageHistoryDetailByIdViewModel>(context, listen: false)
-          .fetchPackageHistoryDetailByIdViewModelApi(
-              context, {"packageBookingId": bookingId}, bookingId);
-      // setDataList(ApiResponse.completed(value));
-      setDataList(ApiResponse.error(''));
-      context.pop(context);
-      // context.pop(context);
-      Utils.toastSuccessMessage(
-        "Pickup location added successfully",
-      );
-      isLoading = false;
-      notifyListeners();
-      debugPrint('Get Package Activity By Id ViewModel Success');
-    }).onError((error, stackTrace) {
-      debugPrint(error.toString());
-      debugPrint('Get Package Activity By Id ViewModel Failed');
-      setDataList(ApiResponse.error(error.toString()));
-      isLoading = false;
-      notifyListeners();
-    });
+  Future<CommonModel?> fetchAddPickUpLocationPackageViewModelApi(
+      BuildContext context, data) async {
+    try {
+      setDataList(ApiResponse.loading());
+     
+      var resp = await _myRepo.addPickUpLocationPackageRepositoryApi(
+          context: context, query: data);
+      setDataList(ApiResponse.completed(resp));
+      return resp;
+    } catch (e) {
+      setDataList(ApiResponse.error(e.toString()));
+    }
+    return null;
   }
 }
 
@@ -513,45 +414,25 @@ class GetPackageItineraryViewModel with ChangeNotifier {
 class ChangeMobileViewModel with ChangeNotifier {
   final _myRepo = ChangeMobileRepository();
   ApiResponse<ChangeMobileModel> changeMobile = ApiResponse.initial();
-  bool isLoading = false;
+  // bool isLoading = false;
   void setDataList(ApiResponse<ChangeMobileModel> response) {
     changeMobile = response;
     notifyListeners();
   }
 
-  Future<ChangeMobileModel?> changeMobileApi(
-      {required BuildContext context,
-      required Map<String, dynamic> body,
-      required String bookingId}) async {
+  Future<ChangeMobileModel?> changeMobileApi({
+    required Map<String, dynamic> body,
+  }) async {
     try {
       setDataList(ApiResponse.loading());
-      isLoading = true;
-      notifyListeners();
-      _myRepo.changeMobile(context: context, body: body).then((onValue) {
-        if (onValue?.status?.httpCode == '200') {
-          setDataList(ApiResponse.completed(onValue));
 
-          Provider.of<GetPackageHistoryDetailByIdViewModel>(context,
-                  listen: false)
-              .fetchPackageHistoryDetailByIdViewModelApi(
-                  context, {"packageBookingId": bookingId}, bookingId);
-          // print("Signup Success");
-          Utils.toastSuccessMessage("Contact Changed  Successfully");
-          isLoading = false;
-          notifyListeners();
-        }
-        context.pop();
-      }).onError((error, stactrace) {
-        setDataList(ApiResponse.error(error.toString()));
-        isLoading = false;
-        notifyListeners();
-      });
+      var rsep = await _myRepo.changeMobile(body: body);
+      setDataList(ApiResponse.completed(rsep));
+      // Utils.toastSuccessMessage("Contact Changed  Successfully");
+      return rsep;
     } catch (e) {
-      isLoading = false;
-      notifyListeners();
-    } finally {
-      isLoading = false;
-      notifyListeners();
+      debugPrint('Change Mobile Api Failed $e');
+      setDataList(ApiResponse.error(e.toString()));
     }
     return null;
   }

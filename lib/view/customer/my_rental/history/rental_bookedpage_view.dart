@@ -63,44 +63,29 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
         .fetchRentalBookedViewDetialViewModelApi(context, {
       "id": widget.bookedId,
     }).then((onValue) {
-      if (onValue?.status.httpCode == '200') {
-        getPaymentDetail(paymentId: onValue?.data.paymentId ?? '');
+     
+      getPaymentDetail(paymentId: widget.paymentId);
         getissueDetail();
-        if (onValue?.data.bookingStatus == 'CANCELLED') {
+     
           Provider.of<GetPaymentRefundViewModel>(context, listen: false)
               .getPaymentRefundApi(
-                  context: context, paymentId: onValue?.data.paymentId ?? '');
-        }
-      }
+              context: context, paymentId: widget.paymentId);
+        
+      
     });
   }
 
   void getissueDetail() {
     Provider.of<RaiseissueViewModel>(context, listen: false)
         .getIssueByBookingId(
-          
             bookingId: widget.bookedId,
-            userId: widget.useriD,
+            // userId: widget.useriD,
             bookingType: 'RENTAL_BOOKING');
   }
 
-  Future<void> getPaymentDetail({required String paymentId}) async {
-    setState(() {
-      loading = true;
-    });
-
-    debugPrint('paymentid:...${widget.paymentId}');
-
-    await Provider.of<RentalPaymentDetailsViewModel>(context, listen: false)
-        .rentalPaymentDetail(context: context, paymentId: paymentId)
-        .then((onValue) {
-      if (onValue?.status?.httpCode == '200') {
-        setState(() {
-          paymentDetails = onValue?.data;
-          loading = false;
-        });
-      }
-    });
+  void getPaymentDetail({required String paymentId}) {
+    Provider.of<RentalPaymentDetailsViewModel>(context, listen: false)
+        .rentalPaymentDetail(paymentId: paymentId);
   }
 
   @override
@@ -142,7 +127,7 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                 "Status.completed") {
               var fulldata = viewModel.dataList.data?.data;
               DateTime dateTime1 = DateTime.fromMillisecondsSinceEpoch(
-                (int.tryParse(fulldata?.createdDate ?? '')) ?? 0 * 1000,
+                fulldata?.createdDate ?? 0,
               );
 
               DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
@@ -188,15 +173,15 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                     carType: fulldata?.carType ?? "",
                     brandName: fulldata?.vehicle.brandName?.toString() ?? '',
                     /////////////////Guest Detail////////////////////////
-                    guestId: fulldata?.guest.guestId?.toString() ?? '',
-                    firstName: fulldata?.guest.guestName?.toString() ?? '',
-                    lastName: fulldata?.guest.guestName == '' ||
-                            fulldata?.guest.guestName != null
+                    guestId: fulldata?.guest?.guestId?.toString() ?? '',
+                    firstName: fulldata?.guest?.guestName?.toString() ?? '',
+                    lastName: fulldata?.guest?.guestName == '' ||
+                            fulldata?.guest?.guestName != null
                         ? ""
                         : "",
                     contact:
-                        '+${fulldata?.guest.countryCode?.toString() ?? '971'} ${fulldata?.guest.guestMobile?.toString()}',
-                    gender: fulldata?.guest.gender?.toString() ?? '',
+                        '+${fulldata?.guest?.countryCode?.toString() ?? '971'} ${fulldata?.guest?.guestMobile?.toString()}',
+                    gender: fulldata?.guest?.gender?.toString() ?? '',
                     btn: Container(),
                   ),
                   const SizedBox(height: 10),
@@ -713,7 +698,7 @@ class _RentalBookingContainerState extends State<RentalBookingContainer> {
     );
   }
 
-Widget bookingItem({required String lable, required String value}) {
+  Widget bookingItem({required String lable, required String value}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -816,7 +801,7 @@ class VechicleDetailsContainer extends StatelessWidget {
     );
   }
 
-Widget vehicleItem({required String lable, required String value}) {
+  Widget vehicleItem({required String lable, required String value}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
