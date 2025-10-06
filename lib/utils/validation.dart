@@ -134,10 +134,12 @@ Future<String?> pickDateRange(BuildContext context) async {
   }
   return null;
 }
+
 String timeFormate(int? date) {
   return DateFormat('h:mm a')
       .format(DateTime.fromMillisecondsSinceEpoch(date ?? 0));
 }
+
 String formatDateRange(DateTimeRange range) {
   final DateFormat formatter = DateFormat('dd/MM/yyyy'); // or 'yyyy-MM-dd'
   return "${formatter.format(range.start)} - ${formatter.format(range.end)}";
@@ -215,6 +217,7 @@ Future<String?> pickSfDateRange(BuildContext context) async {
     },
   );
 }
+
 Future<List<String>?> selectMultipleSfDate(BuildContext context) async {
   List<DateTime> selectedDates = [];
 
@@ -314,6 +317,7 @@ String mapDoubleToDiscount(double? value) {
     // or use value.toString() if decimals are possible
   }
 }
+
 bool isBestTimeWithinRange({
   required String bestTime,
   required String fromHour,
@@ -373,5 +377,62 @@ String formatToIST(int? epochSeconds) {
   return '${DateFormat('HH:mm').format(adjustedTime)} GMT (+05:30)';
 }
 
+bool isBlockedPickupTime(DateTime pickupTime) {
+  // Start of blocked period: today at 00:00
+  final blockStart =
+      DateTime(pickupTime.year, pickupTime.month, pickupTime.day, 0, 0);
 
+  // End of blocked period: today at 02:00
+  final blockEnd =
+      DateTime(pickupTime.year, pickupTime.month, pickupTime.day, 2, 0);
 
+  // Check if pickupTime is inside blocked period
+  if (pickupTime.isAfter(blockStart) && pickupTime.isBefore(blockEnd)) {
+    return true; // blocked
+  }
+
+  return false; // allowed
+}
+
+bool isValidPickupTime({
+  required String pickupTimeStr, // "HH:mm"
+  required String startTimeStr, // "HH:mm"
+  required String endTimeStr, // "HH:mm"
+  required int activityHours, // in hours
+}) {
+  // Parse strings to hours/minutes
+  final pickupParts = pickupTimeStr.split(":");
+  final startParts = startTimeStr.split(":");
+  final endParts = endTimeStr.split(":");
+
+  final pickupMinutes =
+      int.parse(pickupParts[0]) * 60 + int.parse(pickupParts[1]);
+  final startMinutes = int.parse(startParts[0]) * 60 + int.parse(startParts[1]);
+  final endMinutes = int.parse(endParts[0]) * 60 + int.parse(endParts[1]);
+
+  // Blocked period: 00:00 → 02:00
+  if (pickupMinutes >= 0 && pickupMinutes < 120) {
+    return false;
+  }
+
+  // Earliest pickup: 2 hours before activity start
+  final earliestPickup = startMinutes - 120;
+
+  // Latest pickup: end time - 2 hours - activity duration
+  final latestPickup = endMinutes - 120 - (activityHours * 60);
+  debugPrint(
+      'validation ${pickupMinutes >= earliestPickup && pickupMinutes <= latestPickup}');
+  // Pickup must be **between earliest and latest**
+  return pickupMinutes >= earliestPickup && pickupMinutes <= latestPickup;
+}
+
+DateTime parseTime(String timeStr, {DateTime? date}) {
+  // Expects format "HH:mm" or "hh:mm" in 24h format
+  final now = date ?? DateTime.now();
+  final parsed = DateFormat("HH:mm").parse(timeStr);
+  return DateTime(now.year, now.month, now.day, parsed.hour, parsed.minute);
+}
+
+int parseActivityHours(String hoursStr) {
+  return (double.tryParse(hoursStr) ?? 0.0).toInt();
+}

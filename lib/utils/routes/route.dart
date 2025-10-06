@@ -354,7 +354,7 @@ final GoRouter myRouter = GoRouter(
               final data = state.extra as Map<String, dynamic>;
 
               return PackagePageViewDetails(
-                // userId: data['user'],
+                userType: data['userType'],
                 packageBookID: data['bookingId'],
                 paymentId: data['paymentId'],
                 bookingStatus: data['bookingStatus'],

@@ -130,6 +130,8 @@ class _RentalBookingManagementScreenState
             children: [
               Expanded(
                 child: CustomSearchField(
+                  fillColor: background,
+                  filled: true,
                   controller: _searchController,
                   serchHintText: 'Search',
                   onChanged: onSearchChanged,

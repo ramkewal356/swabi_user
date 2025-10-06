@@ -4,8 +4,10 @@ import 'package:flutter_cab/utils/routes/route.dart';
 import 'package:flutter_cab/view_model/activity_management_view_model.dart';
 import 'package:flutter_cab/view_model/auth_view_model.dart';
 import 'package:flutter_cab/view_model/bid_view_model.dart';
+import 'package:flutter_cab/view_model/driver_view_model.dart';
 import 'package:flutter_cab/view_model/enquiry_view_model.dart';
 import 'package:flutter_cab/view_model/home_page_view_model.dart';
+import 'package:flutter_cab/view_model/itinerary_view_model.dart';
 import 'package:flutter_cab/view_model/notification_view_model.dart';
 import 'package:flutter_cab/view_model/offer_view_model.dart';
 import 'package:flutter_cab/view_model/package_management_view_model.dart';
@@ -17,6 +19,7 @@ import 'package:flutter_cab/view_model/rental_management_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
 import 'package:flutter_cab/view_model/user_profile_view_model.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
+import 'package:flutter_cab/view_model/vehicle_view_model.dart';
 import 'package:flutter_cab/view_model/vendor_dashboard_view_model.dart';
 import 'package:flutter_cab/view_model/vendor_view_model.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -102,7 +105,10 @@ Future<void> main() async {
             create: (create) => PackageManagementViewModel()),
         ChangeNotifierProvider(
             create: (create) => ActivityManagementViewModel()),
-        ChangeNotifierProvider(create: (create) => RentalManagementViewModel())
+        ChangeNotifierProvider(create: (create) => RentalManagementViewModel()),
+        ChangeNotifierProvider(create: (create) => ItineraryViewModel()),
+        ChangeNotifierProvider(create: (create) => VehicleViewModel()),
+        ChangeNotifierProvider(create: (create) => DriverViewModel()),
 
       ],
       child: const MyApp(),

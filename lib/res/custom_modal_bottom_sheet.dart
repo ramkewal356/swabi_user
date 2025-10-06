@@ -8,11 +8,15 @@ class CustomModalbottomsheet extends StatefulWidget {
   final Widget child;
   final bool? exit;
   final bool isChangePassword;
+  final double? buttonHeight;
+  final bool isDismissible;
   const CustomModalbottomsheet(
       {super.key,
       required this.title,
       required this.child,
       this.exit = false,
+      this.buttonHeight,
+      this.isDismissible = false,
       this.isChangePassword = false});
 
   @override
@@ -55,17 +59,18 @@ class _CustomModalbottomsheetState extends State<CustomModalbottomsheet> {
             ),
           )
         : CustomButtonSmall(
-        btnHeading: widget.title,
-        onTap: () {
-          widget.exit == true ? context.pop() : null;
-          _showModalBottomSheet(context);
-        });
+            btnHeading: widget.title,
+            height: widget.buttonHeight,
+            onTap: () {
+              widget.exit == true ? context.pop() : null;
+              _showModalBottomSheet(context);
+            });
   }
 
   Future<void> _showModalBottomSheet(BuildContext context) {
     return showModalBottomSheet(
         context: context,
-        isDismissible: false,
+        isDismissible: widget.isDismissible,
         backgroundColor: background,
         isScrollControlled: true,
         shape: const RoundedRectangleBorder(

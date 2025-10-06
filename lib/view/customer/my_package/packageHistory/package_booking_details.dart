@@ -21,26 +21,28 @@ import 'package:flutter_cab/utils/dimensions.dart';
 import 'package:flutter_cab/utils/string_extenstion.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/utils/utils.dart';
+import 'package:flutter_cab/utils/validation.dart';
 import 'package:flutter_cab/view/customer/my_rental/cancel_booking.dart';
+import 'package:flutter_cab/view/vendor/package_booking_management.dart/assign_and_change_driver_screen.dart';
+import 'package:flutter_cab/view/vendor/package_booking_management.dart/assign_and_change_vehicle_screen.dart';
+import 'package:flutter_cab/view/vendor/package_booking_management.dart/create_and_change_itinerary_screen.dart';
+import 'package:flutter_cab/view_model/itinerary_view_model.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:flutter_cab/view_model/raise_issue_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
 import 'package:go_router/go_router.dart';
-// import 'package:google_api_headers/google_api_headers.dart';
-
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../../../data/response/status.dart';
 import '../../../../view_model/package_view_model.dart';
 
 class PackagePageViewDetails extends StatefulWidget {
-  // final String userId;
+  final String userType;
   final String packageBookID;
   final String paymentId;
   final String bookingStatus;
   const PackagePageViewDetails(
       {super.key,
-      // required this.userId,
+      required this.userType,
       required this.packageBookID,
       required this.paymentId,
       required this.bookingStatus});
@@ -73,14 +75,25 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
   String primaryCountryCode = '971';
   String? selectedText;
   FocusNode? focusNode;
+  String selectedTime = '';
+  String? selectedActivity;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       getPackageDetails();
-      if (widget.bookingStatus == "CANCELLED") {
+      if (widget.bookingStatus == "CANCELLED" && widget.paymentId.isNotEmpty) {
         getrefund();
       }
+      context.read<ItineraryViewModel>().addListener(() {
+        final status =
+            context.read<ItineraryViewModel>().addOrEditItinerary.status;
+        if (status == Status.completed) {
+          getItenery(); // refresh itinerary automatically
+        }
+      });
+    
     });
   }
 
@@ -91,7 +104,9 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
             bookingId: widget.packageBookID);
     getItenery();
     getIssue();
-    getPaymentDetail();
+    if (widget.paymentId.isNotEmpty) {
+      getPaymentDetail();
+    }
   }
 
   void getItenery() {
@@ -162,6 +177,19 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
         .rentalPaymentDetail(paymentId: widget.paymentId);
   }
 
+  Color _statusColor(String status) {
+    switch (status.toUpperCase()) {
+      case "BOOKED":
+        return Colors.green;
+      case "CANCELLED":
+        return Colors.red;
+      case "COMPLETED":
+        return Colors.blueGrey;
+      default:
+        return Colors.orange;
+    }
+  }
+
   @override
   void dispose() {
     cancelController.dispose();
@@ -185,7 +213,7 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
         .data
         ?.data;
 
-    DateTime dateTime = DateTime.now();
+    // DateTime dateTime = DateTime.now();
     return Scaffold(
       backgroundColor: bgGreyColor,
       appBar: const CustomAppBar(
@@ -251,7 +279,7 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                                   fontWeight: FontWeight.w600)),
                           TextSpan(
                               text:
-                                  '${double.tryParse(data?.packagePrice ?? '')?.round()}',
+                                  '${double.tryParse(((data?.totalPayableAmount ?? '0').isEmpty ? (data?.packagePrice ?? '0') : (data?.totalPayableAmount ?? '0')))?.round()}',
                               style: const TextStyle(
                                   color: btnColor, fontWeight: FontWeight.w600))
                         ]))
@@ -296,9 +324,7 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                           padding: const EdgeInsets.symmetric(horizontal: 8),
                           // width: 90,
                           decoration: BoxDecoration(
-                              color: data?.bookingStatus == 'CANCELLED'
-                                  ? redColor
-                                  : greenColor,
+                              color: _statusColor(data?.bookingStatus ?? ''),
                               borderRadius: BorderRadius.circular(5)),
                           child: Center(
                               child: Text(
@@ -472,10 +498,10 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                   ],
                 ),
               ),
-              paymentDetails != null
+              (paymentDetails != null && widget.paymentId.isNotEmpty)
                   ? titleText(title: 'Payment Details')
-                  : Container(),
-              paymentDetails != null
+                  : SizedBox.shrink(),
+              (paymentDetails != null && widget.paymentId.isNotEmpty)
                   ? CommonContainer(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 10),
@@ -504,25 +530,23 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                           textItem(
                               lable: 'Total Amount',
                               value:
-                                  'AED ${double.tryParse(paymentDetails.amount.toString()) ?? 0 / 100}'),
+                                  'AED ${(paymentDetails.amount ?? 0) / 100}'),
                           textItem(
                             lable: 'Payment Date',
-                            value: DateFormat('dd-MM-yyyy').format(dateTime),
+                            value: dateFormat(
+                                (paymentDetails.createdAt ?? 0) * 1000),
                           ),
                           textItem(
                               lable: 'Payment Time',
-                              value: paymentDetails.createdAt != null
-                                  ? DateFormat('hh:mm a').format(
-                                      DateTime.fromMicrosecondsSinceEpoch(
-                                          paymentDetails.createdAt! * 1000))
-                                  : ''),
+                              value:
+                                  formatToIST(paymentDetails.createdAt ?? 0)),
                         ],
                       ),
                     )
-                  : Container(),
+                  : SizedBox.shrink(),
               paymentRefund != null && data?.bookingStatus == "CANCELLED"
                   ? titleText(title: 'Refund Details')
-                  : Container(),
+                  : SizedBox.shrink(),
               paymentRefund != null && data?.bookingStatus == "CANCELLED"
                   ? const Padding(
                       padding: EdgeInsets.symmetric(vertical: 5),
@@ -649,10 +673,24 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                   );
                 },
               ),
-              titleText(title: 'Package Activities'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  titleText(title: 'Activities Details'),
+                  (widget.userType == 'USER' ||
+                          data?.bookingStatus == "CANCELLED" ||
+                          data?.bookingStatus == "COMPLETED")
+                      ? SizedBox.shrink()
+                      : CreateAndChangeItineraryScreen(
+                          data: data,
+                          getItenaryData: getItenaryData,
+                        )
+                ],
+              ),
               if (getItenaryData == null &&
                   (data?.bookingStatus != 'CANCELLED' &&
-                      data?.bookingStatus != 'COMPLETED'))
+                      data?.bookingStatus != 'COMPLETED' &&
+                      widget.userType == 'USER'))
                 Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: Text(
@@ -669,26 +707,6 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                       itemBuilder: (context, index) {
                         final packageActivityList =
                             getItenaryData.itineraryDetails[index];
-                        // final acticityImage =
-                        //     packageActivityList.activity.activityImageUrl;
-
-                        // for (var activity in getItenaryData.itineraryDetails) {
-                        //   List<String> activityParticipantTypes =
-                        //       activity.activity.participantType;
-                        //   allParticipantTypes.addAll(activityParticipantTypes);
-                        // }
-
-                        // // Remove duplicates if needed
-                        // allParticipantTypes =
-                        //     allParticipantTypes.toSet().toList();
-                        // sutableFor = data?.pkg.packageActivities
-                        //         .expand((activity) => activity
-                        //             .activity.participantType
-                        //             .map((type) => type.toString())
-                        //             .toList())
-                        //         .toSet()
-                        //         .toList() ??
-                        //     [];
 
                         return ActivityContainer(
                           days: packageActivityList.day.toString(),
@@ -752,8 +770,9 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                               : packageActivityList?.day,
                           pickupDate: '',
                           pickupTime: '',
-                          actyImage: List.generate(acticityImage?.length ?? 0,
-                              (index) => acticityImage![index]),
+                          // actyImage: List.generate(acticityImage?.length ?? 0,
+                          //     (index) => acticityImage?[index] ?? ''),
+                          actyImage: acticityImage ?? [],
                           activityName:
                               packageActivityList?.activity.activityName ?? '',
                           description:
@@ -779,7 +798,32 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                         );
                       },
                     ),
-              titleText(title: 'Vehicle Details'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  titleText(title: 'Vehicle Details'),
+                  widget.userType == 'VENDOR'
+                      ? (data?.bookingStatus != "CANCELLED" &&
+                                  data?.bookingStatus != 'COMPLETED' &&
+                                  (data?.assignedVehicleOnPackageBookings
+                                          .isEmpty ==
+                                      false) ||
+                              getItenaryData != null)
+                          ? AssignAndChangeVehicleScreen(
+                              packageBookingId: data?.packageBookingId ?? '',
+                              assignedVehicleOnPackageBooking:
+                                  data?.assignedVehicleOnPackageBookings,
+                              bookingDate: data?.bookingDate ?? '',
+                              endDate: data?.endDate ?? '',
+                              noOfDays: int.parse(data?.pkg.noOfDays ?? '0'),
+                              onSuccess: () {
+                                getPackageDetails();
+                              },
+                            )
+                          : SizedBox.shrink()
+                      : SizedBox.shrink()
+                ],
+              ),
               data?.assignedVehicleOnPackageBookings.isEmpty == true
                   ? Container(
                       padding: const EdgeInsets.symmetric(
@@ -841,7 +885,49 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                       itemCount:
                           data?.assignedVehicleOnPackageBookings.length ?? 0,
                     ),
-              titleText(title: 'Driver Details'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  titleText(title: 'Driver Details'),
+                  widget.userType == 'VENDOR'
+                      ? (data?.bookingStatus != "CANCELLED" &&
+                                  data?.bookingStatus != 'COMPLETED' &&
+                                  (data?.assignedDriverOnPackageBookings
+                                          .isEmpty ==
+                                      false) ||
+                              (data?.assignedVehicleOnPackageBookings
+                                      .isNotEmpty ==
+                                  true))
+                          ? CustomButtonSmall(
+                              height: 40,
+                              btnHeading:
+                                  (data?.assignedDriverOnPackageBookings ?? [])
+                                          .isEmpty
+                                      ? 'Add Driver'
+                                      : "Change Driver",
+                              onTap: () {
+                                _showBottomSheetModal(
+                                    context,
+                                    (setState) => AssignAndChangeDriverScreen(
+                                          packageBookingId:
+                                              data?.packageBookingId ?? '',
+                                          assignedDriverOnPackageBooking:
+                                              data?.assignedDriverOnPackageBookings ??
+                                                  [],
+                                          bookingDate: data?.bookingDate ?? '',
+                                          endDate: data?.endDate ?? '',
+                                          noOfDays: int.parse(
+                                              data?.pkg.noOfDays ?? '0'),
+                                          onSuccess: () {
+                                            getPackageDetails();
+                                          },
+                                        ));
+                              },
+                            )
+                          : SizedBox.shrink()
+                      : SizedBox.shrink()
+                ],
+              ),
               data?.assignedDriverOnPackageBookings.isEmpty == true
                   ? Container(
                       padding: const EdgeInsets.symmetric(
@@ -895,7 +981,8 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   (data?.bookingStatus == "CANCELLED" ||
-                          data?.bookingStatus == "COMPLETED")
+                          data?.bookingStatus == "COMPLETED" ||
+                          widget.userType == 'VENDOR')
                       ? Container()
                       : (getIssueByBookingId?.data ?? []).isEmpty
                           ? CustomButtonSmall(
@@ -1175,7 +1262,6 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
       padding: const EdgeInsets.only(bottom: 5),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
             flex: 4,

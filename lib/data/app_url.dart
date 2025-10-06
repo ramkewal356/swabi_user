@@ -113,4 +113,24 @@ class AppUrl {
   //package booking management
   static var getAllpackageBookingListUrl =
       '/package_booking/get_package_booking_list';
+  static var updateItineraryUrl = '/package_booking/update_itinerary';
+  static var addItineraryUrl = '/package_booking/create_itinerary';
+
+  /// vehicle management
+  static var getAllVehicleListUrl = '/vehicle/get_vehicle_list';
+  static var getAvailableVehicleListUrl =
+      '/vehicle/get_available_vehicle_by_package_booking_id';
+  static var assignVehicleUrl =
+      '/package_booking/assign_vehicle_to_package_booking';
+  static var addVehicleUrl = '/vehicle/add_vehicle';
+  static var updateVehicleUrl = '/vehicle/update_vehicle';
+  static var getVehicleByIdUrl = '/vehicle/get_vehicle_by_id';
+  static var activateVehicleUrl = '/vehicle/activate_vehicle';
+  // driver management
+  static var getAllDriverListUrl = '/driver/get_driver_list';
+  static var getAvailableDriverListUrl =
+      '/driver/get_available_driver_by_package_booking_id';
+  static var assignDriverUrl =
+      '/package_booking/assign_driver_to_package_booking';
+
 }

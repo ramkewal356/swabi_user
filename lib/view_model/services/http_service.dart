@@ -17,14 +17,7 @@ class HttpService<T> {
   final String? endURL;
   final HttpMethodType? methodType;
   Map<String, dynamic>? queryParameters;
-  // {
-  //   "key1":1,
-  //   "key1":1,
-  //   "key1":1,
-  //   "key1":1,
-  //   "key1":"1",
-  //   "key1":"1"
-  // }
+ 
   final HttpBodyType? bodyType;
   Map<String, dynamic>? body;
   Map<String, String>? headers;

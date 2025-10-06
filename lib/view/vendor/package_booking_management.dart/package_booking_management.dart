@@ -10,19 +10,11 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../data/response/status.dart';
-import 'dart:isolate';
+
 
 class PackageBookingManagement extends StatefulWidget {
   const PackageBookingManagement({super.key});
-  void heavyTask(SendPort sendPort) {
-    // A CPU-heavy calculation (example)
-    int sum = 0;
-    for (int i = 0; i < 500000000; i++) {
-      sum += i;
-    }
-    // Send result back to main isolate
-    sendPort.send(sum);
-  }
+ 
 
   @override
   State<PackageBookingManagement> createState() =>
@@ -145,6 +137,8 @@ class _PackageBookingManagementState extends State<PackageBookingManagement>
             children: [
               Expanded(
                 child: CustomSearchField(
+                  fillColor: background,
+                  filled: true,
                   controller: _searchController,
                   serchHintText: 'Search',
                   onChanged: onSearchChanged,
@@ -233,10 +227,10 @@ class _PackageBookingManagementState extends State<PackageBookingManagement>
                               onTap: () {
                                 context.push("/package/packageDetailsPageView",
                                     extra: {
-                                      // "user": '',
+                                      "userType": 'VENDOR',
                                       "bookingId":
                                           data?.packageBookingId.toString(),
-                                      "paymentId": data?.paymentId,
+                                      "paymentId": data?.paymentId ?? '',
                                       "bookingStatus": data?.bookingStatus
                                     }).then((onValue) {
                                   getAllPackageList(isSort: true);

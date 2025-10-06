@@ -197,7 +197,7 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
                               onTap: () {
                                 context.push("/package/packageDetailsPageView",
                                     extra: {
-                                      // "user": widget.userID,
+                                      "userType": 'USER',
                                       "bookingId": data?.packageBookingId,
                                       "paymentId": data?.paymentId,
                                       "bookingStatus": data?.bookingStatus
