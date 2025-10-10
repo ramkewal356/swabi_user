@@ -159,8 +159,8 @@ class _AssignAndChangeDriverScreenState
           // Title
           Text(
             widget.assignedDriverOnPackageBooking?.isNotEmpty == true
-                ? "Change Vehicle"
-                : "Assign Vehicle",
+                ? "Change Driver"
+                : "Assign Driver",
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,

@@ -136,27 +136,15 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen>
                 radius: 20,
                 child: (userdata?.profileImageUrl ?? '').isEmpty
                     ? const Icon(Icons.person)
-                    : Image.network(
-                        userdata?.profileImageUrl ?? '',
-                        fit: BoxFit.cover,
+                    : ClipOval(
+                        child: Image.network(
+                          userdata?.profileImageUrl ?? '',
+                         
+                        ),
                       ),
               ),
             ),
-            // leading: Builder(
-            //   builder: (BuildContext context) {
-            //     return IconButton(
-            //       icon: const Icon(
-            //         Icons.notes_rounded,
-            //         size: 26,
-            //         // color: Colors.white,
-            //       ),
-            //       onPressed: () {
-            //         Scaffold.of(context)
-            //             .openDrawer(); // Use the context from Builder
-            //       },
-            //     );
-            //   },
-            // ),
+           
 
             centerTitle: true,
             title: _selectedIndex == 0

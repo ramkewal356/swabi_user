@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
 import 'package:flutter_cab/model/calculate_price_model.dart';
-import 'package:flutter_cab/model/change_mobile_model.dart';
 import 'package:flutter_cab/model/common_model.dart';
 import 'package:flutter_cab/model/get_package_details_by_id_model.dart';
 import 'package:flutter_cab/model/package_models.dart';
@@ -413,14 +412,14 @@ class GetPackageItineraryViewModel with ChangeNotifier {
 
 class ChangeMobileViewModel with ChangeNotifier {
   final _myRepo = ChangeMobileRepository();
-  ApiResponse<ChangeMobileModel> changeMobile = ApiResponse.initial();
+  ApiResponse<CommonModel> changeMobile = ApiResponse.initial();
   // bool isLoading = false;
-  void setDataList(ApiResponse<ChangeMobileModel> response) {
+  void setDataList(ApiResponse<CommonModel> response) {
     changeMobile = response;
     notifyListeners();
   }
 
-  Future<ChangeMobileModel?> changeMobileApi({
+  Future<CommonModel?> changeMobileApi({
     required Map<String, dynamic> body,
   }) async {
     try {
@@ -428,7 +427,7 @@ class ChangeMobileViewModel with ChangeNotifier {
 
       var rsep = await _myRepo.changeMobile(body: body);
       setDataList(ApiResponse.completed(rsep));
-      // Utils.toastSuccessMessage("Contact Changed  Successfully");
+      Utils.toastSuccessMessage(rsep.data?.body ?? '');
       return rsep;
     } catch (e) {
       debugPrint('Change Mobile Api Failed $e');

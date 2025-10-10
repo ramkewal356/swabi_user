@@ -1,8 +1,9 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/app_url.dart';
 import 'package:flutter_cab/model/calculate_price_model.dart';
-import 'package:flutter_cab/model/change_mobile_model.dart';
 import 'package:flutter_cab/model/common_model.dart';
 import 'package:flutter_cab/model/get_package_details_by_id_model.dart';
 import 'package:flutter_cab/model/package_models.dart';
@@ -273,7 +274,7 @@ class GetPackageItineraryRepository {
 
 ///Get Package Itinerary Repo
 class ChangeMobileRepository {
-  Future<ChangeMobileModel?> changeMobile(
+  Future<CommonModel> changeMobile(
       {required Map<String, dynamic> body}) async {
     var http = HttpService(
         baseURL: AppUrl.baseUrl,
@@ -285,10 +286,14 @@ class ChangeMobileRepository {
     try {
       Response<dynamic>? response = await http.request<dynamic>();
       debugPrint('response...$response');
-      var resp = ChangeMobileModel.fromJson(response?.data);
+      final parsedData = response?.data is String
+          ? json.decode(response?.data)
+          : response?.data;
+
+      var resp = CommonModel.fromJson(parsedData);
       return resp;
     } catch (error) {
-      // ignore: use_build_context_synchronously
+      debugPrint("Change Mobile Repo Field $error");
       http.handleErrorResponse(error: error);
       rethrow;
     }

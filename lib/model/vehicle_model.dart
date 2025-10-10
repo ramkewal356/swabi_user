@@ -31,7 +31,7 @@ class VehicleModel {
 
 class Data {
   List<Content>? content;
-  String? pageable;
+  Pageable? pageable;
   int? totalElements;
   int? totalPages;
   bool? last;
@@ -61,7 +61,9 @@ class Data {
             ? []
             : List<Content>.from(
                 json["content"]!.map((x) => Content.fromJson(x))),
-        pageable: json["pageable"],
+        pageable: (json["pageable"] is Map<String, dynamic>)
+            ? Pageable.fromJson(json["pageable"])
+            : null,
         totalElements: json["totalElements"],
         totalPages: json["totalPages"],
         last: json["last"],
@@ -166,6 +168,41 @@ class Content {
             images == null ? [] : List<dynamic>.from(images!.map((x) => x)),
         "vehicleStatus": vehicleStatus,
         "vehicleDocUrl": vehicleDocUrl,
+      };
+}
+class Pageable {
+  Sort? sort;
+  int? offset;
+  int? pageNumber;
+  int? pageSize;
+  bool? paged;
+  bool? unpaged;
+
+  Pageable({
+    this.sort,
+    this.offset,
+    this.pageNumber,
+    this.pageSize,
+    this.paged,
+    this.unpaged,
+  });
+
+  factory Pageable.fromJson(Map<String, dynamic> json) => Pageable(
+        sort: json["sort"] == null ? null : Sort.fromJson(json["sort"]),
+        offset: json["offset"],
+        pageNumber: json["pageNumber"],
+        pageSize: json["pageSize"],
+        paged: json["paged"],
+        unpaged: json["unpaged"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "sort": sort?.toJson(),
+        "offset": offset,
+        "pageNumber": pageNumber,
+        "pageSize": pageSize,
+        "paged": paged,
+        "unpaged": unpaged,
       };
 }
 

@@ -25,7 +25,6 @@ import 'package:flutter_cab/view/customer/my_rental/history/rental_bookedpage_vi
 import 'package:flutter_cab/view/customer/my_rental/history/rental_cancel_page_view.dart';
 import 'package:flutter_cab/view/customer/my_rental/history/rental_history_managment_screen.dart';
 import 'package:flutter_cab/view/customer/my_rental/rental_form.dart';
-// import 'package:flutter_cab/view/dashboard/tourPackage/addMemberDesign.dart';
 import 'package:flutter_cab/view/customer/my_package/package_screen.dart';
 import 'package:flutter_cab/view/customer/my_package/package_booking_member_screen.dart';
 import 'package:flutter_cab/view/customer/my_package/package_viewdetails_screen.dart';
@@ -50,6 +49,7 @@ import 'package:flutter_cab/view/vendor/package_management/add_and_edit_package_
 import 'package:flutter_cab/view/vendor/package_management/package_management_screen.dart';
 import 'package:flutter_cab/view/vendor/rental_booking_management_screen/rental_booking_details_screen.dart';
 import 'package:flutter_cab/view/vendor/rental_booking_management_screen/rental_booking_management_screen.dart';
+import 'package:flutter_cab/view/vendor/vehicle_management_screen/vehicle_management_screen.dart';
 import 'package:flutter_cab/view/vendor/vendor_dashboard_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -219,7 +219,7 @@ final GoRouter myRouter = GoRouter(
       },
     ),
     GoRoute(
-      path: '/OfferDetails',
+      path: '/offerDetails',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (BuildContext context, GoRouterState state) {
         return const OfferdetailsScreen();
@@ -532,6 +532,9 @@ final GoRouter myRouter = GoRouter(
             path: 'package_booking_management',
             builder: (context, state) => PackageBookingManagement(),
           ),
+          GoRoute(
+              path: 'vehicle_management',
+              builder: (context, state) => const VehicleManagementScreen()),
         ])
   ],
 );

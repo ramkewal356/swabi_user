@@ -136,13 +136,12 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
           "packageBookingId": widget.packageBookID,
           "mobile": primaryContactController.text,
           "countryCode": primaryCountryCode,
-          "alternateMobile": countryCode,
-          "alternateMobileCountryCode": secondaryContactController.text
+          "alternateMobile": secondaryContactController.text,
+          "alternateMobileCountryCode": countryCode
         },
       ).then((onValue) {
         if (onValue?.status?.httpCode == "200") {
           Navigator.pop(context); // close bottom sheet safely
-          Utils.toastSuccessMessage(onValue?.data?.body ?? '');
           getPackageDetails(); // refresh safely
         } else {
           Navigator.pop(context);
@@ -239,10 +238,12 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
         } else if (viewModel.getPackageHistoryDetailById.status ==
             Status.completed) {
           var data = viewModel.getPackageHistoryDetailById.data?.data;
-          primaryCountryCode = data?.countryCode ?? '971';
-          countryCode = data?.alternateMobileCountryCode ?? '971';
-          primaryContactController.text = data?.mobile ?? '';
-
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            primaryCountryCode = data?.countryCode ?? '971';
+            countryCode = data?.alternateMobileCountryCode ?? '971';
+            primaryContactController.text = data?.mobile ?? '';
+            secondaryContactController.text = data?.alternateMobile ?? '';
+          });
           return ListView(
             children: [
               CommonContainer(
@@ -357,7 +358,8 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                         title: 'Primary Contact',
                         value: '+${data?.countryCode} ${data?.mobile}',
                         iconButton: data?.bookingStatus == "BOOKED"
-                            ? data?.alternateMobile.isEmpty == true
+                            ? (data?.alternateMobile.isEmpty == true &&
+                                    widget.userType != 'VENDOR')
                                 ? InkWell(
                                     onTap: () {
                                       _showBottomSheetModal(
@@ -389,7 +391,8 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                                 : const SizedBox.shrink()
                             : const SizedBox.shrink()),
                     data?.bookingStatus == "BOOKED"
-                        ? data?.alternateMobile.isNotEmpty == true
+                        ? (data?.alternateMobile.isNotEmpty == true &&
+                                widget.userType != 'VENDOR')
                             ? contactTile(
                                 title: 'Secondary Contact',
                                 value:
@@ -459,7 +462,8 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                             : data?.pickupLocation ?? 'N/A',
                         iconButton: data?.bookingStatus == "BOOKED"
                             ? data?.pickupLocation != "N/A" &&
-                                    data?.pickupLocation.isEmpty == true
+                                    (data?.pickupLocation.isEmpty == true &&
+                                        widget.userType != 'VENDOR')
                                 ? InkWell(
                                     onTap: () {
                                       _showBottomSheetModal(
@@ -809,17 +813,32 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                                           .isEmpty ==
                                       false) ||
                               getItenaryData != null)
-                          ? AssignAndChangeVehicleScreen(
-                              packageBookingId: data?.packageBookingId ?? '',
-                              assignedVehicleOnPackageBooking:
-                                  data?.assignedVehicleOnPackageBookings,
-                              bookingDate: data?.bookingDate ?? '',
-                              endDate: data?.endDate ?? '',
-                              noOfDays: int.parse(data?.pkg.noOfDays ?? '0'),
-                              onSuccess: () {
-                                getPackageDetails();
+                          ? CustomButtonSmall(
+                              height: 40,
+                              btnHeading:
+                                  (data?.assignedVehicleOnPackageBookings ?? [])
+                                          .isEmpty
+                                      ? 'Assign Vehicle'
+                                      : "Change Vehicle",
+                              onTap: () {
+                                _showBottomSheetModal(
+                                    context,
+                                    (setState) => AssignAndChangeVehicleScreen(
+                                          packageBookingId:
+                                              data?.packageBookingId ?? '',
+                                          assignedVehicleOnPackageBooking: data
+                                              ?.assignedVehicleOnPackageBookings,
+                                          bookingDate: data?.bookingDate ?? '',
+                                          endDate: data?.endDate ?? '',
+                                          noOfDays: int.parse(
+                                              data?.pkg.noOfDays ?? '0'),
+                                          onSuccess: () {
+                                            getPackageDetails();
+                                          },
+                                        ));
                               },
-                            )
+                            ) 
+                         
                           : SizedBox.shrink()
                       : SizedBox.shrink()
                 ],
@@ -903,7 +922,7 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                               btnHeading:
                                   (data?.assignedDriverOnPackageBookings ?? [])
                                           .isEmpty
-                                      ? 'Add Driver'
+                                      ? 'Assign Driver'
                                       : "Change Driver",
                               onTap: () {
                                 _showBottomSheetModal(
@@ -1003,7 +1022,8 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                               })
                           : const SizedBox(),
                   (data?.bookingStatus == "CANCELLED" ||
-                          data?.bookingStatus == 'COMPLETED')
+                          data?.bookingStatus == 'COMPLETED' ||
+                          widget.userType == 'VENDOR')
                       ? SizedBox.shrink()
                       : Padding(
                           padding: const EdgeInsets.symmetric(vertical: 5),
@@ -1040,7 +1060,7 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                                             }
                                           });
 
-                                          // controller.dispose();
+                                         
                                         },
                                       ));
                             },

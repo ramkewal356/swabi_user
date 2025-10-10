@@ -8,10 +8,10 @@ import 'package:flutter_cab/view_model/bid_accept_or_reject_model.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 
 class BidViewModel with ChangeNotifier {
-  int page = 0; // Track the current page
-  int pageSize = 10; // Number of items per page
-  bool isLastPage = false; // Track if the last page has been reached
-  bool isLoadingMore = false; // Track if more data is being loaded
+  int page = 0;
+  int pageSize = 10;
+  bool isLastPage = false;
+  bool isLoadingMore = false; 
 
   final _myRepo = BidRepository();
   ApiResponse<List<BidContent>> bidData = ApiResponse.initial();
