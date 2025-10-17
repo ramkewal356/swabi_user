@@ -171,7 +171,7 @@ class _ViewActivityScreenState extends State<ViewActivityScreen> {
                                 InfoRow(
                                     title: "Discount %",
                                     value:
-                                        "${data?.activityOfferMapping?.offer?.discountPercentage}%"),
+                                        "${data?.activityOfferMapping?.offer?.discountPercentage ?? 0}%"),
                                 InfoRow(
                                     title: "Created Date",
                                     value: DateFormat('dd-MM-yyyy').format(

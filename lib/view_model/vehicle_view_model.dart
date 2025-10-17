@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
 import 'package:flutter_cab/model/available_vehicle_model.dart';
 import 'package:flutter_cab/model/common_model.dart';
+import 'package:flutter_cab/model/get_vehicle_by_id_model.dart';
 import 'package:flutter_cab/model/vehicle_model.dart';
 import 'package:flutter_cab/respository/vehicle_repository.dart';
+import 'package:flutter_cab/utils/utils.dart';
 // import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 
@@ -15,6 +17,8 @@ class VehicleViewModel extends ChangeNotifier {
   final _myRepo = VehicleRepository();
   ApiResponse<List<Content>> getVehicleList = ApiResponse.initial();
   ApiResponse<VehicleModel> vehicleList = ApiResponse.initial();
+  ApiResponse<GetVehicleByIdModel> getVehicleDetails = ApiResponse.initial();
+
   ApiResponse<AvailableVehicleModel> availableVehicleList =
       ApiResponse.initial();
   ApiResponse<CommonModel> assignVehicle = ApiResponse.initial();
@@ -27,6 +31,10 @@ class VehicleViewModel extends ChangeNotifier {
     getVehicleList = response;
     notifyListeners();
   }
+  void setVehicleDetails(ApiResponse<GetVehicleByIdModel> response) {
+    getVehicleDetails = response;
+    notifyListeners();
+  }
   void setAvailableVehicleList(ApiResponse<AvailableVehicleModel> response) {
     availableVehicleList = response;
     notifyListeners();
@@ -34,6 +42,12 @@ class VehicleViewModel extends ChangeNotifier {
 
   void setAssignVehicle(ApiResponse<CommonModel> response) {
     assignVehicle = response;
+    notifyListeners();
+  }
+  ApiResponse<CommonModel> activeOrDeactive = ApiResponse.initial();
+
+  void activeDeactive(ApiResponse<CommonModel> response) {
+    activeOrDeactive = response;
     notifyListeners();
   }
   Future<void> getAllVehicleListApi(
@@ -129,6 +143,42 @@ class VehicleViewModel extends ChangeNotifier {
       debugPrint("Assign Vehicle Api View Model Field $e");
       setAssignVehicle(ApiResponse.error(e.toString()));
       rethrow;
+    }
+  }
+  Future<void> getVehicleByIdApi({required String vehicleId}) async {
+    if (vehicleId.isEmpty) {
+      setVehicleDetails(
+          ApiResponse.error("Vehicle ID cannot be null or empty"));
+      return;
+    }
+    Map<String, dynamic> query = {
+      "vehicleId": vehicleId,
+    };
+    try {
+      setVehicleDetails(ApiResponse.loading());
+      var resp = await _myRepo.getVehicleByIdApi(query: query);
+      setVehicleDetails(ApiResponse.completed(resp));
+      debugPrint("Get Vehicle By Id Api success ${resp.toJson()}");
+    } catch (e) {
+      debugPrint('error $e');
+      setVehicleDetails(ApiResponse.error(e.toString()));
+    }
+  }
+
+  Future<void> activeDeactiveVehicleApi(
+      {required String vehicleId, bool isActive = false}) async {
+    String? vendorId = await UserViewModel().getUserId();
+    Map<String, dynamic> query = {
+      "vehicleId": vendorId,
+    };
+    try {
+      activeDeactive(ApiResponse.loading());
+      var resp = await _myRepo.activeOrDeactiveVehicleApi(
+          query: query, isActive: isActive);
+      activeDeactive(ApiResponse.completed(resp));
+      Utils.toastSuccessMessage(resp.data?.body ?? '');
+    } catch (e) {
+      activeDeactive(ApiResponse.error(e.toString()));
     }
   }
 }

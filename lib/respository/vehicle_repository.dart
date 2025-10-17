@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/app_url.dart';
 import 'package:flutter_cab/model/available_vehicle_model.dart';
 import 'package:flutter_cab/model/common_model.dart';
+import 'package:flutter_cab/model/get_vehicle_by_id_model.dart';
 import 'package:flutter_cab/model/vehicle_model.dart';
 import 'package:flutter_cab/view_model/services/http_service.dart';
 
@@ -62,6 +63,49 @@ class VehicleRepository {
       return CommonModel.fromJson(response?.data);
     } catch (e) {
       debugPrint("Get Activity List Repo Field $e");
+
+      http.handleErrorResponse(error: e);
+      rethrow;
+    }
+  }
+
+  Future<GetVehicleByIdModel> getVehicleByIdApi(
+      {required Map<String, dynamic> query}) async {
+    var http = HttpService(
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.getVehicleByIdUrl,
+        methodType: HttpMethodType.GET,
+        queryParameters: query,
+        bodyType: HttpBodyType.JSON,
+        isAuthorizeRequest: false);
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("Get Activity List Repo Success ${response?.data}");
+      return GetVehicleByIdModel.fromJson(response?.data);
+    } catch (e) {
+      debugPrint("Get Activity List Repo Field $e");
+
+      http.handleErrorResponse(error: e);
+      rethrow;
+    }
+  }
+
+  Future<CommonModel> activeOrDeactiveVehicleApi(
+      {required Map<String, dynamic> query, required bool isActive}) async {
+    var http = HttpService(
+        baseURL: AppUrl.baseUrl,
+        endURL:
+            isActive ? AppUrl.activateVehicleUrl : AppUrl.deactiveVehicleUrl,
+        methodType: isActive ? HttpMethodType.PATCH : HttpMethodType.DELETE,
+        queryParameters: query,
+        bodyType: HttpBodyType.JSON,
+        isAuthorizeRequest: false);
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("Active-deactive Vehicle  Repo Success ${response?.data}");
+      return CommonModel.fromJson(response?.data);
+    } catch (e) {
+      debugPrint("Active-deactive Vehicle  Repo Field $e");
 
       http.handleErrorResponse(error: e);
       rethrow;

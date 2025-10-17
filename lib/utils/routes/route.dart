@@ -49,7 +49,9 @@ import 'package:flutter_cab/view/vendor/package_management/add_and_edit_package_
 import 'package:flutter_cab/view/vendor/package_management/package_management_screen.dart';
 import 'package:flutter_cab/view/vendor/rental_booking_management_screen/rental_booking_details_screen.dart';
 import 'package:flutter_cab/view/vendor/rental_booking_management_screen/rental_booking_management_screen.dart';
+import 'package:flutter_cab/view/vendor/vehicle_management_screen/add_and_edit_vehicle_screen.dart';
 import 'package:flutter_cab/view/vendor/vehicle_management_screen/vehicle_management_screen.dart';
+import 'package:flutter_cab/view/vendor/vehicle_management_screen/view_vehicle_details_screen.dart';
 import 'package:flutter_cab/view/vendor/vendor_dashboard_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -534,7 +536,27 @@ final GoRouter myRouter = GoRouter(
           ),
           GoRoute(
               path: 'vehicle_management',
-              builder: (context, state) => const VehicleManagementScreen()),
+              builder: (context, state) => const VehicleManagementScreen(),
+              routes: [
+                GoRoute(
+                    path: 'view_vehicle_details',
+                    builder: (context, state) {
+                      var data = state.extra as Map<String, dynamic>;
+                      return ViewVehicleDetailsScreen(
+                        vehicleId: data["vehicleId"],
+                      );
+                    }),
+                GoRoute(
+                  path: 'add_edit_vehicle',
+                  builder: (context, state) {
+                    var data = state.extra as Map<String, dynamic>?;
+                    return AddAndEditVehicleScreen(
+                      isEdit: data?["isEdit"] ?? false,
+                      vehicleId: data?["activityId"],
+                    );
+                  },
+                )
+              ]),
         ])
   ],
 );

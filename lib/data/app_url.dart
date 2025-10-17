@@ -124,15 +124,13 @@ class AppUrl {
       '/package_booking/assign_vehicle_to_package_booking';
   static var addVehicleUrl = '/vehicle/add_vehicle';
   static var updateVehicleUrl = '/vehicle/update_vehicle';
-  static var getVehicleByIdUrl = '/vehicle/get_vehicle_by_id';
+  static var getVehicleByIdUrl = '/vehicle/get_vehicle_by_vehicleId';
   static var activateVehicleUrl = '/vehicle/activate_vehicle';
+  static var deactiveVehicleUrl = '/vehicle/deactivate_vehicle';
   // driver management
   static var getAllDriverListUrl = '/driver/get_driver_list';
   static var getAvailableDriverListUrl =
       '/driver/get_available_driver_by_package_booking_id';
   static var assignDriverUrl =
       '/package_booking/assign_driver_to_package_booking';
-
- 
-
 }

@@ -124,7 +124,7 @@ class _VehicleManagementScreenState extends State<VehicleManagementScreen> {
                   onPressed: () {
                     context
                         .push(
-                            '/vendor_dashboard/package_management/add_edit_package')
+                            '/vendor_dashboard/vehicle_management/add_edit_vehicle')
                         .then((onValue) {
                       _getAllVehicleList(isFilter: true);
                     });
@@ -184,8 +184,9 @@ class _VehicleManagementScreenState extends State<VehicleManagementScreen> {
                                   Text(
                                       'Vehicle No : ${vehicleList?.vehicleNumber}'),
                                   Text('Model No: ${vehicleList?.modelNo}'),
-                                  Text('Year : ${vehicleList?.year}'),
-                                  Text('Seats : ${vehicleList?.seats}'),
+                                  Text(
+                                      'Year : ${vehicleList?.year} - Seats : ${vehicleList?.seats}'),
+                                  // Text('Seats : ${vehicleList?.seats}'),
                                 ],
                               ),
                             ),
@@ -215,18 +216,17 @@ class _VehicleManagementScreenState extends State<VehicleManagementScreen> {
                                   color: background,
                                   onSelected: (value) {
                                     if (value == "View") {
-                                      context.push('/package_view', extra: {
-                                        "packageId":
-                                            vehicleList?.vehicleId.toString(),
-                                        "userType": 'Vendor',
-                                        "userId": '',
-                                        "bookingDate": ''
+                                      context.push(
+                                          '/vendor_dashboard/vehicle_management/view_vehicle_details',
+                                          extra: {
+                                            "vehicleId": vehicleList?.vehicleId
+                                                .toString()
                                       }).then((onValue) {
                                         _getAllVehicleList(isFilter: true);
                                       });
                                     } else if (value == "Edit") {
                                       context.push(
-                                          '/vendor_dashboard/package_management/add_edit_package',
+                                          '/vendor_dashboard/vehicle_management/add_edit_vehicle',
                                           extra: {
                                             "isEdit": true,
                                             "packageId": vehicleList?.vehicleId
@@ -245,9 +245,9 @@ class _VehicleManagementScreenState extends State<VehicleManagementScreen> {
                                           if (value == "Deactivate") {
                                             context
                                                 .read<
-                                                    PackageManagementViewModel>()
-                                                .activeDeactiveApi(
-                                                    packageId: vehicleList
+                                                    VehicleViewModel>()
+                                                .activeDeactiveVehicleApi(
+                                                    vehicleId: vehicleList
                                                             ?.vehicleId
                                                             .toString() ??
                                                         '')
@@ -258,9 +258,9 @@ class _VehicleManagementScreenState extends State<VehicleManagementScreen> {
                                           } else {
                                             context
                                                 .read<
-                                                    PackageManagementViewModel>()
-                                                .activeDeactiveApi(
-                                                    packageId: vehicleList
+                                                    VehicleViewModel>()
+                                                .activeDeactiveVehicleApi(
+                                                    vehicleId: vehicleList
                                                             ?.vehicleId
                                                             .toString() ??
                                                         '',
@@ -315,8 +315,8 @@ class _VehicleManagementScreenState extends State<VehicleManagementScreen> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text("$action Package"),
-        content: Text("Are you sure you want to $action this package?"),
+        title: Text("$action Vehicle"),
+        content: Text("Are you sure you want to $action this vehicle?"),
         actions: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
