@@ -552,7 +552,7 @@ final GoRouter myRouter = GoRouter(
                     var data = state.extra as Map<String, dynamic>?;
                     return AddAndEditVehicleScreen(
                       isEdit: data?["isEdit"] ?? false,
-                      vehicleId: data?["activityId"],
+                      vehicleId: data?["vehicleId"],
                     );
                   },
                 )

@@ -127,10 +127,15 @@ class AppUrl {
   static var getVehicleByIdUrl = '/vehicle/get_vehicle_by_vehicleId';
   static var activateVehicleUrl = '/vehicle/activate_vehicle';
   static var deactiveVehicleUrl = '/vehicle/deactivate_vehicle';
+  static var getVehicleBrandName = '/vehicle/get_vehicle_brand_name';
+  static var getAllVehicleType = '/vehicle/get_all_vehicle_type';
   // driver management
   static var getAllDriverListUrl = '/driver/get_driver_list';
   static var getAvailableDriverListUrl =
       '/driver/get_available_driver_by_package_booking_id';
   static var assignDriverUrl =
       '/package_booking/assign_driver_to_package_booking';
+  // color url
+  static var colorbaseUrl = 'https://www.csscolorsapi.com';
+  static var colorUrl = '/api/colors';
 }

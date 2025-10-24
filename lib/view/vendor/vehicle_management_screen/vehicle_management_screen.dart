@@ -229,7 +229,7 @@ class _VehicleManagementScreenState extends State<VehicleManagementScreen> {
                                           '/vendor_dashboard/vehicle_management/add_edit_vehicle',
                                           extra: {
                                             "isEdit": true,
-                                            "packageId": vehicleList?.vehicleId
+                                            "vehicleId": vehicleList?.vehicleId
                                                 .toString()
                                           }).then((onValue) {
                                         _getAllVehicleList(isFilter: true);

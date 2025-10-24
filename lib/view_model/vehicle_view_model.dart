@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
 import 'package:flutter_cab/model/available_vehicle_model.dart';
 import 'package:flutter_cab/model/common_model.dart';
+import 'package:flutter_cab/model/get_all_vehicle_type_model.dart';
 import 'package:flutter_cab/model/get_vehicle_by_id_model.dart';
+import 'package:flutter_cab/model/vehicle_brand_name_model.dart';
 import 'package:flutter_cab/model/vehicle_model.dart';
 import 'package:flutter_cab/respository/vehicle_repository.dart';
 import 'package:flutter_cab/utils/utils.dart';
@@ -27,14 +29,17 @@ class VehicleViewModel extends ChangeNotifier {
     vehicleList = response;
     notifyListeners();
   }
+
   void setAllVehicleList(ApiResponse<List<Content>> response) {
     getVehicleList = response;
     notifyListeners();
   }
+
   void setVehicleDetails(ApiResponse<GetVehicleByIdModel> response) {
     getVehicleDetails = response;
     notifyListeners();
   }
+
   void setAvailableVehicleList(ApiResponse<AvailableVehicleModel> response) {
     availableVehicleList = response;
     notifyListeners();
@@ -44,12 +49,29 @@ class VehicleViewModel extends ChangeNotifier {
     assignVehicle = response;
     notifyListeners();
   }
+
   ApiResponse<CommonModel> activeOrDeactive = ApiResponse.initial();
 
   void activeDeactive(ApiResponse<CommonModel> response) {
     activeOrDeactive = response;
     notifyListeners();
   }
+
+  ApiResponse<VehicleTypeModel> getAllVehicleType = ApiResponse.initial();
+
+  void setVehicleType(ApiResponse<VehicleTypeModel> response) {
+    getAllVehicleType = response;
+    notifyListeners();
+  }
+
+  ApiResponse<VehicleBrandNameModel> getVehicleBrandName =
+      ApiResponse.initial();
+
+  void setVehicleBrandName(ApiResponse<VehicleBrandNameModel> response) {
+    getVehicleBrandName = response;
+    notifyListeners();
+  }
+
   Future<void> getAllVehicleListApi(
       {required bool isFilter,
       required bool isSearch,
@@ -93,6 +115,7 @@ class VehicleViewModel extends ChangeNotifier {
       isLoadingMore = false; // Reset loading state after request
     }
   }
+
   Future<void> fetchAllVehicles() async {
     String vendorId = await UserViewModel().getUserId() ?? '';
     Map<String, dynamic> query = {
@@ -145,6 +168,7 @@ class VehicleViewModel extends ChangeNotifier {
       rethrow;
     }
   }
+
   Future<void> getVehicleByIdApi({required String vehicleId}) async {
     if (vehicleId.isEmpty) {
       setVehicleDetails(
@@ -179,6 +203,26 @@ class VehicleViewModel extends ChangeNotifier {
       Utils.toastSuccessMessage(resp.data?.body ?? '');
     } catch (e) {
       activeDeactive(ApiResponse.error(e.toString()));
+    }
+  }
+
+  Future<void> getVehicleBrandNameApi() async {
+    try {
+      setVehicleBrandName(ApiResponse.loading());
+      var resp = await _myRepo.getVehicleBrandNameApi();
+      setVehicleBrandName(ApiResponse.completed(resp));
+    } catch (e) {
+      setVehicleBrandName(ApiResponse.error(e.toString()));
+    }
+  }
+
+  Future<void> getVehicleTypeApi() async {
+    try {
+      setVehicleType(ApiResponse.loading());
+      var resp = await _myRepo.getAllVehicleTypeApi();
+      setVehicleType(ApiResponse.completed(resp));
+    } catch (e) {
+      setVehicleType(ApiResponse.error(e.toString()));
     }
   }
 }

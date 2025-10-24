@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/app_url.dart';
 import 'package:flutter_cab/model/available_vehicle_model.dart';
 import 'package:flutter_cab/model/common_model.dart';
+import 'package:flutter_cab/model/get_all_vehicle_type_model.dart';
 import 'package:flutter_cab/model/get_vehicle_by_id_model.dart';
+import 'package:flutter_cab/model/vehicle_brand_name_model.dart';
 import 'package:flutter_cab/model/vehicle_model.dart';
 import 'package:flutter_cab/view_model/services/http_service.dart';
 
@@ -106,6 +108,44 @@ class VehicleRepository {
       return CommonModel.fromJson(response?.data);
     } catch (e) {
       debugPrint("Active-deactive Vehicle  Repo Field $e");
+
+      http.handleErrorResponse(error: e);
+      rethrow;
+    }
+  }
+
+  Future<VehicleBrandNameModel> getVehicleBrandNameApi() async {
+    var http = HttpService(
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.getVehicleBrandName,
+        methodType: HttpMethodType.GET,
+        bodyType: HttpBodyType.JSON,
+        isAuthorizeRequest: false);
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("Get Vehicle Brand Name List Repo Success ${response?.data}");
+      return VehicleBrandNameModel.fromJson(response?.data);
+    } catch (e) {
+      debugPrint("Get Vehicle Brand Name List Repo Field $e");
+
+      http.handleErrorResponse(error: e);
+      rethrow;
+    }
+  }
+
+  Future<VehicleTypeModel> getAllVehicleTypeApi() async {
+    var http = HttpService(
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.getAllVehicleType,
+        methodType: HttpMethodType.GET,
+        bodyType: HttpBodyType.JSON,
+        isAuthorizeRequest: false);
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("Get Vehicle Type List Repo Success ${response?.data}");
+      return VehicleTypeModel.fromJson(response?.data);
+    } catch (e) {
+      debugPrint("Get Vehicle Type List Repo Field $e");
 
       http.handleErrorResponse(error: e);
       rethrow;

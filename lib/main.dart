@@ -17,6 +17,7 @@ import 'package:flutter_cab/view_model/raise_issue_view_model.dart';
 import 'package:flutter_cab/view_model/registration_view_model.dart';
 import 'package:flutter_cab/view_model/rental_management_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
+import 'package:flutter_cab/view_model/third_party_view_model.dart';
 import 'package:flutter_cab/view_model/user_profile_view_model.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:flutter_cab/view_model/vehicle_view_model.dart';
@@ -109,7 +110,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (create) => ItineraryViewModel()),
         ChangeNotifierProvider(create: (create) => VehicleViewModel()),
         ChangeNotifierProvider(create: (create) => DriverViewModel()),
-
+        ChangeNotifierProvider(create: (create) => ThirdPartyViewModel())
       ],
       child: const MyApp(),
     ));
