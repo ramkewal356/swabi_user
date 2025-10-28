@@ -10,6 +10,7 @@ import 'package:flutter_cab/respository/vehicle_repository.dart';
 import 'package:flutter_cab/utils/utils.dart';
 // import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
+import 'package:go_router/go_router.dart';
 
 class VehicleViewModel extends ChangeNotifier {
   int pageNumber = 0;
@@ -69,6 +70,13 @@ class VehicleViewModel extends ChangeNotifier {
 
   void setVehicleBrandName(ApiResponse<VehicleBrandNameModel> response) {
     getVehicleBrandName = response;
+    notifyListeners();
+  }
+
+  ApiResponse<bool> addOrUpdateVehicle = ApiResponse.initial();
+
+  void setAddOrUpdateVehicle(ApiResponse<bool> response) {
+    addOrUpdateVehicle = response;
     notifyListeners();
   }
 
@@ -191,9 +199,9 @@ class VehicleViewModel extends ChangeNotifier {
 
   Future<void> activeDeactiveVehicleApi(
       {required String vehicleId, bool isActive = false}) async {
-    String? vendorId = await UserViewModel().getUserId();
+   
     Map<String, dynamic> query = {
-      "vehicleId": vendorId,
+      "vehicleId": vehicleId,
     };
     try {
       activeDeactive(ApiResponse.loading());
@@ -223,6 +231,26 @@ class VehicleViewModel extends ChangeNotifier {
       setVehicleType(ApiResponse.completed(resp));
     } catch (e) {
       setVehicleType(ApiResponse.error(e.toString()));
+    }
+  }
+
+  Future<void> addOrUpdateVehicleApi(
+      {required BuildContext context,
+      required Map<String, dynamic> body,
+      required bool isEdit}) async {
+    try {
+      setAddOrUpdateVehicle(ApiResponse.loading());
+      var resp = await _myRepo.addOrEditVehicleApi(body: body, isEdit: isEdit);
+      setAddOrUpdateVehicle(ApiResponse.completed(resp));
+      if (isEdit) {
+        Utils.toastSuccessMessage('Updated Vehicle Successfully');
+      } else {
+        Utils.toastSuccessMessage('Added Vehicle Successfully');
+      }
+      // ignore: use_build_context_synchronously
+      context.pop();
+    } catch (e) {
+      setAddOrUpdateVehicle(ApiResponse.error(e.toString()));
     }
   }
 }

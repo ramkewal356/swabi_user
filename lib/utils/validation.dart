@@ -57,6 +57,23 @@ class Validation {
     String formattedTime = DateFormat('hh:mm a').format(dateTime);
     return formattedTime;
   }
+
+  bool isValidEmiratesId(String emiratesId) {
+    // final RegExp regex = RegExp(r'^784-\d{4}-\d{7}-\d{1}$');
+    final RegExp regex = RegExp(r'^784\d{4}\d{7}\d{1}$');
+
+    return regex.hasMatch(emiratesId);
+  }
+
+  bool isValidUaeVehicleNumber(String plate) {
+    final RegExp regex = RegExp(r'^[A-Z]{1,3}\s?\d{1,5}$');
+    return regex.hasMatch(plate.trim().toUpperCase());
+  }
+
+  bool isValidVehicleModelNo(String value) {
+    final RegExp modelRegex = RegExp(r'^[A-Z]{2,}[A-Z0-9]{2,13}$');
+    return modelRegex.hasMatch(value.trim().toUpperCase());
+  }
 }
 
 String dateFormat(int? time) {

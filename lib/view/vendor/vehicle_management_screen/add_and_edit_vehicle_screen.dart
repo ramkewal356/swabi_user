@@ -1,7 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_cab/data/response/status.dart';
 import 'package:flutter_cab/data/validatorclass.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/customdropdown_button.dart';
@@ -12,8 +17,11 @@ import 'package:flutter_cab/res/custom_mobile_number.dart';
 import 'package:flutter_cab/res/single_image_picker.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
+import 'package:flutter_cab/utils/validation.dart';
 import 'package:flutter_cab/view_model/third_party_view_model.dart';
 import 'package:flutter_cab/view_model/user_profile_view_model.dart';
+import 'package:flutter_cab/view_model/user_view_model.dart';
+import 'package:flutter_cab/view_model/vehicle_owner_view_model.dart';
 import 'package:flutter_cab/view_model/vehicle_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -33,6 +41,8 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _emiratesController = TextEditingController();
+
   final TextEditingController _countryController = TextEditingController();
   final TextEditingController _stateController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
@@ -53,6 +63,7 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
   List<String> initialImages = [];
   List<File> selectedImages = [];
   String? selectedDocumentImage;
+  // String? initialDocumentImage;
   String? selectedOwnerImage;
 
   String _selectedOption = 'New Owner';
@@ -97,6 +108,17 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
     context.read<VehicleViewModel>().getVehicleBrandNameApi();
   }
 
+  void getVehicleOwnerList() {
+    context.read<VehicleOwnerViewModel>().getVehicleOwnerListApi(
+        isFilter: true,
+        filterText: 'true',
+        isSearch: true,
+        searchText: '',
+        isPagination: false,
+        pageNumber1: -1,
+        pageSize1: -1);
+  }
+
   Future<void> getVehicleById() async {
     var vm = context.read<VehicleViewModel>();
     await vm.getVehicleByIdApi(vehicleId: widget.vehicleId ?? '');
@@ -115,10 +137,13 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
     _colorController.text = data?.color ?? '';
     _brandNameController.text = data?.brandName ?? '';
     _vahicleNoController.text = data?.vehicleNumber ?? '';
-    _statusController.text =
-        data?.vehicleStatus == 'TRUE' ? 'Active' : 'Inactive';
+    _statusController.text = data?.vehicleStatus == 'TRUE'
+        ? 'Active'
+        : data?.vehicleStatus == 'FALSE'
+            ? 'Inactive'
+            : "";
     initialImages = data?.images ?? [];
-    selectedDocumentImage = data?.vehicleDocUrl;
+    selectedDocumentImage = data?.vehicleDocUrl ?? '';
   }
 
   @override
@@ -130,7 +155,12 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
     var vehicleTypeList =
         context.watch<VehicleViewModel>().getAllVehicleType.data?.data;
     var vehicleBrandName =
-        context.read<VehicleViewModel>().getVehicleBrandName.data?.data?.data;
+        context.watch<VehicleViewModel>().getVehicleBrandName.data?.data?.data;
+    var vehicleOwnerList =
+        context.watch<VehicleOwnerViewModel>().getVehicleOwnerList.data;
+    var status = context.watch<VehicleViewModel>().addOrUpdateVehicle.status;
+    var loadingStatus =
+        context.watch<VehicleViewModel>().getVehicleDetails.status;
     return Scaffold(
       backgroundColor: bgGreyColor,
       appBar: AppBar(
@@ -138,7 +168,12 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
         title: Text(
             widget.isEdit ? 'Update Vehicle' : "Add New Owner And Vehicle"),
       ),
-      body: Form(
+      body: loadingStatus == Status.loading
+          ? Center(
+              child: CircularProgressIndicator(
+              color: greenColor,
+            ))
+          : Form(
         key: _formKey,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -161,9 +196,14 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
                               ListTile(
                                 leading: CircleAvatar(
                                   radius: 35,
+                                        backgroundColor: Colors.grey[200],
+                                        backgroundImage: ownerImage.isNotEmpty
+                                            ? NetworkImage(ownerImage)
+                                            : null,
                                   child: ownerImage.isEmpty
-                                      ? Icon(Icons.person)
-                                      : Image.network(ownerImage),
+                                            ? const Icon(Icons.person,
+                                                size: 35, color: Colors.grey)
+                                            : null,
                                 ),
                                 horizontalTitleGap: 10,
                                 contentPadding: EdgeInsets.zero,
@@ -208,7 +248,9 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
                                   onChanged: (value) {
                                     setState(() {
                                       _selectedOption = value!;
+                                            selectedOwnerImage = null;
                                     });
+                                          getVehicleOwnerList();
                                   },
                                   title: Text(
                                     'Existing Owner',
@@ -284,6 +326,27 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
                                           },
                                         ),
                                         const SizedBox(height: 10),
+                                              lableText('Emirates id'),
+                                              Customtextformfield(
+                                                controller: _emiratesController,
+                                                fillColor: background,
+                                                hintText: '784-YYYY-NNNNNNN-C',
+                                                keyboardType:
+                                                    TextInputType.number,
+                                                validator: (value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return 'Please enter Emirates ID';
+                                                  } else if (!Validation()
+                                                      .isValidEmiratesId(
+                                                          value)) {
+                                                    return 'Enter a valid Emirates ID (e.g., 784-2000-9876543-2)';
+                                                  }
+
+                                                  return null; // valid
+                                                },
+                                              ),
+                                              const SizedBox(height: 10),
                                         lableText('Country'),
                                         Material(
                                           child: Customtextformfield(
@@ -408,9 +471,35 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
                                         lableText('Select Existing Owner'),
                                         SizedBox(height: 5),
                                         CustomDropdownButton(
-                                          itemsList: ['vnbvnv', 'hggjhhj'],
+                                                itemsList: vehicleOwnerList
+                                                        ?.map((toElement) =>
+                                                            '${toElement.firstName} ${toElement.lastName}')
+                                                        .toList() ??
+                                                    [],
                                           controller: _existingOwnerController,
                                           hintText: 'Select Owner',
+                                                onChanged: (p0) {
+                                                  setState(() {
+                                                    // Find the matching owner object safely
+                                                    final matching =
+                                                        vehicleOwnerList?.where(
+                                                            (owner) =>
+                                                                '${owner.firstName} ${owner.lastName}' ==
+                                                                p0);
+                                                    final selectedOwner =
+                                                        (matching != null &&
+                                                                matching
+                                                                    .isNotEmpty)
+                                                            ? matching.first
+                                                            : null;
+
+                                                    // Set the ownerId safely
+                                                    ownerId = selectedOwner
+                                                            ?.vehicleOwnerId
+                                                            ?.toString() ??
+                                                        '';
+                                                  });
+                                                },
                                         ),
                                       ],
                                     ),
@@ -481,6 +570,9 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
                           validator: (p0) {
                             if (p0 == null || p0.isEmpty) {
                               return 'Please enter model no';
+                                  } else if (!Validation()
+                                      .isValidVehicleModelNo(p0)) {
+                                    return 'Invalid model number (e.g. CAMRY2023)';
                             }
                             return null;
                           },
@@ -559,6 +651,9 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
                           validator: (p0) {
                             if (p0 == null || p0.isEmpty) {
                               return 'Please enter vehicle no';
+                                  } else if (!Validation()
+                                      .isValidUaeVehicleNumber(p0)) {
+                                    return 'Invalid UAE vehicle number (e.g. A 12345)';
                             }
                             return null;
                           },
@@ -578,8 +673,9 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
                         ),
                         const SizedBox(height: 10),
                         lableText('Upload Vehicle Document Image'),
-                        FormField<File>(
+                              FormField<String>(
                           autovalidateMode: AutovalidateMode.onUserInteraction,
+                                initialValue: selectedDocumentImage,
                           builder: (field) {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -592,7 +688,7 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
                                     setState(() {
                                       selectedDocumentImage = file?.path;
                                     });
-                                    field.didChange(file);
+                                          field.didChange(file?.path);
                                     debugPrint(
                                         'Selected image: $selectedDocumentImage');
                                   },
@@ -667,9 +763,111 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
                 ),
                 SizedBox(height: 10),
                 CustomButtonSmall(
-                  btnHeading: widget.isEdit ? 'Update Vehicle' : "Add Vehicle",
-                  onTap: () {
-                    if (_formKey.currentState!.validate()) {}
+                        loading: status == Status.loading,
+                        btnHeading: widget.isEdit
+                            ? 'Update Vehicle'
+                            : _selectedOption == 'New Owner'
+                                ? "Add New Owner And Vehicle"
+                                : "Add Vehicle",
+                        onTap: () async {
+                          if (_formKey.currentState!.validate()) {
+                            String? vendorId =
+                                await UserViewModel().getUserId();
+                            // List<String> allImageUrls = [
+                            //   ...initialImages,
+                            //   ...selectedImages.map((file) => file.path),
+                            // ];
+                            List<MultipartFile> imageFiles = [];
+                            for (var image in selectedImages) {
+                              if (image.existsSync()) {
+                                imageFiles.add(await MultipartFile.fromFile(
+                                    image.path,
+                                    filename: image.path.split('/').last));
+                              }
+                            }
+
+                            var vehicleRequest = {
+                              if (widget.isEdit)
+                                "vehicleId": widget.vehicleId
+                                    .toString(), // or null for new
+                              "carType": _carTypeController.text.trim(),
+                              "brandName": _brandNameController.text.trim(),
+                              "fuelType": _fuelTypeController.text.trim(),
+                              "seats":
+                                  int.tryParse(_seatController.text.trim()) ??
+                                      0,
+                              "color": _colorController.text.trim(),
+                              "carName": _carNameController.text.trim(),
+                              "vehicleNumber": _vahicleNoController.text.trim(),
+                              "modelNo": _modelNoController.text.trim(),
+                              "year":
+                                  int.tryParse(_yearController.text.trim()) ??
+                                      0,
+                              if (_selectedOption == 'New Owner' &&
+                                  !widget.isEdit)
+                                "firstName": _firstNameController.text.trim(),
+                              if (_selectedOption == 'New Owner' &&
+                                  !widget.isEdit)
+                                "lastName": _lastNameController.text.trim(),
+                              if (_selectedOption == 'New Owner' &&
+                                  !widget.isEdit)
+                                "country": _countryController.text.trim(),
+                              if (_selectedOption == 'New Owner' &&
+                                  !widget.isEdit)
+                                "state": _stateController.text.trim(),
+                              if (_selectedOption == 'New Owner' &&
+                                  !widget.isEdit)
+                                "city": "",
+                              if (_selectedOption == 'New Owner' &&
+                                  !widget.isEdit)
+                                "address": _locationController.text.trim(),
+                              if (_selectedOption == 'New Owner' &&
+                                  !widget.isEdit)
+                                "emiratesId": _emiratesController.text.trim(),
+                              if (_selectedOption == 'New Owner' &&
+                                  !widget.isEdit)
+                                "email": _emailController.text.trim(),
+                              if (_selectedOption == 'New Owner' &&
+                                  !widget.isEdit)
+                                "mobile": _phoneController.text.trim(),
+                              if (_selectedOption == 'New Owner' &&
+                                  !widget.isEdit)
+                                "countryCode": countryCode,
+                              if (widget.isEdit) "images": initialImages,
+                              "vendorId": vendorId,
+                              if (widget.isEdit)
+                                "vehicleUnavailableReason":
+                                    null, // static or from your logic
+                              if (widget.isEdit) "notAvailableDates": [],
+                              "vehicleOwnerId": (widget.isEdit ||
+                                      _selectedOption == 'Existing Owner')
+                                  ? int.tryParse(ownerId)
+                                  : null,
+                              "vehicleStatus":
+                                  _statusController.text == 'Active'
+                                      ? "TRUE"
+                                      : "FALSE",
+                            };
+                            var vehicleRequestJson = jsonEncode(vehicleRequest);
+                            final payload = {
+                              "vehicleRequest": vehicleRequestJson,
+                              "images": imageFiles,
+                              if (!widget.isEdit)
+                                "vehicleOwnerImage":
+                                    await MultipartFile.fromFile(
+                                  selectedOwnerImage ?? '',
+                                  filename: selectedOwnerImage?.split('/').last,
+                                ),
+                              "vehicleDocument": selectedDocumentImage
+                            };
+                            debugPrint('payload $payload');
+                            context
+                                .read<VehicleViewModel>()
+                                .addOrUpdateVehicleApi(
+                                    context: context,
+                                    body: payload,
+                                    isEdit: widget.isEdit);
+                          }
                   },
                 )
               ],

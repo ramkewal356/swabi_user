@@ -20,6 +20,7 @@ import 'package:flutter_cab/view_model/rental_view_model.dart';
 import 'package:flutter_cab/view_model/third_party_view_model.dart';
 import 'package:flutter_cab/view_model/user_profile_view_model.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
+import 'package:flutter_cab/view_model/vehicle_owner_view_model.dart';
 import 'package:flutter_cab/view_model/vehicle_view_model.dart';
 import 'package:flutter_cab/view_model/vendor_dashboard_view_model.dart';
 import 'package:flutter_cab/view_model/vendor_view_model.dart';
@@ -110,7 +111,8 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (create) => ItineraryViewModel()),
         ChangeNotifierProvider(create: (create) => VehicleViewModel()),
         ChangeNotifierProvider(create: (create) => DriverViewModel()),
-        ChangeNotifierProvider(create: (create) => ThirdPartyViewModel())
+        ChangeNotifierProvider(create: (create) => ThirdPartyViewModel()),
+        ChangeNotifierProvider(create: (create) => VehicleOwnerViewModel())
       ],
       child: const MyApp(),
     ));

@@ -151,4 +151,31 @@ class VehicleRepository {
       rethrow;
     }
   }
+  Future<bool> addOrEditVehicleApi(
+      {required Map<String, dynamic> body, bool isEdit = false}) async {
+    var http = HttpService(
+        baseURL: AppUrl.baseUrl,
+        endURL: isEdit ? AppUrl.updateVehicleUrl : AppUrl.addVehicleUrl,
+        methodType: isEdit ? HttpMethodType.PUT : HttpMethodType.POST,
+        body: body,
+        bodyType: HttpBodyType.FormData,
+        isAuthorizeRequest: false);
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("Add Or Edit Vehicle Repo Success ${response?.data}");
+      if (response != null && response.statusCode == 200) {
+        debugPrint("Add or Edit vehicle Success: ${response.data}");
+        return true;
+      } else {
+        debugPrint("Add or Edit vehicle Failed: ${response?.statusCode}");
+        return false;
+      }
+    } catch (e) {
+      debugPrint("Add or Edit vehicle Repo Field $e");
+
+      http.handleErrorResponse(error: e);
+      rethrow;
+    }
+  }
+
 }

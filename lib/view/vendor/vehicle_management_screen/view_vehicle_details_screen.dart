@@ -153,8 +153,8 @@ class _ViewVehicleDetailsScreenState extends State<ViewVehicleDetailsScreen> {
                         child: Image.network(
                           data?.vehicleDocUrl ?? '',
                           width: double.infinity,
-                          // height: 200,
-                          fit: BoxFit.fill,
+                          height: 250,
+                          fit: BoxFit.cover,
                         ),
                       ),
                     ),
@@ -167,8 +167,8 @@ class _ViewVehicleDetailsScreenState extends State<ViewVehicleDetailsScreen> {
                         child: Image.network(
                           data?.vehicleOwnerInfo?.vehicleOwnerImageUrl ?? '',
                           width: double.infinity,
-                          // height: 200,
-                          fit: BoxFit.fill,
+                          height: 250,
+                          fit: BoxFit.cover,
                         ),
                       ),
                     ),

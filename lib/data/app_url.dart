@@ -129,6 +129,7 @@ class AppUrl {
   static var deactiveVehicleUrl = '/vehicle/deactivate_vehicle';
   static var getVehicleBrandName = '/vehicle/get_vehicle_brand_name';
   static var getAllVehicleType = '/vehicle/get_all_vehicle_type';
+  static var getVehicleOwnerListUrl = '/vehicle/get_vehicle_owner_list';
   // driver management
   static var getAllDriverListUrl = '/driver/get_driver_list';
   static var getAvailableDriverListUrl =
