@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
+import 'package:flutter_cab/model/vehicle_owner_by_id_model.dart';
 import 'package:flutter_cab/model/vehicle_owner_model.dart';
 import 'package:flutter_cab/respository/vehicle_owner_repository.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
@@ -18,6 +19,12 @@ class VehicleOwnerViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  ApiResponse<VehicleOwnerByIdModel> vehicleOwnerById = ApiResponse.initial();
+  void setVehicleOwnerById(ApiResponse<VehicleOwnerByIdModel> response) {
+    vehicleOwnerById = response;
+    notifyListeners();
+  }
+
   Future<void> getVehicleOwnerListApi(
       {required bool isFilter,
       required String filterText,
@@ -27,7 +34,7 @@ class VehicleOwnerViewModel with ChangeNotifier {
       int? pageNumber1,
       int? pageSize1}) async {
     if (isLoadingMore) return;
-    bool newSearch = (isSearch || isPagination);
+    bool newSearch = (isSearch || isFilter);
     if (!isPagination && newSearch) {
       pageNumber = 0;
       isLastPage = false;
@@ -57,6 +64,19 @@ class VehicleOwnerViewModel with ChangeNotifier {
       setVehicleOwner(ApiResponse.error(e.toString()));
     } finally {
       isLoadingMore = false;
+    }
+  }
+
+  Future<void> getVehicleOwnerByIdApi({required String ownerId}) async {
+    Map<String, dynamic> query = {
+      "vehicleOwnerId": ownerId,
+    };
+    try {
+      setVehicleOwnerById(ApiResponse.loading());
+      var resp = await _myRepo.getVehicleOwnerByIdApi(query: query);
+      setVehicleOwnerById(ApiResponse.completed(resp));
+    } catch (e) {
+      setVehicleOwnerById(ApiResponse.error(e.toString()));
     }
   }
 }

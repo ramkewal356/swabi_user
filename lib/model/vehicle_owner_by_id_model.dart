@@ -1,26 +1,26 @@
 // To parse this JSON data, do
 //
-//     final vehicleOwnerModel = vehicleOwnerModelFromJson(jsonString);
+//     final vehicleOwnerByIdModel = vehicleOwnerByIdModelFromJson(jsonString);
 
 import 'dart:convert';
 
-VehicleOwnerModel vehicleOwnerModelFromJson(String str) =>
-    VehicleOwnerModel.fromJson(json.decode(str));
+VehicleOwnerByIdModel vehicleOwnerByIdModelFromJson(String str) =>
+    VehicleOwnerByIdModel.fromJson(json.decode(str));
 
-String vehicleOwnerModelToJson(VehicleOwnerModel data) =>
+String vehicleOwnerByIdModelToJson(VehicleOwnerByIdModel data) =>
     json.encode(data.toJson());
 
-class VehicleOwnerModel {
+class VehicleOwnerByIdModel {
   Status? status;
   Data? data;
 
-  VehicleOwnerModel({
+  VehicleOwnerByIdModel({
     this.status,
     this.data,
   });
 
-  factory VehicleOwnerModel.fromJson(Map<String, dynamic> json) =>
-      VehicleOwnerModel(
+  factory VehicleOwnerByIdModel.fromJson(Map<String, dynamic> json) =>
+      VehicleOwnerByIdModel(
         status: json["status"] == null ? null : Status.fromJson(json["status"]),
         data: json["data"] == null ? null : Data.fromJson(json["data"]),
       );
@@ -32,69 +32,6 @@ class VehicleOwnerModel {
 }
 
 class Data {
-  List<OwnerContent>? content;
-  Pageable? pageable;
-  int? totalPages;
-  int? totalElements;
-  bool? last;
-  int? number;
-  Sort? sort;
-  int? size;
-  int? numberOfElements;
-  bool? first;
-  bool? empty;
-
-  Data({
-    this.content,
-    this.pageable,
-    this.totalPages,
-    this.totalElements,
-    this.last,
-    this.number,
-    this.sort,
-    this.size,
-    this.numberOfElements,
-    this.first,
-    this.empty,
-  });
-
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
-        content: json["content"] == null
-            ? []
-            : List<OwnerContent>.from(
-                json["content"]!.map((x) => OwnerContent.fromJson(x))),
-        pageable: (json["pageable"] is Map<String, dynamic>)
-            ? Pageable.fromJson(json["pageable"])
-            : null,
-        totalPages: json["totalPages"],
-        totalElements: json["totalElements"],
-        last: json["last"],
-        number: json["number"],
-        sort: json["sort"] == null ? null : Sort.fromJson(json["sort"]),
-        size: json["size"],
-        numberOfElements: json["numberOfElements"],
-        first: json["first"],
-        empty: json["empty"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "content": content == null
-            ? []
-            : List<dynamic>.from(content!.map((x) => x.toJson())),
-        "pageable": pageable,
-        "totalPages": totalPages,
-        "totalElements": totalElements,
-        "last": last,
-        "number": number,
-        "sort": sort?.toJson(),
-        "size": size,
-        "numberOfElements": numberOfElements,
-        "first": first,
-        "empty": empty,
-      };
-}
-
-class OwnerContent {
   int? vehicleOwnerId;
   String? firstName;
   String? lastName;
@@ -112,7 +49,7 @@ class OwnerContent {
   List<VehicleList>? vehicleList;
   String? vehicleOwnerImageUrl;
 
-  OwnerContent({
+  Data({
     this.vehicleOwnerId,
     this.firstName,
     this.lastName,
@@ -131,7 +68,7 @@ class OwnerContent {
     this.vehicleOwnerImageUrl,
   });
 
-  factory OwnerContent.fromJson(Map<String, dynamic> json) => OwnerContent(
+  factory Data.fromJson(Map<String, dynamic> json) => Data(
         vehicleOwnerId: json["vehicleOwnerId"],
         firstName: json["firstName"],
         lastName: json["lastName"],
@@ -255,66 +192,6 @@ class VehicleList {
             images == null ? [] : List<dynamic>.from(images!.map((x) => x)),
         "vehicleStatus": vehicleStatus,
         "vehicleDocUrl": vehicleDocUrl,
-      };
-}
-
-class Pageable {
-  Sort? sort;
-  int? offset;
-  int? pageNumber;
-  int? pageSize;
-  bool? paged;
-  bool? unpaged;
-
-  Pageable({
-    this.sort,
-    this.offset,
-    this.pageNumber,
-    this.pageSize,
-    this.paged,
-    this.unpaged,
-  });
-
-  factory Pageable.fromJson(Map<String, dynamic> json) => Pageable(
-        sort: json["sort"] == null ? null : Sort.fromJson(json["sort"]),
-        offset: json["offset"],
-        pageNumber: json["pageNumber"],
-        pageSize: json["pageSize"],
-        paged: json["paged"],
-        unpaged: json["unpaged"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "sort": sort?.toJson(),
-        "offset": offset,
-        "pageNumber": pageNumber,
-        "pageSize": pageSize,
-        "paged": paged,
-        "unpaged": unpaged,
-      };
-}
-
-class Sort {
-  bool? empty;
-  bool? unsorted;
-  bool? sorted;
-
-  Sort({
-    this.empty,
-    this.unsorted,
-    this.sorted,
-  });
-
-  factory Sort.fromJson(Map<String, dynamic> json) => Sort(
-        empty: json["empty"],
-        unsorted: json["unsorted"],
-        sorted: json["sorted"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "empty": empty,
-        "unsorted": unsorted,
-        "sorted": sorted,
       };
 }
 

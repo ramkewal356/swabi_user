@@ -52,6 +52,8 @@ import 'package:flutter_cab/view/vendor/rental_booking_management_screen/rental_
 import 'package:flutter_cab/view/vendor/vehicle_management_screen/add_and_edit_vehicle_screen.dart';
 import 'package:flutter_cab/view/vendor/vehicle_management_screen/vehicle_management_screen.dart';
 import 'package:flutter_cab/view/vendor/vehicle_management_screen/view_vehicle_details_screen.dart';
+import 'package:flutter_cab/view/vendor/vehicle_owner_management/vehicle_owner_management_screen.dart';
+import 'package:flutter_cab/view/vendor/vehicle_owner_management/view_vehicle_owner_details_screen.dart';
 import 'package:flutter_cab/view/vendor/vendor_dashboard_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -553,9 +555,24 @@ final GoRouter myRouter = GoRouter(
                     return AddAndEditVehicleScreen(
                       isEdit: data?["isEdit"] ?? false,
                       vehicleId: data?["vehicleId"],
+                      ownerId: data?["ownerId"],
+                      actionByOwner: data?["actionByOwner"] ?? '',
                     );
                   },
                 )
+              ]),
+          GoRoute(
+              path: 'vehicle_owner_management',
+              builder: (context, state) => const VehicleOwnerManagementScreen(),
+              routes: [
+                GoRoute(
+                    path: 'view_vehicle_owner_details',
+                    builder: (context, state) {
+                      var data = state.extra as Map<String, dynamic>;
+                      return ViewVehicleOwnerDetailsScreen(
+                        ownerId: data["ownerId"],
+                      );
+                    }),
               ]),
         ])
   ],

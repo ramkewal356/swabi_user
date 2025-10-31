@@ -149,7 +149,9 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
               {
                 "imgUrl": user,
                 "label": "Vehicle Owner Management",
-                "onTap": () {}
+                "onTap": () {
+                  context.push("/vendor_dashboard/vehicle_owner_management");
+                }
               },
               {
                 "imgUrl": driverImage,

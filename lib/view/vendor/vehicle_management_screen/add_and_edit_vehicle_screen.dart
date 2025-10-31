@@ -28,8 +28,14 @@ import 'package:provider/provider.dart';
 class AddAndEditVehicleScreen extends StatefulWidget {
   final bool isEdit;
   final String? vehicleId;
+  final String? ownerId;
+  final String? actionByOwner;
   const AddAndEditVehicleScreen(
-      {super.key, this.isEdit = false, this.vehicleId});
+      {super.key,
+      this.isEdit = false,
+      this.vehicleId,
+      this.ownerId,
+      this.actionByOwner});
 
   @override
   State<AddAndEditVehicleScreen> createState() =>
@@ -85,6 +91,12 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
       getCountry();
       if (widget.isEdit) {
         getVehicleById();
+      } else {
+        if (widget.actionByOwner == 'edit owner') {
+          ownerId = widget.ownerId!;
+          getVehicleOwnerById();
+          // _selectedOption = 'Existing Owner';
+        }
       }
       getColors();
     });
@@ -146,6 +158,23 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
     selectedDocumentImage = data?.vehicleDocUrl ?? '';
   }
 
+  Future<void> getVehicleOwnerById() async {
+    if (ownerId.isEmpty) return;
+    var vom = context.read<VehicleOwnerViewModel>();
+    await vom.getVehicleOwnerByIdApi(ownerId: ownerId);
+    var data = vom.vehicleOwnerById.data?.data;
+
+    _firstNameController.text = data?.firstName ?? '';
+    _lastNameController.text = data?.lastName ?? '';
+    _emailController.text = data?.email ?? '';
+    _emiratesController.text = data?.emiratesId ?? '';
+    _countryController.text = data?.country ?? '';
+    _stateController.text = data?.state ?? '';
+    _locationController.text = data?.address ?? '';
+    _phoneController.text = data?.mobile ?? '';
+    selectedOwnerImage = data?.vehicleOwnerImageUrl ?? '';
+  }
+
   @override
   Widget build(BuildContext context) {
     var state = context.watch<GetCountryStateListViewModel>().getStateNameModel;
@@ -165,8 +194,13 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
       backgroundColor: bgGreyColor,
       appBar: AppBar(
         backgroundColor: background,
-        title: Text(
-            widget.isEdit ? 'Update Vehicle' : "Add New Owner And Vehicle"),
+        title: Text(widget.isEdit
+            ? 'Update Vehicle'
+            : widget.actionByOwner == 'edit owner'
+                ? 'Edit Owner'
+                : widget.actionByOwner == 'add vehicle'
+                    ? 'Add Vehicle'
+                    : "Add New Owner And Vehicle"),
       ),
       body: loadingStatus == Status.loading
           ? Center(
@@ -174,609 +208,671 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
               color: greenColor,
             ))
           : Form(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                widget.isEdit
-                    ? Card(
-                        color: background,
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Owner Details',
-                                style: landingText,
-                              ),
-                              SizedBox(height: 10),
-                              ListTile(
-                                leading: CircleAvatar(
-                                  radius: 35,
+              key: _formKey,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      widget.isEdit
+                          ? Card(
+                              color: background,
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Owner Details',
+                                      style: landingText,
+                                    ),
+                                    SizedBox(height: 10),
+                                    ListTile(
+                                      leading: CircleAvatar(
+                                        radius: 35,
                                         backgroundColor: Colors.grey[200],
                                         backgroundImage: ownerImage.isNotEmpty
                                             ? NetworkImage(ownerImage)
                                             : null,
-                                  child: ownerImage.isEmpty
+                                        child: ownerImage.isEmpty
                                             ? const Icon(Icons.person,
                                                 size: 35, color: Colors.grey)
                                             : null,
-                                ),
-                                horizontalTitleGap: 10,
-                                contentPadding: EdgeInsets.zero,
-                                title: Text('$ownerName ($ownerId)'),
-                                subtitle: Text(ownerEmail),
-                              )
-                            ],
-                          ),
-                        ),
-                      )
-                    : Column(
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: RadioListTile(
-                                  dense: true,
-                                  contentPadding:
-                                      EdgeInsets.symmetric(horizontal: 0),
-                                  activeColor: btnColor,
-                                  value: 'New Owner',
-                                  groupValue: _selectedOption,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _selectedOption = value!;
-                                    });
-                                  },
-                                  title: Text(
-                                    'New Owner',
-                                    style: titleTextStyle,
-                                  ),
+                                      ),
+                                      horizontalTitleGap: 10,
+                                      contentPadding: EdgeInsets.zero,
+                                      title: Text('$ownerName ($ownerId)'),
+                                      subtitle: Text(ownerEmail),
+                                    )
+                                  ],
                                 ),
                               ),
-                              Expanded(
-                                child: RadioListTile(
-                                  dense: true,
-                                  activeColor: btnColor,
-                                  contentPadding:
-                                      EdgeInsets.symmetric(horizontal: 0),
-                                  value: 'Existing Owner',
-                                  groupValue: _selectedOption,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _selectedOption = value!;
-                                            selectedOwnerImage = null;
-                                    });
-                                          getVehicleOwnerList();
-                                  },
-                                  title: Text(
-                                    'Existing Owner',
-                                    style: titleTextStyle,
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                          _selectedOption == 'New Owner'
-                              ? Card(
-                                  color: background,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Owner Details',
-                                          style: landingText,
-                                        ),
-                                        lableText('First Name'),
-                                        Customtextformfield(
-                                          controller: _firstNameController,
-                                          inputFormatters: [
-                                            FilteringTextInputFormatter.allow(
-                                              RegExp(r'^[\u0000-\u007F]*$'),
-                                            ),
-                                          ],
-                                          keyboardType: TextInputType.name,
-                                          fillColor: background,
-                                          hintText: 'Enter your first name',
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return 'Please enter first name';
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                        const SizedBox(height: 10),
-                                        lableText('Last Name'),
-                                        Customtextformfield(
-                                          controller: _lastNameController,
-                                          keyboardType: TextInputType.name,
-                                          inputFormatters: [
-                                            FilteringTextInputFormatter.allow(
-                                              RegExp(r'^[\u0000-\u007F]*$'),
-                                            ),
-                                          ],
-                                          fillColor: background,
-                                          hintText: 'Enter your last name',
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return 'Please enter last name';
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                        const SizedBox(height: 10),
-                                        lableText('Email'),
-                                        Customtextformfield(
-                                          keyboardType:
-                                              TextInputType.emailAddress,
-                                          controller: _emailController,
-                                          fillColor: background,
-                                          hintText: 'xyz@gmail.com',
-                                          validator: (p0) {
-                                            return Validatorclass.validateEmail(
-                                                p0);
-                                          },
-                                        ),
-                                        const SizedBox(height: 10),
-                                              lableText('Emirates id'),
-                                              Customtextformfield(
-                                                controller: _emiratesController,
-                                                fillColor: background,
-                                                hintText: '784-YYYY-NNNNNNN-C',
-                                                keyboardType:
-                                                    TextInputType.number,
-                                                validator: (value) {
-                                                  if (value == null ||
-                                                      value.isEmpty) {
-                                                    return 'Please enter Emirates ID';
-                                                  } else if (!Validation()
-                                                      .isValidEmiratesId(
-                                                          value)) {
-                                                    return 'Enter a valid Emirates ID (e.g., 784-2000-9876543-2)';
-                                                  }
-
-                                                  return null; // valid
-                                                },
+                            )
+                          : Column(
+                              children: [
+                                (widget.actionByOwner == 'edit owner' ||
+                                        widget.actionByOwner == 'add vehicle')
+                                    ? SizedBox()
+                                    : Row(
+                                        children: [
+                                          Expanded(
+                                            child: RadioListTile(
+                                              dense: true,
+                                              contentPadding:
+                                                  EdgeInsets.symmetric(
+                                                      horizontal: 0),
+                                              activeColor: btnColor,
+                                              value: 'New Owner',
+                                              groupValue: _selectedOption,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  _selectedOption = value!;
+                                                });
+                                              },
+                                              title: Text(
+                                                'New Owner',
+                                                style: titleTextStyle,
                                               ),
-                                              const SizedBox(height: 10),
-                                        lableText('Country'),
-                                        Material(
-                                          child: Customtextformfield(
-                                            controller: _countryController,
-                                            readOnly: true,
-                                            enableInteractiveSelection: false,
-                                            // prefixiconvisible: true,
-                                            // inputFormatters: [
-                                            //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
-                                            // ],
-                                            fillColor: background,
-
-                                            hintText: 'Country',
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(height: 10),
-                                        lableText('State'),
-                                        CustomDropdownButton(
-                                          controller: _stateController,
+                                          Expanded(
+                                            child: RadioListTile(
+                                              dense: true,
+                                              activeColor: btnColor,
+                                              contentPadding:
+                                                  EdgeInsets.symmetric(
+                                                      horizontal: 0),
+                                              value: 'Existing Owner',
+                                              groupValue: _selectedOption,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  _selectedOption = value!;
+                                                  selectedOwnerImage = null;
+                                                });
+                                                getVehicleOwnerList();
+                                              },
+                                              title: Text(
+                                                'Existing Owner',
+                                                style: titleTextStyle,
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                (widget.actionByOwner == 'add vehicle')
+                                    ? SizedBox()
+                                    : _selectedOption == 'New Owner'
+                                        ? Card(
+                                            color: background,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(10.0),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Owner Details',
+                                                    style: landingText,
+                                                  ),
+                                                  lableText('First Name'),
+                                                  Customtextformfield(
+                                                    controller:
+                                                        _firstNameController,
+                                                    inputFormatters: [
+                                                      FilteringTextInputFormatter
+                                                          .allow(
+                                                        RegExp(
+                                                            r'^[\u0000-\u007F]*$'),
+                                                      ),
+                                                    ],
+                                                    keyboardType:
+                                                        TextInputType.name,
+                                                    fillColor: background,
+                                                    hintText:
+                                                        'Enter your first name',
+                                                    validator: (value) {
+                                                      if (value == null ||
+                                                          value.isEmpty) {
+                                                        return 'Please enter first name';
+                                                      }
+                                                      return null;
+                                                    },
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  lableText('Last Name'),
+                                                  Customtextformfield(
+                                                    controller:
+                                                        _lastNameController,
+                                                    keyboardType:
+                                                        TextInputType.name,
+                                                    inputFormatters: [
+                                                      FilteringTextInputFormatter
+                                                          .allow(
+                                                        RegExp(
+                                                            r'^[\u0000-\u007F]*$'),
+                                                      ),
+                                                    ],
+                                                    fillColor: background,
+                                                    hintText:
+                                                        'Enter your last name',
+                                                    validator: (value) {
+                                                      if (value == null ||
+                                                          value.isEmpty) {
+                                                        return 'Please enter last name';
+                                                      }
+                                                      return null;
+                                                    },
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  lableText('Email'),
+                                                  Customtextformfield(
+                                                    keyboardType: TextInputType
+                                                        .emailAddress,
+                                                    controller:
+                                                        _emailController,
+                                                    fillColor: background,
+                                                    hintText: 'xyz@gmail.com',
+                                                    validator: (p0) {
+                                                      return Validatorclass
+                                                          .validateEmail(p0);
+                                                    },
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  lableText('Emirates id'),
+                                                  Customtextformfield(
+                                                    controller:
+                                                        _emiratesController,
+                                                    fillColor: background,
+                                                    hintText:
+                                                        '784-YYYY-NNNNNNN-C',
+                                                    keyboardType:
+                                                        TextInputType.number,
+                                                    validator: (value) {
+                                                      if (value == null ||
+                                                          value.isEmpty) {
+                                                        return 'Please enter Emirates ID';
+                                                      } else if (!Validation()
+                                                          .isValidEmiratesId(
+                                                              value)) {
+                                                        return 'Enter a valid Emirates ID (e.g., 784-2000-9876543-2)';
+                                                      }
 
-                                          itemsList: state
-                                                  ?.map(
-                                                      (stateName) => stateName)
-                                                  .toList() ??
-                                              [],
+                                                      return null; // valid
+                                                    },
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  lableText('Country'),
+                                                  Material(
+                                                    child: Customtextformfield(
+                                                      controller:
+                                                          _countryController,
+                                                      readOnly: true,
+                                                      enableInteractiveSelection:
+                                                          false,
+                                                      // prefixiconvisible: true,
+                                                      // inputFormatters: [
+                                                      //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+                                                      // ],
+                                                      fillColor: background,
 
-                                          // itemsList: [],
-                                          onChanged: isLoadingState
-                                              ? null
-                                              : (value) {
-                                                  setState(() {
-                                                    _stateController.text =
-                                                        value ?? '';
-                                                    _locationController.clear();
-                                                  });
-                                                },
-                                          hintText: 'Select State',
-
-                                          validator: (p0) {
-                                            if (p0 == null || p0.isEmpty) {
-                                              return 'Please select state';
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                        const SizedBox(height: 10),
-                                        lableText('Location'),
-                                        CustomSearchLocation(
-                                            fillColor: background,
-                                            controller: _locationController,
-                                            state: _stateController.text,
-                                            // stateValidation: true,
-                                            hintText: 'Search your location'),
-                                        const SizedBox(height: 10),
-                                        lableText('Contact No'),
-                                        CustomMobilenumber(
-                                            controller: _phoneController,
-                                            fillColor: background,
-                                            textLength: 9,
-                                            hintText: 'Enter phone number',
-                                            countryCode: countryCode),
-                                        const SizedBox(height: 10),
-                                        lableText('Upload Owner Image'),
-                                        FormField<File>(
-                                          autovalidateMode: AutovalidateMode
-                                              .onUserInteraction,
-                                          builder: (field) {
-                                            return Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                SingleImagePicker(
-                                                  initialImageUrl:
-                                                      selectedOwnerImage,
-                                                  noteText:
-                                                      '* For the best viewing experience, please upload an image with a resolution of 1080x1350 pixels.',
-                                                  onImageSelected: (file) {
-                                                    setState(() {
-                                                      selectedOwnerImage =
-                                                          file?.path;
-                                                    });
-                                                    field.didChange(file);
-                                                    debugPrint(
-                                                        'Selected image: ${file?.path}');
-                                                  },
-                                                ),
-                                                if (field.hasError)
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            top: 5, left: 10),
-                                                    child: Text(
-                                                      field.errorText ?? '',
-                                                      style: TextStyle(
-                                                          color:
-                                                              Colors.red[700],
-                                                          fontSize: 12),
+                                                      hintText: 'Country',
                                                     ),
                                                   ),
-                                              ],
-                                            );
-                                          },
-                                          validator: (value) {
-                                            if (value == null) {
-                                              return 'Please select image';
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              : Card(
-                                  color: background,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        lableText('Select Existing Owner'),
-                                        SizedBox(height: 5),
-                                        CustomDropdownButton(
-                                                itemsList: vehicleOwnerList
-                                                        ?.map((toElement) =>
-                                                            '${toElement.firstName} ${toElement.lastName}')
-                                                        .toList() ??
-                                                    [],
-                                          controller: _existingOwnerController,
-                                          hintText: 'Select Owner',
-                                                onChanged: (p0) {
-                                                  setState(() {
-                                                    // Find the matching owner object safely
-                                                    final matching =
-                                                        vehicleOwnerList?.where(
-                                                            (owner) =>
-                                                                '${owner.firstName} ${owner.lastName}' ==
-                                                                p0);
-                                                    final selectedOwner =
-                                                        (matching != null &&
-                                                                matching
-                                                                    .isNotEmpty)
-                                                            ? matching.first
-                                                            : null;
+                                                  const SizedBox(height: 10),
+                                                  lableText('State'),
+                                                  CustomDropdownButton(
+                                                    controller:
+                                                        _stateController,
 
-                                                    // Set the ownerId safely
-                                                    ownerId = selectedOwner
-                                                            ?.vehicleOwnerId
-                                                            ?.toString() ??
-                                                        '';
-                                                  });
-                                                },
-                                        ),
+                                                    itemsList: state
+                                                            ?.map((stateName) =>
+                                                                stateName)
+                                                            .toList() ??
+                                                        [],
+
+                                                    // itemsList: [],
+                                                    onChanged: isLoadingState
+                                                        ? null
+                                                        : (value) {
+                                                            setState(() {
+                                                              _stateController
+                                                                      .text =
+                                                                  value ?? '';
+                                                              _locationController
+                                                                  .clear();
+                                                            });
+                                                          },
+                                                    hintText: 'Select State',
+
+                                                    validator: (p0) {
+                                                      if (p0 == null ||
+                                                          p0.isEmpty) {
+                                                        return 'Please select state';
+                                                      }
+                                                      return null;
+                                                    },
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  lableText('Location'),
+                                                  CustomSearchLocation(
+                                                      fillColor: background,
+                                                      controller:
+                                                          _locationController,
+                                                      state:
+                                                          _stateController.text,
+                                                      // stateValidation: true,
+                                                      hintText:
+                                                          'Search your location'),
+                                                  const SizedBox(height: 10),
+                                                  lableText('Contact No'),
+                                                  CustomMobilenumber(
+                                                      controller:
+                                                          _phoneController,
+                                                      fillColor: background,
+                                                      textLength: 9,
+                                                      hintText:
+                                                          'Enter phone number',
+                                                      countryCode: countryCode),
+                                                  const SizedBox(height: 10),
+                                                  lableText(
+                                                      'Upload Owner Image'),
+                                                  FormField<File>(
+                                                    autovalidateMode:
+                                                        AutovalidateMode
+                                                            .onUserInteraction,
+                                                    builder: (field) {
+                                                      return Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          SingleImagePicker(
+                                                            initialImageUrl:
+                                                                selectedOwnerImage,
+                                                            noteText:
+                                                                '* For the best viewing experience, please upload an image with a resolution of 1080x1350 pixels.',
+                                                            onImageSelected:
+                                                                (file) {
+                                                              setState(() {
+                                                                selectedOwnerImage =
+                                                                    file?.path;
+                                                              });
+                                                              field.didChange(
+                                                                  file);
+                                                              debugPrint(
+                                                                  'Selected image: ${file?.path}');
+                                                            },
+                                                          ),
+                                                          if (field.hasError)
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                      top: 5,
+                                                                      left: 10),
+                                                              child: Text(
+                                                                field.errorText ??
+                                                                    '',
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                            .red[
+                                                                        700],
+                                                                    fontSize:
+                                                                        12),
+                                                              ),
+                                                            ),
+                                                        ],
+                                                      );
+                                                    },
+                                                    validator: (value) {
+                                                      if (value == null) {
+                                                        return 'Please select image';
+                                                      }
+                                                      return null;
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                            ))
+                                        : Card(
+                                            color: background,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(10.0),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  lableText(
+                                                      'Select Existing Owner'),
+                                                  SizedBox(height: 5),
+                                                  CustomDropdownButton(
+                                                    itemsList: vehicleOwnerList
+                                                            ?.map((toElement) =>
+                                                                '${toElement.firstName} ${toElement.lastName}')
+                                                            .toList() ??
+                                                        [],
+                                                    controller:
+                                                        _existingOwnerController,
+                                                    hintText: 'Select Owner',
+                                                    onChanged: (p0) {
+                                                      setState(() {
+                                                        // Find the matching owner object safely
+                                                        final matching =
+                                                            vehicleOwnerList
+                                                                ?.where((owner) =>
+                                                                    '${owner.firstName} ${owner.lastName}' ==
+                                                                    p0);
+                                                        final selectedOwner =
+                                                            (matching != null &&
+                                                                    matching
+                                                                        .isNotEmpty)
+                                                                ? matching.first
+                                                                : null;
+
+                                                        // Set the ownerId safely
+                                                        ownerId = selectedOwner
+                                                                ?.vehicleOwnerId
+                                                                ?.toString() ??
+                                                            '';
+                                                      });
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          )
+                              ],
+                            ),
+                      SizedBox(height: 10),
+                      widget.actionByOwner == 'edit owner'
+                          ? SizedBox()
+                          : Card(
+                              color: background,
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Vehicle Details',
+                                      style: landingText,
+                                    ),
+                                    SizedBox(height: 10),
+                                    lableText('Car Name'),
+                                    Customtextformfield(
+                                      controller: _carNameController,
+                                      fillColor: background,
+                                      hintText: 'Enter car name',
+                                      validator: (p0) {
+                                        if (p0 == null || p0.isEmpty) {
+                                          return 'Please enter car name';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(height: 10),
+                                    lableText('Car Type'),
+                                    CustomDropdownButton(
+                                      itemsList: vehicleTypeList
+                                              ?.map((toElement) => toElement)
+                                              .toList() ??
+                                          [],
+                                      controller: _carTypeController,
+                                      hintText: 'Select Car Type',
+                                      validator: (p0) {
+                                        if (p0 == null || p0.isEmpty) {
+                                          return 'Please select car type';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(height: 10),
+                                    lableText('Fuel Type'),
+                                    CustomDropdownButton(
+                                      itemsList: [
+                                        'Diesel',
+                                        'Petrol',
+                                        'CNG',
+                                        "EV"
                                       ],
+                                      controller: _fuelTypeController,
+                                      hintText: 'Select Fuel Type',
+                                      validator: (p0) {
+                                        if (p0 == null || p0.isEmpty) {
+                                          return 'Please select fuel type';
+                                        }
+                                        return null;
+                                      },
                                     ),
-                                  ),
-                                )
-                        ],
-                      ),
-                SizedBox(height: 10),
-                Card(
-                  color: background,
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Vehicle Details',
-                          style: landingText,
-                        ),
-                        SizedBox(height: 10),
-                        lableText('Car Name'),
-                        Customtextformfield(
-                          controller: _carNameController,
-                          fillColor: background,
-                          hintText: 'Enter car name',
-                          validator: (p0) {
-                            if (p0 == null || p0.isEmpty) {
-                              return 'Please enter car name';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        lableText('Car Type'),
-                        CustomDropdownButton(
-                          itemsList: vehicleTypeList
-                                  ?.map((toElement) => toElement)
-                                  .toList() ??
-                              [],
-                          controller: _carTypeController,
-                          hintText: 'Select Car Type',
-                          validator: (p0) {
-                            if (p0 == null || p0.isEmpty) {
-                              return 'Please select car type';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        lableText('Fuel Type'),
-                        CustomDropdownButton(
-                          itemsList: ['Diesel', 'Petrol', 'CNG', "EV"],
-                          controller: _fuelTypeController,
-                          hintText: 'Select Fuel Type',
-                          validator: (p0) {
-                            if (p0 == null || p0.isEmpty) {
-                              return 'Please select fuel type';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        lableText('Model No'),
-                        Customtextformfield(
-                          controller: _modelNoController,
-                          fillColor: background,
-                          hintText: 'Enter Model No',
-                          validator: (p0) {
-                            if (p0 == null || p0.isEmpty) {
-                              return 'Please enter model no';
-                                  } else if (!Validation()
-                                      .isValidVehicleModelNo(p0)) {
-                                    return 'Invalid model number (e.g. CAMRY2023)';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        lableText('Seats'),
-                        CustomDropdownButton(
-                          itemsList: List.generate(
-                            8,
-                            (index) {
-                              return (index + 2).toString();
-                            },
-                          ),
-                          controller: _seatController,
-                          hintText: 'Select Seats',
-                          validator: (p0) {
-                            if (p0 == null || p0.isEmpty) {
-                              return 'Please select seats';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        lableText('Years'),
-                        CustomDropdownButton(
-                          itemsList: yearsList,
-                          controller: _yearController,
-                          hintText: 'Select Years',
-                          validator: (p0) {
-                            if (p0 == null || p0.isEmpty) {
-                              return 'Please select year';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        lableText('Colors'),
-                        CustomDropdownButton(
-                          itemsList: colors
-                                  ?.map(
-                                      (toElement) => toElement.name.toString())
-                                  .toList() ??
-                              [],
-                          controller: _colorController,
-                          hintText: 'Select Color',
-                          validator: (p0) {
-                            if (p0 == null || p0.isEmpty) {
-                              return 'Please select color';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        lableText('Brand Name'),
-                        CustomDropdownButton(
-                          itemsList: vehicleBrandName
-                                  ?.map(
-                                      (toElement) => toElement.name.toString())
-                                  .toList() ??
-                              [],
-                          controller: _brandNameController,
-                          hintText: 'Select Brand Name',
-                          validator: (p0) {
-                            if (p0 == null || p0.isEmpty) {
-                              return 'Please select brand name';
-                            }
-                            return null;
-                          },
-                        ),
-                        SizedBox(height: 10),
-                        lableText('Vehicle No'),
-                        Customtextformfield(
-                          controller: _vahicleNoController,
-                          fillColor: background,
-                          hintText: 'Enter Vehicle No',
-                          validator: (p0) {
-                            if (p0 == null || p0.isEmpty) {
-                              return 'Please enter vehicle no';
-                                  } else if (!Validation()
-                                      .isValidUaeVehicleNumber(p0)) {
-                                    return 'Invalid UAE vehicle number (e.g. A 12345)';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        lableText('Status'),
-                        CustomDropdownButton(
-                          itemsList: ['Active', 'Inactive'],
-                          controller: _statusController,
-                          hintText: 'Select status',
-                          validator: (p0) {
-                            if (p0 == null || p0.isEmpty) {
-                              return 'Please select status';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        lableText('Upload Vehicle Document Image'),
-                              FormField<String>(
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                                initialValue: selectedDocumentImage,
-                          builder: (field) {
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SingleImagePicker(
-                                  initialImageUrl: selectedDocumentImage,
-                                  noteText:
-                                      '* For the best viewing experience, please upload an image with a resolution of 1080x1350 pixels.',
-                                  onImageSelected: (file) {
-                                    setState(() {
-                                      selectedDocumentImage = file?.path;
-                                    });
-                                          field.didChange(file?.path);
-                                    debugPrint(
-                                        'Selected image: $selectedDocumentImage');
-                                  },
-                                ),
-                                if (field.hasError)
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.only(top: 5, left: 10),
-                                    child: Text(
-                                      field.errorText ?? '',
+                                    const SizedBox(height: 10),
+                                    lableText('Model No'),
+                                    Customtextformfield(
+                                      controller: _modelNoController,
+                                      fillColor: background,
+                                      hintText: 'Enter Model No',
+                                      validator: (p0) {
+                                        if (p0 == null || p0.isEmpty) {
+                                          return 'Please enter model no';
+                                        } else if (!Validation()
+                                            .isValidVehicleModelNo(p0)) {
+                                          return 'Invalid model number (e.g. CAMRY2023)';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(height: 10),
+                                    lableText('Seats'),
+                                    CustomDropdownButton(
+                                      itemsList: List.generate(
+                                        8,
+                                        (index) {
+                                          return (index + 2).toString();
+                                        },
+                                      ),
+                                      controller: _seatController,
+                                      hintText: 'Select Seats',
+                                      validator: (p0) {
+                                        if (p0 == null || p0.isEmpty) {
+                                          return 'Please select seats';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(height: 10),
+                                    lableText('Years'),
+                                    CustomDropdownButton(
+                                      itemsList: yearsList,
+                                      controller: _yearController,
+                                      hintText: 'Select Years',
+                                      validator: (p0) {
+                                        if (p0 == null || p0.isEmpty) {
+                                          return 'Please select year';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(height: 10),
+                                    lableText('Colors'),
+                                    CustomDropdownButton(
+                                      itemsList: colors
+                                              ?.map((toElement) =>
+                                                  toElement.name.toString())
+                                              .toList() ??
+                                          [],
+                                      controller: _colorController,
+                                      hintText: 'Select Color',
+                                      validator: (p0) {
+                                        if (p0 == null || p0.isEmpty) {
+                                          return 'Please select color';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(height: 10),
+                                    lableText('Brand Name'),
+                                    CustomDropdownButton(
+                                      itemsList: vehicleBrandName
+                                              ?.map((toElement) =>
+                                                  toElement.name.toString())
+                                              .toList() ??
+                                          [],
+                                      controller: _brandNameController,
+                                      hintText: 'Select Brand Name',
+                                      validator: (p0) {
+                                        if (p0 == null || p0.isEmpty) {
+                                          return 'Please select brand name';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    SizedBox(height: 10),
+                                    lableText('Vehicle No'),
+                                    Customtextformfield(
+                                      controller: _vahicleNoController,
+                                      fillColor: background,
+                                      hintText: 'Enter Vehicle No',
+                                      validator: (p0) {
+                                        if (p0 == null || p0.isEmpty) {
+                                          return 'Please enter vehicle no';
+                                        } else if (!Validation()
+                                            .isValidUaeVehicleNumber(p0)) {
+                                          return 'Invalid UAE vehicle number (e.g. A 12345)';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(height: 10),
+                                    lableText('Status'),
+                                    CustomDropdownButton(
+                                      itemsList: ['Active', 'Inactive'],
+                                      controller: _statusController,
+                                      hintText: 'Select status',
+                                      validator: (p0) {
+                                        if (p0 == null || p0.isEmpty) {
+                                          return 'Please select status';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(height: 10),
+                                    lableText('Upload Vehicle Document Image'),
+                                    FormField<String>(
+                                      autovalidateMode:
+                                          AutovalidateMode.onUserInteraction,
+                                      initialValue: selectedDocumentImage,
+                                      builder: (field) {
+                                        return Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            SingleImagePicker(
+                                              initialImageUrl:
+                                                  selectedDocumentImage,
+                                              noteText:
+                                                  '* For the best viewing experience, please upload an image with a resolution of 1080x1350 pixels.',
+                                              onImageSelected: (file) {
+                                                setState(() {
+                                                  selectedDocumentImage =
+                                                      file?.path;
+                                                });
+                                                field.didChange(file?.path);
+                                                debugPrint(
+                                                    'Selected image: $selectedDocumentImage');
+                                              },
+                                            ),
+                                            if (field.hasError)
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 5, left: 10),
+                                                child: Text(
+                                                  field.errorText ?? '',
+                                                  style: TextStyle(
+                                                      color: Colors.red[700],
+                                                      fontSize: 12),
+                                                ),
+                                              ),
+                                          ],
+                                        );
+                                      },
+                                      validator: (value) {
+                                        if (value == null ||
+                                            (selectedDocumentImage ?? '')
+                                                .isEmpty) {
+                                          return 'Please select image';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(height: 10),
+                                    lableText('Upload Vehicle Images'),
+                                    FormField<List<File>>(
+                                      autovalidateMode:
+                                          AutovalidateMode.onUserInteraction,
+                                      builder: (field) {
+                                        return Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            MultiImageUploadWidget(
+                                              initialImageUrls: initialImages,
+                                              onImagesSelected: (images) {
+                                                setState(() {
+                                                  selectedImages = images;
+                                                });
+                                                field.didChange(images);
+                                              },
+                                            ),
+                                            if (field.hasError)
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 5, left: 10),
+                                                child: Text(
+                                                  field.errorText ?? '',
+                                                  style: TextStyle(
+                                                      color: Colors.red[700],
+                                                      fontSize: 12),
+                                                ),
+                                              ),
+                                          ],
+                                        );
+                                      },
+                                      validator: (value) {
+                                        if ((value == null || value.isEmpty) &&
+                                            initialImages.isEmpty) {
+                                          return 'Please select images';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(height: 8),
+                                    const Text(
+                                      "* File should be less than 1 MB\n* For the best viewing experience, please upload an image with a resolution of 1280x720 pixels.",
                                       style: TextStyle(
-                                          color: Colors.red[700], fontSize: 12),
+                                          color: Colors.orange, fontSize: 12),
                                     ),
-                                  ),
-                              ],
-                            );
-                          },
-                          validator: (value) {
-                            if (value == null ||
-                                (selectedDocumentImage ?? '').isEmpty) {
-                              return 'Please select image';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        lableText('Upload Vehicle Images'),
-                        FormField<List<File>>(
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          builder: (field) {
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                MultiImageUploadWidget(
-                                  initialImageUrls: initialImages,
-                                  onImagesSelected: (images) {
-                                    setState(() {
-                                      selectedImages = images;
-                                    });
-                                    field.didChange(images);
-                                  },
+                                  ],
                                 ),
-                                if (field.hasError)
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.only(top: 5, left: 10),
-                                    child: Text(
-                                      field.errorText ?? '',
-                                      style: TextStyle(
-                                          color: Colors.red[700], fontSize: 12),
-                                    ),
-                                  ),
-                              ],
-                            );
-                          },
-                          validator: (value) {
-                            if ((value == null || value.isEmpty) &&
-                                initialImages.isEmpty) {
-                              return 'Please select images';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          "* File should be less than 1 MB\n* For the best viewing experience, please upload an image with a resolution of 1280x720 pixels.",
-                          style: TextStyle(color: Colors.orange, fontSize: 12),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(height: 10),
-                CustomButtonSmall(
+                              ),
+                            ),
+                      SizedBox(height: 10),
+                      CustomButtonSmall(
                         loading: status == Status.loading,
                         btnHeading: widget.isEdit
                             ? 'Update Vehicle'
-                            : _selectedOption == 'New Owner'
-                                ? "Add New Owner And Vehicle"
-                                : "Add Vehicle",
+                            : widget.actionByOwner == 'edit owner'
+                                ? 'Update Owner'
+                                : widget.actionByOwner == 'add vehicle'
+                                    ? 'Add Vehicle'
+                                    : _selectedOption == 'New Owner'
+                                        ? "Add New Owner And Vehicle"
+                                        : "Add Vehicle",
                         onTap: () async {
                           if (_formKey.currentState!.validate()) {
                             String? vendorId =
                                 await UserViewModel().getUserId();
-                            // List<String> allImageUrls = [
-                            //   ...initialImages,
-                            //   ...selectedImages.map((file) => file.path),
-                            // ];
+
                             List<MultipartFile> imageFiles = [];
                             for (var image in selectedImages) {
                               if (image.existsSync()) {
@@ -868,13 +964,13 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
                                     body: payload,
                                     isEdit: widget.isEdit);
                           }
-                  },
-                )
-              ],
+                        },
+                      )
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-      ),
     );
   }
 

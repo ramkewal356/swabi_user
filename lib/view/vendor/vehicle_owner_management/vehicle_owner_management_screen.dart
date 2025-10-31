@@ -4,21 +4,22 @@ import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/res/custom_filter_popup_widget.dart';
 import 'package:flutter_cab/res/custom_search_field.dart';
 import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/view_model/vehicle_view_model.dart';
+import 'package:flutter_cab/view_model/vehicle_owner_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../data/response/status.dart';
 
-class VehicleManagementScreen extends StatefulWidget {
-  const VehicleManagementScreen({super.key});
+class VehicleOwnerManagementScreen extends StatefulWidget {
+  const VehicleOwnerManagementScreen({super.key});
 
   @override
-  State<VehicleManagementScreen> createState() =>
-      _VehicleManagementScreenState();
+  State<VehicleOwnerManagementScreen> createState() =>
+      _VehicleOwnerManagementScreenState();
 }
 
-class _VehicleManagementScreenState extends State<VehicleManagementScreen> {
+class _VehicleOwnerManagementScreenState
+    extends State<VehicleOwnerManagementScreen> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocus = FocusNode();
   final ScrollController _scrollController = ScrollController();
@@ -34,7 +35,7 @@ class _VehicleManagementScreenState extends State<VehicleManagementScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getAllVehicleList(
+      _getAllVehicleOwnerList(
         isFilter: true,
         isSearch: false,
         isPagination: false,
@@ -43,12 +44,12 @@ class _VehicleManagementScreenState extends State<VehicleManagementScreen> {
     _scrollController.addListener(_onScroll);
   }
 
-  void _getAllVehicleList({
+  void _getAllVehicleOwnerList({
     bool isFilter = false,
     bool isSearch = false,
     bool isPagination = false,
   }) {
-    context.read<VehicleViewModel>().getAllVehicleListApi(
+    context.read<VehicleOwnerViewModel>().getVehicleOwnerListApi(
         isFilter: isFilter,
         isSearch: isSearch,
         isPagination: isPagination,
@@ -59,7 +60,8 @@ class _VehicleManagementScreenState extends State<VehicleManagementScreen> {
   void _onSearchChanged(String value) {
     setState(() {
       searchText = value;
-      _getAllVehicleList(isSearch: true, isFilter: false, isPagination: false);
+      _getAllVehicleOwnerList(
+          isSearch: true, isFilter: false, isPagination: false);
     });
     // Handle search logic here
     debugPrint("Search value: $value");
@@ -69,15 +71,16 @@ class _VehicleManagementScreenState extends State<VehicleManagementScreen> {
     setState(() {
       selectedStatus = value;
       // Handle filter logic here
-      debugPrint("Selected bid: $selectedStatus");
+      debugPrint("Selected owner: $selectedStatus");
     });
-    _getAllVehicleList(isFilter: true, isSearch: false, isPagination: false);
+    _getAllVehicleOwnerList(
+        isFilter: true, isSearch: false, isPagination: false);
   }
 
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
-      _getAllVehicleList(
+      _getAllVehicleOwnerList(
         isFilter: false,
         isSearch: false,
         isPagination: true,
@@ -87,11 +90,11 @@ class _VehicleManagementScreenState extends State<VehicleManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final statuss =
-        context.watch<VehicleViewModel>().activeOrDeactive.status;
+    // final statuss =
+    //     context.watch<VehicleOwnerViewModel>().activeOrDeactive.status;
     return PageLayoutPage(
       appBar: AppBar(
-        title: const Text("Vehicle Management"),
+        title: const Text("Vehicle Owner Management"),
         backgroundColor: background,
       ),
       child: Column(
@@ -114,27 +117,12 @@ class _VehicleManagementScreenState extends State<VehicleManagementScreen> {
                   title: title,
                   filterOptions: packageFilter,
                   onFilterChanged: _onFilterChanged),
-              SizedBox(width: 5),
-              IconButton.filled(
-                  style: ButtonStyle(
-                      backgroundColor: WidgetStatePropertyAll(btnColor),
-                      shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                          borderRadius: BorderRadiusGeometry.circular(6)))),
-                  onPressed: () {
-                    context
-                        .push(
-                            '/vendor_dashboard/vehicle_management/add_edit_vehicle')
-                        .then((onValue) {
-                      _getAllVehicleList(isFilter: true);
-                    });
-                  },
-                  icon: Icon(Icons.add))
             ],
           ),
           SizedBox(height: 5),
-          Expanded(child: Consumer<VehicleViewModel>(
+          Expanded(child: Consumer<VehicleOwnerViewModel>(
             builder: (context, value, child) {
-              if (value.getVehicleList.status == Status.loading) {
+              if (value.getVehicleOwnerList.status == Status.loading) {
                 return Center(
                   child: CircularProgressIndicator(
                     color: greenColor,
@@ -143,17 +131,19 @@ class _VehicleManagementScreenState extends State<VehicleManagementScreen> {
               } else {
                 return ListView.builder(
                   controller: _scrollController,
-                  itemCount: (value.getVehicleList.data ?? []).length +
+                  itemCount: (value.getVehicleOwnerList.data ?? []).length +
                       (value.isLastPage ? 0 : 1),
                   itemBuilder: (context, index) {
-                    if (index == value.getVehicleList.data?.length) {
+                    if (index == value.getVehicleOwnerList.data?.length) {
                       return Center(
                         child: CircularProgressIndicator(
                           color: greenColor,
                         ),
                       );
                     }
-                    var vehicleList = value.getVehicleList.data?[index];
+                    var vehicleOwnerList =
+                        value.getVehicleOwnerList.data?[index];
+
                     return Card(
                       color: background,
                       margin: EdgeInsets.symmetric(horizontal: 2, vertical: 6),
@@ -170,22 +160,57 @@ class _VehicleManagementScreenState extends State<VehicleManagementScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    vehicleList?.carName ?? '',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.person,
+                                          color: btnColor, size: 20),
+                                      SizedBox(width: 5),
+                                      Text(
+                                        '${vehicleOwnerList?.firstName} ${vehicleOwnerList?.lastName} (${vehicleOwnerList?.vehicleOwnerId})',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 15),
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                      'Vehicle Id : ${vehicleList?.vehicleId.toString()}'),
-                                  Text(
-                                      'Vehicle Type : ${vehicleList?.carType}'),
-                                  Text(
-                                      'Vehicle No : ${vehicleList?.vehicleNumber}'),
-                                  Text('Model No: ${vehicleList?.modelNo}'),
-                                  Text(
-                                      'Year : ${vehicleList?.year} - Seats : ${vehicleList?.seats}'),
-                                  // Text('Seats : ${vehicleList?.seats}'),
+                                  SizedBox(height: 5),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.email,
+                                          color: btnColor, size: 20),
+                                      SizedBox(width: 5),
+                                      Text('${vehicleOwnerList?.email}'),
+                                    ],
+                                  ),
+                                  SizedBox(height: 5),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.phone,
+                                          color: btnColor, size: 20),
+                                      SizedBox(width: 5),
+                                      Text(
+                                          '+${vehicleOwnerList?.countryCode} ${vehicleOwnerList?.mobile}'),
+                                    ],
+                                  ),
+                                  SizedBox(height: 5),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.location_on,
+                                          color: btnColor, size: 20),
+                                      SizedBox(width: 5),
+                                      Text('${vehicleOwnerList?.country}'),
+                                    ],
+                                  ),
+                                  SizedBox(height: 5),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.directions_car,
+                                          color: btnColor, size: 20),
+                                      SizedBox(width: 5),
+                                      Text(
+                                          'Assigned Vehicle : ${vehicleOwnerList?.vehicleList?.length}'),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
@@ -197,13 +222,13 @@ class _VehicleManagementScreenState extends State<VehicleManagementScreen> {
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 10, vertical: 6),
                                   decoration: BoxDecoration(
-                                    color: vehicleList?.vehicleStatus == "TRUE"
+                                    color: vehicleOwnerList?.status == true
                                         ? Colors.green
                                         : Colors.red,
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Text(
-                                    vehicleList?.vehicleStatus == "TRUE"
+                                    vehicleOwnerList?.status == true
                                         ? 'ACTIVE'
                                         : "INACTIVE",
                                     style: TextStyle(
@@ -216,58 +241,59 @@ class _VehicleManagementScreenState extends State<VehicleManagementScreen> {
                                   onSelected: (value) {
                                     if (value == "View") {
                                       context.push(
-                                          '/vendor_dashboard/vehicle_management/view_vehicle_details',
+                                          '/vendor_dashboard/vehicle_owner_management/view_vehicle_owner_details',
                                           extra: {
-                                            "vehicleId": vehicleList?.vehicleId
+                                            "ownerId": vehicleOwnerList
+                                                ?.vehicleOwnerId
                                                 .toString()
-                                      }).then((onValue) {
-                                        _getAllVehicleList(isFilter: true);
+                                          }).then((onValue) {
+                                        _getAllVehicleOwnerList(isFilter: true);
                                       });
                                     } else if (value == "Edit") {
                                       context.push(
                                           '/vendor_dashboard/vehicle_management/add_edit_vehicle',
                                           extra: {
-                                            "isEdit": true,
-                                            "vehicleId": vehicleList?.vehicleId
-                                                .toString()
+                                            // "isEdit": true,
+                                            "ownerId": vehicleOwnerList
+                                                ?.vehicleOwnerId
+                                                .toString(),
+                                            "actionByOwner": 'edit owner',
                                           }).then((onValue) {
-                                        _getAllVehicleList(isFilter: true);
+                                        _getAllVehicleOwnerList(isFilter: true);
                                       });
                                     } else if (value == "Deactivate" ||
                                         value == "Activate") {
                                       _showConfirmationDialog(
                                         context: context,
                                         action: value,
-                                        loader: statuss == Status.loading,
+                                        // loader: statuss == Status.loading,
                                         onTap: () {
                                           Navigator.pop(context);
                                           if (value == "Deactivate") {
-                                            context
-                                                .read<
-                                                    VehicleViewModel>()
-                                                .activeDeactiveVehicleApi(
-                                                    vehicleId: vehicleList
-                                                            ?.vehicleId
-                                                            .toString() ??
-                                                        '')
-                                                .then((onValue) {
-                                              _getAllVehicleList(
-                                                  isFilter: true);
-                                            });
+                                            // context
+                                            //     .read<VehicleOwnerViewModel>()
+                                            //     .activeDeactiveVehicleApi(
+                                            //         vehicleId: vehicleOwnerList
+                                            //                 ?.vehicleId
+                                            //                 .toString() ??
+                                            //             '')
+                                            //     .then((onValue) {
+                                            //   _getAllVehicleOwnerList(
+                                            //       isFilter: true);
+                                            // });
                                           } else {
-                                            context
-                                                .read<
-                                                    VehicleViewModel>()
-                                                .activeDeactiveVehicleApi(
-                                                    vehicleId: vehicleList
-                                                            ?.vehicleId
-                                                            .toString() ??
-                                                        '',
-                                                    isActive: true)
-                                                .then((onValue) {
-                                              _getAllVehicleList(
-                                                  isFilter: true);
-                                            });
+                                            // context
+                                            //     .read<VehicleOwnerViewModel>()
+                                            //     .activeDeactiveVehicleApi(
+                                            //         vehicleId: vehicleOwnerList
+                                            //                 ?.vehicleId
+                                            //                 .toString() ??
+                                            //             '',
+                                            //         isActive: true)
+                                            //     .then((onValue) {
+                                            //   _getAllVehicleOwnerList(
+                                            //       isFilter: true);
+                                            // });
                                           }
                                         },
                                       );
@@ -276,16 +302,15 @@ class _VehicleManagementScreenState extends State<VehicleManagementScreen> {
                                   itemBuilder: (context) => [
                                     PopupMenuItem(
                                         value: "View", child: Text("View")),
-                                    if (vehicleList?.vehicleStatus == 'TRUE')
+                                    if (vehicleOwnerList?.status == true)
                                       PopupMenuItem(
                                           value: "Edit", child: Text("Edit")),
                                     PopupMenuItem(
-                                        value:
-                                            vehicleList?.vehicleStatus == 'TRUE'
-                                                ? "Deactivate"
-                                                : "Activate",
+                                        value: vehicleOwnerList?.status == true
+                                            ? "Deactivate"
+                                            : "Activate",
                                         child: Text(
-                                            vehicleList?.vehicleStatus == 'TRUE'
+                                            vehicleOwnerList?.status == true
                                                 ? "Deactivate"
                                                 : "Activate")),
                                   ],

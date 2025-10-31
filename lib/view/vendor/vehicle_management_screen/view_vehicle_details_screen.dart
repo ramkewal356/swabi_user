@@ -24,7 +24,9 @@ class _ViewVehicleDetailsScreenState extends State<ViewVehicleDetailsScreen> {
   void initState() {
     super.initState();
 
-    getVehicleDetails();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getVehicleDetails();
+    });
   }
 
   void getVehicleDetails() {
