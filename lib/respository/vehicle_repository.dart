@@ -151,6 +151,7 @@ class VehicleRepository {
       rethrow;
     }
   }
+
   Future<bool> addOrEditVehicleApi(
       {required Map<String, dynamic> body, bool isEdit = false}) async {
     var http = HttpService(

@@ -4,6 +4,7 @@ import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/res/custom_filter_popup_widget.dart';
 import 'package:flutter_cab/res/custom_search_field.dart';
 import 'package:flutter_cab/utils/color.dart';
+import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view_model/vehicle_owner_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -90,8 +91,8 @@ class _VehicleOwnerManagementScreenState
 
   @override
   Widget build(BuildContext context) {
-    // final statuss =
-    //     context.watch<VehicleOwnerViewModel>().activeOrDeactive.status;
+    final statuss =
+        context.watch<VehicleOwnerViewModel>().activeOrDeactive.status;
     return PageLayoutPage(
       appBar: AppBar(
         title: const Text("Vehicle Owner Management"),
@@ -129,7 +130,14 @@ class _VehicleOwnerManagementScreenState
                   ),
                 );
               } else {
-                return ListView.builder(
+                return (value.getVehicleOwnerList.data ?? []).isEmpty
+                    ? Center(
+                        child: Text(
+                          'No Data Found',
+                          style: nodataTextStyle,
+                        ),
+                      )
+                    : ListView.builder(
                   controller: _scrollController,
                   itemCount: (value.getVehicleOwnerList.data ?? []).length +
                       (value.isLastPage ? 0 : 1),
@@ -266,34 +274,37 @@ class _VehicleOwnerManagementScreenState
                                       _showConfirmationDialog(
                                         context: context,
                                         action: value,
-                                        // loader: statuss == Status.loading,
+                                              loader: statuss == Status.loading,
                                         onTap: () {
                                           Navigator.pop(context);
                                           if (value == "Deactivate") {
-                                            // context
-                                            //     .read<VehicleOwnerViewModel>()
-                                            //     .activeDeactiveVehicleApi(
-                                            //         vehicleId: vehicleOwnerList
-                                            //                 ?.vehicleId
-                                            //                 .toString() ??
-                                            //             '')
-                                            //     .then((onValue) {
-                                            //   _getAllVehicleOwnerList(
-                                            //       isFilter: true);
-                                            // });
+                                                  context
+                                                      .read<
+                                                          VehicleOwnerViewModel>()
+                                                      .activeDeactiveVehicleOwnerApi(
+                                                        ownerId: vehicleOwnerList
+                                                                ?.vehicleOwnerId
+                                                                .toString() ??
+                                                            '',
+                                                      )
+                                                      .then((onValue) {
+                                                    _getAllVehicleOwnerList(
+                                                        isFilter: true);
+                                                  });
                                           } else {
-                                            // context
-                                            //     .read<VehicleOwnerViewModel>()
-                                            //     .activeDeactiveVehicleApi(
-                                            //         vehicleId: vehicleOwnerList
-                                            //                 ?.vehicleId
-                                            //                 .toString() ??
-                                            //             '',
-                                            //         isActive: true)
-                                            //     .then((onValue) {
-                                            //   _getAllVehicleOwnerList(
-                                            //       isFilter: true);
-                                            // });
+                                                  context
+                                                      .read<
+                                                          VehicleOwnerViewModel>()
+                                                      .activeDeactiveVehicleOwnerApi(
+                                                          ownerId: vehicleOwnerList
+                                                                  ?.vehicleOwnerId
+                                                                  .toString() ??
+                                                              '',
+                                                          isActive: true)
+                                                      .then((onValue) {
+                                                    _getAllVehicleOwnerList(
+                                                        isFilter: true);
+                                                  });
                                           }
                                         },
                                       );
@@ -339,8 +350,8 @@ class _VehicleOwnerManagementScreenState
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text("$action Vehicle"),
-        content: Text("Are you sure you want to $action this vehicle?"),
+        title: Text("$action Vehicle Owner"),
+        content: Text("Are you sure you want to $action this Vehicle Owner?"),
         actions: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

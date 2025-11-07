@@ -177,7 +177,7 @@ class TravelInquiry {
   String? budget;
   String? specialRequests;
   String? travelDates;
-  dynamic tentativeDates;
+  String? tentativeDays;
   User? user;
   int? createdAt;
   int? updatedAt;
@@ -193,7 +193,7 @@ class TravelInquiry {
     this.budget,
     this.specialRequests,
     this.travelDates,
-    this.tentativeDates,
+    this.tentativeDays,
     this.user,
     this.createdAt,
     this.updatedAt,
@@ -212,7 +212,7 @@ class TravelInquiry {
         budget: json["budget"],
         specialRequests: json["specialRequests"],
         travelDates: json["travelDates"],
-        tentativeDates: json["tentativeDates"],
+        tentativeDays: json["tentativeDays"],
         user: json["user"] == null ? null : User.fromJson(json["user"]),
         createdAt: json["createdAt"],
         updatedAt: json["updatedAt"],
@@ -231,7 +231,7 @@ class TravelInquiry {
         "budget": budget,
         "specialRequests": specialRequests,
         "travelDates": travelDates,
-        "tentativeDates": tentativeDates,
+        "tentativeDays": tentativeDays,
         "user": user?.toJson(),
         "createdAt": createdAt,
         "updatedAt": updatedAt,

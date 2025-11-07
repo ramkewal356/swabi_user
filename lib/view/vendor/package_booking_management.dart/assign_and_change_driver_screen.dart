@@ -90,7 +90,14 @@ class _AssignAndChangeDriverScreenState
   }
 
   void getDrivers() async {
-    context.read<DriverViewModel>().fetchAllDrivers();
+    context.read<DriverViewModel>().fetchAllDrivers(
+        filterText: 'TRUE',
+        isFilter: false,
+        isSearch: false,
+        isPagination: false,
+        searchText: '',
+        pageNumber1: -1,
+        pageSize1: -1);
   }
 
   void getAvailableVehicles() async {
@@ -103,7 +110,7 @@ class _AssignAndChangeDriverScreenState
   Widget build(BuildContext context) {
     final status = context.watch<DriverViewModel>().assignDriver.status;
     final drivers =
-        context.watch<DriverViewModel>().driverList.data?.data?.content ?? [];
+        context.watch<DriverViewModel>().driverList.data ?? [];
     final availableDrivers =
         context.watch<DriverViewModel>().availableDriverList.data?.data ?? [];
     final sameDriverItems = drivers

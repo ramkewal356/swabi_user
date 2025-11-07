@@ -45,6 +45,7 @@ class _CustomFilterPopupWidgetState extends State<CustomFilterPopupWidget> {
     });
 
     _applyFilters();
+    Navigator.pop(context);
   }
 
   void _applyFilters() {

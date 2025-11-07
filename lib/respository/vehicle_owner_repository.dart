@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/app_url.dart';
+import 'package:flutter_cab/model/common_model.dart';
 import 'package:flutter_cab/model/vehicle_owner_by_id_model.dart';
 import 'package:flutter_cab/model/vehicle_owner_model.dart';
 import 'package:flutter_cab/view_model/services/http_service.dart';
@@ -46,4 +47,56 @@ class VehicleOwnerRepository {
       rethrow;
     }
   }
+  
+  Future<bool> updateVehicleOwnerApi(
+      {required Map<String, dynamic> body}) async {
+    var http = HttpService(
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.updateVehicleOwnerDetails,
+        methodType: HttpMethodType.PUT,
+        body: body,
+        bodyType: HttpBodyType.FormData,
+        isAuthorizeRequest: false);
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("Update Vehicle Owner Repo Success ${response?.data}");
+      if (response != null && response.statusCode == 200) {
+        debugPrint("Update Vehicle Owner Success: ${response.data}");
+        return true;
+      } else {
+        debugPrint("Update Vehicle Owner Failed: ${response?.statusCode}");
+        return false;
+      }
+    } catch (e) {
+      debugPrint("Update Vehicle Owner Repo Field $e");
+
+      http.handleErrorResponse(error: e);
+      rethrow;
+    }
+  }
+
+  Future<CommonModel> activeOrDeactiveVehicleOwnerApi(
+      {required Map<String, dynamic> query, required bool isActive}) async {
+    var http = HttpService(
+        baseURL: AppUrl.baseUrl,
+        endURL: isActive
+            ? AppUrl.activateVehicleOwnerUrl
+            : AppUrl.deactiveVehicleOwnerUrl,
+        methodType: isActive ? HttpMethodType.PATCH : HttpMethodType.DELETE,
+        queryParameters: query,
+        bodyType: HttpBodyType.JSON,
+        isAuthorizeRequest: false);
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint(
+          "Active-deactive Vehicle Owner  Repo Success ${response?.data}");
+      return CommonModel.fromJson(response?.data);
+    } catch (e) {
+      debugPrint("Active-deactive Vehicle Owner  Repo Field $e");
+
+      http.handleErrorResponse(error: e);
+      rethrow;
+    }
+  }
+
 }

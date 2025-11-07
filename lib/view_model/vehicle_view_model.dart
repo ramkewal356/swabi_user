@@ -253,4 +253,5 @@ class VehicleViewModel extends ChangeNotifier {
       setAddOrUpdateVehicle(ApiResponse.error(e.toString()));
     }
   }
+
 }

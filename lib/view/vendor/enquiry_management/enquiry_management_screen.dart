@@ -204,7 +204,8 @@ class _EnquiryManagementScreenState extends State<EnquiryManagementScreen> {
                                       ),
                                     ),
                             ),
-                            title: Text('${enquiryData?.name} ',
+                            title: Text(
+                                '${enquiryData?.name} [${enquiryData?.id}]',
                                 style: const TextStyle(
                                     fontSize: 15, fontWeight: FontWeight.w600)),
                             subtitle: Column(
@@ -262,12 +263,12 @@ class _EnquiryManagementScreenState extends State<EnquiryManagementScreen> {
                                       fontWeight: FontWeight.w600)),
                               const SizedBox(height: 10),
                               textItem(
-                                  label: "Travel Start Date",
+                                  label: "Travel Dates",
                                   value: enquiryData?.travelDates ?? 'NA'),
                               textItem(
-                                  label: "Travel End Date",
+                                  label: "Tentative Days",
                                   value:
-                                      "${enquiryData?.tentativeDates ?? 'NA'}"),
+                                      enquiryData?.tentativeDays ?? 'NA'),
                               textItem(
                                   label: "Accommodation",
                                   value:

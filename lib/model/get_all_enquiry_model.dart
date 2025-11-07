@@ -106,7 +106,7 @@ class EnquiryContent {
   String? budget;
   String? specialRequests;
   String? travelDates;
-  dynamic tentativeDates;
+  String? tentativeDays;
   int? createdAt;
   User? user;
   bool? bidPlacedByVendor;
@@ -123,7 +123,7 @@ class EnquiryContent {
     this.budget,
     this.specialRequests,
     this.travelDates,
-    this.tentativeDates,
+    this.tentativeDays,
     this.createdAt,
     this.user,
     this.bidPlacedByVendor,
@@ -143,7 +143,7 @@ class EnquiryContent {
         budget: json["budget"],
         specialRequests: json["specialRequests"],
         travelDates: json["travelDates"],
-        tentativeDates: json["tentativeDates"],
+        tentativeDays: json["tentativeDays"],
         createdAt: json["createdAt"],
         user: json["user"] == null ? null : User.fromJson(json["user"]),
         bidPlacedByVendor: json["bidPlacedByVendor"],
@@ -163,7 +163,7 @@ class EnquiryContent {
         "budget": budget,
         "specialRequests": specialRequests,
         "travelDates": travelDates,
-        "tentativeDates": tentativeDates,
+        "tentativeDays": tentativeDays,
         "createdAt": createdAt,
         "user": user?.toJson(),
         "bidPlacedByVendor": bidPlacedByVendor,

@@ -79,9 +79,15 @@ class _ViewBidScreenState extends State<ViewBidScreen> {
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold)),
                               Text(
+                                'Enquiry ID : ${vm.getEnquiryById.data?.data?.id ?? 'N/A'}',
+                              ),
+                              Text(
                                   "Budget : AED ${vm.getEnquiryById.data?.data?.budget ?? 'N/A'}"),
-                              // Text(
-                              //     "State: ${widget.enquiryData?.user?.state ?? 'N/A'}"),
+                              Text(
+                                  'Enquiry Date : ${dateFormat(vm.getEnquiryById.data?.data?.createdAt)}'),
+                              Text(
+                                  'Travel Dates : ${vm.getEnquiryById.data?.data?.travelDates ?? 'N/A'}'),
+                             
                               Text(
                                   "destination: ${vm.getEnquiryById.data?.data?.destinations?.join(' , ') ?? 'N/A'}"),
                             ],
@@ -327,7 +333,7 @@ class _ViewBidScreenState extends State<ViewBidScreen> {
                                                 ),
                                                 const SizedBox(height: 4),
                                                 travelItem(Icons.calendar_today,
-                                                    "Travel Date : ${dateFormat(bids?.createdAt)}"),
+                                                    "Enquiry Date : ${dateFormat(bids?.createdAt)}"),
                                                 const SizedBox(height: 8),
                                                 travelItem(Icons.restaurant,
                                                     'Meals : ${bids?.meals ?? 'N/A'}'),

@@ -131,10 +131,10 @@ class AppUrl {
   static var getAllVehicleType = '/vehicle/get_all_vehicle_type';
   static var getVehicleOwnerListUrl = '/vehicle/get_vehicle_owner_list';
   static var addVehicleOwnerUrl = '/vehicle/add_vehicle_owner';
-  static var updateVehicleOwnerUrl = '/vehicle/update_vehicle_owner';
   static var getVehicleOwnerByIdUrl = '/vehicle/get_vehicle_owner_by_id';
   static var activateVehicleOwnerUrl = '/vehicle/activate_vehicle_owner';
-  static var deactiveVehicleOwnerUrl = '/vehicle/deactivate_vehicle_owner';
+  static var deactiveVehicleOwnerUrl = '/vehicle/delete_vehicle_owner';
+  static var updateVehicleOwnerDetails = '/vehicle/update_vehicle_owner_detail';
   // driver management
   static var getAllDriverListUrl = '/driver/get_driver_list';
   static var getAvailableDriverListUrl =

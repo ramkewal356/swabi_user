@@ -91,6 +91,9 @@ class _BidNowScreenState extends State<BidNowScreen> {
                       travelItem(Icons.calendar_today,
                           "Travel Date : ${widget.enquiryData?.travelDates ?? widget.bidData?.travelInquiry?.travelDates ?? 'N/A'}"),
                       const SizedBox(height: 8),
+                      travelItem(Icons.date_range,
+                          'Tentative Days : ${widget.enquiryData?.tentativeDays ?? widget.bidData?.travelInquiry?.tentativeDays ?? 'N/A'}'),
+                      const SizedBox(height: 8),
                       travelItem(Icons.restaurant,
                           'Meals : ${widget.enquiryData?.meals ?? widget.bidData?.travelInquiry?.meals ?? 'N/A'}'),
                       const SizedBox(height: 8),
@@ -103,9 +106,7 @@ class _BidNowScreenState extends State<BidNowScreen> {
                       travelItem(Icons.card_giftcard,
                           'Special Requests : ${widget.enquiryData?.specialRequests ?? widget.bidData?.travelInquiry?.specialRequests ?? 'N/A'}'),
                       const SizedBox(height: 8),
-                      travelItem(Icons.date_range,
-                          'Tentative Dates : ${widget.enquiryData?.tentativeDates ?? widget.bidData?.travelInquiry?.tentativeDates ?? 'N/A'}'),
-                      const SizedBox(height: 8),
+                    
                       travelItem(Icons.location_on,
                           'Destination : ${widget.enquiryData?.destinations?.join(',') ?? widget.bidData?.travelInquiry?.destinations?.join(',') ?? 'N/A'}'),
                       const SizedBox(height: 8),
@@ -236,20 +237,33 @@ class _BidNowScreenState extends State<BidNowScreen> {
                         Customtextformfield(
                             controller: extrasController,
                             hintText: '',
-                            lable: 'Extras',
+                          lable: 'Extras *',
                             prefixIcon: const Icon(
                               Icons.card_giftcard,
                               color: btnColor,
-                            )),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter extras';
+                            }
+                            return null;
+                          },
+                        ),
                         const SizedBox(height: 10),
                         Customtextformfield(
                             controller: accommodationController,
                             hintText: '',
-                            lable: 'Accommodation',
+                            lable: 'Accommodation *',
                             prefixIcon: const Icon(
                               Icons.hotel,
                               color: btnColor,
                             ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter accommodation';
+                              }
+                              return null;
+                            },
                             maxLines: 2),
                         const SizedBox(height: 10),
                         Customtextformfield(

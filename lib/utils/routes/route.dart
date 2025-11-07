@@ -42,6 +42,7 @@ import 'package:flutter_cab/view/auth_screens/reset_password_screen.dart';
 import 'package:flutter_cab/view/vendor/activity_management_screen/activity_management_screen.dart';
 import 'package:flutter_cab/view/vendor/activity_management_screen/add_and_edit_activity_screen.dart';
 import 'package:flutter_cab/view/vendor/activity_management_screen/view_activity_screen.dart';
+import 'package:flutter_cab/view/vendor/driver_management_screen/driver_management_screen.dart';
 import 'package:flutter_cab/view/vendor/enquiry_management/bid_now_screen.dart';
 import 'package:flutter_cab/view/vendor/enquiry_management/enquiry_management_screen.dart';
 import 'package:flutter_cab/view/vendor/package_booking_management.dart/package_booking_management.dart';
@@ -574,6 +575,12 @@ final GoRouter myRouter = GoRouter(
                       );
                     }),
               ]),
+          GoRoute(
+            path: 'driver_management',
+            builder: (context, state) {
+              return DriverManagementScreen();
+            },
+          )
         ])
   ],
 );

@@ -7,12 +7,16 @@ import 'package:flutter_cab/respository/driver_repository.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 
 class DriverViewModel extends ChangeNotifier {
+  int pageNumber = 0;
+  int pageSize = 10;
+  bool isLastPage = false;
+  bool isLoadingMore = false;
   final _myRepo = DriverRepository();
-  ApiResponse<DriverModel> driverList = ApiResponse.initial();
+  ApiResponse<List<Content>> driverList = ApiResponse.initial();
   ApiResponse<AvailableDriverModel> availableDriverList = ApiResponse.initial();
   ApiResponse<CommonModel> assignDriver = ApiResponse.initial();
 
-  void setDriverList(ApiResponse<DriverModel> response) {
+  void setDriverList(ApiResponse<List<Content>> response) {
     driverList = response;
     notifyListeners();
   }
@@ -27,23 +31,48 @@ class DriverViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchAllDrivers() async {
-    String vendorId = await UserViewModel().getUserId() ?? '';
+  Future<void> fetchAllDrivers(
+      {required bool isSearch,
+      required bool isFilter,
+      required bool isPagination,
+      required String filterText,
+      required String searchText,
+      int? pageNumber1,
+      int? pageSize1}) async {
+    if (isLoadingMore) return;
+    bool newSearch = (isSearch || isFilter);
+    if (!isPagination && newSearch) {
+      pageNumber = 0;
+      isLastPage = false;
+      setDriverList(ApiResponse.loading());
+    }
+    String? vendorId = await UserViewModel().getUserId();
     Map<String, dynamic> query = {
-      "pageNumber": -1,
-      "pageSize": -1,
-      "search": "",
-      "driverStatus": "TRUE",
-      "vendorId": vendorId,
+      "pageNumber": pageNumber1 ?? pageNumber,
+      "pageSize": pageSize1 ?? pageSize,
+      "search": searchText,
+      "driverStatus": filterText,
+      "vendorId": vendorId
     };
-    setDriverList(ApiResponse.loading());
+    if (isLastPage) return;
+    isLoadingMore = true;
+ 
+  
     try {
-      var response = await _myRepo.fetchAllDrivers(query: query);
-      debugPrint("Get Driver List View Model Success $response");
-      setDriverList(ApiResponse.completed(response));
+      var resp = await _myRepo.fetchAllDrivers(query: query);
+      debugPrint("Get Driver List View Model Success $resp");
+      List<Content> newData = resp.data?.content ?? [];
+      List<Content> allData =
+          (pageNumber == 0) ? newData : [...driverList.data ?? [], ...newData];
+
+      isLastPage = resp.data?.last ?? false;
+      pageNumber++;
+      setDriverList(ApiResponse.completed(allData));
     } catch (e) {
       debugPrint("Get Driver List View Model Field $e");
       setDriverList(ApiResponse.error(e.toString()));
+    } finally {
+      isLoadingMore = false;
     }
   }
 

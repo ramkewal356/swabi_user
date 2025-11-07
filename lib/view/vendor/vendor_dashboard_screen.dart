@@ -156,7 +156,9 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
               {
                 "imgUrl": driverImage,
                 "label": "Driver Management",
-                "onTap": () {}
+                "onTap": () {
+                  context.push("/vendor_dashboard/driver_management");
+                }
               },
               {
                 "imgUrl": advanceBookingIcon,

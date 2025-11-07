@@ -93,7 +93,8 @@ class _MyEnquiryScreenState extends State<MyEnquiryScreen> {
                             color: background,
                           ),
                         ),
-                        title: Text('${enquiryData?.travelInquiry?.name} ',
+                        title: Text(
+                            '${enquiryData?.travelInquiry?.name} [${enquiryData?.travelInquiry?.id}]',
                             style: const TextStyle(
                                 fontSize: 15, fontWeight: FontWeight.w600)),
                         subtitle: Column(

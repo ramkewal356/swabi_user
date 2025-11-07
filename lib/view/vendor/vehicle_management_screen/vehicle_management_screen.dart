@@ -4,6 +4,7 @@ import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/res/custom_filter_popup_widget.dart';
 import 'package:flutter_cab/res/custom_search_field.dart';
 import 'package:flutter_cab/utils/color.dart';
+import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view_model/vehicle_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -141,7 +142,14 @@ class _VehicleManagementScreenState extends State<VehicleManagementScreen> {
                   ),
                 );
               } else {
-                return ListView.builder(
+                return (value.getVehicleList.data ?? []).isEmpty
+                    ? Center(
+                        child: Text(
+                          'No Data found',
+                          style: nodataTextStyle,
+                        ),
+                      )
+                    : ListView.builder(
                   controller: _scrollController,
                   itemCount: (value.getVehicleList.data ?? []).length +
                       (value.isLastPage ? 0 : 1),

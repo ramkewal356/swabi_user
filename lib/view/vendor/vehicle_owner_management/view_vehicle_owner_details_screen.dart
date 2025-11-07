@@ -168,10 +168,11 @@ class _ViewVehicleOwnerDetailsScreenState
                             context.push(
                                 '/vendor_dashboard/vehicle_management/add_edit_vehicle',
                                 extra: {
-                                  "ownerId": vehicleOwnerDetails.vehicleOwnerId
-                                      .toString(),
+                                  "ownerId": widget.ownerId,
                                   "actionByOwner": 'add vehicle',
-                                }).then((onValue) {});
+                                }).then((onValue) {
+                              getVehicleOwnerDetails();
+                            });
                           },
                         ),
                       ],
