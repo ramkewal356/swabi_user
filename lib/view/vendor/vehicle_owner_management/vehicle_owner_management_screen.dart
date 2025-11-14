@@ -95,7 +95,10 @@ class _VehicleOwnerManagementScreenState
         context.watch<VehicleOwnerViewModel>().activeOrDeactive.status;
     return PageLayoutPage(
       appBar: AppBar(
-        title: const Text("Vehicle Owner Management"),
+        title: Text(
+          "Vehicle Owner Management",
+          style: appBarTitleStyle,
+        ),
         backgroundColor: background,
       ),
       child: Column(

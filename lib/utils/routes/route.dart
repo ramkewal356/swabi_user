@@ -42,7 +42,9 @@ import 'package:flutter_cab/view/auth_screens/reset_password_screen.dart';
 import 'package:flutter_cab/view/vendor/activity_management_screen/activity_management_screen.dart';
 import 'package:flutter_cab/view/vendor/activity_management_screen/add_and_edit_activity_screen.dart';
 import 'package:flutter_cab/view/vendor/activity_management_screen/view_activity_screen.dart';
+import 'package:flutter_cab/view/vendor/driver_management_screen/add_and_edit_driver_screen.dart';
 import 'package:flutter_cab/view/vendor/driver_management_screen/driver_management_screen.dart';
+import 'package:flutter_cab/view/vendor/driver_management_screen/view_driver_details_screen.dart';
 import 'package:flutter_cab/view/vendor/enquiry_management/bid_now_screen.dart';
 import 'package:flutter_cab/view/vendor/enquiry_management/enquiry_management_screen.dart';
 import 'package:flutter_cab/view/vendor/package_booking_management.dart/package_booking_management.dart';
@@ -580,6 +582,26 @@ final GoRouter myRouter = GoRouter(
             builder: (context, state) {
               return DriverManagementScreen();
             },
+            routes: [
+              GoRoute(
+                path: 'view_driver_details',
+                builder: (context, state) {
+                  var data = state.extra as Map<String, dynamic>;
+                  return ViewDriverDetailsScreen(
+                    driverId: data["driverId"],
+                  );
+                },
+              ),
+              GoRoute(
+                  path: 'add_edit_driver',
+                  builder: (context, state) {
+                    var data = state.extra as Map<String, dynamic>?;
+                    return AddAndEditDriverScreen(
+                      isEdit: data?["isEdit"] ?? false,
+                      driverId: data?["driverId"],
+                    );
+                  })
+            ],
           )
         ])
   ],

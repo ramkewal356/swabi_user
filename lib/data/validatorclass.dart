@@ -45,4 +45,15 @@ class Validatorclass {
 
     return null; // Return null if the email is valid
   }
+  String? validateUaeLicence(String? value) {
+    final regex = RegExp(r'^([A-Z]{0,2}\d{5,8}|[A-Z]{0,2}\d{2}\/\d{5,8})$');
+    if (value == null || value.isEmpty) {
+      return 'Please enter licence number';
+    } else if (!regex.hasMatch(value)) {
+      return 'Enter valid UAE licence number';
+    }
+    return null;
+  }
+
+
 }

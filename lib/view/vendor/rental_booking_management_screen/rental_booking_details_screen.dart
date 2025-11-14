@@ -6,6 +6,7 @@ import 'package:flutter_cab/res/info_row.dart';
 import 'package:flutter_cab/res/section_card.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/dimensions.dart';
+import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/utils/validation.dart';
 import 'package:flutter_cab/view/customer/my_rental/cancel_booking.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
@@ -107,7 +108,10 @@ class _RentalBookingDetailsScreenState
     return Scaffold(
       backgroundColor: bgGreyColor,
       appBar: AppBar(
-        title: const Text("Booking Details"),
+        title: Text(
+          "Booking Details",
+          style: appBarTitleStyle,
+        ),
         backgroundColor: background,
       ),
       body: Consumer<RentalViewDetailViewModel>(

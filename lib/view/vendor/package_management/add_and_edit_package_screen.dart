@@ -110,7 +110,10 @@ class _AddAndEditPackageScreenState extends State<AddAndEditPackageScreen> {
       backgroundColor: bgGreyColor,
       appBar: AppBar(
         backgroundColor: background,
-        title: Text(widget.isEdit ? "Edit Package" : "Add New Package"),
+        title: Text(
+          widget.isEdit ? "Edit Package" : "Add New Package",
+          style: appBarTitleStyle,
+        ),
         centerTitle: true,
       ),
       body: SingleChildScrollView(

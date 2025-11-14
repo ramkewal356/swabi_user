@@ -6,6 +6,7 @@ import 'package:flutter_cab/model/get_all_bid_model.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/utils/color.dart';
+import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view_model/bid_view_model.dart';
 import 'package:flutter_cab/view_model/enquiry_view_model.dart';
 import 'package:go_router/go_router.dart';
@@ -62,7 +63,10 @@ class _BidNowScreenState extends State<BidNowScreen> {
     return Scaffold(
       backgroundColor: bgGreyColor,
       appBar: AppBar(
-        title: Text(widget.bidData == null ? "Enquiry Details" : "Bid Details"),
+        title: Text(
+          widget.bidData == null ? "Enquiry Details" : "Bid Details",
+          style: appBarTitleStyle,
+        ),
         backgroundColor: background,
       ),
       body: SingleChildScrollView(

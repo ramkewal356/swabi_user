@@ -288,7 +288,7 @@ Future<List<String>?> selectMultipleSfDate(BuildContext context) async {
               if (selectedDates.isNotEmpty) {
                 // Format selected dates into string list
                 final formattedDates = selectedDates
-                    .map((d) => DateFormat('dd/MM/yyyy').format(d))
+                    .map((d) => DateFormat('dd-MM-yyyy').format(d))
                     .toList();
                 Navigator.pop(context, formattedDates);
               } else {

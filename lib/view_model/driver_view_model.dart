@@ -1,9 +1,15 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
 import 'package:flutter_cab/model/available_driver_model.dart';
 import 'package:flutter_cab/model/common_model.dart';
 import 'package:flutter_cab/model/driver_model.dart';
+import 'package:flutter_cab/model/get_driver_by_id_model.dart';
 import 'package:flutter_cab/respository/driver_repository.dart';
+import 'package:flutter_cab/utils/utils.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 
 class DriverViewModel extends ChangeNotifier {
@@ -15,6 +21,9 @@ class DriverViewModel extends ChangeNotifier {
   ApiResponse<List<Content>> driverList = ApiResponse.initial();
   ApiResponse<AvailableDriverModel> availableDriverList = ApiResponse.initial();
   ApiResponse<CommonModel> assignDriver = ApiResponse.initial();
+  ApiResponse<GetDriverByIdModel> getDriverById = ApiResponse.initial();
+  ApiResponse<bool> addEditDriver = ApiResponse.initial();
+
 
   void setDriverList(ApiResponse<List<Content>> response) {
     driverList = response;
@@ -31,6 +40,22 @@ class DriverViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setDriverById(ApiResponse<GetDriverByIdModel> response) {
+    getDriverById = response;
+    notifyListeners();
+  }
+
+  void setAddEditDriver(ApiResponse<bool> response) {
+    addEditDriver = response;
+    notifyListeners();
+  }
+
+  ApiResponse<CommonModel> activeOrDeactive = ApiResponse.initial();
+
+  void activeDeactive(ApiResponse<CommonModel> response) {
+    activeOrDeactive = response;
+    notifyListeners();
+  }
   Future<void> fetchAllDrivers(
       {required bool isSearch,
       required bool isFilter,
@@ -56,8 +81,7 @@ class DriverViewModel extends ChangeNotifier {
     };
     if (isLastPage) return;
     isLoadingMore = true;
- 
-  
+
     try {
       var resp = await _myRepo.fetchAllDrivers(query: query);
       debugPrint("Get Driver List View Model Success $resp");
@@ -106,6 +130,67 @@ class DriverViewModel extends ChangeNotifier {
       debugPrint("Assign Driver Api View Model Field $e");
       setAssignDriver(ApiResponse.error(e.toString()));
       rethrow;
+    }
+  }
+
+  Future<void> getDriverByIdApi({required String driverId}) async {
+    Map<String, dynamic> query = {
+      "driverId": driverId,
+    };
+    setDriverById(ApiResponse.loading());
+    try {
+      var response = await _myRepo.getDriverByIdApi(query: query);
+      debugPrint("Get Driver By Id View Model Success $response");
+      setDriverById(ApiResponse.completed(response));
+    } catch (e) {
+      debugPrint("Get Driver By Id View Model Field $e");
+      setDriverById(ApiResponse.error(e.toString()));
+    }
+  }
+
+  Future<bool> addEditDriverApi(
+      {required Map<String, dynamic> driverRequest,
+      required File? selectedImageFile,
+      required bool isEdit}) async {
+    String? vendorId = await UserViewModel().getUserId();
+    driverRequest["vendorId"] = vendorId;
+    var driverRequestJson = jsonEncode(driverRequest);
+    Map<String, dynamic> body = {
+      "driverRequest": driverRequestJson,
+      "image": selectedImageFile != null
+          ? await MultipartFile.fromFile(
+              selectedImageFile.path,
+              filename: selectedImageFile.path.split('/').last,
+            )
+          : null,
+    };
+    debugPrint('bodydata   :$body');
+    setAddEditDriver(ApiResponse.loading());
+    try {
+      var response = await _myRepo.addEditDriverApi(body: body, isEdit: isEdit);
+      debugPrint("Add/Edit Driver Api View Model Success $response");
+      setAddEditDriver(ApiResponse.completed(response));
+      return response;
+    } catch (e) {
+      debugPrint("Add/Edit Driver Api View Model Field $e");
+      setAddEditDriver(ApiResponse.error(e.toString()));
+      rethrow;
+    }
+  }
+
+  Future<void> activeDeactiveDriverApi(
+      {required String driverId, bool isActive = false}) async {
+    Map<String, dynamic> query = {
+      "driverId": driverId,
+    };
+    try {
+      activeDeactive(ApiResponse.loading());
+      var resp = await _myRepo.activeOrDeactiveDriverApi(
+          query: query, isActive: isActive);
+      activeDeactive(ApiResponse.completed(resp));
+      Utils.toastSuccessMessage(resp.data?.body ?? '');
+    } catch (e) {
+      activeDeactive(ApiResponse.error(e.toString()));
     }
   }
 }

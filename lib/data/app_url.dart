@@ -141,6 +141,11 @@ class AppUrl {
       '/driver/get_available_driver_by_package_booking_id';
   static var assignDriverUrl =
       '/package_booking/assign_driver_to_package_booking';
+  static var getDriverByIdUrl = '/driver/get_driver_by_driverId';
+  static var addDriverUrl = '/driver/add_driver';
+  static var updateDriverUrl = '/driver/update_driver_details';
+  static var activateDriverUrl = '/driver/activate_driver';
+  static var deactivateDriverUrl = '/driver/deactivate_driver';
   // color url
   static var colorbaseUrl = 'https://www.csscolorsapi.com';
   static var colorUrl = '/api/colors';

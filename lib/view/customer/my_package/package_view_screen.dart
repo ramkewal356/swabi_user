@@ -132,12 +132,12 @@ class _PackageViewScreenState extends State<PackageViewScreen> {
                             ? SizedBox.shrink()
                             : detailItem(
                                 lable: 'Created Date',
-                                value: timeFormate(packageData?.createdDate)),
+                                value: dateFormat(packageData?.createdDate)),
                         widget.userType == 'Customer'
                             ? SizedBox.shrink()
                             : detailItem(
                                 lable: 'Updated Date',
-                                value: timeFormate(packageData?.modifiedDate)),
+                                value: dateFormat(packageData?.modifiedDate)),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [

@@ -92,7 +92,10 @@ class _DriverManagementScreenState extends State<DriverManagementScreen> {
     // final statuss = context.watch<DriverViewModel>().activeOrDeactive.status;
     return PageLayoutPage(
       appBar: AppBar(
-        title: const Text("Driver Management"),
+        title: Text(
+          "Driver Management",
+          style: appBarTitleStyle,
+        ),
         backgroundColor: background,
       ),
       child: Column(
@@ -124,7 +127,7 @@ class _DriverManagementScreenState extends State<DriverManagementScreen> {
                   onPressed: () {
                     context
                         .push(
-                            '/vendor_dashboard/vehicle_management/add_edit_vehicle')
+                            '/vendor_dashboard/driver_management/add_edit_driver')
                         .then((onValue) {
                       _getAllDriverList(isFilter: true);
                     });
@@ -168,168 +171,62 @@ class _DriverManagementScreenState extends State<DriverManagementScreen> {
                             onAction: (action) {
                               if (action == "View") {
                                 // navigate or handle view
+                                context.push(
+                                    '/vendor_dashboard/driver_management/view_driver_details',
+                                    extra: {
+                                      "driverId":
+                                          driverData?.driverId.toString()
+                                    }).then((onValue) {
+                                  _getAllDriverList(isFilter: true);
+                                });
                               } else if (action == "Edit") {
-                                // handle edit
+                                context.push(
+                                    '/vendor_dashboard/driver_management/add_edit_driver',
+                                    extra: {
+                                      "isEdit": true,
+                                      "driverId":
+                                          driverData?.driverId.toString()
+                                    }).then((onValue) {
+                                  _getAllDriverList(isFilter: true);
+                                });
                               } else if (action == "Deactivate" ||
                                   action == "Activate") {
                                 // handle status change
                                 _showConfirmationDialog(
                                   context: context,
+                                  loader: value.activeOrDeactive.status ==
+                                      Status.loading,
                                   action: action,
-                                  onTap: () {},
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                    if (action == "Deactivate") {
+                                      context
+                                          .read<DriverViewModel>()
+                                          .activeDeactiveDriverApi(
+                                              driverId: driverData?.driverId
+                                                      .toString() ??
+                                                  '')
+                                          .then((onValue) {
+                                        _getAllDriverList(isFilter: true);
+                                      });
+                                    } else {
+                                      context
+                                          .read<DriverViewModel>()
+                                          .activeDeactiveDriverApi(
+                                              driverId: driverData?.driverId
+                                                      .toString() ??
+                                                  '',
+                                              isActive: true)
+                                          .then((onValue) {
+                                        _getAllDriverList(isFilter: true);
+                                      });
+                                    }
+                                  },
                                 );
                               }
                             },
                           );
-                          // return Card(
-                          //   color: background,
-                          //   margin: EdgeInsets.symmetric(
-                          //       horizontal: 2, vertical: 6),
-                          //   shape: RoundedRectangleBorder(
-                          //     borderRadius: BorderRadius.circular(10),
-                          //   ),
-                          //   elevation: 4,
-                          //   child: Padding(
-                          //     padding: const EdgeInsets.all(10.0),
-                          //     child: Row(
-                          //       crossAxisAlignment: CrossAxisAlignment.start,
-                          //       children: [
-                          //         Expanded(
-                          //           child: Column(
-                          //             crossAxisAlignment:
-                          //                 CrossAxisAlignment.start,
-                          //             children: [
-                          //               Text(
-                          //                 '${driverData?.firstName} ${driverData?.lastName}',
-                          //                 style: TextStyle(
-                          //                     fontWeight: FontWeight.bold,
-                          //                     fontSize: 15),
-                          //               ),
-                          //               Text(
-                          //                   'Driver Id : ${driverData?.driverId.toString()}'),
-                          //               Text(
-                          //                   'Contact No : +${driverData?.countryCode} ${driverData?.mobile}'),
-                          //               Text('Gender : ${driverData?.gender}'),
-                          //               Text(
-                          //                   'Location: ${driverData?.driverAddress}'),
-                          //             ],
-                          //           ),
-                          //         ),
-                          //         Column(
-                          //           mainAxisAlignment:
-                          //               MainAxisAlignment.spaceBetween,
-                          //           mainAxisSize: MainAxisSize.min,
-                          //           children: [
-                          //             Container(
-                          //               padding: EdgeInsets.symmetric(
-                          //                   horizontal: 10, vertical: 6),
-                          //               decoration: BoxDecoration(
-                          //                 color:
-                          //                     driverData?.driverStatus == "TRUE"
-                          //                         ? Colors.green
-                          //                         : Colors.red,
-                          //                 borderRadius:
-                          //                     BorderRadius.circular(20),
-                          //               ),
-                          //               child: Text(
-                          //                 driverData?.driverStatus == "TRUE"
-                          //                     ? 'ACTIVE'
-                          //                     : "INACTIVE",
-                          //                 style: TextStyle(
-                          //                     color: Colors.white,
-                          //                     fontSize: 12),
-                          //               ),
-                          //             ),
-                          //             SizedBox(height: 10),
-                          //             PopupMenuButton<String>(
-                          //               color: background,
-                          //               onSelected: (value) {
-                          //                 if (value == "View") {
-                          //                   context.push(
-                          //                       '/vendor_dashboard/vehicle_management/view_vehicle_details',
-                          //                       extra: {
-                          //                         "driverId": driverData
-                          //                             ?.driverId
-                          //                             .toString()
-                          //                       }).then((onValue) {
-                          //                     _getAllDriverList(isFilter: true);
-                          //                   });
-                          //                 } else if (value == "Edit") {
-                          //                   context.push(
-                          //                       '/vendor_dashboard/vehicle_management/add_edit_vehicle',
-                          //                       extra: {
-                          //                         "isEdit": true,
-                          //                         "driverId": driverData
-                          //                             ?.driverId
-                          //                             .toString()
-                          //                       }).then((onValue) {
-                          //                     _getAllDriverList(isFilter: true);
-                          //                   });
-                          //                 } else if (value == "Deactivate" ||
-                          //                     value == "Activate") {
-                          //                   _showConfirmationDialog(
-                          //                     context: context,
-                          //                     action: value,
-                          //                     // loader: statuss == Status.loading,
-                          //                     onTap: () {
-                          //                       Navigator.pop(context);
-                          //                       if (value == "Deactivate") {
-                          //                         // context
-                          //                         //     .read<DriverViewModel>()
-                          //                         //     .activeDeactiveVehicleApi(
-                          //                         //         driverId: driverData
-                          //                         //                 ?.driverId
-                          //                         //                 .toString() ??
-                          //                         //             '')
-                          //                         //     .then((onValue) {
-                          //                         //   _getAllDriverList(
-                          //                         //       isFilter: true);
-                          //                         // });
-                          //                       } else {
-                          //                         // context
-                          //                         //     .read<DriverViewModel>()
-                          //                         //     .activeDeactiveVehicleApi(
-                          //                         //         driverId: driverData
-                          //                         //                 ?.driverId
-                          //                         //                 .toString() ??
-                          //                         //             '',
-                          //                         //         isActive: true)
-                          //                         //     .then((onValue) {
-                          //                         //   _getAllDriverList(
-                          //                         //       isFilter: true);
-                          //                         // });
-                          //                       }
-                          //                     },
-                          //                   );
-                          //                 }
-                          //               },
-                          //               itemBuilder: (context) => [
-                          //                 PopupMenuItem(
-                          //                     value: "View",
-                          //                     child: Text("View")),
-                          //                 if (driverData?.driverStatus ==
-                          //                     'TRUE')
-                          //                   PopupMenuItem(
-                          //                       value: "Edit",
-                          //                       child: Text("Edit")),
-                          //                 PopupMenuItem(
-                          //                     value: driverData?.driverStatus ==
-                          //                             'TRUE'
-                          //                         ? "Deactivate"
-                          //                         : "Activate",
-                          //                     child: Text(
-                          //                         driverData?.driverStatus ==
-                          //                                 'TRUE'
-                          //                             ? "Deactivate"
-                          //                             : "Activate")),
-                          //               ],
-                          //             ),
-                          //           ],
-                          //         ),
-                          //       ],
-                          //     ),
-                          //   ),
-                          // );
+                        
                         },
                       );
               }
@@ -481,7 +378,7 @@ class _DriverManagementScreenState extends State<DriverManagementScreen> {
                   onSelected: (value) => onAction(value),
                   itemBuilder: (context) => [
                     const PopupMenuItem(value: "View", child: Text("View")),
-                    if (isActive)
+                    // if (isActive)
                       const PopupMenuItem(value: "Edit", child: Text("Edit")),
                     PopupMenuItem(
                       value: isActive ? "Deactivate" : "Activate",

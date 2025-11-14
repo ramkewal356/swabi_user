@@ -94,7 +94,10 @@ class _EnquiryManagementScreenState extends State<EnquiryManagementScreen> {
     return PageLayoutPage(
       bgColor: bgGreyColor,
       appBar: AppBar(
-        title: const Text("Enquiry Management"),
+        title: Text(
+          "Enquiry Management",
+          style: appBarTitleStyle,
+        ),
         backgroundColor: background,
       ),
       child: Column(

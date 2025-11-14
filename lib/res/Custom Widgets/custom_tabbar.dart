@@ -36,7 +36,7 @@ class _CustomtabbarState extends State<Customtabbar> {
       appBar: AppBar(
         title: Text(
           widget.titleHeading ?? '',
-          style: appbarTextStyle,
+          style: appBarTitleStyle,
         ),
         backgroundColor: background,
         centerTitle: true,

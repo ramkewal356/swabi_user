@@ -196,12 +196,17 @@ class _ProfilePageState extends State<ProfilePage> {
                                     border:
                                         Border.all(width: 4, color: btnColor)),
                                 child: ImagePickerWidget(
-                                  userImg: widget.userType == 'USER'
+                                  // userImg: widget.userType == 'USER'
+                                  //     ? userdata.profileImageUrl
+                                  //     : vendorData
+                                  //             .data?.vendorProfileImageUrl ??
+                                  //         '',
+                                  // initialImage: null,
+                                  initialImageUrl: widget.userType == 'USER'
                                       ? userdata.profileImageUrl
                                       : vendorData
                                               .data?.vendorProfileImageUrl ??
                                           '',
-                                  initialImage: null,
                                   isEditable: true,
                                   onImageSelected: _uploadImage,
                                 ),

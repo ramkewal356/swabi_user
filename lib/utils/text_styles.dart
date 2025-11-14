@@ -12,6 +12,7 @@ TextStyle appbarTextStyle1 = GoogleFonts.lato(
   fontWeight: FontWeight.w600,
   fontSize: 20,
 );
+TextStyle appBarTitleStyle = GoogleFonts.poppins(fontWeight: FontWeight.w600);
 
 TextStyle btnTextStyle = GoogleFonts.lato(
     color: background, fontSize: 18, fontWeight: FontWeight.w700);

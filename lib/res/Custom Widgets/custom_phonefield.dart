@@ -2,6 +2,7 @@
 
 import 'dart:async';
 
+// import 'package:country_currency_pickers/countries.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/utils/color.dart';
 import 'package:flutter_cab/utils/text_styles.dart';
@@ -38,11 +39,17 @@ class _CustomphonefieldState extends State<Customphonefield> {
   // String initialCountryCode = 'AE';
   @override
   void initState() {
-  
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-    
-    });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {});
+  }
+
+  String getInitialCountryCode() {
+    var code =
+        countries.where((test) => test.dialCode == widget.initalCountryCode);
+    debugPrint('code ${code.first.code}');
+    return code.first.code;
+
+    // return widget.initalCountryCode;
   }
 
   @override
@@ -57,10 +64,11 @@ class _CustomphonefieldState extends State<Customphonefield> {
         dropdownTextStyle: titleTextStyle,
         dropdownIconPosition: IconPosition.trailing,
         disableLengthCheck: false,
+        keyboardType: TextInputType.phone,
         dropdownDecoration: const BoxDecoration(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(5), bottomLeft: Radius.circular(5))),
-        initialCountryCode: widget.initalCountryCode,
+        initialCountryCode: getInitialCountryCode(),
         controller: widget.controller,
         pickerDialogStyle: PickerDialogStyle(
           // searchFieldCursorColor: blackColor,
@@ -79,12 +87,12 @@ class _CustomphonefieldState extends State<Customphonefield> {
               suffixStyle: titleTextStyle),
           countryCodeStyle: titleTextStyle,
           countryNameStyle: titleTextStyle,
+
           // backgroundColor: background,
         ),
         decoration: InputDecoration(
           filled: true,
           fillColor: background,
-
           helperStyle: const TextStyle(height: 1),
           errorStyle: const TextStyle(height: 1),
           // hintStyle: titleTextStyle,
@@ -101,10 +109,12 @@ class _CustomphonefieldState extends State<Customphonefield> {
           ),
           contentPadding: const EdgeInsets.symmetric(vertical: 8),
           // suffixStyle: titleTextStyle1,
-          focusedErrorBorder:
-              const OutlineInputBorder(borderSide: BorderSide(color: redColor)),
+          focusedErrorBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: naturalGreyColor.withOpacity(0.3))),
           enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: naturalGreyColor.withOpacity(0.3))),
+          counterText: '',
+          
         ),
         onChanged: widget.onChanged,
         onCountryChanged: widget.onCountryChanged,

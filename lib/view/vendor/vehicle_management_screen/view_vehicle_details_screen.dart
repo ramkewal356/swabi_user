@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/multi_image_slider_container_widget.dart';
 import 'package:flutter_cab/res/custom_container.dart';
 import 'package:flutter_cab/utils/color.dart';
+import 'package:flutter_cab/utils/text_styles.dart';
 
 import 'package:flutter_cab/view_model/vehicle_view_model.dart';
 
@@ -41,7 +42,10 @@ class _ViewVehicleDetailsScreenState extends State<ViewVehicleDetailsScreen> {
         backgroundColor: bgGreyColor,
         appBar: AppBar(
           backgroundColor: background,
-          title: const Text("Vehicle Details"),
+          title: Text(
+            "Vehicle Details",
+            style: appBarTitleStyle,
+          ),
           centerTitle: true,
         ),
         body: Consumer<VehicleViewModel>(

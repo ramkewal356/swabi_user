@@ -5,6 +5,7 @@ import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/res/custom_filter_popup_widget.dart';
 import 'package:flutter_cab/res/custom_search_field.dart';
 import 'package:flutter_cab/utils/color.dart';
+import 'package:flutter_cab/utils/text_styles.dart';
 import 'package:flutter_cab/view_model/package_management_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -90,7 +91,10 @@ class _PackageManagementScreenState extends State<PackageManagementScreen> {
         context.watch<PackageManagementViewModel>().activeOrDeactive.status;
     return PageLayoutPage(
       appBar: AppBar(
-        title: const Text("Package Management"),
+        title: Text(
+          "Package Management",
+          style: appBarTitleStyle,
+        ),
         backgroundColor: background,
       ),
       child: Column(

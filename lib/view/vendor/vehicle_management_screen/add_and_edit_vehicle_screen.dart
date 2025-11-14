@@ -202,7 +202,9 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
                 ? 'Edit Owner'
                 : widget.actionByOwner == 'add vehicle'
                     ? 'Add Vehicle'
-                    : "Add New Owner And Vehicle"),
+                      : "Add New Owner And Vehicle",
+          style: appBarTitleStyle,
+        ),
       ),
       body: loadingStatus == Status.loading
           ? Center(

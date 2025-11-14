@@ -92,7 +92,10 @@ class _VehicleManagementScreenState extends State<VehicleManagementScreen> {
         context.watch<VehicleViewModel>().activeOrDeactive.status;
     return PageLayoutPage(
       appBar: AppBar(
-        title: const Text("Vehicle Management"),
+        title: Text(
+          "Vehicle Management",
+          style: appBarTitleStyle,
+        ),
         backgroundColor: background,
       ),
       child: Column(
