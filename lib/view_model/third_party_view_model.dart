@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
-import 'package:flutter_cab/model/color_model.dart';
-import 'package:flutter_cab/respository/third_party_repository.dart';
+import 'package:flutter_cab/data/models/color_model.dart';
+import 'package:flutter_cab/data/repositories/third_party_repository.dart';
 
 class ThirdPartyViewModel with ChangeNotifier {
   final _myRepo = ThirdPartyRepository();

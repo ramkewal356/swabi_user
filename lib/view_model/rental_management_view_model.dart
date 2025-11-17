@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
 // import 'package:flutter_cab/model/rental_booking_model.dart';
-import 'package:flutter_cab/respository/rental_management_repository.dart';
+import 'package:flutter_cab/data/repositories/rental_management_repository.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 
-import '../model/rental_model.dart';
+import '../data/models/rental_model.dart';
 
 class RentalManagementViewModel with ChangeNotifier {
   int page = 0;

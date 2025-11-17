@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
-import 'package:flutter_cab/model/get_vendor_by_id_model.dart';
-import 'package:flutter_cab/respository/vendor_repository.dart';
+import 'package:flutter_cab/data/models/get_vendor_by_id_model.dart';
+import 'package:flutter_cab/data/repositories/vendor_repository.dart';
 
 import 'package:flutter_cab/view_model/user_view_model.dart';
 

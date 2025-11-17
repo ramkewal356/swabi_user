@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/dimensions.dart';
-import 'package:flutter_cab/utils/text_styles.dart';
+import 'package:flutter_cab/common/styles/app_color.dart';
+import 'package:flutter_cab/core/utils/dimensions.dart';
+import 'package:flutter_cab/common/styles/text_styles.dart';
 
 import 'package:intl/intl.dart';
 

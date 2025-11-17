@@ -1,7 +1,7 @@
 // ignore_for_file: strict_top_level_inference
 
 import 'package:flutter/material.dart';
-import '../utils/utils.dart';
+import '../core/utils/utils.dart';
 
 // ignore: depend_on_referenced_packages
 import 'package:shared_preferences/shared_preferences.dart';

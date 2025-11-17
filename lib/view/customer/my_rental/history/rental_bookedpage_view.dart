@@ -1,9 +1,9 @@
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/model/get_issue_by_booking_id_model.dart';
-import 'package:flutter_cab/model/payment_details_model.dart';
-import 'package:flutter_cab/model/payment_refund_model.dart';
+import 'package:flutter_cab/data/models/get_issue_by_booking_id_model.dart';
+import 'package:flutter_cab/data/models/payment_details_model.dart';
+import 'package:flutter_cab/data/models/payment_refund_model.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_paymentdetails_container.dart';
@@ -11,9 +11,9 @@ import 'package:flutter_cab/res/Custom%20Widgets/multi_image_slider_container_wi
 import 'package:flutter_cab/res/Custom%20Widgets/refund_payment_container.dart';
 import 'package:flutter_cab/res/custom_appbar_widget.dart';
 import 'package:flutter_cab/res/custom_raise_issue_form.dart';
-import 'package:flutter_cab/utils/assets.dart';
-import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/dimensions.dart';
+import 'package:flutter_cab/core/constants/assets.dart';
+import 'package:flutter_cab/common/styles/app_color.dart';
+import 'package:flutter_cab/core/utils/dimensions.dart';
 import 'package:flutter_cab/view/customer/my_rental/cancel_booking.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:flutter_cab/view_model/raise_issue_view_model.dart';
@@ -23,7 +23,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../utils/text_styles.dart';
+import '../../../../common/styles/text_styles.dart';
 
 class RentalBookedPageView extends StatefulWidget {
   final String bookedId;

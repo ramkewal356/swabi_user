@@ -1,15 +1,15 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:flutter_cab/core/services/payment_service.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/customdropdown_button.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/res/custom_mobile_number.dart';
-import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/text_styles.dart';
+import 'package:flutter_cab/common/styles/app_color.dart';
+import 'package:flutter_cab/common/styles/text_styles.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
-import 'package:flutter_cab/view_model/services/payment_service.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';

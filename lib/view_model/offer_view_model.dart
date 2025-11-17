@@ -1,10 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/model/get_activity_offer_model.dart';
-import 'package:flutter_cab/model/offer_detail_by_id_model.dart';
-import 'package:flutter_cab/model/offer_list_model.dart';
-import 'package:flutter_cab/respository/offer_repository.dart';
+import 'package:flutter_cab/data/models/get_activity_offer_model.dart';
+import 'package:flutter_cab/data/models/offer_detail_by_id_model.dart';
+import 'package:flutter_cab/data/models/offer_list_model.dart';
+import 'package:flutter_cab/data/repositories/offer_repository.dart';
 import 'package:go_router/go_router.dart';
 
 import '../data/response/api_response.dart';

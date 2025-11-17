@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
-import 'package:flutter_cab/model/common_model.dart';
-import 'package:flutter_cab/respository/itinerary_repository.dart';
-import 'package:flutter_cab/utils/utils.dart';
+import 'package:flutter_cab/data/models/common_model.dart';
+import 'package:flutter_cab/data/repositories/itinerary_repository.dart';
+import 'package:flutter_cab/core/utils/utils.dart';
 
 class ItineraryViewModel with ChangeNotifier {
   final _myRepo = ItineraryRepository();

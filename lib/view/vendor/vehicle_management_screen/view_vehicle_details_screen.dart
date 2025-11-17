@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/multi_image_slider_container_widget.dart';
 import 'package:flutter_cab/res/custom_container.dart';
-import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/text_styles.dart';
+import 'package:flutter_cab/common/styles/app_color.dart';
+import 'package:flutter_cab/common/styles/text_styles.dart';
 
 import 'package:flutter_cab/view_model/vehicle_view_model.dart';
 
 import 'package:provider/provider.dart';
 
 import '../../../data/response/status.dart';
-import '../../../utils/dimensions.dart';
+import '../../../core/utils/dimensions.dart';
 
 class ViewVehicleDetailsScreen extends StatefulWidget {
   final String vehicleId;

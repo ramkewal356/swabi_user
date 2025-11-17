@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/data/validatorclass.dart';
+import 'package:flutter_cab/core/utils/validatorclass.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/customdropdown_button.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_phonefield.dart';
@@ -9,10 +9,10 @@ import 'package:flutter_cab/res/Custom%20Widgets/custom_search_location.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
 // import 'package:flutter_cab/res/custom_mobile_number.dart';
 import 'package:flutter_cab/res/image_picker_widget.dart';
-import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/text_styles.dart';
-import 'package:flutter_cab/utils/utils.dart';
-import 'package:flutter_cab/utils/validation.dart';
+import 'package:flutter_cab/common/styles/app_color.dart';
+import 'package:flutter_cab/common/styles/text_styles.dart';
+import 'package:flutter_cab/core/utils/utils.dart';
+import 'package:flutter_cab/core/utils/validation.dart';
 import 'package:flutter_cab/view_model/driver_view_model.dart';
 import 'package:flutter_cab/view_model/user_profile_view_model.dart';
 import 'package:provider/provider.dart';

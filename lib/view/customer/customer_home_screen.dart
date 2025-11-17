@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/model/offer_list_model.dart';
-import 'package:flutter_cab/model/user_profile_model.dart';
+import 'package:flutter_cab/data/models/offer_list_model.dart';
+import 'package:flutter_cab/data/models/user_profile_model.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 // import 'package:flutter_cab/res/custom_drawer.dart';
-import 'package:flutter_cab/utils/assets.dart';
-import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/text_styles.dart';
+import 'package:flutter_cab/core/constants/assets.dart';
+import 'package:flutter_cab/common/styles/app_color.dart';
+import 'package:flutter_cab/common/styles/text_styles.dart';
 import 'package:flutter_cab/view/customer/account_screen.dart';
 import 'package:flutter_cab/view/customer/enquiry/send_enquiry_screen.dart';
 import 'package:flutter_cab/view/customer/my_rental/rental_form.dart';
@@ -134,12 +134,28 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen>
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: CircleAvatar(
                 radius: 20,
+                backgroundColor: Colors.grey.shade200,
+
+                // If no user image => show local asset
+                backgroundImage: (userdata?.profileImageUrl ?? '').isEmpty
+                    ? const AssetImage(user)
+                    : null,
+
+                // If user image available => show network
                 child: (userdata?.profileImageUrl ?? '').isEmpty
-                    ? const Icon(Icons.person)
+                    ? null
                     : ClipOval(
                         child: Image.network(
                           userdata?.profileImageUrl ?? '',
-                         
+                          width: 35,
+                          height: 35,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              user,
+                              fit: BoxFit.cover,
+                            );
+                          },
                         ),
                       ),
               ),

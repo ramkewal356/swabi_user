@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/data/response/status.dart';
-import 'package:flutter_cab/data/validatorclass.dart';
+import 'package:flutter_cab/core/utils/validatorclass.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
-import 'package:flutter_cab/utils/text_styles.dart';
-import 'package:flutter_cab/view_model/user_profile_view_model.dart';
+import 'package:flutter_cab/common/styles/text_styles.dart';
+import 'package:flutter_cab/view_model/auth_view_model.dart';
+
 import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:provider/provider.dart';
-
-import '../../utils/color.dart';
 
 class ChangePassword extends StatefulWidget {
   final String userType;
@@ -55,8 +55,6 @@ class _ChangePasswordState extends State<ChangePassword> {
     super.dispose();
   }
 
- 
-
   void _updatePassword() {
     if (_formKey.currentState!.validate()) {
       final String idKey = widget.userType == 'USER' ? 'userId' : 'vendorId';
@@ -68,18 +66,9 @@ class _ChangePasswordState extends State<ChangePassword> {
 
       // Proceed with password update logic
       try {
-      
-        Provider.of<ChangePasswordViewModel>(context, listen: false)
-            .changePasswordViewModelApi(query: query, userType: widget.userType)
-            .then((onValue) {
-          if (onValue?.status.httpCode == '200') {
-          
-            // ignore: use_build_context_synchronously
-            context.pop();
-          }
-        });
+        context.read<AuthViewModel>().changePasswordViewModelApi(
+            context: context, query: query, userType: widget.userType);
       } catch (e) {
-       
         debugPrint('error $e');
       }
     }
@@ -87,7 +76,7 @@ class _ChangePasswordState extends State<ChangePassword> {
 
   @override
   Widget build(BuildContext context) {
-    final status = context.watch<ChangePasswordViewModel>().dataList.status;
+    final status = context.watch<AuthViewModel>().changePassResponse.status;
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Form(

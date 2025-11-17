@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
-import 'package:flutter_cab/model/get_all_bid_model.dart';
-import 'package:flutter_cab/model/get_bid_by_id_model.dart';
-import 'package:flutter_cab/respository/bid_repository.dart';
-import 'package:flutter_cab/utils/utils.dart';
+import 'package:flutter_cab/data/models/get_all_bid_model.dart';
+import 'package:flutter_cab/data/models/get_bid_by_id_model.dart';
+import 'package:flutter_cab/data/repositories/bid_repository.dart';
+import 'package:flutter_cab/core/utils/utils.dart';
 import 'package:flutter_cab/view_model/bid_accept_or_reject_model.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
-import 'package:flutter_cab/model/get_trasactionbyid_model.dart';
-import 'package:flutter_cab/model/payment_getway_model.dart';
-import 'package:flutter_cab/model/payment_refund_model.dart';
-import 'package:flutter_cab/respository/payment_gateway_repository.dart';
+import 'package:flutter_cab/data/models/get_trasactionbyid_model.dart';
+import 'package:flutter_cab/data/models/payment_getway_model.dart';
+import 'package:flutter_cab/data/models/payment_refund_model.dart';
+import 'package:flutter_cab/data/repositories/payment_gateway_repository.dart';
 
 
 /// Rental Booking View Model

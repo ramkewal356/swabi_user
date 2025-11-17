@@ -3,16 +3,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
-import 'package:flutter_cab/model/payment_details_model.dart';
-import 'package:flutter_cab/model/rental_booking_model.dart';
-import 'package:flutter_cab/model/rental_model.dart';
-import 'package:flutter_cab/respository/rental_repository.dart';
+import 'package:flutter_cab/data/models/payment_details_model.dart';
+import 'package:flutter_cab/data/models/rental_booking_model.dart';
+import 'package:flutter_cab/data/models/rental_model.dart';
+import 'package:flutter_cab/data/repositories/rental_repository.dart';
 import 'package:flutter_cab/view_model/notification_view_model.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../utils/utils.dart';
+import '../core/utils/utils.dart';
 // ignore: depend_on_referenced_packages
 
 // Rental View Model

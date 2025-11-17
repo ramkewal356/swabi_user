@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/utils/color.dart';
+import 'package:flutter_cab/common/styles/app_color.dart';
 
 class CustomFilterPopupWidget extends StatefulWidget {
   final Map<String, String> filterOptions; // UI label to return value

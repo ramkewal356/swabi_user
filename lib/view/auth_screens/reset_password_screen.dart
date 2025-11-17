@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_cab/data/validatorclass.dart';
+import 'package:flutter_cab/core/utils/validatorclass.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
-import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/text_styles.dart';
-import 'package:flutter_cab/view_model/user_profile_view_model.dart';
+import 'package:flutter_cab/common/styles/app_color.dart';
+import 'package:flutter_cab/common/styles/text_styles.dart';
+import 'package:flutter_cab/view_model/auth_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+
+import '../../data/response/status.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   final String email;
@@ -28,7 +30,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ResetPasswordViewModel>(
+    return Consumer<AuthViewModel>(
       builder: (context, viewModel, child) {
         return Scaffold(
           backgroundColor: bgGreyColor,
@@ -150,7 +152,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           height: 20,
                         ),
                         CustomButtonSmall(
-                            loading: viewModel.isLoading2,
+                            loading: viewModel.resetPassResponse.status ==
+                                Status.loading,
                             btnHeading: 'Submit',
                             onTap: () {
                               if (_formKey.currentState!.validate()) {

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
-import 'package:flutter_cab/model/get_all_enquiry_model.dart';
-import 'package:flutter_cab/model/get_enquiry_by_id_model.dart';
-import 'package:flutter_cab/model/get_my_enquiry_model.dart';
-import 'package:flutter_cab/respository/enquiry_repository.dart';
-import 'package:flutter_cab/utils/utils.dart';
+import 'package:flutter_cab/data/models/get_all_enquiry_model.dart';
+import 'package:flutter_cab/data/models/get_enquiry_by_id_model.dart';
+import 'package:flutter_cab/data/models/get_my_enquiry_model.dart';
+import 'package:flutter_cab/data/repositories/enquiry_repository.dart';
+import 'package:flutter_cab/core/utils/utils.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 
 class EnquiryViewModel with ChangeNotifier {

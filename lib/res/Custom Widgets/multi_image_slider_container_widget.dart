@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/utils/assets.dart';
-import 'package:flutter_cab/utils/color.dart';
+import 'package:flutter_cab/core/constants/assets.dart';
+import 'package:flutter_cab/common/styles/app_color.dart';
 
 class MultiImageSlider extends StatefulWidget {
   final List<String> images;

@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/status.dart';
 
 import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
-import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/text_styles.dart';
-import 'package:flutter_cab/utils/validation.dart';
+import 'package:flutter_cab/common/styles/app_color.dart';
+import 'package:flutter_cab/common/styles/text_styles.dart';
+import 'package:flutter_cab/core/utils/validation.dart';
 import 'package:flutter_cab/view_model/bid_view_model.dart';
 import 'package:flutter_cab/view_model/enquiry_view_model.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
-import 'package:flutter_cab/view_model/services/payment_service.dart';
+import 'package:flutter_cab/core/services/payment_service.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';

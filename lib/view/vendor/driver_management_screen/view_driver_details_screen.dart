@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/res/custom_container.dart';
 import 'package:flutter_cab/res/info_row.dart';
-import 'package:flutter_cab/utils/assets.dart';
-import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/dimensions.dart';
-import 'package:flutter_cab/utils/text_styles.dart';
+import 'package:flutter_cab/core/constants/assets.dart';
+import 'package:flutter_cab/common/styles/app_color.dart';
+import 'package:flutter_cab/core/utils/dimensions.dart';
+import 'package:flutter_cab/common/styles/text_styles.dart';
 import 'package:flutter_cab/view_model/driver_view_model.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../data/response/status.dart';
-import '../../../model/get_driver_by_id_model.dart' hide Status;
+import '../../../data/models/get_driver_by_id_model.dart' hide Status;
 
 class ViewDriverDetailsScreen extends StatefulWidget {
   final String driverId;

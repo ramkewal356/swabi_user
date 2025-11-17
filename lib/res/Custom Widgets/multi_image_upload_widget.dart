@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/utils/color.dart';
+import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:image_picker/image_picker.dart';
 
 class MultiImageUploadWidget extends StatefulWidget {

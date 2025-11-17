@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/utils/text_styles.dart';
+import 'package:flutter_cab/common/styles/text_styles.dart';
 
 class CustomItemText extends StatelessWidget {
   final String lable;

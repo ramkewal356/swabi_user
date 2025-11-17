@@ -3,17 +3,19 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_cab/data/validatorclass.dart';
+import 'package:flutter_cab/core/utils/utils.dart';
+import 'package:flutter_cab/data/response/status.dart';
+import 'package:flutter_cab/core/utils/validatorclass.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/customdropdown_button.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_search_location.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/res/custom_text_widget.dart';
 import 'package:flutter_cab/res/custom_mobile_number.dart';
-import 'package:flutter_cab/utils/assets.dart';
-import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/text_styles.dart';
-import 'package:flutter_cab/view_model/registration_view_model.dart';
+import 'package:flutter_cab/core/constants/assets.dart';
+import 'package:flutter_cab/common/styles/app_color.dart';
+import 'package:flutter_cab/common/styles/text_styles.dart';
+import 'package:flutter_cab/view_model/auth_view_model.dart';
 import 'package:flutter_cab/view_model/user_profile_view_model.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
@@ -110,10 +112,10 @@ class _registration_screenState extends State<registration_screen> {
     super.dispose();
   }
 
-  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
-    isLoading = context.watch<PostSignUpViewModel>().loading;
+    var status = context.watch<AuthViewModel>().signUpResponse.status;
     var state = context.watch<GetCountryStateListViewModel>().getStateNameModel;
     bool isLoadingState =
         context.watch<GetCountryStateListViewModel>().isLoading;
@@ -233,7 +235,7 @@ class _registration_screenState extends State<registration_screen> {
                       itemsList:
                           state?.map((stateName) => stateName).toList() ?? [],
 
-                      // itemsList: [],
+                     
                       onChanged: isLoadingState
                           ? null
                           : (value) {
@@ -387,15 +389,11 @@ class _registration_screenState extends State<registration_screen> {
                     const SizedBox(height: 30),
                     CustomButtonBig(
                       btnHeading: "Sign Up",
-                      loading: isLoading,
+                      loading: status == Status.loading,
                       onTap: () {
-                        setState(() {
-                          load = true;
-                        });
+                      
                         if (_formKey.currentState!.validate()) {
-                          setState(() {
-                            load = true;
-                          });
+                         
                           Map<String, String> body = {
                             "firstName": controller[0].text,
                             "lastName": controller[1].text,
@@ -408,21 +406,32 @@ class _registration_screenState extends State<registration_screen> {
                             "country": controller[8].text,
                             "state": controller[9].text
                           };
-                          Provider.of<PostSignUpViewModel>(context,
-                                  listen: false)
+                          context
+                              .read<AuthViewModel>()
                               .fetchPostSingUp(context: context, body: body)
                               .then((value) {
-                            final userPreference = Provider.of<UserViewModel>(
-                                context,
-                                listen: false);
+                            if (value?.status?.httpCode == '200') {
+                              final userPreference =
+                                  context.read<UserViewModel>();
+                        
                             userPreference.clearRememberMe();
-                            setState(() {
-                              load = false;
-                            });
-                          });
-                        } else {
-                          setState(() {
-                            load = false;
+                              userPreference.allClear(context);
+                              // Utils.toastSuccessMessage("SignUp Successfully");
+                              context
+                                  .read<AuthViewModel>()
+                                  .sendOtp(
+                                      context: context,
+                                      emailId: controller[2].text.trim())
+                                  .then((onValue) {
+                                if (onValue?.status?.httpCode == '200') {
+                                  context.push('/verifyOtp', extra: {
+                                    "email": controller[2].text.trim(),
+                                    "forVerify":true
+                                  });
+                                }
+                              });
+                          
+                            }
                           });
                         }
                       },

@@ -4,12 +4,12 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
-import 'package:flutter_cab/model/available_driver_model.dart';
-import 'package:flutter_cab/model/common_model.dart';
-import 'package:flutter_cab/model/driver_model.dart';
-import 'package:flutter_cab/model/get_driver_by_id_model.dart';
-import 'package:flutter_cab/respository/driver_repository.dart';
-import 'package:flutter_cab/utils/utils.dart';
+import 'package:flutter_cab/data/models/available_driver_model.dart';
+import 'package:flutter_cab/data/models/common_model.dart';
+import 'package:flutter_cab/data/models/driver_model.dart';
+import 'package:flutter_cab/data/models/get_driver_by_id_model.dart';
+import 'package:flutter_cab/data/repositories/driver_repository.dart';
+import 'package:flutter_cab/core/utils/utils.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 
 class DriverViewModel extends ChangeNotifier {

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
-import 'package:flutter_cab/model/get_activity_category_list_model.dart';
-import 'package:flutter_cab/model/get_all_activity_list_model.dart';
-import 'package:flutter_cab/model/get_state_with_image_list_model.dart';
-import 'package:flutter_cab/model/package_models.dart';
-import 'package:flutter_cab/respository/home_page_repository.dart';
+import 'package:flutter_cab/data/models/get_activity_category_list_model.dart';
+import 'package:flutter_cab/data/models/get_all_activity_list_model.dart';
+import 'package:flutter_cab/data/models/get_state_with_image_list_model.dart';
+import 'package:flutter_cab/data/models/package_models.dart';
+import 'package:flutter_cab/data/repositories/home_page_repository.dart';
 
 class GetActivityCategoryListViewModel with ChangeNotifier {
   final _myRepo = HomePageRepository();

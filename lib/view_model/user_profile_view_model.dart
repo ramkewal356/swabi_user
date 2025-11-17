@@ -4,13 +4,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
-import 'package:flutter_cab/model/changepassword_model.dart';
-import 'package:flutter_cab/model/common_model.dart';
-import 'package:flutter_cab/model/user_profile_model.dart';
-import 'package:flutter_cab/respository/user_profi_repository.dart';
-import 'package:flutter_cab/utils/utils.dart';
+import 'package:flutter_cab/data/models/common_model.dart';
+import 'package:flutter_cab/data/models/user_profile_model.dart';
+import 'package:flutter_cab/data/repositories/user_profi_repository.dart';
+import 'package:flutter_cab/core/utils/utils.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
-import 'package:go_router/go_router.dart';
 
 
 class UserProfileViewModel with ChangeNotifier {
@@ -22,18 +20,13 @@ class UserProfileViewModel with ChangeNotifier {
     notifyListeners();
   }
 
- 
   String userStateName = '';
-  Future<UserProfileModel?> fetchUserProfileViewModelApi(
-  
-   
-  ) async {
+  Future<UserProfileModel?> fetchUserProfileViewModelApi() async {
     String vendorId = await UserViewModel().getUserId() ?? '';
     Map<String, dynamic> query = {"userId": vendorId};
     try {
       setDataList(ApiResponse.loading());
-      var resp =
-          await _myRepo.userProfileRepositoryApi(query: query);
+      var resp = await _myRepo.userProfileRepositoryApi(query: query);
       if (resp.status.httpCode == '200') {
         setDataList(ApiResponse.completed(resp));
         userStateName = resp.data.state;
@@ -70,7 +63,6 @@ class ProfileImageViewModel with ChangeNotifier {
       debugPrint('error $e');
       setDataList(ApiResponse.error(e.toString()));
     }
-  
   }
 }
 
@@ -102,122 +94,6 @@ class UserProfileUpdateViewModel with ChangeNotifier {
       setDataList(ApiResponse.error(e.toString()));
       return false;
     }
-
-   
-  }
-}
-
-class ChangePasswordViewModel with ChangeNotifier {
-  final _myRepo = UserProfileUpdateRepository();
-  ApiResponse<ChangePasswordModel> dataList = ApiResponse.initial();
-
-  void setDataList(ApiResponse<ChangePasswordModel> response) {
-    dataList = response;
-    notifyListeners();
-  }
-
-  Future<ChangePasswordModel?> changePasswordViewModelApi(
-      {required Map<String, dynamic> query, required String userType}) async {
-    try {
-      setDataList(ApiResponse.loading());
-      var resp =
-          await _myRepo.changePasswordApi(query: query, userType: userType);
-      if (resp?.status.httpCode == '200') {
-        Utils.toastSuccessMessage(resp?.data.body ?? '');
-      }
-      setDataList(ApiResponse.completed(resp));
-      // Utils.flushBarSuccessMessage("Changed password Successfully", context);
-      return resp;
-    } catch (e) {
-      setDataList(ApiResponse.error(e.toString()));
-      debugPrint('error $e');
-    }
-    return null;
-  }
-}
-
-class ResetPasswordViewModel with ChangeNotifier {
-  final _myRepo = UserProfileUpdateRepository();
-  bool isLoading = false;
-  bool isLoading1 = false;
-  bool isLoading2 = false;
-
-  Future<CommonModel?> sendOtp(
-      {required BuildContext context, required String email}) async {
-    Map<String, dynamic> query = {"email": email};
-    try {
-      isLoading = true;
-      notifyListeners();
-      var resp = await _myRepo.sendOtpApi(context: context, query: query);
-      if (resp?.status?.httpCode == '200') {
-        Utils.toastSuccessMessage(resp?.data?.body ?? '');
-        isLoading = false;
-        notifyListeners();
-      }
-
-      return resp;
-    } catch (e) {
-      isLoading = false;
-      notifyListeners();
-      debugPrint('error$e');
-    } finally {
-      isLoading = false;
-      notifyListeners();
-    }
-    return null;
-  }
-
-  Future<void> verifyOtp(
-      {required BuildContext context,
-      required String email,
-      required String otp}) async {
-    Map<String, dynamic> query = {"email": email, "otp": otp};
-    try {
-      isLoading1 = true;
-      notifyListeners();
-      await _myRepo.verifyOtpApi(context: context, query: query).then((resp) {
-        if (resp?.status?.httpCode == '200') {
-          Utils.toastSuccessMessage(resp?.data?.body ?? '');
-          context.push('/resetPassword', extra: {"email": email});
-          isLoading = false;
-          notifyListeners();
-        }
-      });
-    } catch (e) {
-      isLoading1 = false;
-      notifyListeners();
-      debugPrint('error$e');
-    } finally {
-      isLoading1 = false;
-      notifyListeners();
-    }
-  }
-
-  Future<CommonModel?> resetPassword(
-      {required BuildContext context,
-      required String email,
-      required String password}) async {
-    Map<String, dynamic> query = {"email": email, "password": password};
-    try {
-      isLoading2 = true;
-      notifyListeners();
-      var resp = await _myRepo.resetPasswordApi(context: context, query: query);
-      if (resp?.status?.httpCode == '200') {
-        Utils.toastSuccessMessage(resp?.data?.body ?? '');
-    
-        context.push('/login');
-        isLoading2 = false;
-        notifyListeners();
-      }
-    } catch (e) {
-      isLoading2 = false;
-      notifyListeners();
-      debugPrint('error$e');
-    } finally {
-      isLoading2 = false;
-      notifyListeners();
-    }
-    return null;
   }
 }
 

@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
-import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/dimensions.dart';
-import 'package:flutter_cab/utils/text_styles.dart';
-import 'package:flutter_cab/view_model/user_profile_view_model.dart';
+import 'package:flutter_cab/common/styles/app_color.dart';
+import 'package:flutter_cab/core/utils/dimensions.dart';
+import 'package:flutter_cab/common/styles/text_styles.dart';
+import 'package:flutter_cab/view_model/auth_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../../data/response/status.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({super.key});
@@ -41,7 +42,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ResetPasswordViewModel>(
+    return Consumer<AuthViewModel>(
       builder: (context, viewModel, child) {
         return PageLayoutPage(
             child: SingleChildScrollView(
@@ -93,27 +94,23 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         height: 20,
                       ),
                       CustomButtonSmall(
-                          loading: viewModel.isLoading,
+                          loading: viewModel.sendOtpResponse.status ==
+                              Status.loading,
                           btnHeading: 'Submit',
                           onTap: () {
                             if (_formKey.currentState!.validate()) {
-                              setState(() {
-                                isloading = true;
-                              });
+                           
                               viewModel
-                                  .sendOtp(context: context, email: email.text)
+                                  .sendOtp(
+                                      context: context, emailId: email.text)
                                   .then((onValue) {
                                 if (onValue?.status?.httpCode == '200') {
-                                  // Utils.flushBarSuccessMessage(
-                                  //     onValue?.status?.message, context);
                                   // ignore: use_build_context_synchronously
                                   context.push('/verifyOtp',
-                                      extra: {"email": email.text});
+                                      extra: {"email": email.text,"forVerify":false});
                                 }
                               });
-                              setState(() {
-                                isloading = false;
-                              });
+                            
                             }
                           }),
                       const SizedBox(height: 10),

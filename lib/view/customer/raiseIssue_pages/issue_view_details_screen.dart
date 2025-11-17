@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/model/issuedetail_model.dart';
+import 'package:flutter_cab/data/models/issuedetail_model.dart';
 import 'package:flutter_cab/res/custom_appbar_widget.dart';
-import 'package:flutter_cab/utils/color.dart';
+import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/view_model/raise_issue_view_model.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';

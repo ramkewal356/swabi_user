@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_cab/model/calculate_price_model.dart' hide Status;
-import 'package:flutter_cab/model/get_package_details_by_id_model.dart'
+import 'package:flutter_cab/data/models/calculate_price_model.dart' hide Status;
+import 'package:flutter_cab/data/models/get_package_details_by_id_model.dart'
     hide Status;
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/customdropdown_button.dart';
@@ -11,15 +11,15 @@ import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/res/custom_appbar_widget.dart';
 import 'package:flutter_cab/res/custom_mobile_number.dart';
-import 'package:flutter_cab/utils/assets.dart';
-import 'package:flutter_cab/utils/color.dart';
+import 'package:flutter_cab/core/constants/assets.dart';
+import 'package:flutter_cab/common/styles/app_color.dart';
 // import 'package:flutter_cab/utils/string_extenstion.dart';
-import 'package:flutter_cab/utils/text_styles.dart';
-import 'package:flutter_cab/utils/utils.dart';
+import 'package:flutter_cab/common/styles/text_styles.dart';
+import 'package:flutter_cab/core/utils/utils.dart';
 import 'package:flutter_cab/view_model/offer_view_model.dart';
 import 'package:flutter_cab/view_model/package_view_model.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
-import 'package:flutter_cab/view_model/services/payment_service.dart';
+import 'package:flutter_cab/core/services/payment_service.dart';
 import 'package:flutter_cab/view_model/user_profile_view_model.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';

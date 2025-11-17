@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/model/get_all_driver_model.dart';
-import 'package:flutter_cab/model/get_all_package_booking_model.dart';
-import 'package:flutter_cab/model/get_all_rental_booking_model.dart';
-import 'package:flutter_cab/model/get_all_vehicle_model.dart';
-import 'package:flutter_cab/respository/vendor_dashboard_repository.dart';
+import 'package:flutter_cab/data/models/get_all_driver_model.dart';
+import 'package:flutter_cab/data/models/get_all_package_booking_model.dart';
+import 'package:flutter_cab/data/models/get_all_rental_booking_model.dart';
+import 'package:flutter_cab/data/models/get_all_vehicle_model.dart';
+import 'package:flutter_cab/data/repositories/vendor_dashboard_repository.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 
 import '../data/response/api_response.dart';

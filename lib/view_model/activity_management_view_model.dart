@@ -4,11 +4,11 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
-import 'package:flutter_cab/model/common_model.dart';
-import 'package:flutter_cab/model/get_activity_by_id_model.dart';
-import 'package:flutter_cab/model/get_all_activity_list_model.dart';
-import 'package:flutter_cab/respository/activity_management_repository.dart';
-import 'package:flutter_cab/utils/utils.dart';
+import 'package:flutter_cab/data/models/common_model.dart';
+import 'package:flutter_cab/data/models/get_activity_by_id_model.dart';
+import 'package:flutter_cab/data/models/get_all_activity_list_model.dart';
+import 'package:flutter_cab/data/repositories/activity_management_repository.dart';
+import 'package:flutter_cab/core/utils/utils.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 

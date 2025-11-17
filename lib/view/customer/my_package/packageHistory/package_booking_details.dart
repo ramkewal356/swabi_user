@@ -1,10 +1,10 @@
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/model/get_issue_by_booking_id_model.dart'
+import 'package:flutter_cab/data/models/get_issue_by_booking_id_model.dart'
     hide Status;
-import 'package:flutter_cab/model/package_models.dart' hide Status;
-import 'package:flutter_cab/model/payment_details_model.dart' hide Status;
+import 'package:flutter_cab/data/models/package_models.dart' hide Status;
+import 'package:flutter_cab/data/models/payment_details_model.dart' hide Status;
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_search_location.dart';
@@ -15,13 +15,13 @@ import 'package:flutter_cab/res/custom_container.dart';
 import 'package:flutter_cab/res/custom_raise_issue_form.dart';
 import 'package:flutter_cab/res/custom_text_widget.dart';
 import 'package:flutter_cab/res/custom_mobile_number.dart';
-import 'package:flutter_cab/utils/assets.dart';
-import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/dimensions.dart';
-import 'package:flutter_cab/utils/string_extenstion.dart';
-import 'package:flutter_cab/utils/text_styles.dart';
-import 'package:flutter_cab/utils/utils.dart';
-import 'package:flutter_cab/utils/validation.dart';
+import 'package:flutter_cab/core/constants/assets.dart';
+import 'package:flutter_cab/common/styles/app_color.dart';
+import 'package:flutter_cab/core/utils/dimensions.dart';
+import 'package:flutter_cab/common/extensions/string_extenstion.dart';
+import 'package:flutter_cab/common/styles/text_styles.dart';
+import 'package:flutter_cab/core/utils/utils.dart';
+import 'package:flutter_cab/core/utils/validation.dart';
 import 'package:flutter_cab/view/customer/my_rental/cancel_booking.dart';
 import 'package:flutter_cab/view/vendor/package_booking_management.dart/assign_and_change_driver_screen.dart';
 import 'package:flutter_cab/view/vendor/package_booking_management.dart/assign_and_change_vehicle_screen.dart';

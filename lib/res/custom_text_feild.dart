@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/dimensions.dart';
+import 'package:flutter_cab/common/styles/app_color.dart';
+import 'package:flutter_cab/core/utils/dimensions.dart';
 
 class CustomTextFeildWidget extends StatefulWidget {
   const CustomTextFeildWidget({super.key});

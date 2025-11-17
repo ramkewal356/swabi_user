@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
-import 'package:flutter_cab/model/common_model.dart';
-import 'package:flutter_cab/model/vehicle_owner_by_id_model.dart';
-import 'package:flutter_cab/model/vehicle_owner_model.dart';
-import 'package:flutter_cab/respository/vehicle_owner_repository.dart';
-import 'package:flutter_cab/utils/utils.dart';
+import 'package:flutter_cab/data/models/common_model.dart';
+import 'package:flutter_cab/data/models/vehicle_owner_by_id_model.dart';
+import 'package:flutter_cab/data/models/vehicle_owner_model.dart';
+import 'package:flutter_cab/data/repositories/vehicle_owner_repository.dart';
+import 'package:flutter_cab/core/utils/utils.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 

@@ -12,22 +12,6 @@ class ApiCalls {
 
   }
 
-  // Dashboard data initialisation
-  // static Future<void> fetchDashboardData(BuildContext context) async {
-  //   WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-  //     Provider.of<>(context, listen: false)
-  //         .(context);
-  //     Provider.of<>(context, listen: false)
-  //         .fetchOfficeLocationApi(context);
-  //   });
-  // }
-
-// Daily data initialisation
-//   static Future<void> fetchAttendanceData(BuildContext context) async {
-//     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-//       Provider.of<CheckInViewViewModel>(context, listen: false)
-//           .fetchAttendanceApi(context, DateTime.now().month.toString(), DateTime.now().year.toString());
-//     });
-//   }
+ 
 
 }

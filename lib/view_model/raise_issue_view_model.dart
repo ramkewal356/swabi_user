@@ -3,12 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
 import 'package:flutter_cab/data/response/error_handler.dart';
-import 'package:flutter_cab/model/getissue_model.dart';
-import 'package:flutter_cab/model/issuedetail_model.dart';
-import 'package:flutter_cab/model/raise_issue_model.dart';
-import 'package:flutter_cab/model/get_issue_by_booking_id_model.dart';
-import 'package:flutter_cab/respository/raise_issue_repository.dart';
-import 'package:flutter_cab/utils/utils.dart';
+import 'package:flutter_cab/data/models/getissue_model.dart';
+import 'package:flutter_cab/data/models/issuedetail_model.dart';
+import 'package:flutter_cab/data/models/raise_issue_model.dart';
+import 'package:flutter_cab/data/models/get_issue_by_booking_id_model.dart';
+import 'package:flutter_cab/data/repositories/raise_issue_repository.dart';
+import 'package:flutter_cab/core/utils/utils.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 

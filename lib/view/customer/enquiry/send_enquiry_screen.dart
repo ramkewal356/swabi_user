@@ -3,8 +3,8 @@ import 'package:flutter_cab/data/response/status.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_multiselect_dropdown.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
-import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/validation.dart';
+import 'package:flutter_cab/common/styles/app_color.dart';
+import 'package:flutter_cab/core/utils/validation.dart';
 import 'package:flutter_cab/view_model/enquiry_view_model.dart';
 import 'package:provider/provider.dart';
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/data/app_excaptions.dart';
+import 'package:flutter_cab/data/response/app_excaptions.dart';
 
 class ErrorHandler {
   // ignore: strict_top_level_inference

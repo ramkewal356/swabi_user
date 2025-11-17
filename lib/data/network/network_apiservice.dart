@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 // ignore: depend_on_referenced_packages
 import 'package:dio/dio.dart' as dio;
 import 'package:shared_preferences/shared_preferences.dart';
-import '/data/app_excaptions.dart';
+import '../response/app_excaptions.dart';
 
 import 'base_apiservices.dart';
 

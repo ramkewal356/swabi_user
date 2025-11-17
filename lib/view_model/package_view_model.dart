@@ -2,12 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
-import 'package:flutter_cab/model/calculate_price_model.dart';
-import 'package:flutter_cab/model/common_model.dart';
-import 'package:flutter_cab/model/get_package_details_by_id_model.dart';
-import 'package:flutter_cab/model/package_models.dart';
-import 'package:flutter_cab/respository/package_repository.dart';
-import 'package:flutter_cab/utils/utils.dart';
+import 'package:flutter_cab/data/models/calculate_price_model.dart';
+import 'package:flutter_cab/data/models/common_model.dart';
+import 'package:flutter_cab/data/models/get_package_details_by_id_model.dart';
+import 'package:flutter_cab/data/models/package_models.dart';
+import 'package:flutter_cab/data/repositories/package_repository.dart';
+import 'package:flutter_cab/core/utils/utils.dart';
 import 'package:flutter_cab/view_model/notification_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';

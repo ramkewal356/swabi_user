@@ -1,18 +1,18 @@
 // ignore_for_file: deprecated_member_use, strict_top_level_inference
 
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/model/rental_booking_model.dart';
-import 'package:flutter_cab/model/user_profile_model.dart';
+import 'package:flutter_cab/data/models/rental_booking_model.dart';
+import 'package:flutter_cab/data/models/user_profile_model.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_paynow_modal.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/res/custom_appbar_widget.dart';
 import 'package:flutter_cab/res/custom_text_widget.dart';
 import 'package:flutter_cab/res/custom_modal_bottom_sheet.dart';
-import 'package:flutter_cab/utils/assets.dart';
-import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/text_styles.dart';
-import 'package:flutter_cab/utils/utils.dart';
+import 'package:flutter_cab/core/constants/assets.dart';
+import 'package:flutter_cab/common/styles/app_color.dart';
+import 'package:flutter_cab/common/styles/text_styles.dart';
+import 'package:flutter_cab/core/utils/utils.dart';
 import 'package:flutter_cab/view_model/offer_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
 import 'package:flutter_cab/view_model/user_profile_view_model.dart';

@@ -1,15 +1,18 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
-import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/view_model/user_profile_view_model.dart';
-// import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
+import 'package:flutter_cab/common/styles/app_color.dart';
+import 'package:flutter_cab/view_model/auth_view_model.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 
+import '../../data/response/status.dart';
+
 class OtpVerificationScreen extends StatefulWidget {
   final String email;
-  const OtpVerificationScreen({super.key, required this.email});
+  final bool forUseVerification;
+  const OtpVerificationScreen(
+      {super.key, required this.email, required this.forUseVerification});
 
   @override
   State<OtpVerificationScreen> createState() => _OtpVerificationScreenState();
@@ -55,7 +58,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   Widget build(BuildContext context) {
     debugPrint('email....${widget.email}');
 
-    return Consumer<ResetPasswordViewModel>(
+    return Consumer<AuthViewModel>(
       builder: (context, viewModel, child) {
         return Scaffold(
           backgroundColor: bgGreyColor,
@@ -139,14 +142,16 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                       height: 10,
                     ),
                     CustomButtonSmall(
-                        loading: viewModel.isLoading1,
+                        loading: viewModel.verifyOtpResponse.status ==
+                            Status.loading,
                         btnHeading: 'Verify OTP',
                         onTap: () {
                           if (_formKey.currentState!.validate()) {
                             viewModel.verifyOtp(
                                 context: context,
                                 email: widget.email,
-                                otp: _otpController.text);
+                                otp: _otpController.text,
+                                forUserVerification: widget.forUseVerification);
                           }
                         }),
                     Row(
@@ -170,9 +175,11 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                                     });
                                     startTimer();
                                     viewModel.sendOtp(
-                                        context: context, email: widget.email);
+                                        context: context,
+                                        emailId: widget.email);
                                   },
-                            child: viewModel.isLoading
+                            child: viewModel.sendOtpResponse.status ==
+                                    Status.loading
                                 ? const SizedBox(
                                     height: 25,
                                     width: 25,

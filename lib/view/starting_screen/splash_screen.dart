@@ -1,8 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/utils/assets.dart';
-import 'package:flutter_cab/view_model/services/splash_services.dart';
+import 'package:flutter_cab/core/constants/assets.dart';
+import 'package:flutter_cab/core/services/splash_services.dart';
 
 class SplashSreen extends StatefulWidget {
   const SplashSreen({super.key});

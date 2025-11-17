@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/model/getall_notification_model.dart';
-import 'package:flutter_cab/model/getlatest_notification_model.dart';
-import 'package:flutter_cab/model/update_notification_status_model.dart';
-import 'package:flutter_cab/respository/notification_repository.dart';
+import 'package:flutter_cab/data/models/getall_notification_model.dart';
+import 'package:flutter_cab/data/models/getlatest_notification_model.dart';
+import 'package:flutter_cab/data/models/update_notification_status_model.dart';
+import 'package:flutter_cab/data/repositories/notification_repository.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 
 class NotificationViewModel with ChangeNotifier {

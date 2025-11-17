@@ -3,11 +3,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/model/common_model.dart';
-import 'package:flutter_cab/model/get_package_list_model.dart';
-import 'package:flutter_cab/model/get_package_model.dart';
-import 'package:flutter_cab/respository/package_management_repository.dart';
-import 'package:flutter_cab/utils/utils.dart';
+import 'package:flutter_cab/data/models/common_model.dart';
+import 'package:flutter_cab/data/models/get_package_list_model.dart';
+import 'package:flutter_cab/data/models/get_package_model.dart';
+import 'package:flutter_cab/data/repositories/package_management_repository.dart';
+import 'package:flutter_cab/core/utils/utils.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 

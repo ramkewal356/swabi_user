@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/utils/assets.dart';
-import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/text_styles.dart';
+import 'package:flutter_cab/core/constants/assets.dart';
+import 'package:flutter_cab/common/styles/app_color.dart';
+import 'package:flutter_cab/common/styles/text_styles.dart';
 import 'package:go_router/go_router.dart';
 
 class CustomDrawer extends StatefulWidget {

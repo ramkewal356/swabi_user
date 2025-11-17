@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/model/package_models.dart' hide Status;
+import 'package:flutter_cab/data/models/package_models.dart' hide Status;
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/custom_modal_bottom_sheet.dart';
-import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/utils.dart';
-import 'package:flutter_cab/utils/validation.dart';
+import 'package:flutter_cab/common/styles/app_color.dart';
+import 'package:flutter_cab/core/utils/utils.dart';
+import 'package:flutter_cab/core/utils/validation.dart';
 import 'package:flutter_cab/view_model/itinerary_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';

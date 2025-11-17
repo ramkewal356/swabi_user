@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/custom_tabbar.dart';
 import 'package:flutter_cab/res/custom_search_field.dart';
-import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/text_styles.dart';
+import 'package:flutter_cab/common/styles/app_color.dart';
+import 'package:flutter_cab/common/styles/text_styles.dart';
 import 'package:flutter_cab/view/customer/my_rental/history/rental_listing_container.dart';
 import 'package:flutter_cab/view_model/rental_management_view_model.dart';
 

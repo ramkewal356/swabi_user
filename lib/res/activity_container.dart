@@ -3,9 +3,9 @@ import 'package:flutter_cab/res/Custom%20Widgets/custom_viewmore_viewless.dart';
 import 'package:flutter_cab/res/Custom%20Widgets/multi_image_slider_container_widget.dart';
 import 'package:flutter_cab/res/custom_container.dart';
 import 'package:flutter_cab/res/custom_text_widget.dart';
-import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/string_extenstion.dart';
-import 'package:flutter_cab/utils/text_styles.dart';
+import 'package:flutter_cab/common/styles/app_color.dart';
+import 'package:flutter_cab/common/extensions/string_extenstion.dart';
+import 'package:flutter_cab/common/styles/text_styles.dart';
 
 class ActivityContainer extends StatefulWidget {
   final List<String> actyImage;

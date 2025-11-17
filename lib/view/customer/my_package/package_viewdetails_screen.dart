@@ -1,7 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/model/get_package_details_by_id_model.dart';
+import 'package:flutter_cab/data/models/get_package_details_by_id_model.dart';
 // import 'package:flutter_cab/model/package_models.dart';
 import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
@@ -10,9 +10,9 @@ import 'package:flutter_cab/res/activity_container.dart';
 import 'package:flutter_cab/res/custom_appbar_widget.dart';
 import 'package:flutter_cab/res/custom_container.dart';
 import 'package:flutter_cab/res/custom_text_widget.dart';
-import 'package:flutter_cab/utils/color.dart';
-import 'package:flutter_cab/utils/dimensions.dart';
-import 'package:flutter_cab/utils/string_extenstion.dart';
+import 'package:flutter_cab/common/styles/app_color.dart';
+import 'package:flutter_cab/core/utils/dimensions.dart';
+import 'package:flutter_cab/common/extensions/string_extenstion.dart';
 import 'package:flutter_cab/view_model/package_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';

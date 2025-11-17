@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_cab/utils/routes/route.dart';
+import 'package:flutter_cab/app/routes.dart';
 import 'package:flutter_cab/view_model/activity_management_view_model.dart';
 import 'package:flutter_cab/view_model/auth_view_model.dart';
 import 'package:flutter_cab/view_model/bid_view_model.dart';
@@ -14,7 +14,6 @@ import 'package:flutter_cab/view_model/package_management_view_model.dart';
 import 'package:flutter_cab/view_model/package_view_model.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:flutter_cab/view_model/raise_issue_view_model.dart';
-import 'package:flutter_cab/view_model/registration_view_model.dart';
 import 'package:flutter_cab/view_model/rental_management_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
 import 'package:flutter_cab/view_model/third_party_view_model.dart';
@@ -39,7 +38,6 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => AuthViewModel()),
         ChangeNotifierProvider(create: (context) => UserViewModel()),
-        ChangeNotifierProvider(create: (context) => PostSignUpViewModel()),
         ChangeNotifierProvider(create: (context) => RentalViewModel()),
         ChangeNotifierProvider(
             create: (context) => GetRentalRangeListViewModel()),
@@ -73,12 +71,12 @@ Future<void> main() async {
         ChangeNotifierProvider(
             create: (context) => PaymentCreateOrderIdViewModel()),
         ChangeNotifierProvider(create: (context) => PaymentVerifyViewModel()),
-        ChangeNotifierProvider(create: (context) => ChangePasswordViewModel()),
+       
         ChangeNotifierProvider(
             create: (context) => RentalPaymentDetailsViewModel()),
         ChangeNotifierProvider(create: (context) => ChangeMobileViewModel()),
         ChangeNotifierProvider(create: (context) => RaiseissueViewModel()),
-        ChangeNotifierProvider(create: (context) => ResetPasswordViewModel()),
+      
         ChangeNotifierProvider(create: (context) => OfferViewModel()),
         ChangeNotifierProvider(create: (context) => GetTranactionViewModel()),
         ChangeNotifierProvider(
