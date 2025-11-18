@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/res/custom_bottomsheet_image_modal.dart';
+import 'package:flutter_cab/widgets/custom_bottomsheet_image_modal.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 
 // class ImagePickerWidget extends StatefulWidget {

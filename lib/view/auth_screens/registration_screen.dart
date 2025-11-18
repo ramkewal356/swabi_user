@@ -3,15 +3,15 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_cab/core/utils/utils.dart';
+// import 'package:flutter_cab/core/utils/utils.dart';
 import 'package:flutter_cab/data/response/status.dart';
 import 'package:flutter_cab/core/utils/validatorclass.dart';
-import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
-import 'package:flutter_cab/res/Custom%20%20Button/customdropdown_button.dart';
-import 'package:flutter_cab/res/Custom%20Widgets/custom_search_location.dart';
-import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
-import 'package:flutter_cab/res/custom_text_widget.dart';
-import 'package:flutter_cab/res/custom_mobile_number.dart';
+import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
+import 'package:flutter_cab/widgets/Custom%20%20Button/customdropdown_button.dart';
+import 'package:flutter_cab/widgets/Custom%20Widgets/custom_search_location.dart';
+import 'package:flutter_cab/widgets/Custom%20Widgets/custom_textformfield.dart';
+import 'package:flutter_cab/widgets/custom_text_widget.dart';
+import 'package:flutter_cab/widgets/custom_mobile_number.dart';
 import 'package:flutter_cab/core/constants/assets.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
@@ -112,11 +112,11 @@ class _registration_screenState extends State<registration_screen> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     var status = context.watch<AuthViewModel>().signUpResponse.status;
     var state = context.watch<GetCountryStateListViewModel>().getStateNameModel;
+    var sendOtpStatus = context.watch<AuthViewModel>().sendOtpResponse.status;
     bool isLoadingState =
         context.watch<GetCountryStateListViewModel>().isLoading;
     return Scaffold(
@@ -235,7 +235,6 @@ class _registration_screenState extends State<registration_screen> {
                       itemsList:
                           state?.map((stateName) => stateName).toList() ?? [],
 
-                     
                       onChanged: isLoadingState
                           ? null
                           : (value) {
@@ -389,11 +388,10 @@ class _registration_screenState extends State<registration_screen> {
                     const SizedBox(height: 30),
                     CustomButtonBig(
                       btnHeading: "Sign Up",
-                      loading: status == Status.loading,
+                      loading: status == Status.loading ||
+                          sendOtpStatus == Status.loading,
                       onTap: () {
-                      
                         if (_formKey.currentState!.validate()) {
-                         
                           Map<String, String> body = {
                             "firstName": controller[0].text,
                             "lastName": controller[1].text,
@@ -413,8 +411,8 @@ class _registration_screenState extends State<registration_screen> {
                             if (value?.status?.httpCode == '200') {
                               final userPreference =
                                   context.read<UserViewModel>();
-                        
-                            userPreference.clearRememberMe();
+
+                              userPreference.clearRememberMe();
                               userPreference.allClear(context);
                               // Utils.toastSuccessMessage("SignUp Successfully");
                               context
@@ -426,11 +424,10 @@ class _registration_screenState extends State<registration_screen> {
                                 if (onValue?.status?.httpCode == '200') {
                                   context.push('/verifyOtp', extra: {
                                     "email": controller[2].text.trim(),
-                                    "forVerify":true
+                                    "forVerify": true
                                   });
                                 }
                               });
-                          
                             }
                           });
                         }

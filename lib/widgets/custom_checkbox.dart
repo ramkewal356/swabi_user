@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
+import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/core/utils/dimensions.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
@@ -8,10 +8,11 @@ class CustomCheckBox extends StatelessWidget {
   final VoidCallback onTap;
   final String contect;
   final bool value;
-  const CustomCheckBox({super.key,
-    required this.onTap,
-    required this.contect,
-    required this.value});
+  const CustomCheckBox(
+      {super.key,
+      required this.onTap,
+      required this.contect,
+      required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -21,24 +22,32 @@ class CustomCheckBox extends StatelessWidget {
           onTap: onTap,
           child: Container(
             height: 20,
-              width: 20,
+            width: 20,
             decoration: BoxDecoration(
-              color: value? Colors.black:Colors.transparent,
+              color: value ? Colors.black : Colors.transparent,
               borderRadius: BorderRadius.circular(3),
-              border: Border.all(color: Colors.black,width: 2.5),
+              border: Border.all(color: Colors.black, width: 2.5),
             ),
-            child: value?const Icon(Icons.check,color: Colors.white,size: 15,):null,
+            child: value
+                ? const Icon(
+                    Icons.check,
+                    color: Colors.white,
+                    size: 15,
+                  )
+                : null,
           ),
         ),
-        Padding(padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Text(contect,style: titleTextStyle,),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Text(
+            contect,
+            style: titleTextStyle,
+          ),
         )
       ],
     );
   }
 }
-
-
 
 class CustomButton extends StatefulWidget {
   final VoidCallback onTap;
@@ -74,7 +83,7 @@ class _CustomButtonState extends State<CustomButton> {
     } else {
       debugPrint("For Other's");
     }
-    widget.onTap();  // Call the original onTap callback
+    widget.onTap(); // Call the original onTap callback
   }
 
   @override
@@ -87,9 +96,10 @@ class _CustomButtonState extends State<CustomButton> {
         }),
         const SizedBox(height: 10.0),
         CustomButtonSmall(
-          width: AppDimension.getWidth(context) * .4,
-          btnHeading: _selectedValue == widget.options[0]['value'] ? 'Book' : 'OK',
-          onTap: _handleTap)
+            width: AppDimension.getWidth(context) * .4,
+            btnHeading:
+                _selectedValue == widget.options[0]['value'] ? 'Book' : 'OK',
+            onTap: _handleTap)
       ],
     );
   }
@@ -115,15 +125,15 @@ class _CustomButtonState extends State<CustomButton> {
               ),
               child: _selectedValue == value
                   ? Center(
-                child: Container(
-                  height: 12.0,
-                  width: 12.0,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: btnColor,
-                  ),
-                ),
-              )
+                      child: Container(
+                        height: 12.0,
+                        width: 12.0,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: btnColor,
+                        ),
+                      ),
+                    )
                   : Container(),
             ),
             const SizedBox(width: 10.0),
@@ -141,7 +151,6 @@ class _CustomButtonState extends State<CustomButton> {
     );
   }
 }
-
 
 class RadioField extends StatefulWidget {
   final String title;

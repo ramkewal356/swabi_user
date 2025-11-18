@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/res/custom_container.dart';
-import 'package:flutter_cab/res/info_row.dart';
+import 'package:flutter_cab/widgets/custom_container.dart';
+import 'package:flutter_cab/widgets/info_row.dart';
 import 'package:flutter_cab/core/constants/assets.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/core/utils/dimensions.dart';

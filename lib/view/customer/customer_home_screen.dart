@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/models/offer_list_model.dart';
 import 'package:flutter_cab/data/models/user_profile_model.dart';
-import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
+import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
 // import 'package:flutter_cab/res/custom_drawer.dart';
 import 'package:flutter_cab/core/constants/assets.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
@@ -137,13 +137,11 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen>
                 backgroundColor: Colors.grey.shade200,
 
                 // If no user image => show local asset
-                backgroundImage: (userdata?.profileImageUrl ?? '').isEmpty
-                    ? const AssetImage(user)
-                    : null,
+                backgroundImage: null,
 
                 // If user image available => show network
                 child: (userdata?.profileImageUrl ?? '').isEmpty
-                    ? null
+                    ? Icon(Icons.person)
                     : ClipOval(
                         child: Image.network(
                           userdata?.profileImageUrl ?? '',
@@ -154,6 +152,8 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen>
                             return Image.asset(
                               user,
                               fit: BoxFit.cover,
+                              height: 35,
+                              width: 35,
                             );
                           },
                         ),

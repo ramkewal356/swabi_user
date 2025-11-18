@@ -2,10 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/core/services/payment_service.dart';
-import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
-import 'package:flutter_cab/res/Custom%20%20Button/customdropdown_button.dart';
-import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
-import 'package:flutter_cab/res/custom_mobile_number.dart';
+import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
+import 'package:flutter_cab/widgets/Custom%20%20Button/customdropdown_button.dart';
+import 'package:flutter_cab/widgets/Custom%20Widgets/custom_textformfield.dart';
+import 'package:flutter_cab/widgets/custom_mobile_number.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
-import 'package:flutter_cab/res/Custom%20Widgets/multi_image_slider_container_widget.dart';
-import 'package:flutter_cab/res/custom_container.dart';
+import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
+import 'package:flutter_cab/widgets/Custom%20Widgets/multi_image_slider_container_widget.dart';
+import 'package:flutter_cab/widgets/custom_container.dart';
 
 import 'package:flutter_cab/common/styles/app_color.dart';
 

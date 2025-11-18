@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/status.dart';
-import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
-import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
+import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
+import 'package:flutter_cab/widgets/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
 import 'package:flutter_cab/core/utils/utils.dart';
@@ -148,12 +148,8 @@ class _RaiseIssueDialogState extends State<RaiseIssueDialog> {
                                       : _selectedIssue ?? '',
                               vendorId: widget.venderId)
                           .then((onValue) {
-                    
-                      Navigator.of(context).pop();
-                   
+                        Navigator.of(context).pop();
                       });
-
-                    
                     }
                   } else {
                     context
@@ -169,9 +165,7 @@ class _RaiseIssueDialogState extends State<RaiseIssueDialog> {
                             vendorId: widget.venderId)
                         .then((onValue) {
                       Navigator.of(context).pop();
-                    
                     });
-                  
                   }
                 } else {
                   Utils.toastMessage('Please select an issue.');

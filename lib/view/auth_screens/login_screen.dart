@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/status.dart';
 import 'package:flutter_cab/core/utils/validatorclass.dart';
-import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
-import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
-import 'package:flutter_cab/res/custom_text_widget.dart';
+import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
+import 'package:flutter_cab/widgets/Custom%20Widgets/custom_textformfield.dart';
+import 'package:flutter_cab/widgets/custom_text_widget.dart';
 import 'package:flutter_cab/core/constants/assets.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
@@ -201,7 +201,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   CustomButtonBig(
                     btnHeading: "Sign In",
                     loading:
-                        authViewMode.loginResponse.status == Status.loading,
+                        authViewMode.loginResponse.status ==
+                            Status.loading ||
+                        authViewMode.sendOtpResponse.status == Status.loading,
                     onTap: () {
                       if (_formKey.currentState!.validate()) {
                         authViewMode.userLoginApi(

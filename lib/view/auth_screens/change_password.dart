@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/data/response/status.dart';
 import 'package:flutter_cab/core/utils/validatorclass.dart';
-import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
-import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
+import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
+import 'package:flutter_cab/widgets/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
 import 'package:flutter_cab/view_model/auth_view_model.dart';
 

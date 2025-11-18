@@ -2,9 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
-import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
-import 'package:flutter_cab/res/custom_appbar_widget.dart';
+import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
+import 'package:flutter_cab/widgets/Custom%20Page%20Layout/common_page_layout.dart';
+import 'package:flutter_cab/widgets/custom_appbar_widget.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
 import 'package:flutter_cab/view_model/offer_view_model.dart';

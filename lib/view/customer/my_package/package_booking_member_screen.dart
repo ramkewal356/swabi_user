@@ -5,12 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_cab/data/models/calculate_price_model.dart' hide Status;
 import 'package:flutter_cab/data/models/get_package_details_by_id_model.dart'
     hide Status;
-import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
-import 'package:flutter_cab/res/Custom%20%20Button/customdropdown_button.dart';
-import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
-import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
-import 'package:flutter_cab/res/custom_appbar_widget.dart';
-import 'package:flutter_cab/res/custom_mobile_number.dart';
+import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
+import 'package:flutter_cab/widgets/Custom%20%20Button/customdropdown_button.dart';
+import 'package:flutter_cab/widgets/Custom%20Page%20Layout/common_page_layout.dart';
+import 'package:flutter_cab/widgets/Custom%20Widgets/custom_textformfield.dart';
+import 'package:flutter_cab/widgets/custom_appbar_widget.dart';
+import 'package:flutter_cab/widgets/custom_mobile_number.dart';
 import 'package:flutter_cab/core/constants/assets.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 // import 'package:flutter_cab/utils/string_extenstion.dart';

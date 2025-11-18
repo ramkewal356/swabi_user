@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/models/get_all_bid_model.dart';
-import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
+import 'package:flutter_cab/widgets/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/view/auth_screens/change_password.dart';
 import 'package:flutter_cab/view/customer/enquiry/my_enquiry_screen.dart';
 import 'package:flutter_cab/view/customer/enquiry/view_bid_screen.dart';

@@ -1,11 +1,11 @@
 // ignore_for_file: strict_top_level_inference
 
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/res/Custom%20%20Button/custom_btn.dart';
-import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
-import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
-import 'package:flutter_cab/res/custom_appbar_widget.dart';
-import 'package:flutter_cab/res/custom_text_widget.dart';
+import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
+import 'package:flutter_cab/widgets/Custom%20Page%20Layout/common_page_layout.dart';
+import 'package:flutter_cab/widgets/Custom%20Widgets/custom_textformfield.dart';
+import 'package:flutter_cab/widgets/custom_appbar_widget.dart';
+import 'package:flutter_cab/widgets/custom_text_widget.dart';
 import 'package:flutter_cab/core/constants/assets.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/core/utils/dimensions.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cab/data/models/offer_list_model.dart';
-import 'package:flutter_cab/res/custom_container.dart';
-import 'package:flutter_cab/res/custom_text_widget.dart';
+import 'package:flutter_cab/widgets/custom_container.dart';
+import 'package:flutter_cab/widgets/custom_text_widget.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
 import 'package:flutter_cab/view_model/offer_view_model.dart';
@@ -28,7 +28,6 @@ class _CommonOfferContainerState extends State<CommonOfferContainer> {
   OfferListModel? offerListData;
   @override
   void initState() {
-   
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Provider.of<OfferViewModel>(context, listen: false).getOfferList(
@@ -67,6 +66,7 @@ class _CommonOfferContainerState extends State<CommonOfferContainer> {
       });
     });
   }
+
   // Shimmer effect placeholder
   Widget _buildShimmerPlaceholder() {
     return Shimmer.fromColors(
@@ -79,6 +79,7 @@ class _CommonOfferContainerState extends State<CommonOfferContainer> {
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     offerListData = context.watch<OfferViewModel>().offerListModel;
@@ -177,10 +178,10 @@ class _CommonOfferContainerState extends State<CommonOfferContainer> {
                                       child: (data?.imageUrl ?? '').isEmpty
                                           ? _buildShimmerPlaceholder()
                                           : Image.network(
-                                        data?.imageUrl ??
-                                            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTePpXbUcvlhV4a1px1UFFfXeZWZANowRWZXw&s',
+                                              data?.imageUrl ??
+                                                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTePpXbUcvlhV4a1px1UFFfXeZWZANowRWZXw&s',
                                               fit: BoxFit.cover,
-                                      ),
+                                            ),
                                     ),
                                   )),
                               Column(

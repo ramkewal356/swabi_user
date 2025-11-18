@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/status.dart';
-import 'package:flutter_cab/res/Custom%20%20Button/gradient_button.dart';
-import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
+import 'package:flutter_cab/widgets/Custom%20%20Button/gradient_button.dart';
+import 'package:flutter_cab/widgets/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
 import 'package:flutter_cab/view_model/enquiry_view_model.dart';
@@ -56,7 +56,14 @@ class _MyEnquiryScreenState extends State<MyEnquiryScreen> {
                 color: greenColor,
               ));
             } else {
-              return ListView.builder(
+              return (value.myEnquiryResponse.data ?? []).isEmpty
+                  ? Center(
+                      child: Text(
+                        'No Data Found',
+                        style: nodataTextStyle,
+                      ),
+                    )
+                  : ListView.builder(
                 controller: _scrollController,
                 itemCount: (value.myEnquiryResponse.data ?? []).length +
                     (value.isLastPage ? 0 : 1),

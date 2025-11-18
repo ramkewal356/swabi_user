@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/status.dart';
 
-import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
+import 'package:flutter_cab/widgets/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
 import 'package:flutter_cab/core/utils/validation.dart';

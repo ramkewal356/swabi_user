@@ -72,33 +72,44 @@ class AuthViewModel with ChangeNotifier {
       setOnLoginUser(ApiResponse.loading());
       _myRepo.userloginApi(context: context, body: body).then((value) {
         if (value?.status?.httpCode == '200') {
-          final userPreference =
-              context.read<UserViewModel>();
-
-          // userPreference.saveEmail(value['user']);
-
-          userPreference.saveUser(
-              userId: value?.data?.userId.toString() ?? '',
-              token: value?.data?.token ?? '',
-              userType: value?.data?.userType ?? "");
-          rememberMe
-              ? userPreference.saveRememberMe(email, password, rememberMe)
-              : userPreference.clearRememberMe();
           debugPrint('token: ${value?.data?.token}');
           debugPrint('usertype: ${value?.data?.userType ?? ''}');
           if (value?.data?.accountVerified == false) {
-            context.push('/verifyOtp',
-                extra: {"email": value?.data?.email ?? '', "forVerify": true});
+            if (value?.data?.userType == 'USER') {
+              context
+                  .read<AuthViewModel>()
+                  .sendOtp(context: context, emailId: email)
+                  .then((onValue) {
+                if (onValue?.status?.httpCode == '200') {
+                  context.push('/verifyOtp', extra: {
+                    "email": value?.data?.email ?? '',
+                    "forVerify": true
+                  });
+                }
+              });
+            } else if (value?.data?.userType == 'VENDOR') {
+              Utils.toastMessage('Please verify account');
+              setOnLoginUser(ApiResponse.error('error'));
+            }
           } else {
             if (value?.data?.userType == 'USER') {
-            context.pushReplacement('/user_dashboard');
-          } else if (value?.data?.userType == 'VENDOR') {
-            context.pushReplacement('/vendor_dashboard');
+              context.pushReplacement('/user_dashboard');
+            } else if (value?.data?.userType == 'VENDOR') {
+              context.pushReplacement('/vendor_dashboard');
+            }
+            final userPreference = context.read<UserViewModel>();
+            userPreference.saveUser(
+                userId: value?.data?.userId.toString() ?? '',
+                token: value?.data?.token ?? '',
+                userType: value?.data?.userType ?? "");
+            rememberMe
+                ? userPreference.saveRememberMe(email, password, rememberMe)
+                : userPreference.clearRememberMe();
+            Utils.toastSuccessMessage("Login Successfully");
+            setOnLoginUser(ApiResponse.completed(value));
           }
-          Utils.toastSuccessMessage("Login Successfully");
-
-          }
-          setOnLoginUser(ApiResponse.completed(value));
+        } else if (value?.status?.httpCode == '400') {
+          Utils.toastMessage('Please verify account');
         }
       }).onError((error, stackTrace) {
         FocusScope.of(context).unfocus();
@@ -122,7 +133,6 @@ class AuthViewModel with ChangeNotifier {
       return resp;
     } catch (e) {
       debugPrint('errrrrrrrrrrrrrrrrrrrr$e');
-
       setOnSignUpUser(ApiResponse.error(e.toString()));
     }
     return null;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/models/getall_notification_model.dart';
-import 'package:flutter_cab/res/Custom%20Page%20Layout/common_page_layout.dart';
-import 'package:flutter_cab/res/custom_appbar_widget.dart';
+import 'package:flutter_cab/widgets/Custom%20Page%20Layout/common_page_layout.dart';
+import 'package:flutter_cab/widgets/custom_appbar_widget.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
 import 'package:flutter_cab/view_model/notification_view_model.dart';

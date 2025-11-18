@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/res/Custom%20%20Button/gradient_button.dart';
+import 'package:flutter_cab/widgets/Custom%20%20Button/gradient_button.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
 import 'package:flutter_cab/view_model/bid_view_model.dart';
@@ -8,9 +8,9 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../data/response/status.dart';
-import '../../../res/Custom Page Layout/common_page_layout.dart';
-import '../../../res/custom_filter_popup_widget.dart';
-import '../../../res/custom_search_field.dart';
+import '../../../widgets/Custom Page Layout/common_page_layout.dart';
+import '../../../widgets/custom_filter_popup_widget.dart';
+import '../../../widgets/custom_search_field.dart';
 
 class BidManagementScreen extends StatefulWidget {
   const BidManagementScreen({super.key});

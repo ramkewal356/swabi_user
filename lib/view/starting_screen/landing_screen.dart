@@ -6,7 +6,7 @@ import 'package:flutter_cab/data/models/get_activity_category_list_model.dart';
 import 'package:flutter_cab/data/models/get_all_activity_list_model.dart';
 import 'package:flutter_cab/data/models/get_state_with_image_list_model.dart';
 import 'package:flutter_cab/data/models/package_models.dart';
-import 'package:flutter_cab/res/Custom%20Widgets/custom_textformfield.dart';
+import 'package:flutter_cab/widgets/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/core/constants/assets.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';

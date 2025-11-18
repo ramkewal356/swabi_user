@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/models/get_trasactionbyid_model.dart';
-import 'package:flutter_cab/res/Custom%20Widgets/custom_tabbar.dart';
+import 'package:flutter_cab/widgets/Custom%20Widgets/custom_tabbar.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
