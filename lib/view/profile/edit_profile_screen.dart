@@ -5,10 +5,11 @@ import 'package:flutter_cab/data/models/user_profile_model.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/customdropdown_button.dart';
 import 'package:flutter_cab/widgets/Custom%20Page%20Layout/common_page_layout.dart';
+import 'package:flutter_cab/widgets/Custom%20Widgets/custom_phonefield.dart';
 import 'package:flutter_cab/widgets/Custom%20Widgets/custom_search_location.dart';
 import 'package:flutter_cab/widgets/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/widgets/custom_appbar_widget.dart';
-import 'package:flutter_cab/widgets/custom_mobile_number.dart';
+// import 'package:flutter_cab/widgets/custom_mobile_number.dart';
 import 'package:flutter_cab/core/constants/assets.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
@@ -216,14 +217,20 @@ class _EditProfiePageState extends State<EditProfiePage> {
                 ],
               ),
               const SizedBox(height: 5),
-              CustomMobilenumber(
-                  // width: AppDimension.getWidth(context) * .9,
-                  fillColor: background,
-                  textLength: 9,
-                  keyboardType: TextInputType.phone,
-                  countryCode: controllers[4].text,
+              Customphonefield(
+                initalCountryCode: controllers[4].text,
                   controller: controllers[5],
-                  hintText: 'Enter mobile number'),
+                hintText: 'Enter phone number',
+                fillColor: background,
+              ),
+              // CustomMobilenumber(
+              //     // width: AppDimension.getWidth(context) * .9,
+              //     fillColor: background,
+              //     textLength: 9,
+              //     keyboardType: TextInputType.phone,
+              //     countryCode: controllers[4].text,
+              //     controller: controllers[5],
+              //     hintText: 'Enter mobile number'),
               const SizedBox(height: 10),
               Padding(
                   padding: const EdgeInsets.only(bottom: 5),

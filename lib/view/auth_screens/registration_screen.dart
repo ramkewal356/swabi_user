@@ -3,15 +3,17 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+// import 'package:flutter_cab/core/utils/validation.dart';
 // import 'package:flutter_cab/core/utils/utils.dart';
 import 'package:flutter_cab/data/response/status.dart';
 import 'package:flutter_cab/core/utils/validatorclass.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/customdropdown_button.dart';
+import 'package:flutter_cab/widgets/Custom%20Widgets/custom_phonefield.dart';
 import 'package:flutter_cab/widgets/Custom%20Widgets/custom_search_location.dart';
 import 'package:flutter_cab/widgets/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/widgets/custom_text_widget.dart';
-import 'package:flutter_cab/widgets/custom_mobile_number.dart';
+// import 'package:flutter_cab/widgets/custom_mobile_number.dart';
 import 'package:flutter_cab/core/constants/assets.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
@@ -309,12 +311,18 @@ class _registration_screenState extends State<registration_screen> {
                       ],
                     ),
                     const SizedBox(height: 5),
-                    CustomMobilenumber(
-                        controller: controller[5],
-                        fillColor: background,
-                        textLength: 9,
-                        hintText: 'Enter phone number',
-                        countryCode: countryCode),
+                    Customphonefield(
+                      initalCountryCode: countryCode,
+                      controller: controller[5],
+                      hintText: 'Enter phone number',
+                      fillColor: background,
+                    ),
+                    // CustomMobilenumber(
+                    //     controller: controller[5],
+                    //     fillColor: background,
+                    //     textLength: 9,
+                    //     hintText: 'Enter phone number',
+                    //     countryCode: countryCode),
                     const SizedBox(height: 10),
                     lableText('Password'),
                     Customtextformfield(

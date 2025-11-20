@@ -7,6 +7,7 @@ import 'package:flutter_cab/data/models/package_models.dart' hide Status;
 import 'package:flutter_cab/data/models/payment_details_model.dart' hide Status;
 import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/widgets/Custom%20Page%20Layout/common_page_layout.dart';
+import 'package:flutter_cab/widgets/Custom%20Widgets/custom_phonefield.dart';
 import 'package:flutter_cab/widgets/Custom%20Widgets/custom_search_location.dart';
 import 'package:flutter_cab/widgets/Custom%20Widgets/multi_image_slider_container_widget.dart';
 import 'package:flutter_cab/widgets/activity_container.dart';
@@ -14,7 +15,7 @@ import 'package:flutter_cab/widgets/custom_appbar_widget.dart';
 import 'package:flutter_cab/widgets/custom_container.dart';
 import 'package:flutter_cab/widgets/custom_raise_issue_form.dart';
 import 'package:flutter_cab/widgets/custom_text_widget.dart';
-import 'package:flutter_cab/widgets/custom_mobile_number.dart';
+// import 'package:flutter_cab/widgets/custom_mobile_number.dart';
 import 'package:flutter_cab/core/constants/assets.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/core/utils/dimensions.dart';
@@ -1150,12 +1151,18 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                     ])),
                   ),
                   if (isChangeContact)
-                    CustomMobilenumber(
-                      textLength: 9,
+                    Customphonefield(
+                      initalCountryCode: countryCode,
                       controller: secondaryContactController,
                       hintText: 'Enter phone number',
-                      countryCode: countryCode,
+                      fillColor: background,
                     ),
+                  // CustomMobilenumber(
+                  //   textLength: 9,
+                  //   controller: secondaryContactController,
+                  //   hintText: 'Enter phone number',
+                  //   countryCode: countryCode,
+                  // ),
                   if (!isChangeContact)
                     CustomSearchLocation(
                         controller: searchLocationController,

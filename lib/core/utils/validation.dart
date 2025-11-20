@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:intl/intl.dart';
+import 'package:phone_numbers_parser/phone_numbers_parser.dart';
+// import 'package:intl_phone_field/phone_number.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class Validation {
@@ -452,4 +454,19 @@ DateTime parseTime(String timeStr, {DateTime? date}) {
 
 int parseActivityHours(String hoursStr) {
   return (double.tryParse(hoursStr) ?? 0.0).toInt();
+}
+Future<String?> globalPhoneValidator(String fullNumber) async {
+  try {
+    // Parse safely
+    final phone = PhoneNumber.parse(fullNumber);
+
+    // Check if valid
+    final isValid = phone.isValid();
+
+    if (!isValid) return "Invalid phone number";
+
+    return null;
+  } catch (e) {
+    return "Invalid phone number";
+  }
 }

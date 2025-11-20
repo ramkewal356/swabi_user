@@ -8,9 +8,10 @@ import 'package:flutter_cab/data/models/get_package_details_by_id_model.dart'
 import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/customdropdown_button.dart';
 import 'package:flutter_cab/widgets/Custom%20Page%20Layout/common_page_layout.dart';
+import 'package:flutter_cab/widgets/Custom%20Widgets/custom_phonefield.dart';
 import 'package:flutter_cab/widgets/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/widgets/custom_appbar_widget.dart';
-import 'package:flutter_cab/widgets/custom_mobile_number.dart';
+// import 'package:flutter_cab/widgets/custom_mobile_number.dart';
 import 'package:flutter_cab/core/constants/assets.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 // import 'package:flutter_cab/utils/string_extenstion.dart';
@@ -747,13 +748,19 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                     const SizedBox(height: 5),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: CustomMobilenumber(
-                          textLength: 9,
-                          focusNode: focusNode5,
-                          fillColor: background,
+                      child: Customphonefield(
+                        initalCountryCode: secondaryCountryCode,
                           controller: secondaryNoController,
-                          hintText: 'Enter number',
-                          countryCode: secondaryCountryCode),
+                        hintText: 'Enter phone number',
+                        fillColor: background,
+                      ),
+                      // child: CustomMobilenumber(
+                      //     textLength: 9,
+                      //     focusNode: focusNode5,
+                      //     fillColor: background,
+                      //     controller: secondaryNoController,
+                      //     hintText: 'Enter number',
+                      //     countryCode: secondaryCountryCode),
                     ),
                     const SizedBox(height: 10),
                     Container(

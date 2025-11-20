@@ -304,6 +304,8 @@ class _AddAndEditDriverScreenState extends State<AddAndEditDriverScreen> {
                       //     countryCode: countryCode),\
                       Customphonefield(
                         initalCountryCode: countryCode,
+                        hintText: 'Enter phone number',
+                        fillColor: background,
                         controller: _phoneController,
                         onChanged: (number) => {
                           debugPrint(

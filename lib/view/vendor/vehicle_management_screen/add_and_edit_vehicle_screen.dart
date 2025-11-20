@@ -10,10 +10,11 @@ import 'package:flutter_cab/data/response/status.dart';
 import 'package:flutter_cab/core/utils/validatorclass.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/customdropdown_button.dart';
+import 'package:flutter_cab/widgets/Custom%20Widgets/custom_phonefield.dart';
 import 'package:flutter_cab/widgets/Custom%20Widgets/custom_search_location.dart';
 import 'package:flutter_cab/widgets/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/widgets/Custom%20Widgets/multi_image_upload_widget.dart';
-import 'package:flutter_cab/widgets/custom_mobile_number.dart';
+// import 'package:flutter_cab/widgets/custom_mobile_number.dart';
 import 'package:flutter_cab/widgets/single_image_picker.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
@@ -470,14 +471,23 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
                                                           'Search your location'),
                                                   const SizedBox(height: 10),
                                                   lableText('Contact No'),
-                                                  CustomMobilenumber(
+                                                  Customphonefield(
+                                                    initalCountryCode:
+                                                        countryCode,
                                                       controller:
-                                                          _phoneController,
-                                                      fillColor: background,
-                                                      textLength: 9,
-                                                      hintText:
-                                                          'Enter phone number',
-                                                      countryCode: countryCode),
+                                                        _phoneController,
+                                                    hintText:
+                                                        'Enter phone number',
+                                                    fillColor: background,
+                                                  ),
+                                                  // CustomMobilenumber(
+                                                  //     controller:
+                                                  //         _phoneController,
+                                                  //     fillColor: background,
+                                                  //     textLength: 9,
+                                                  //     hintText:
+                                                  //         'Enter phone number',
+                                                  //     countryCode: countryCode),
                                                   const SizedBox(height: 10),
                                                   lableText(
                                                       'Upload Owner Image'),

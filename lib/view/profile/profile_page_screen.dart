@@ -8,9 +8,10 @@ import 'package:flutter_cab/data/models/get_vendor_by_id_model.dart'
 import 'package:flutter_cab/data/models/user_profile_model.dart' hide Status;
 import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/customdropdown_button.dart';
+import 'package:flutter_cab/widgets/Custom%20Widgets/custom_phonefield.dart';
 import 'package:flutter_cab/widgets/Custom%20Widgets/custom_search_location.dart';
 import 'package:flutter_cab/widgets/custom_appbar_widget.dart';
-import 'package:flutter_cab/widgets/custom_mobile_number.dart';
+// import 'package:flutter_cab/widgets/custom_mobile_number.dart';
 import 'package:flutter_cab/widgets/custom_modal_bottom_sheet.dart';
 import 'package:flutter_cab/widgets/image_picker_widget.dart';
 import 'package:flutter_cab/core/constants/assets.dart';
@@ -322,15 +323,22 @@ class _ProfilePageState extends State<ProfilePage> {
                         icon: Icons.phone,
                         title: 'Contact No',
                         controller: contactController,
-                        child: CustomMobilenumber(
+                        child: Customphonefield(
                             readOnly: !isEditing,
                             withoutBorder: true,
+                            hintText: 'Enter phone number',
                             fillColor: background,
-                            textLength: 9,
-                            keyboardType: TextInputType.phone,
-                            countryCode: countryCode,
-                            controller: contactController,
-                            hintText: 'Enter contact number'),
+                            initalCountryCode: countryCode,
+                            controller: contactController),
+                        // child: CustomMobilenumber(
+                        //     readOnly: !isEditing,
+                        //     withoutBorder: true,
+                        //     fillColor: background,
+                        //     textLength: 9,
+                        //     keyboardType: TextInputType.phone,
+                        //     countryCode: countryCode,
+                        //     controller: contactController,
+                        //     hintText: 'Enter contact number'),
                       ),
                       DetailItem(
                         readOnly: true,
