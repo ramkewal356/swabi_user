@@ -29,7 +29,7 @@ import 'package:flutter_cab/view/customer/my_package/package_screen.dart';
 import 'package:flutter_cab/view/customer/my_package/package_booking_member_screen.dart';
 import 'package:flutter_cab/view/customer/my_package/package_viewdetails_screen.dart';
 import 'package:flutter_cab/view/customer/my_package/packageHistory/mypackage_history_screen.dart';
-import 'package:flutter_cab/view/profile/edit_profile_screen.dart';
+// import 'package:flutter_cab/view/profile/edit_profile_screen.dart';
 import 'package:flutter_cab/view/customer/wallet_pages/wallet_history_screen.dart';
 import 'package:flutter_cab/view/customer/wallet_pages/wallet_screen.dart';
 import 'package:flutter_cab/view/auth_screens/forgot_screen.dart';
@@ -129,15 +129,15 @@ final GoRouter myRouter = GoRouter(
           );
         },
         routes: [
-          GoRoute(
-            path: 'editProfilePage',
-            builder: (BuildContext context, GoRouterState state) {
-              var data = state.extra as Map<String, dynamic>;
-              return EditProfiePage(
-                usrId: data['uId'],
-              );
-            },
-          ),
+          // GoRoute(
+          //   path: 'editProfilePage',
+          //   builder: (BuildContext context, GoRouterState state) {
+          //     var data = state.extra as Map<String, dynamic>;
+          //     return EditProfiePage(
+          //       usrId: data['uId'],
+          //     );
+          //   },
+          // ),
         ]),
     GoRoute(
       path: '/changePassword',
@@ -230,7 +230,10 @@ final GoRouter myRouter = GoRouter(
       path: '/offerDetails',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (BuildContext context, GoRouterState state) {
-        return const OfferdetailsScreen();
+        var data = state.extra as Map<String, dynamic>;
+        return OfferdetailsScreen(
+          offerId: data["offerId"],
+        );
       },
     ),
     GoRoute(
@@ -310,7 +313,7 @@ final GoRouter myRouter = GoRouter(
         path: '/package',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (BuildContext context, GoRouterState state) {
-          return const Packages();
+          return const PackageScreen();
         },
         routes: [
           GoRoute(

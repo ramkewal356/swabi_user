@@ -20,8 +20,8 @@ class UserProfileViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  String userStateName = '';
-  Future<UserProfileModel?> fetchUserProfileViewModelApi() async {
+
+  Future<void> fetchUserProfileViewModelApi() async {
     String vendorId = await UserViewModel().getUserId() ?? '';
     Map<String, dynamic> query = {"userId": vendorId};
     try {
@@ -29,15 +29,14 @@ class UserProfileViewModel with ChangeNotifier {
       var resp = await _myRepo.userProfileRepositoryApi(query: query);
       if (resp.status.httpCode == '200') {
         setDataList(ApiResponse.completed(resp));
-        userStateName = resp.data.state;
-        notifyListeners();
+      
       }
 
-      return resp;
+      // return resp;
     } catch (error) {
       setDataList(ApiResponse.error(error.toString()));
     }
-    return null;
+    // return null;
   }
 }
 
@@ -97,99 +96,3 @@ class UserProfileUpdateViewModel with ChangeNotifier {
   }
 }
 
-class GetCountryStateListViewModel with ChangeNotifier {
-  final _myRepo = UserProfileUpdateRepository();
-  List<dynamic> getCountryListModel = [];
-  // List<dynamic> getStateListModel = [];
-  List<String>? getStateNameModel;
-  bool isLoading = false;
-  Future<dynamic> getAccessToken({
-    required BuildContext context,
-  }) async {
-    Map<String, String> headers = {
-      'api-token':
-          'ky36oc3IK7cBvBSMi9wkMQsvyf2kLTHLg83JuA8pYL5tLotwdV_401qVFkMHMunj8nM',
-      'user-email': 'saurabhm@shilshatech.com',
-    };
-    try {
-      var resp =
-          await _myRepo.getAccessTokentApi(context: context, header: headers);
-      return resp;
-    } catch (e) {
-      debugPrint('error$e');
-    }
-    return null;
-  }
-
-  Future<dynamic> getCountryList({
-    required BuildContext context,
-    required String token,
-  }) async {
-    Map<String, String> header = {
-      "Authorization": 'Bearer $token',
-    };
-    try {
-      _myRepo
-          .getCountryListApi(context: context, header: header)
-          .then((onValue) {
-        getCountryListModel = onValue;
-        notifyListeners();
-      });
-    } catch (e) {
-      debugPrint('error$e');
-    }
-    return null;
-  }
-
-  Future<void> getStateList({
-    required BuildContext context,
-    required String country,
-  }) async {
-    Map<String, dynamic> body = {"country": country};
-    try {
-      isLoading = true;
-      notifyListeners();
-      _myRepo
-          .getStateListApi(
-        context: context,
-        body: body,
-      )
-          .then((onValue) {
-        if (onValue.data != null) {
-          // Filter the data to get the country-specific states
-          var countryData = onValue.data?.firstWhere(
-            (item) => item.name == country,
-            // orElse: () => null,
-          );
-
-          if (countryData != null) {
-            var states = countryData.states;
-            getStateNameModel = states
-                ?.map((state) => state.name
-                    ?.replaceFirst(RegExp(r' Emirate$'), '') as String)
-                .toList();
-            debugPrint('vcnbxcnbxcn,,,,,,,,....???????? $getStateNameModel');
-          } else {
-            // If country is not found in the data, handle accordingly
-            getStateNameModel = [];
-          }
-
-          isLoading = false;
-          notifyListeners(); // Notify listeners after update
-        } else {
-          // Handle case when the response is null
-          isLoading = false;
-          notifyListeners();
-        }
-      });
-    } catch (e) {
-      debugPrint('error$e');
-      isLoading = false;
-      notifyListeners();
-    } finally {
-      isLoading = false;
-      notifyListeners();
-    }
-    // return null;
-  }
-}

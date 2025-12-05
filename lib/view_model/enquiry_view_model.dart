@@ -185,6 +185,7 @@ class EnquiryViewModel with ChangeNotifier {
       required String transportation,
       required String specialRequest,
       required String travelDate,
+      required String tentativeDates,
       required String tentativeDays}) async {
     String? userId = await UserViewModel().getUserId();
     Map<String, dynamic> body = {
@@ -195,6 +196,7 @@ class EnquiryViewModel with ChangeNotifier {
       "meals": meals,
       "name": fullName,
       "specialRequests": specialRequest,
+      "tentativeDates": tentativeDates,
       "tentativeDays": tentativeDays,
       "transportation": transportation,
       "travelDates": travelDate,

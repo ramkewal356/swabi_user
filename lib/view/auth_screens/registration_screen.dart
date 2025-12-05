@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 // import 'package:flutter_cab/core/utils/utils.dart';
 import 'package:flutter_cab/data/response/status.dart';
 import 'package:flutter_cab/core/utils/validatorclass.dart';
+import 'package:flutter_cab/view_model/third_party_view_model.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/customdropdown_button.dart';
 import 'package:flutter_cab/widgets/Custom%20Widgets/custom_phonefield.dart';
@@ -18,7 +19,7 @@ import 'package:flutter_cab/core/constants/assets.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
 import 'package:flutter_cab/view_model/auth_view_model.dart';
-import 'package:flutter_cab/view_model/user_profile_view_model.dart';
+// import 'package:flutter_cab/view_model/user_profile_view_model.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -84,15 +85,12 @@ class _registration_screenState extends State<registration_screen> {
 
   Dio? dio;
   String accessToken = '';
-  void getCountry() async {
-    try {
-      Provider.of<GetCountryStateListViewModel>(context, listen: false)
-          .getStateList(context: context, country: country);
-    } catch (e) {
-      debugPrint('error $e');
-    }
+  void getCountry() {
+    context.read<ThirdPartyViewModel>().getCountryList();
   }
-
+void getStateListApi(String country) {
+    context.read<ThirdPartyViewModel>().getStateList(country: country);
+  }
   @override
   void dispose() {
     controller[0].dispose();
@@ -117,10 +115,12 @@ class _registration_screenState extends State<registration_screen> {
   @override
   Widget build(BuildContext context) {
     var status = context.watch<AuthViewModel>().signUpResponse.status;
-    var state = context.watch<GetCountryStateListViewModel>().getStateNameModel;
+    var stateList = context.watch<ThirdPartyViewModel>().stateList.data;
+    var countryList =
+        context.watch<ThirdPartyViewModel>().getCountryListResponse.data;
     var sendOtpStatus = context.watch<AuthViewModel>().sendOtpResponse.status;
     bool isLoadingState =
-        context.watch<GetCountryStateListViewModel>().isLoading;
+        context.watch<ThirdPartyViewModel>().stateList.status == Status.loading;
     return Scaffold(
         backgroundColor: bgGreyColor,
         body: SafeArea(
@@ -209,18 +209,19 @@ class _registration_screenState extends State<registration_screen> {
                               text: ' *', style: TextStyle(color: redColor))
                         ]))),
                     Material(
-                      child: Customtextformfield(
-                        // focusNode: focusNode2,
+                      child: CustomDropdownButton(
+                        itemsList: countryList ?? [],
+                        hintText: 'Select Country',
                         controller: controller[8],
-                        readOnly: true,
-                        enableInteractiveSelection: false,
-                        // prefixiconvisible: true,
-                        // inputFormatters: [
-                        //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
-                        // ],
-                        fillColor: background,
-                        img: user,
-                        hintText: 'Country',
+                        onChanged: (value) {
+                          setState(() {
+                            controller[8].text = value ?? '';
+                            controller[9].text = '';
+                            stateList = [];
+                          });
+                          getStateListApi(value!);
+                          setState(() {});
+                        },
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -235,7 +236,8 @@ class _registration_screenState extends State<registration_screen> {
                       controller: controller[9],
                       // focusNode: focusNode3,
                       itemsList:
-                          state?.map((stateName) => stateName).toList() ?? [],
+                          stateList?.map((stateName) => stateName).toList() ??
+                              [],
 
                       onChanged: isLoadingState
                           ? null

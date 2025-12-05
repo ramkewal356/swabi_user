@@ -20,7 +20,6 @@ import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
 import 'package:flutter_cab/core/utils/validation.dart';
 import 'package:flutter_cab/view_model/third_party_view_model.dart';
-import 'package:flutter_cab/view_model/user_profile_view_model.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:flutter_cab/view_model/vehicle_owner_view_model.dart';
 import 'package:flutter_cab/view_model/vehicle_view_model.dart';
@@ -45,6 +44,7 @@ class AddAndEditVehicleScreen extends StatefulWidget {
 
 class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
   final _formKey = GlobalKey<FormState>();
+  var stateDropdownKey = UniqueKey();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -91,7 +91,7 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      getCountry();
+      // getCountry();
       if (widget.isEdit) {
         getVehicleById();
       } else {
@@ -106,15 +106,16 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
     _countryController.text = country;
   }
 
-  String accessToken = '';
-  void getCountry() async {
-    try {
+  // String accessToken = '';
+  void getCountry() {
+    context.read<ThirdPartyViewModel>().getCountryList();
+  }
+
+  void getStateListApi(String country1) async {
+   
       context
-          .read<GetCountryStateListViewModel>()
-          .getStateList(context: context, country: country);
-    } catch (e) {
-      debugPrint('error $e');
-    }
+          .read<ThirdPartyViewModel>().getStateList(country: country1);
+  
   }
 
   void getColors() {
@@ -176,13 +177,17 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
     _locationController.text = data?.address ?? '';
     _phoneController.text = data?.mobile ?? '';
     initialOwnerImage = data?.vehicleOwnerImageUrl ?? '';
+    getCountry();
+    getStateListApi(_countryController.text);
   }
 
   @override
   Widget build(BuildContext context) {
-    var state = context.watch<GetCountryStateListViewModel>().getStateNameModel;
+    var countryList =
+        context.watch<ThirdPartyViewModel>().getCountryListResponse.data;
+    var stateList = context.watch<ThirdPartyViewModel>().stateList.data;
     bool isLoadingState =
-        context.watch<GetCountryStateListViewModel>().isLoading;
+        context.watch<ThirdPartyViewModel>().stateList.status == Status.loading;
     var colors = context.watch<ThirdPartyViewModel>().colors.data?.colors;
     var vehicleTypeList =
         context.watch<VehicleViewModel>().getAllVehicleType.data?.data;
@@ -408,29 +413,56 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
                                                   ),
                                                   const SizedBox(height: 10),
                                                   lableText('Country'),
-                                                  Material(
-                                                    child: Customtextformfield(
-                                                      controller:
-                                                          _countryController,
-                                                      readOnly: true,
-                                                      enableInteractiveSelection:
-                                                          false,
-                                                      // prefixiconvisible: true,
-                                                      // inputFormatters: [
-                                                      //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
-                                                      // ],
-                                                      fillColor: background,
+                                                  // Material(
+                                                  //   child: Customtextformfield(
+                                                  //     controller:
+                                                  //         _countryController,
+                                                  //     readOnly: true,
+                                                  //     enableInteractiveSelection:
+                                                  //         false,
+                                                  //     // prefixiconvisible: true,
+                                                  //     // inputFormatters: [
+                                                  //     //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
+                                                  //     // ],
+                                                  //     fillColor: background,
 
-                                                      hintText: 'Country',
-                                                    ),
+                                                  //     hintText: 'Country',
+                                                  //   ),
+                                                  // ),
+                                                  CustomDropdownButton(
+                                                    itemsList:
+                                                        countryList ?? [],
+                                                    controller:
+                                                        _countryController,
+                                                    hintText: 'Select Country',
+                                                    onChanged: (value) {
+                                                    
+                                                      _countryController.text =
+                                                          value ?? '';
+                                                      setState(() {
+                                                        _stateController
+                                                            .clear();
+                                                        stateList = [];
+                                                        stateDropdownKey =
+                                                            UniqueKey();
+                                                      });
+                                                    },
+                                                    validator: (p0) {
+                                                      if (p0 == null ||
+                                                          p0.isEmpty) {
+                                                        return 'Please select country';
+                                                      }
+                                                      return null;
+                                                    },
                                                   ),
                                                   const SizedBox(height: 10),
                                                   lableText('State'),
                                                   CustomDropdownButton(
+                                                    key: stateDropdownKey,
                                                     controller:
                                                         _stateController,
 
-                                                    itemsList: state
+                                                    itemsList: stateList
                                                             ?.map((stateName) =>
                                                                 stateName)
                                                             .toList() ??

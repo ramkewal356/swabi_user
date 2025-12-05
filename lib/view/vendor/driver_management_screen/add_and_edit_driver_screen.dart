@@ -2,19 +2,18 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/core/utils/validatorclass.dart';
+import 'package:flutter_cab/view_model/third_party_view_model.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/customdropdown_button.dart';
 import 'package:flutter_cab/widgets/Custom%20Widgets/custom_phonefield.dart';
 import 'package:flutter_cab/widgets/Custom%20Widgets/custom_search_location.dart';
 import 'package:flutter_cab/widgets/Custom%20Widgets/custom_textformfield.dart';
-// import 'package:flutter_cab/res/custom_mobile_number.dart';
 import 'package:flutter_cab/widgets/image_picker_widget.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
 import 'package:flutter_cab/core/utils/utils.dart';
 import 'package:flutter_cab/core/utils/validation.dart';
 import 'package:flutter_cab/view_model/driver_view_model.dart';
-import 'package:flutter_cab/view_model/user_profile_view_model.dart';
 import 'package:provider/provider.dart';
 
 import '../../../data/response/status.dart';
@@ -46,14 +45,15 @@ class _AddAndEditDriverScreenState extends State<AddAndEditDriverScreen> {
   String countryCode = '971';
   // String countryCode = 'AE';
   List<String>? selectedDate;
-
+  var stateDropdownKey = UniqueKey();
   File? imagePath;
   String initialImage = '';
   String country = 'United Arab Emirates';
   @override
   void initState() {
     getDriverDetails();
-    getCountry();
+    // getCountry();
+    // getStateListApi(_countryController.text);
     super.initState();
     _countryController.text = country;
   }
@@ -61,9 +61,13 @@ class _AddAndEditDriverScreenState extends State<AddAndEditDriverScreen> {
   void getCountry() async {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context
-          .read<GetCountryStateListViewModel>()
-          .getStateList(context: context, country: country);
+          .read<ThirdPartyViewModel>()
+          .getStateList(country: _countryController.text);
     });
+  }
+
+  void getStateListApi(String country) {
+    context.read<ThirdPartyViewModel>().getStateList(country: country);
   }
 
   void getDriverDetails() {
@@ -87,6 +91,8 @@ class _AddAndEditDriverScreenState extends State<AddAndEditDriverScreen> {
           _phoneController.text = driverData?.mobile ?? '';
           countryCode = driverData?.countryCode ?? '971';
           setState(() {});
+          getCountry();
+          getStateListApi(_countryController.text);
         });
       });
     }
@@ -95,9 +101,10 @@ class _AddAndEditDriverScreenState extends State<AddAndEditDriverScreen> {
   @override
   Widget build(BuildContext context) {
     var status = context.watch<DriverViewModel>().getDriverById.status;
-    var state = context.watch<GetCountryStateListViewModel>().getStateNameModel;
+    var stateList = context.watch<ThirdPartyViewModel>().stateList.data;
     var addStatus = context.watch<DriverViewModel>().addEditDriver.status;
-
+    var countryList =
+        context.watch<ThirdPartyViewModel>().getCountryListResponse.data;
     return Scaffold(
       backgroundColor: bgGreyColor,
       appBar: AppBar(
@@ -205,26 +212,33 @@ class _AddAndEditDriverScreenState extends State<AddAndEditDriverScreen> {
                       const SizedBox(height: 10),
                       lableText('Country'),
                       Material(
-                        child: Customtextformfield(
+                        child: CustomDropdownButton(
+                          withoutBorder: true,
+                          itemsList: countryList ?? [],
+                          hintText: 'Select Country',
                           controller: _countryController,
-                          readOnly: true,
-                          enableInteractiveSelection: false,
-                          // prefixiconvisible: true,
-                          // inputFormatters: [
-                          //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
-                          // ],
-                          fillColor: background,
-
-                          hintText: 'Country',
+                          onChanged: (value) {
+                         
+                            _countryController.text = value ?? '';
+                            setState(() {
+                              _stateController.clear();
+                              stateList = [];
+                              stateDropdownKey = UniqueKey();
+                            });
+                            getStateListApi(value!);
+                            setState(() {});
+                          },
                         ),
                       ),
                       const SizedBox(height: 10),
                       lableText('State'),
                       CustomDropdownButton(
+                        key: stateDropdownKey,
                         controller: _stateController,
 
                         itemsList:
-                            state?.map((stateName) => stateName).toList() ?? [],
+                            stateList?.map((stateName) => stateName).toList() ??
+                                [],
 
                         // itemsList: [],
                         onChanged: (value) {

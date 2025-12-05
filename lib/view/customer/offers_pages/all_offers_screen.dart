@@ -8,6 +8,7 @@ import 'package:flutter_cab/widgets/custom_appbar_widget.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
 import 'package:flutter_cab/view_model/offer_view_model.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -81,7 +82,7 @@ class _AlloffersScreenState extends State<AlloffersScreen>
     super.dispose();
   }
 
-  int selectIndex = -1;
+  int? selectIndex;
   String coupne = 'xzcxvcvbbvb';
   @override
   Widget build(BuildContext context) {
@@ -309,20 +310,24 @@ class _AlloffersScreenState extends State<AlloffersScreen>
                                                 CustomButtonSmall(
                                                     height: 40,
                                                     width: 120,
-                                                    loading: viewModel
-                                                            .isLoading &&
+                                                    loading: 
                                                         selectIndex == index,
                                                     btnHeading: 'View Details',
                                                     onTap: () {
                                                       setState(() {
                                                         selectIndex = index;
                                                       });
-                                                      // context.push('/offerDetails');
-                                                      viewModel.getOfferDetails(
-                                                          context: context,
-                                                          offerId:
-                                                              data?.offerId ??
-                                                                  0);
+                                                      context.push(
+                                                          '/offerDetails',
+                                                          extra: {
+                                                            "offerId": data
+                                                                    ?.offerId
+                                                                    .toString() ??
+                                                                ''
+                                                          });
+                                                      setState(() {
+                                                        selectIndex = null;
+                                                      });
                                                     })
                                               ],
                                             ),

@@ -4,108 +4,75 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/status.dart';
 import 'package:flutter_cab/data/models/package_models.dart' hide Status;
-import 'package:flutter_cab/widgets/Common%20Widgets/common_offer_container.dart';
+import 'package:flutter_cab/view_model/third_party_view_model.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/customdropdown_button.dart';
-import 'package:flutter_cab/widgets/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/widgets/Custom%20Widgets/multi_image_slider_container_widget.dart';
 import 'package:flutter_cab/widgets/custom_container.dart';
 import 'package:flutter_cab/widgets/custom_text_widget.dart';
 import 'package:flutter_cab/core/constants/assets.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/core/utils/dimensions.dart';
-import 'package:flutter_cab/common/styles/text_styles.dart';
 import 'package:flutter_cab/core/utils/validation.dart';
-import 'package:flutter_cab/view_model/offer_view_model.dart';
 import 'package:flutter_cab/view_model/package_view_model.dart';
 import 'package:flutter_cab/view_model/user_profile_view_model.dart';
-import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class Packages extends StatefulWidget {
-  final String? userSate;
-  const Packages({super.key, this.userSate});
+class PackageScreen extends StatefulWidget {
+  const PackageScreen({super.key});
 
   @override
-  State<Packages> createState() => _PackagesState();
+  State<PackageScreen> createState() => _PackageScreenState();
 }
 
-class _PackagesState extends State<Packages> {
+class _PackageScreenState extends State<PackageScreen> {
+  final _formKey = GlobalKey<FormState>();
+  var stateDropdownKey = UniqueKey();
   TextEditingController controller = TextEditingController();
   TextEditingController statecontroller = TextEditingController();
-  UserViewModel userViewModel = UserViewModel();
-
+  TextEditingController countrycontroller = TextEditingController();
+  // UserViewModel userViewModel = UserViewModel();
   DateTime tomorrow = DateTime.now().add(const Duration(days: 1));
-
   final DateFormat _dateFormat = DateFormat('dd-MM-yyyy');
   final ScrollController _scrollController = ScrollController();
-
-  bool isLastPage = false;
   String? userId;
-  String countryName = 'United Arab Emirates';
-  String selectedStateName = 'Dubai';
 
   @override
   void initState() {
     super.initState();
     controller = TextEditingController(text: _dateFormat.format(tomorrow));
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      getCountry();
-      var userData =
-          // ignore: use_build_context_synchronously
-          await Provider.of<UserProfileViewModel>(context, listen: false)
-              .fetchUserProfileViewModelApi();
-      if (userData != null && userData.data.userId != '') {
-        fetchState();
-      }
+      _loadData();
     });
-
     _scrollController.addListener(_onScroll);
   }
 
-  void fetchState() async {
-    try {
-      final String userState = await userViewModel.getState();
-      userId = await userViewModel.getUserId();
-      if (userState.isNotEmpty) {
-        setState(() {
-          selectedStateName = userState; // Update local state
-          debugPrint('Fetched state: $selectedStateName');
-          statecontroller.text = selectedStateName;
-        });
-        // Update the text controller
-      } else {
-        final fallbackState =
-            // ignore: use_build_context_synchronously
-            Provider.of<UserProfileViewModel>(context, listen: false)
-                .userStateName;
 
-        setState(() {
-          selectedStateName = fallbackState;
-          statecontroller.text = fallbackState; // Update the controller
-          debugPrint('Fetched fallback state: $fallbackState');
-        });
+  void _loadData() async {
+    var vm = context.read<UserProfileViewModel>();
 
-        debugPrint(
-            'Fetched state:,,,,..,,,....,,..,,.,,.,,.,.. $selectedStateName');
-      }
-      fetchPackageList();
-    } catch (e) {
-      debugPrint('Error fetching state: $e');
+    await vm.fetchUserProfileViewModelApi();
+    if (vm.dataList.data != null) {
+      setState(() {
+        userId = vm.dataList.data?.data.userId;
+        countrycontroller.text = vm.dataList.data?.data.country ?? '';
+        statecontroller.text = vm.dataList.data?.data.state ?? '';
+      });
     }
+    getCountry();
+    getStateListApi(countrycontroller.text);
+    fetchPackageList();
   }
 
   void fetchPackageList({bool isPagination = false, bool isSearch = false}) {
     context.read<GetPackageListViewModel>().fetchGetPackageListViewModelApi(
         date: controller.text,
-        country: countryName,
-        state: statecontroller.text.isEmpty
-            ? selectedStateName
-            : statecontroller.text,
+        country: countrycontroller.text,
+        state: statecontroller.text,
         isPagination: isPagination,
         isSearch: isSearch);
   }
@@ -117,17 +84,16 @@ class _PackagesState extends State<Packages> {
     }
   }
 
-  String accessToken = '';
-  void getCountry() async {
-    try {
-      Provider.of<GetCountryStateListViewModel>(context, listen: false)
-          .getStateList(context: context, country: countryName);
-    } catch (e) {
-      debugPrint('error $e');
-    }
+  void getCountry() {
+    context.read<ThirdPartyViewModel>().getCountryList();
   }
 
-  List<Content> getPackageList = [];
+  void getStateListApi(String country) {
+    context
+        .read<ThirdPartyViewModel>()
+        .getStateList(country: countrycontroller.text);
+  }
+
   @override
   void dispose() {
     statecontroller.dispose();
@@ -135,87 +101,86 @@ class _PackagesState extends State<Packages> {
     super.dispose();
   }
 
-  bool loader = false;
-  int selectedIndex = -1;
-  bool isLoadingData = false;
-  // List<Content> imgList = [];
+  int? selectedIndex;
+
   @override
   Widget build(BuildContext context) {
-    final status =
-        context.watch<GetPackageListViewModel>().getPackageList.status;
-    final statusDetails = context
-        .watch<GetPackageActivityByIdViewModel>()
-        .getPackageActivityById
-        .status;
-
-    isLoadingData = context.watch<OfferViewModel>().isLoading1;
-    var state = context.watch<GetCountryStateListViewModel>().getStateNameModel;
-    isLastPage = context.watch<GetPackageListViewModel>().isLastPage;
-    getPackageList =
-        context.watch<GetPackageListViewModel>().getPackageList.data ?? [];
-    return Stack(
+    var countryList =
+        context.watch<ThirdPartyViewModel>().getCountryListResponse.data;
+    var userStatus = context.watch<UserProfileViewModel>().dataList.status;
+    var stateList = context.watch<ThirdPartyViewModel>().stateList.data;
+    return Column(
       children: [
-        Column(
-          children: [
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Customtextformfield(
-                  fillColor: background,
-                  readOnly: true,
-                  prefixIcon: const Icon(Icons.location_on_outlined),
-                  controller: TextEditingController(text: countryName),
-                  hintText: 'Select country'),
-            ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: CustomDropdownButton(
-                      controller: statecontroller,
-                      // focusNode: focusNode3,
-                      itemsList: state
-                              ?.map((stateName) => stateName)
-                              .toSet()
-                              .toList() ??
-                          [],
-
+        const SizedBox(height: 10),
+        Card(
+          color: background,
+          margin: const EdgeInsets.symmetric(horizontal: 10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    CustomDropdownButton(
+                      itemsList: countryList ?? [],
+                      hintText: 'Select Country',
+                      controller: countrycontroller,
                       onChanged: (value) {
+                        countrycontroller.text = value ?? '';
                         setState(() {
-                          selectedStateName = value ?? '';
+                          statecontroller.clear();
+                          stateList = [];
+                          stateDropdownKey = UniqueKey();
                         });
+                        getStateListApi(value!);
+
+                        setState(() {});
                       },
-                      hintText: 'Select State',
+                      validator: (p0) {
+                        if (p0 == null || p0.isEmpty) {
+                          return 'Please select country';
+                        }
+                        return null;
+                      },
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    flex: 3,
-                    child: Container(
-                      // padding: const EdgeInsets.symmetric(horizontal: 10),
-                      color: bgGreyColor,
-                      child: Material(
-                        borderRadius: BorderRadius.circular(5),
-                        elevation: 0,
-                        child: Container(
-                          // width: AppDimension.getWidth(context) * .92,
-                          // height: 50,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: naturalGreyColor.withOpacity(0.3),
-                            ),
-                            color: background,
-                            borderRadius: BorderRadius.circular(5),
+                    const SizedBox(height: 10),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: CustomDropdownButton(
+                            key: stateDropdownKey,
+                            controller: statecontroller,
+                            itemsList: stateList
+                                    ?.map((stateName) => stateName)
+                                    .toSet()
+                                    .toList() ??
+                                [],
+
+                            onChanged: (value) {
+                              setState(() {
+                                statecontroller.text = value ?? '';
+                              });
+                            },
+                            hintText: 'Select State',
+                            validator: (p0) {
+                              if (p0 == null || p0.isEmpty) {
+                                return 'Please select state';
+                              }
+                              return null;
+                            },
                           ),
-                          child: TextField(
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: TextFormField(
                             controller: controller,
                             textAlignVertical: TextAlignVertical.center,
                             readOnly: true,
                             onTap: () async {
-                              // await _selectDate(context);
                               final selectedDate = await showCustomDatePicker(
                                 context,
                                 initialDate: _dateFormat.parse(controller.text),
@@ -231,159 +196,151 @@ class _PackagesState extends State<Packages> {
                                 });
                               }
                             },
-                            style: titleTextStyle,
                             decoration: InputDecoration(
-                              border: const UnderlineInputBorder(
-                                  borderSide: BorderSide.none),
+                              hintText: 'Select Date',
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 10),
+                              focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                  borderSide: const BorderSide(
+                                      color: naturalGreyColor)),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                  borderSide: const BorderSide(
+                                      color: naturalGreyColor)),
                               prefixIcon: const Icon(
                                 Icons.calendar_month_outlined,
                                 color: naturalGreyColor,
                               ),
-                              suffixIcon: Container(
-                                  height: 50,
-                                  margin: const EdgeInsets.all(0.5),
-                                  width: 50,
-                                  decoration: const BoxDecoration(
-                                      borderRadius: BorderRadius.only(
-                                          topRight: Radius.circular(5),
-                                          bottomRight: Radius.circular(5)),
-                                      color: btnColor),
-                                  child: InkWell(
-                                    onTap: () {
-                                      fetchPackageList(isSearch: true);
-                                      userViewModel
-                                          .setSate(statecontroller.text);
-                                    },
-                                    child: const Icon(
-                                      Icons.search,
-                                      color: background,
-                                    ),
-                                  )),
                             ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please select date';
+                              }
+                              return null;
+                            },
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                controller: _scrollController,
-                child: Column(
-                  children: [
-                    const CommonOfferContainer(
-                      bookingType: 'PACKAGE_BOOKING',
-                    ),
-                    status == Status.completed
-                        ? getPackageList.isNotEmpty
-                            ? ListView.builder(
-                                // controller: _scrollController,
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 0, horizontal: 10),
-                                itemCount: getPackageList.length +
-                                    (isLastPage ? 0 : 1),
-                                itemBuilder: (context, index) {
-                                  if (index == getPackageList.length) {
-                                    return const Center(
-                                        child: CircularProgressIndicator(
-                                      color: greenColor,
-                                    ));
-
-                                    // Hide if not loading
-                                  }
-                                  List<PackageActivity> activityData =
-                                      getPackageList[index].packageActivities;
-                                  return PackageContainer(
-                                    packageImg: getPackageList[index]
-                                        .packageActivities
-                                        .expand(
-                                            (e) => e.activity.activityImageUrl)
-                                        .toList(),
-                                    packageName:
-                                        getPackageList[index].packageName,
-                                    noOfDays: getPackageList[index].noOfDays,
-                                    // noOfNights: "0",
-                                    country: getPackageList[index].country,
-                                    state: getPackageList[index].state,
-                                    location: getPackageList[index].location,
-                                    total: getPackageList[index].totalPrice,
-                                    activityList: List.generate(
-                                        activityData.length,
-                                        (index) =>
-                                            activityData[index].activity),
-                                    activity: getPackageList[index]
-                                        .packageActivities
-                                        .length
-                                        .toString(),
-                                    discountPrice: getPackageList[index]
-                                        .packageDiscountedAmount,
-                                    loader: statusDetails == Status.loading &&
-
-                                        selectedIndex == index,
-                               
-                                    ontap: () {
-                                      setState(() {
-                                        selectedIndex = index;
-
-                                      });
-                                      debugPrint('onclickpage.....');
-                                      context.push('/package_view', extra: {
-                                        "packageId":
-                                            getPackageList[index].packageId,
-                                        "userType": 'Customer',
-                                        "userId": userId ?? '',
-                                        "bookingDate": controller.text
-                                      }).then((onValue) {
-                                        fetchPackageList(isPagination: true);
-                                      });
-                                    },
-                                    // ontap: () {
-                                    //   setState(() {
-                                    //     selectedIndex = index;
-                                    //     loader = true;
-                                    //   });
-                                    //   Provider.of<GetPackageActivityByIdViewModel>(
-                                    //           context,
-                                    //           listen: false)
-                                    //       .fetchGetPackageActivityByIdViewModelApi(
-                                    //           context,
-                                    //           {
-                                    //             "packageId":
-                                    //                 getPackageList[index]
-                                    //                     .packageId
-                                    //           },
-                                    //           getPackageList[index].packageId,
-                                    //           controller.text);
-                                    // }
-                                    // ()=> context.push("/package/packageDetails"),
-                                  );
-                                },
-                              )
-                            : Center(
-                                child: Container(
-                                    decoration: const BoxDecoration(),
-                                    child: const Text(
-                                      'No Data',
-                                      style: TextStyle(color: redColor),
-                                    )))
-                        : Container()
+                    const SizedBox(height: 10),
+                    CustomButtonSmall(
+                      btnHeading: 'Search',
+                      onTap: () {
+                        if (_formKey.currentState!.validate()) {
+                          fetchPackageList(isSearch: true);
+                          // userViewModel.setSate(statecontroller.text);
+                        }
+                      },
+                    )
                   ],
-                ),
-              ),
-            )
-          ],
+                )),
+          ),
         ),
-        (status == Status.loading || isLoadingData == true)
-            ? const SpinKitFadingCube(
-                size: 50,
-                duration: Duration(milliseconds: 1200),
-                color: Colors.red,
-              )
-            : Container()
+        const SizedBox(height: 10),
+        Consumer<GetPackageListViewModel>(
+          builder: (context, value, child) {
+            if (value.getPackageList.status == Status.loading ||
+                userStatus == Status.loading) {
+              return Expanded(
+                child: Center(
+                  child: SpinKitFadingCube(
+                    size: 50,
+                    duration: const Duration(milliseconds: 1200),
+                    color: Colors.red,
+                  ),
+                ),
+              );
+            }
+            if (value.getPackageList.status == Status.completed) {
+              var getPackageList = value.getPackageList.data ?? [];
+              return (value.getPackageList.data ?? []).isEmpty
+                  ? Container(
+                      height: 200,
+                      width: double.infinity,
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: greyColor1.withOpacity(0.1),
+                      ),
+                      child: Center(
+                        child: const Text('No Package Available',
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: redColor)),
+                      ))
+                  : Expanded(
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        shrinkWrap: true,
+                        // physics: const NeverScrollableScrollPhysics(),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 0, horizontal: 10),
+                        itemCount:
+                            getPackageList.length + (value.isLastPage ? 0 : 1),
+                        itemBuilder: (context, index) {
+                          if (index == getPackageList.length) {
+                            return const Center(
+                                child: CircularProgressIndicator(
+                              color: greenColor,
+                            ));
+
+                            // Hide if not loading
+                          }
+                          List<PackageActivity> activityData =
+                              getPackageList[index].packageActivities;
+                          return PackageContainer(
+                            packageImg: getPackageList[index]
+                                .packageActivities
+                                .expand((e) => e.activity.activityImageUrl)
+                                .toList(),
+                            packageName: getPackageList[index].packageName,
+                            noOfDays: getPackageList[index].noOfDays,
+                            // noOfNights: "0",
+                            country: getPackageList[index].country,
+                            state: getPackageList[index].state,
+                            location: getPackageList[index].location,
+                            total: getPackageList[index].totalPrice,
+                            activityList: List.generate(activityData.length,
+                                (index) => activityData[index].activity),
+                            activity: getPackageList[index]
+                                .packageActivities
+                                .length
+                                .toString(),
+                            discountPrice:
+                                getPackageList[index].packageDiscountedAmount,
+                            loader: selectedIndex == index,
+
+                            ontap: () {
+                              setState(() {
+                                selectedIndex = index;
+                              });
+                              debugPrint('onclickpage.....');
+                              context.push('/package_view', extra: {
+                                "packageId": getPackageList[index].packageId,
+                                "userType": 'Customer',
+                                "userId": userId ?? '',
+                                "bookingDate": controller.text
+                              }).then((onValue) {
+                                fetchPackageList(isPagination: true);
+                                setState(() {
+                                  selectedIndex = null;
+                                });
+                              });
+                            },
+                          );
+                        },
+                      ),
+                    );
+            } else {
+              return Expanded(
+                child: SizedBox(height: 10),
+              );
+            }
+          },
+        ),
       ],
     );
   }

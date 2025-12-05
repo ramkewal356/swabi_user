@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/status.dart';
+import 'package:flutter_cab/view_model/third_party_view_model.dart';
 
 import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/custom_multiselect_dropdown.dart';
@@ -18,7 +19,7 @@ import 'package:flutter_cab/core/utils/validation.dart';
 import 'package:flutter_cab/view_model/activity_management_view_model.dart';
 import 'package:flutter_cab/view_model/home_page_view_model.dart';
 import 'package:flutter_cab/view_model/offer_view_model.dart';
-import 'package:flutter_cab/view_model/user_profile_view_model.dart';
+// import 'package:flutter_cab/view_model/user_profile_view_model.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -60,6 +61,7 @@ class _AddAndEditActivityScreenState extends State<AddAndEditActivityScreen> {
   final TextEditingController _activityCategoryController =
       TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _countryController = TextEditingController();
 
   String countryName = 'United Arab Emirates';
   List<String> selectedSuitableFor = [];
@@ -124,21 +126,31 @@ class _AddAndEditActivityScreenState extends State<AddAndEditActivityScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((callback) {
-      getData();
       if (widget.isEdit) {
         getActivityById();
       }
     });
+    getData();
   }
 
   void getData() {
-    context
-        .read<GetCountryStateListViewModel>()
-        .getStateList(context: context, country: countryName);
+  
     context
         .read<GetActivityCategoryListViewModel>()
         .getActivityCategoryListApi();
     context.read<OfferViewModel>().getActivityOfferApi();
+    context.read<ThirdPartyViewModel>().getCountryList();
+    getStateListApi(_countryController.text);
+  }
+
+  void getStateListApi(String country) async {
+    try {
+      context
+          .read<ThirdPartyViewModel>()
+          .getStateList(country: _countryController.text);
+    } catch (e) {
+      debugPrint('error $e');
+    }
   }
 
   void getActivityById() async {
@@ -148,6 +160,7 @@ class _AddAndEditActivityScreenState extends State<AddAndEditActivityScreen> {
     if (activity != null) {
       final startParts = activity.startTime?.split(":"); // ["01", "00"]
       final endParts = activity.endTime?.split(":"); // ["23", "00"]
+      _countryController.text = activity.country ?? '';
       _stateController.text = activity.state ?? '';
       _locationNameController.text = activity.address ?? '';
       _activityNameController.text = activity.activityName ?? '';
@@ -186,7 +199,10 @@ class _AddAndEditActivityScreenState extends State<AddAndEditActivityScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var state = context.watch<GetCountryStateListViewModel>().getStateNameModel;
+    var stateList = context.watch<ThirdPartyViewModel>().stateList.data;
+    var countryList =
+        context.watch<ThirdPartyViewModel>().getCountryListResponse.data;
+
     var activityCategoryList = context
         .watch<GetActivityCategoryListViewModel>()
         .getActivityList
@@ -218,18 +234,29 @@ class _AddAndEditActivityScreenState extends State<AddAndEditActivityScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CustomLableText(lable: 'Country'),
-                      Customtextformfield(
-                          readOnly: true,
-                          fillColor: background,
-                          controller: TextEditingController(text: countryName),
-                          hintText: 'Country'),
+                      CustomDropdownButton(
+                        withoutBorder: true,
+                        itemsList: countryList ?? [],
+                        hintText: 'Select Country',
+                        controller: _countryController,
+                        onChanged: (value) {
+                          setState(() {
+                            _countryController.text = value ?? '';
+                            _stateController.text = '';
+                            stateList = [];
+                          });
+                          getStateListApi(value!);
+                          setState(() {});
+                        },
+                      ),
                       const SizedBox(height: 10),
                       CustomLableText(lable: 'State'),
                       CustomDropdownButton(
                         isEditable: true,
                         controller: _stateController,
                         itemsList:
-                            state?.map((stateName) => stateName).toList() ?? [],
+                            stateList?.map((stateName) => stateName).toList() ??
+                                [],
                         onChanged: (value) {
                           setState(() {
                             _stateController.text = value ?? '';
@@ -438,7 +465,6 @@ class _AddAndEditActivityScreenState extends State<AddAndEditActivityScreen> {
                         onHoursChanged: (val) => setState(() {}),
                         minsController: _visitfromminsController,
                         onMinsChanged: (val) => setState(() {}),
-                       
                       ),
                       SizedBox(height: 10),
                       CustomLableText(lable: 'Local Visit Time To'),
@@ -505,7 +531,6 @@ class _AddAndEditActivityScreenState extends State<AddAndEditActivityScreen> {
                             dateController.text = selectedDate?.join(',') ?? '';
                           }
                         },
-                       
                       ),
                       SizedBox(height: 10),
                       Text(
@@ -640,7 +665,6 @@ class _AddAndEditActivityScreenState extends State<AddAndEditActivityScreen> {
                             ? 'Update Activity'
                             : 'Create Activity',
                         onTap: () async {
-                          
                           String? vendorId =
                               await UserViewModel().getUserId() ?? '';
                           if (_formKey.currentState!.validate()) {
@@ -681,17 +705,14 @@ class _AddAndEditActivityScreenState extends State<AddAndEditActivityScreen> {
                                       "description":
                                           _descriptionController.text,
                                       "ageGroupDiscountPercent": {
-                                        "INFANT":
-                                            mapDiscountToDouble(
+                                        "INFANT": mapDiscountToDouble(
                                             _infantDiscountController.text),
                                         "CHILD": mapDiscountToDouble(
                                             _childDiscountController.text),
-                                        "SENIOR":
-                                            mapDiscountToDouble(
+                                        "SENIOR": mapDiscountToDouble(
                                             _seniorDiscountController.text),
                                       },
                                       "vendorId": vendorId,
-                                     
                                     },
                                     images: selectedImages,
                                     isEdit: widget.isEdit);
@@ -706,10 +727,10 @@ class _AddAndEditActivityScreenState extends State<AddAndEditActivityScreen> {
     );
   }
 
-  Widget selectTime(
-      {required TextEditingController hoursController,
-      dynamic Function(String?)? onHoursChanged,
-      required TextEditingController minsController,
+  Widget selectTime({
+    required TextEditingController hoursController,
+    dynamic Function(String?)? onHoursChanged,
+    required TextEditingController minsController,
     dynamic Function(String?)? onMinsChanged,
     String? Function()? extraValidator,
   }) {
@@ -733,7 +754,7 @@ class _AddAndEditActivityScreenState extends State<AddAndEditActivityScreen> {
                   return 'Please select hours';
                 }
                 // return null;
-                return extraValidator?.call(); 
+                return extraValidator?.call();
               },
             ),
           ),
@@ -760,7 +781,7 @@ class _AddAndEditActivityScreenState extends State<AddAndEditActivityScreen> {
                   return 'Please select mins';
                 }
                 // return null;
-                return extraValidator?.call(); 
+                return extraValidator?.call();
               },
             ),
           ),

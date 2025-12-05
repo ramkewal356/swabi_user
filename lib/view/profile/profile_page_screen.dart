@@ -6,6 +6,7 @@ import 'package:flutter_cab/data/response/status.dart';
 import 'package:flutter_cab/data/models/get_vendor_by_id_model.dart'
     hide Status;
 import 'package:flutter_cab/data/models/user_profile_model.dart' hide Status;
+import 'package:flutter_cab/view_model/third_party_view_model.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/customdropdown_button.dart';
 import 'package:flutter_cab/widgets/Custom%20Widgets/custom_phonefield.dart';
@@ -16,7 +17,7 @@ import 'package:flutter_cab/widgets/custom_modal_bottom_sheet.dart';
 import 'package:flutter_cab/widgets/image_picker_widget.dart';
 import 'package:flutter_cab/core/constants/assets.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
-import 'package:flutter_cab/core/utils/dimensions.dart';
+// import 'package:flutter_cab/core/utils/dimensions.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
 import 'package:flutter_cab/core/utils/utils.dart';
 import 'package:flutter_cab/view/auth_screens/change_password.dart';
@@ -41,11 +42,11 @@ class _ProfilePageState extends State<ProfilePage> {
   final _formKey = GlobalKey<FormState>();
   bool isEditing = false;
   String gender = '';
-  String country = '';
   String countryCode = '971';
   ProfileData userdata = ProfileData();
   late GetVendorByIdModel vendorData;
   late Status? status;
+  var stateDropdownKey = UniqueKey();
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController genderController = TextEditingController();
@@ -53,6 +54,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController stateController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
+  final TextEditingController _countryController = TextEditingController();
 
   Future<void> _uploadImage(File file) async {
     try {
@@ -101,7 +103,7 @@ class _ProfilePageState extends State<ProfilePage> {
         contactController.text = data.mobile;
         stateController.text = data.state;
         locationController.text = data.address;
-        country = data.country;
+        _countryController.text = data.country;
         countryCode = data.countryCode;
       }
     } else {
@@ -114,22 +116,26 @@ class _ProfilePageState extends State<ProfilePage> {
         contactController.text = data.mobile ?? '';
         stateController.text = data.state ?? '';
         locationController.text = data.address ?? '';
-        country = data.country ?? '';
+        _countryController.text = data.country ?? '';
         countryCode = data.countryCode ?? "";
       }
     }
     getCountry();
+    getStateListApi(_countryController.text);
+    setState(() {});
   }
 
   void getCountry() async {
+    context.read<ThirdPartyViewModel>().getCountryList();
+  }
+
+  void getStateListApi(String country) async {
     try {
-      Provider.of<GetCountryStateListViewModel>(context, listen: false)
-          .getStateList(context: context, country: country);
+      context.read<ThirdPartyViewModel>().getStateList(country: country);
     } catch (e) {
       debugPrint('error $e');
     }
   }
-
   @override
   Widget build(BuildContext context) {
     if (widget.userType == 'USER') {
@@ -141,9 +147,11 @@ class _ProfilePageState extends State<ProfilePage> {
           GetVendorByIdModel();
       status = context.watch<VendorViewModel>().vendorData.status;
     }
-    var state = context.watch<GetCountryStateListViewModel>().getStateNameModel;
+    var stateList = context.watch<ThirdPartyViewModel>().stateList.data;
+    var countryList =
+        context.watch<ThirdPartyViewModel>().getCountryListResponse.data;
     bool isLoadingState =
-        context.watch<GetCountryStateListViewModel>().isLoading;
+        context.watch<ThirdPartyViewModel>().stateList.status == Status.loading;
     final updateStatus =
         context.watch<UserProfileUpdateViewModel>().dataList.status;
     return Scaffold(
@@ -198,12 +206,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     border:
                                         Border.all(width: 4, color: btnColor)),
                                 child: ImagePickerWidget(
-                                  // userImg: widget.userType == 'USER'
-                                  //     ? userdata.profileImageUrl
-                                  //     : vendorData
-                                  //             .data?.vendorProfileImageUrl ??
-                                  //         '',
-                                  // initialImage: null,
+                                  
                                   initialImageUrl: widget.userType == 'USER'
                                       ? userdata.profileImageUrl
                                       : vendorData
@@ -356,7 +359,31 @@ class _ProfilePageState extends State<ProfilePage> {
                         readOnly: true,
                         icon: Icons.public,
                         title: 'Country',
-                        controller: TextEditingController(text: country),
+                        controller: _countryController.text.isNotEmpty
+                            ? _countryController
+                            : TextEditingController(text: ''),
+                        child: CustomDropdownButton(
+                          isEditable: isEditing,
+                          withoutBorder: true,
+                          itemsList: countryList ?? [],
+                          hintText: 'Select Country',
+                          controller: _countryController,
+                          onChanged: (value) {
+                            _countryController.text = value ?? '';
+
+                            setState(() {
+                              stateController.clear();
+                              stateList = [];
+                              stateDropdownKey = UniqueKey();
+                            });
+                            getStateListApi(value!);
+
+                            setState(() {});
+                          },
+                          validator: (p0) => (p0 == null || p0.isEmpty)
+                              ? 'Please select country'
+                              : null,
+                        ),
                       ),
                       DetailItem(
                         readOnly: !isEditing,
@@ -365,11 +392,14 @@ class _ProfilePageState extends State<ProfilePage> {
                         controller: stateController,
                         child: CustomDropdownButton(
                           withoutBorder: true,
+                          key: stateDropdownKey,
                           isEditable: isEditing,
                           controller: stateController,
                           // focusNode: focusNode3,
                           itemsList:
-                              state?.map((stateName) => stateName).toList() ??
+                              stateList
+                                  ?.map((stateName) => stateName)
+                                  .toList() ??
                                   [],
 
                           onChanged: isLoadingState
@@ -381,6 +411,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                   });
                                 },
                           hintText: 'Select State',
+                          validator: (p0) => (p0 == null || p0.isEmpty)
+                              ? 'Please select state'
+                              : null,
                         ),
                       ),
                       DetailItem(
@@ -421,7 +454,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     "gender": genderController.text,
                                     "countryCode": countryCode,
                                     "mobile": contactController.text,
-                                    "country": country,
+                                    "country": _countryController.text,
                                     "state": stateController.text
                                   };
                                   debugPrint('edit data.........$data');
@@ -447,81 +480,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ),
-    );
-  }
-}
-
-class ProfileContainer extends StatelessWidget {
-  final dynamic imgPath;
-  final VoidCallback onTap;
-  final String name;
-
-  const ProfileContainer(
-      {required this.onTap, this.imgPath = profile, this.name = "", super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
-          width: AppDimension.getWidth(context) * .3,
-          height: AppDimension.getHeight(context) * .2,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            color: curvePageColor,
-          ),
-          child: imgPath.runtimeType != String
-              ? Container(
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                          filterQuality: FilterQuality.high,
-                          image: FileImage(imgPath),
-                          fit: BoxFit.cover)),
-                )
-              : imgPath.toString().contains("http")
-                  ? Container(
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                              filterQuality: FilterQuality.high,
-                              image: NetworkImage(
-                                  // AppUrl.userProfileUpdate +
-                                  imgPath),
-                              // image: AssetImage(imgPath),
-                              fit: BoxFit.fill)))
-                  : Container(
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                              filterQuality: FilterQuality.high,
-                              image: AssetImage(
-                                  // AppUrl.userProfileUpdate +
-                                  imgPath),
-                              // image: AssetImage(imgPath),
-                              fit: BoxFit.cover))),
-        ),
-        Positioned(
-          bottom: 20,
-          right: 0,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(50),
-            onTap: onTap,
-            child: const Card(
-              elevation: 0,
-              shape: CircleBorder(),
-              color: btnColor,
-              child: SizedBox(
-                  height: 30,
-                  width: 30,
-                  child: Icon(
-                    Icons.camera_alt_outlined,
-                    color: background,
-                  )),
-            ),
-          ),
-        )
-      ],
     );
   }
 }

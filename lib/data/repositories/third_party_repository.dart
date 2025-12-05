@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/core/constants/app_url.dart';
 import 'package:flutter_cab/data/models/color_model.dart';
 import 'package:flutter_cab/core/services/http_service.dart';
+import 'package:flutter_cab/data/models/get_state_name_model.dart';
 
 class ThirdPartyRepository {
   Future<ColorModel> getColorsApi() async {
@@ -26,4 +27,48 @@ class ThirdPartyRepository {
       rethrow;
     }
   }
+  Future<dynamic> getCountryListApi() async {
+    var http = HttpService(
+      isAuthorizeRequest: false,
+      baseURL: AppUrl.countryStateBaseUrl,
+      endURL: AppUrl.getCountryListUrl,
+      methodType: HttpMethodType.GET,
+      bodyType: HttpBodyType.JSON,
+    );
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("getcountry List response ${response?.data}");
+      return response?.data;
+    } catch (error) {
+      debugPrint('error.. $error');
+      http.handleErrorResponse(error: error);
+      rethrow;
+    }
+  }
+
+  Future<GetStateNameModel> getStateListApi({
+    required Map<String, dynamic> body,
+  }) async {
+    var http = HttpService(
+      baseURL: AppUrl.countryStateBaseUrl,
+      endURL: AppUrl.getStateNameUrl,
+      body: body,
+      bodyType: HttpBodyType.JSON,
+      isAuthorizeRequest: false,
+      methodType: HttpMethodType.GET,
+    );
+
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+
+      debugPrint("Response: ${response?.data}");
+      var resp = GetStateNameModel.fromJson(response?.data);
+      return resp;
+    } catch (error) {
+      debugPrint('error.. $error');
+      http.handleErrorResponse(error: error);
+      rethrow;
+    }
+  }
+
 }

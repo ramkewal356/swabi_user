@@ -1,13 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/widgets/Common%20Widgets/common_offer_container.dart';
+import 'package:flutter_cab/view_model/third_party_view_model.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/customdropdown_button.dart';
 import 'package:flutter_cab/widgets/Custom%20Widgets/custom_search_location.dart';
-import 'package:flutter_cab/widgets/Custom%20Widgets/custom_textformfield.dart';
-import 'package:flutter_cab/core/constants/assets.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
-import 'package:flutter_cab/view_model/user_profile_view_model.dart';
-import 'package:flutter_cab/data/models/rental_booking_model.dart';
+import 'package:flutter_cab/data/models/rental_booking_model.dart' hide Status;
 import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/widgets/custom_datePicker/common_textfield.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
@@ -27,6 +24,7 @@ class RentalForm extends StatefulWidget {
 
 class _RentalFormState extends State<RentalForm> with RouteAware {
   final _formKey = GlobalKey<FormState>();
+  var stateDropdownKey = UniqueKey();
   final pickuplocationController = TextEditingController();
   final pickupdateController = TextEditingController();
   final seatController = TextEditingController();
@@ -35,6 +33,7 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
   final minsController = TextEditingController();
   final TextEditingController countryController = TextEditingController();
   final TextEditingController stateController = TextEditingController();
+  final TextEditingController _countryController = TextEditingController();
 
   final FocusNode locationFocusNode = FocusNode();
   String selectHour = '';
@@ -90,11 +89,8 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
       countryController.text = country;
 
       getCountry();
+      getStateListApi(_countryController.text);
     });
-
-    // controllers[0].addListener(() {
-    //   onChange();
-    // });
   }
 
   void _unfocusLocationField() {
@@ -105,13 +101,12 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
 
   Dio? dio;
   String accessToken = '';
-  void getCountry() async {
-    try {
-      Provider.of<GetCountryStateListViewModel>(context, listen: false)
-          .getStateList(context: context, country: countryController.text);
-    } catch (e) {
-      debugPrint('error $e');
-    }
+  void getCountry() {
+    context.read<ThirdPartyViewModel>().getCountryList();
+  }
+
+  void getStateListApi(String country) {
+    context.read<ThirdPartyViewModel>().getStateList(country: country);
   }
 
   @override
@@ -150,10 +145,11 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
             .data
             ?.data ??
         [];
+    var countryList =
+        context.watch<ThirdPartyViewModel>().getCountryListResponse.data;
+    var stateList = context.watch<ThirdPartyViewModel>().stateList.data;
     String status = context.watch<RentalViewModel>().dataList.status.toString();
-    var state = context.watch<GetCountryStateListViewModel>().getStateNameModel;
-    bool isLoadingState =
-        context.watch<GetCountryStateListViewModel>().isLoading;
+    // var state = context.watch<ThirdPartyViewModel>().stateList.data;
 
     return SingleChildScrollView(
       child: Form(
@@ -162,32 +158,35 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // const SizedBox(height: 10),
-            const CommonOfferContainer(
-              bookingType: 'RENTAL_BOOKING',
-            ),
-            // const SizedBox(height: 10),
+            // const CommonOfferContainer(
+            //   bookingType: 'RENTAL_BOOKING',
+            // ),
+            const SizedBox(height: 10),
             Padding(
                 padding: const EdgeInsets.only(bottom: 5, left: 10, right: 10),
                 child: Text.rich(TextSpan(children: [
                   TextSpan(text: 'Country', style: titleTextStyle),
-                  // const TextSpan(text: ' *', style: TextStyle(color: redColor))
+                  const TextSpan(text: ' *', style: TextStyle(color: redColor))
                 ]))),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Material(
-                child: Customtextformfield(
-                  // focusNode: focusNode2,
-                  controller: countryController,
-                  readOnly: true,
-                  enableInteractiveSelection: false,
-                  // prefixiconvisible: true,
-                  // inputFormatters: [
-                  //   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
-                  // ],
-                  fillColor: background,
-                  img: user,
-                  hintText: 'Country',
-                ),
+              child: CustomDropdownButton(
+                itemsList: countryList ?? [],
+                hintText: 'Select Country',
+                controller: _countryController,
+                onChanged: (value) {
+                  _countryController.text = value ?? '';
+                  setState(() {
+                    stateController.clear();
+                    stateList = [];
+                    stateDropdownKey = UniqueKey();
+                  });
+
+                  getStateListApi(value!);
+                  setState(() {});
+                },
+                validator: (p0) =>
+                    (p0 == null || p0.isEmpty) ? 'Please select country' : null,
               ),
             ),
 
@@ -203,19 +202,19 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: CustomDropdownButton(
+                key: stateDropdownKey,
                 controller: stateController,
                 // focusNode: focusNode3,
-                itemsList: state?.map((stateName) => stateName).toList() ?? [],
+                itemsList:
+                    stateList?.map((stateName) => stateName).toList() ?? [],
 
                 // itemsList: [],
-                onChanged: isLoadingState
-                    ? null
-                    : (value) {
-                        setState(() {
-                          stateController.text = value ?? '';
-                          pickuplocationController.clear();
-                        });
-                      },
+                onChanged: (value) {
+                  setState(() {
+                    stateController.text = value ?? '';
+                    pickuplocationController.clear();
+                  });
+                },
                 hintText: 'Select State',
 
                 validator: (p0) {
@@ -462,6 +461,5 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
         ),
       ),
     );
-    // );
   }
 }

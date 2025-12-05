@@ -10,7 +10,8 @@ import 'package:flutter_cab/view_model/offer_view_model.dart';
 import 'package:provider/provider.dart';
 
 class OfferdetailsScreen extends StatefulWidget {
-  const OfferdetailsScreen({super.key});
+  final String offerId;
+  const OfferdetailsScreen({super.key, required this.offerId});
 
   @override
   State<OfferdetailsScreen> createState() => _OfferdetailsScreenState();
@@ -33,18 +34,32 @@ class _OfferdetailsScreenState extends State<OfferdetailsScreen> {
     });
   }
 
-  final List<String> terms = [
-    "ffgffjgfjf",
-    "gfhghdbmnbjhkdjjhnmdbjk nmkjkjbnhjkjkjh hkjjdjkdjkjdkj nkjkkjdjkj bjdkj",
-    "gfg",
-    "jagrthewr",
-  ];
+  // final List<String> terms = [
+  //   "ffgffjgfjf",
+  //   "gfhghdbmnbjhkdjjhnmdbjk nmkjkjbnhjkjkjh hkjjdjkdjkjdkj nkjkkjdjkj bjdkj",
+  //   "gfg",
+  //   "jagrthewr",
+  // ];
+  @override
+  void initState() {
+    getOfferDetails();
+    super.initState();
+  }
+
+  void getOfferDetails() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context
+          .read<OfferViewModel>()
+          .getOfferDetailsApi(offerId: widget.offerId);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<OfferViewModel>(
       builder: (context, viewModel, child) {
         String termConditions =
-            """${viewModel.offerDetailByIdModel?.data?.termsAndConditions}""";
+            """${viewModel.getOfferDetails.data?.data?.termsAndConditions}""";
         // final document = html_parser.parse(termConditions);
         // final List<String> termsList = [
         //   ...document.getElementsByTagName('p').map((p) => p.text.trim()),
@@ -52,7 +67,7 @@ class _OfferdetailsScreenState extends State<OfferdetailsScreen> {
         // ];
         final List<String> termsList =
             termConditions.split(RegExp(r'\n')).map((e) => e.trim()).toList();
-
+        var data = viewModel.getOfferDetails.data?.data;
         return Scaffold(
           appBar: const CustomAppBar(
             heading: 'Offer Details',
@@ -79,7 +94,7 @@ class _OfferdetailsScreenState extends State<OfferdetailsScreen> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(5),
                           child: Image.network(
-                            viewModel.offerDetailByIdModel?.data?.imageUrl ??
+                            data?.imageUrl ??
                                 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS23qSvFQm2bH4nUAwxBk7ZzBQm5Qi__4imxg&s',
                             // fit: BoxFit.fill,
                           ),
@@ -94,7 +109,7 @@ class _OfferdetailsScreenState extends State<OfferdetailsScreen> {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
-                          viewModel.offerDetailByIdModel?.data?.offerType ==
+                          data?.offerType ==
                                   'PACKAGE_BOOKING'
                               ? "PACKAGE OFFER"
                               : "RENTAL OFFER",
@@ -103,15 +118,15 @@ class _OfferdetailsScreenState extends State<OfferdetailsScreen> {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        '${viewModel.offerDetailByIdModel?.data?.offerName}',
+                        '${data?.offerName}',
                         style: pageHeadingTextStyle,
                       ),
                       Text(
-                        'Save up to AED ${viewModel.offerDetailByIdModel?.data?.maxDiscountAmount?.toInt()} on ${viewModel.offerDetailByIdModel?.data?.offerType == 'RENTAL_BOOKING' ? 'RENTAL BOOKING' : "PACKAGE BOOKING"}',
+                        'Save up to AED ${data?.maxDiscountAmount?.toInt()} on ${data?.offerType == 'RENTAL_BOOKING' ? 'RENTAL BOOKING' : "PACKAGE BOOKING"}',
                         style: titleTextStyle1,
                       ),
                       Text(
-                        'Min booking AED ${viewModel.offerDetailByIdModel?.data?.minimumBookingAmount?.toInt()}',
+                        'Min booking AED ${data?.minimumBookingAmount?.toInt()}',
                         style: titleTextStyle1,
                       ),
                       const SizedBox(height: 5),
@@ -122,7 +137,7 @@ class _OfferdetailsScreenState extends State<OfferdetailsScreen> {
                             child: offerTile(
                                 lable: 'Expire on ',
                                 value:
-                                    '${viewModel.offerDetailByIdModel?.data?.endDate}'),
+                                    '${data?.endDate}'),
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(
@@ -140,7 +155,7 @@ class _OfferdetailsScreenState extends State<OfferdetailsScreen> {
                                         style: TextStyle(color: Colors.green),
                                       )
                                     : Text(
-                                        viewModel.offerDetailByIdModel?.data
+                                        data
                                                 ?.offerCode ??
                                             '',
                                         style: titleTextStyle,
@@ -148,9 +163,7 @@ class _OfferdetailsScreenState extends State<OfferdetailsScreen> {
                                 const SizedBox(width: 20),
                                 GestureDetector(
                                   onTap: () {
-                                    copyToClipboard(viewModel
-                                            .offerDetailByIdModel
-                                            ?.data
+                                    copyToClipboard(data
                                             ?.offerCode ??
                                         '');
                                   },
@@ -172,7 +185,7 @@ class _OfferdetailsScreenState extends State<OfferdetailsScreen> {
                         style: titleTextStyle,
                       ),
                       Text(
-                        viewModel.offerDetailByIdModel?.data?.description ?? '',
+                        data?.description ?? '',
                         // style: titleTextStyle1,
                         // maxLines: 2,
                         // overflow: TextOverflow.ellipsis,
@@ -210,7 +223,7 @@ class _OfferdetailsScreenState extends State<OfferdetailsScreen> {
     );
   }
 
-Widget offerTile({required String lable, required String value}) {
+  Widget offerTile({required String lable, required String value}) {
     return Row(
       children: [
         Text(

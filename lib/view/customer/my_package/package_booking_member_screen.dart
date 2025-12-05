@@ -11,13 +11,10 @@ import 'package:flutter_cab/widgets/Custom%20Page%20Layout/common_page_layout.da
 import 'package:flutter_cab/widgets/Custom%20Widgets/custom_phonefield.dart';
 import 'package:flutter_cab/widgets/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/widgets/custom_appbar_widget.dart';
-// import 'package:flutter_cab/widgets/custom_mobile_number.dart';
 import 'package:flutter_cab/core/constants/assets.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
-// import 'package:flutter_cab/utils/string_extenstion.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
 import 'package:flutter_cab/core/utils/utils.dart';
-import 'package:flutter_cab/view_model/offer_view_model.dart';
 import 'package:flutter_cab/view_model/package_view_model.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:flutter_cab/core/services/payment_service.dart';
@@ -57,7 +54,6 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
   List<TextEditingController> controller =
       List.generate(2, (index) => TextEditingController());
   final _formKey = GlobalKey<FormState>();
-  final _formCouponKey = GlobalKey<FormState>();
   TextEditingController nameController = TextEditingController();
   TextEditingController ageController = TextEditingController();
   TextEditingController genderController = TextEditingController();
@@ -90,6 +86,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
       Provider.of<UserProfileViewModel>(context, listen: false)
           .fetchUserProfileViewModelApi();
       getData();
+      // _getPackageOfferList();
     });
     checkParticipantTypes(widget.participantTypes);
   }
@@ -116,6 +113,13 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
     });
   }
 
+  // void _getPackageOfferList() {
+  //   context.read<OfferViewModel>().getOfferByVenderApi(
+  //       venderId: widget.venderId,
+  //       date: widget.bookingDate,
+  //       offerType: 'PACKAGE_BOOKING');
+  // }
+
   bool adultType = false;
   bool childType = false;
   bool infantType = false;
@@ -124,12 +128,6 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
     adultType = normalizedTypes.contains('ADULT');
     childType = normalizedTypes.contains('CHILD');
     infantType = normalizedTypes.contains('INFANT');
-
-    // Debug prints
-    debugPrint('Normalized Types: $normalizedTypes');
-    debugPrint('Adult Type: $adultType');
-    debugPrint('Child Type: $childType');
-    debugPrint('Infant Type: $infantType');
   }
 
   double taxPercentage = 5;
@@ -148,8 +146,6 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
       taxAmount = taxamount();
       // amount += double.parse(widget.amt);
       payAbleAmount = sumAmount + taxAmount;
-      debugPrint('taxamount....$taxAmount');
-      debugPrint('totalPayableAmount....$payAbleAmount');
       discountAmount == 0 ? null : discountAmount = getPercentage();
     });
   }
@@ -575,7 +571,6 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                             });
                           },
                           hintText: 'Select Gender',
-                        
                         )
                       ],
                     ),
@@ -671,7 +666,6 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
     focusNode3.dispose();
   }
 
-
   // ignore: prefer_typing_uninitialized_variables
   var profileUser;
   @override
@@ -688,6 +682,8 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
     final createStatus =
         context.watch<PaymentCreateOrderIdViewModel>().paymentOrderID.status;
     profileUser = context.watch<UserProfileViewModel>().dataList.data?.data;
+    // var offerList =
+    //     context.watch<OfferViewModel>().getOfferListByVender.data?.data ?? [];
     return Scaffold(
       backgroundColor: bgGreyColor,
       resizeToAvoidBottomInset: false,
@@ -713,7 +709,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                       child: ListTile(
                         leading: const Icon(Icons.date_range, color: btnColor),
                         title: const Text("Travel Date"),
-                        subtitle: const Text("03-09-2025"),
+                        subtitle: Text(widget.bookingDate),
                       ),
                     ),
 
@@ -728,29 +724,50 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                         leading: const Icon(Icons.phone_android,
                             color: Colors.green),
                         title: const Text("Primary Contact"),
-                        subtitle: const Text("+971 987655343"),
+                        subtitle: Text(
+                            '+$primaryCountryCode ${primaryNoController.text}'),
+                        trailing: IconButton(
+                          icon: Icon(
+                            visibleSecondaryContact
+                                ? Icons.remove_circle_outline
+                                : Icons.add_circle_outline,
+                            color: visibleSecondaryContact
+                                ? Colors.red
+                                : Colors.green,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              visibleSecondaryContact =
+                                  !visibleSecondaryContact;
+                            });
+                          },
+                        ),
                       ),
                     ),
                     const SizedBox(height: 5),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
+                    Visibility(
+                      visible: visibleSecondaryContact,
+                      child: Column(
                         children: [
-                          Text('Secondary Contact ',
-                              textAlign: TextAlign.start,
-                              style: titleTextStyle),
-                          Text('(Optional)',
-                              textAlign: TextAlign.start,
-                              style: titleTextStyle1),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 5),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Row(
+                              children: [
+                                Text('Secondary Contact ',
+                                    textAlign: TextAlign.start,
+                                    style: titleTextStyle),
+                                Text('(Optional)',
+                                    textAlign: TextAlign.start,
+                                    style: titleTextStyle1),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 5),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Customphonefield(
                         initalCountryCode: secondaryCountryCode,
-                          controller: secondaryNoController,
+                              controller: secondaryNoController,
                         hintText: 'Enter phone number',
                         fillColor: background,
                       ),
@@ -762,118 +779,144 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                       //     hintText: 'Enter number',
                       //     countryCode: secondaryCountryCode),
                     ),
-                    const SizedBox(height: 10),
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      margin: EdgeInsets.symmetric(horizontal: 10),
-                      decoration: BoxDecoration(
-                          color: background,
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(10)),
-                          border: Border.all(
-                              // ignore: deprecated_member_use
-                              color: naturalGreyColor.withOpacity(.3))),
-                      child: Form(
-                        key: _formCouponKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Customtextformfield(
-                                    focusNode: couponFocus,
-                                    controller: couponController,
-                                    hintText: 'Coupon code',
-                                    readOnly: offerVisible ? true : false,
-                                    validator: (p0) {
-                                      if (members.isEmpty) {
-                                        return 'Please add members first';
-                                      } else if (p0 == null || p0.isEmpty) {
-                                        return "Please enter offer coupon";
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                offerVisible
-                                    ? CustomButtonSmall(
-                                        height: 45,
-                                        width: 80,
-                                        btnHeading: 'Remove',
-                                        onTap: () {
-                                          FocusScope.of(context).unfocus();
-
-                                          // Optionally, unfocus specific fields
-                                          couponFocus.unfocus();
-                                          setState(() {
-                                            offerVisible = false;
-                                            discountAmount = 0;
-                                            disAmount = 0;
-                                          });
-                                        },
-                                      )
-                                    : CustomButtonSmall(
-                                        height: 45,
-                                        width: 80,
-                                        btnHeading: 'Apply',
-                                        onTap: () {
-                                          if (_formCouponKey.currentState!
-                                              .validate()) {
-                                            Provider.of<OfferViewModel>(context,
-                                                    listen: false)
-                                                .validateOffer(
-                                                    context: context,
-                                                    offerCode:
-                                                        couponController.text,
-                                                    bookingType:
-                                                        'PACKAGE_BOOKING',
-                                                    bookigAmount: payAbleAmount)
-                                                .then((onValue) {
-                                              if (onValue?.status?.httpCode ==
-                                                  '200') {
-                                                Utils.toastSuccessMessage(
-                                                    onValue?.status?.message ??
-                                                        '');
-                                                offerCode =
-                                                    onValue?.data?.offerCode;
-                                                disCountPer = onValue?.data
-                                                        ?.discountPercentage ??
-                                                    0;
-                                                maxDisAmount = onValue?.data
-                                                        ?.maxDiscountAmount ??
-                                                    0;
-                                                setState(() {
-                                                  offerVisible = true;
-                                                  discountAmount =
-                                                      getPercentage();
-                                                  debugPrint(
-                                                      'discountpercentage.....,..,.,$discountAmount');
-                                                });
-                                              } else {
-                                                setState(() {
-                                                  discountAmount = 0;
-                                                });
-                                              }
-                                            });
-                                          }
-                                        },
-                                      )
-                              ],
-                            ),
-                            offerVisible
-                                ? Text(
-                                    'Congrats!  You have availed discount of AED ${disAmount.toStringAsFixed(2)}.',
-                                    style: const TextStyle(color: greenColor),
-                                  )
-                                : Container(),
-                          ],
-                        ),
+                          const SizedBox(height: 10),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 10),
+                   
+                   
+                    // Container(
+                    //   padding: const EdgeInsets.all(10),
+                    //   margin: EdgeInsets.symmetric(horizontal: 10),
+                    //   decoration: BoxDecoration(
+                    //       color: background,
+                    //       borderRadius:
+                    //           const BorderRadius.all(Radius.circular(10)),
+                    //       border: Border.all(
+                    //           // ignore: deprecated_member_use
+                    //           color: naturalGreyColor.withOpacity(.3))),
+                    //   child: Form(
+                    //     key: _formCouponKey,
+                    //     child: Column(
+                    //       crossAxisAlignment: CrossAxisAlignment.start,
+                    //       children: [
+                    //         Row(
+                    //           crossAxisAlignment: CrossAxisAlignment.start,
+                    //           children: [
+                    //             Expanded(
+                    //               child: Customtextformfield(
+                    //                 focusNode: couponFocus,
+                    //                 controller: couponController,
+                    //                 hintText: 'Coupon code',
+                    //                 readOnly: offerVisible ? true : false,
+                    //                 validator: (p0) {
+                    //                   if (members.isEmpty) {
+                    //                     return 'Please add members first';
+                    //                   } else if (p0 == null || p0.isEmpty) {
+                    //                     return "Please enter offer coupon";
+                    //                   }
+                    //                   return null;
+                    //                 },
+                    //               ),
+                    //             ),
+                    //             const SizedBox(width: 10),
+                    //             offerVisible
+                    //                 ? CustomButtonSmall(
+                    //                     height: 45,
+                    //                     width: 80,
+                    //                     btnHeading: 'Remove',
+                    //                     onTap: () {
+                    //                       FocusScope.of(context).unfocus();
+
+                    //                       // Optionally, unfocus specific fields
+                    //                       couponFocus.unfocus();
+                    //                       setState(() {
+                    //                         offerVisible = false;
+                    //                         discountAmount = 0;
+                    //                         disAmount = 0;
+                    //                       });
+                    //                     },
+                    //                   )
+                    //                 : CustomButtonSmall(
+                    //                     height: 45,
+                    //                     width: 80,
+                    //                     btnHeading: 'Apply',
+                    //                     onTap: () {
+                    //                       if (_formCouponKey.currentState!
+                    //                           .validate()) {
+                    //                         Provider.of<OfferViewModel>(context,
+                    //                                 listen: false)
+                    //                             .validateOffer(
+                    //                                 context: context,
+                    //                                 offerCode:
+                    //                                     couponController.text,
+                    //                                 bookingType:
+                    //                                     'PACKAGE_BOOKING',
+                    //                                 bookigAmount: payAbleAmount)
+                    //                             .then((onValue) {
+                    //                           if (onValue?.status?.httpCode ==
+                    //                               '200') {
+                    //                             Utils.toastSuccessMessage(
+                    //                                 onValue?.status?.message ??
+                    //                                     '');
+                    //                             offerCode =
+                    //                                 onValue?.data?.offerCode;
+                    //                             disCountPer = onValue?.data
+                    //                                     ?.discountPercentage ??
+                    //                                 0;
+                    //                             maxDisAmount = onValue?.data
+                    //                                     ?.maxDiscountAmount ??
+                    //                                 0;
+                    //                             setState(() {
+                    //                               offerVisible = true;
+                    //                               discountAmount =
+                    //                                   getPercentage();
+                    //                               debugPrint(
+                    //                                   'discountpercentage.....,..,.,$discountAmount');
+                    //                             });
+                    //                           } else {
+                    //                             setState(() {
+                    //                               discountAmount = 0;
+                    //                             });
+                    //                           }
+                    //                         });
+                    //                       }
+                    //                     },
+                    //                   )
+                    //           ],
+                    //         ),
+                    //         offerVisible
+                    //             ? Text(
+                    //                 'Congrats!  You have availed discount of AED ${disAmount.toStringAsFixed(2)}.',
+                    //                 style: const TextStyle(color: greenColor),
+                    //               )
+                    //             : Container(),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
+                    // ListView.builder(
+                    //   shrinkWrap: true,
+                    //   itemCount: offerList.length,
+                    //   itemBuilder: (context, index) {
+                    //     var offer = offerList[index];
+                    //     return OfferCard(
+                    //       imageUrl: offer.imageUrl ?? '',
+                    //       title: offer.offerName ?? '',
+                    //       minimumBookingAmount:
+                    //           offer.minimumBookingAmount.toString(),
+                    //       discountPercentage:
+                    //           offer.discountPercentage?.toInt().toString() ??
+                    //               '0',
+                    //       maxDiscountAmount: offer.maxDiscountAmount.toString(),
+                    //       code: offer.offerCode ?? '',
+                    //       description: offer.description ?? '',
+                    //       endDate: offer.endDate ?? '',
+                    //       termsAndConditions: offer.termsAndConditions ?? '',
+                    //     );
+                    //   },
+                    // ),
+                    // const SizedBox(height: 10),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Row(
@@ -887,6 +930,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                 fontWeight: FontWeight.w600),
                           ),
                           const Spacer(),
+                        
                           InkWell(
                               onTap: adultType
                                   ? () {
@@ -1065,7 +1109,6 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                                 String ageunit =
                                                     t['ageUnit'].toString();
                                                 if (ageunit == 'Month') {
-                                                  // _editInfantdMember(index);
                                                   _editMember(
                                                       title: 'Edit Infant',
                                                       index: index,
@@ -1073,25 +1116,21 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                                       type: 'Infant');
                                                 } else {
                                                   if (age >= 18) {
-                                                    // _editAdultMember(index);
                                                     _editMember(
                                                         title: 'Edit Adult',
                                                         index: index,
                                                         ageUnit: 'Year',
                                                         type: 'Adult');
                                                   } else {
-                                                    // _editChildMember(index);
                                                     _editMember(
                                                         title: 'Edit Child',
                                                         index: index,
                                                         ageUnit: 'Year',
                                                         type: 'Child');
-                                                    // addedChildCount++;
                                                   }
                                                 }
                                                 setState(() {
                                                   tableIcon = false;
-                                                  // updateButtonStates();
                                                 });
                                               },
                                               child: Icon(
@@ -1126,9 +1165,6 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                                                               children: [
                                                                 Text(
                                                                   'Are you sure you want to delete this traveler ?',
-                                                                  // textAlign:
-                                                                  //     TextAlign
-                                                                  //         .center,
                                                                   style:
                                                                       titleTextStyle,
                                                                 ),
@@ -1214,895 +1250,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                               );
                             },
                           ),
-                    // Padding(
-                    //   padding: const EdgeInsets.symmetric(horizontal: 10),
-                    //   child: Column(
-                    //     children: [
-                    // Column(
-                    //   crossAxisAlignment: CrossAxisAlignment.start,
-                    //   mainAxisSize: MainAxisSize.min,
-                    //   children: [
-                    //     Container(
-                    //       margin:
-                    //           const EdgeInsets.only(bottom: 0, top: 5),
-                    //       child: Row(
-                    //         children: [
-                    //           Expanded(
-                    //             child: Text(
-                    //               "Travel Date",
-                    //               overflow: TextOverflow.ellipsis,
-                    //               style: titleTextStyle,
-                    //             ),
-                    //           ),
-                    //           Text(
-                    //             ':',
-                    //             style: titleTextStyle,
-                    //           ),
-                    //           const SizedBox(width: 10),
-                    //           Expanded(
-                    //             child: Text(
-                    //               widget.bookingDate,
-                    //               style: titleTextStyle1,
-                    //             ),
-                    //           )
-                    //         ],
-                    //       ),
-                    //     ),
-                    //     const SizedBox(height: 5),
-                    //     primaryNoController.text.isEmpty
-                    //         ? const SizedBox.shrink()
-                    //         : Row(
-                    //             children: [
-                    //               Expanded(
-                    //                 child: Text(
-                    //                   "Primary Contact",
-                    //                   overflow: TextOverflow.ellipsis,
-                    //                   style: titleTextStyle,
-                    //                 ),
-                    //               ),
-                    //               Text(
-                    //                 ':',
-                    //                 style: titleTextStyle,
-                    //               ),
-                    //               const SizedBox(width: 10),
-                    //               Expanded(
-                    //                 child: Text(
-                    //                   '+971 ${primaryNoController.text}',
-                    //                   style: titleTextStyle1,
-                    //                 ),
-                    //               )
-                    //             ],
-                    //           ),
-                    // const SizedBox(height: 5),
-                    // Row(
-                    //   children: [
-                    //     Text('Secondary Contact ',
-                    //         textAlign: TextAlign.start,
-                    //         style: titleTextStyle),
-                    //     Text('(Optional)',
-                    //         textAlign: TextAlign.start,
-                    //         style: titleTextStyle1),
-                    //   ],
-                    // ),
-                    // const SizedBox(height: 5),
-                    // CustomMobilenumber(
-                    //     textLength: 9,
-                    //     focusNode: focusNode5,
-                    //     fillColor: background,
-                    //     controller: secondaryNoController,
-                    //     hintText: 'Enter number',
-                    //     countryCode: secondaryCountryCode)
-                    //   ],
-                    // ),
-                    // const SizedBox(height: 10),
-                    // Container(
-                    //   padding: const EdgeInsets.all(10),
-                    //   decoration: BoxDecoration(
-                    //       color: background,
-                    //       borderRadius:
-                    //           const BorderRadius.all(Radius.circular(10)),
-                    //       border: Border.all(
-                    //           // ignore: deprecated_member_use
-                    //           color: naturalGreyColor.withOpacity(.3))),
-                    //   child: Form(
-                    //     key: _formCouponKey,
-                    //     child: Column(
-                    //       crossAxisAlignment: CrossAxisAlignment.start,
-                    //       children: [
-                    //         Row(
-                    //           crossAxisAlignment:
-                    //               CrossAxisAlignment.start,
-                    //           children: [
-                    //             Expanded(
-                    //               child: Customtextformfield(
-                    //                 focusNode: couponFocus,
-                    //                 controller: couponController,
-                    //                 hintText: 'Coupon code',
-                    //                 readOnly: offerVisible ? true : false,
-                    //                 validator: (p0) {
-                    //                   if (members.isEmpty) {
-                    //                     return 'Please add members first';
-                    //                   } else if (p0 == null ||
-                    //                       p0.isEmpty) {
-                    //                     return "Please enter offer coupon";
-                    //                   }
-                    //                   return null;
-                    //                 },
-                    //               ),
-                    //             ),
-                    //             const SizedBox(width: 10),
-                    //             offerVisible
-                    //                 ? CustomButtonSmall(
-                    //                     height: 45,
-                    //                     width: 80,
-                    //                     btnHeading: 'Remove',
-                    //                     onTap: () {
-                    //                       FocusScope.of(context)
-                    //                           .unfocus();
 
-                    //                       // Optionally, unfocus specific fields
-                    //                       couponFocus.unfocus();
-                    //                       setState(() {
-                    //                         offerVisible = false;
-                    //                         discountAmount = 0;
-                    //                         disAmount = 0;
-                    //                       });
-                    //                     },
-                    //                   )
-                    //                 : CustomButtonSmall(
-                    //                     height: 45,
-                    //                     width: 80,
-                    //                     btnHeading: 'Apply',
-                    //                     onTap: () {
-                    //                       if (_formCouponKey.currentState!
-                    //                           .validate()) {
-                    //                         Provider.of<OfferViewModel>(
-                    //                                 context,
-                    //                                 listen: false)
-                    //                             .validateOffer(
-                    //                                 context: context,
-                    //                                 offerCode:
-                    //                                     couponController
-                    //                                         .text,
-                    //                                 bookingType:
-                    //                                     'PACKAGE_BOOKING',
-                    //                                 bookigAmount:
-                    //                                     payAbleAmount)
-                    //                             .then((onValue) {
-                    //                           if (onValue?.status
-                    //                                   ?.httpCode ==
-                    //                               '200') {
-                    //                             Utils.toastSuccessMessage(
-                    //                                 onValue?.status
-                    //                                         ?.message ??
-                    //                                     '');
-                    //                             offerCode = onValue
-                    //                                 ?.data?.offerCode;
-                    //                             disCountPer = onValue
-                    //                                     ?.data
-                    //                                     ?.discountPercentage ??
-                    //                                 0;
-                    //                             maxDisAmount = onValue
-                    //                                     ?.data
-                    //                                     ?.maxDiscountAmount ??
-                    //                                 0;
-                    //                             setState(() {
-                    //                               offerVisible = true;
-                    //                               discountAmount =
-                    //                                   getPercentage();
-                    //                               debugPrint(
-                    //                                   'discountpercentage.....,..,.,$discountAmount');
-                    //                             });
-                    //                           } else {
-                    //                             setState(() {
-                    //                               discountAmount = 0;
-                    //                             });
-                    //                           }
-                    //                         });
-                    //                       }
-                    //                     },
-                    //                   )
-                    //           ],
-                    //         ),
-                    //         offerVisible
-                    //             ? Text(
-                    //                 'Congrats!  You have availed discount of AED ${disAmount.toStringAsFixed(2)}.',
-                    //                 style: const TextStyle(
-                    //                     color: greenColor),
-                    //               )
-                    //             : Container(),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
-                    // const SizedBox(height: 10),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.start,
-                    //   children: [
-                    //     const Text(
-                    //       'Travellers Details',
-                    //       style: TextStyle(
-                    //           color: btnColor,
-                    //           fontSize: 18,
-                    //           fontWeight: FontWeight.w600),
-                    //     ),
-                    //     const Spacer(),
-                    //     InkWell(
-                    //         onTap: adultType
-                    //             ? () {
-                    //                 FocusScope.of(context).unfocus();
-
-                    //                 // Optionally, unfocus specific fields
-                    //                 focusNode4.unfocus();
-                    //                 focusNode5.unfocus();
-                    //                 couponFocus.unfocus();
-                    //                 _addMember(
-                    //                     title: 'Add Adult',
-                    //                     ageUnit: 'Year',
-                    //                     type: 'Adult');
-                    //               }
-                    //             : null,
-                    //         child: Material(
-                    //           elevation: 4,
-                    //           color: adultType ? bgGreyColor : greyColor1,
-                    //           child: Container(
-                    //             decoration: BoxDecoration(
-                    //                 shape: BoxShape.rectangle,
-                    //                 borderRadius:
-                    //                     BorderRadius.circular(2),
-                    //                 border: Border.all(color: btnColor)),
-                    //             padding: const EdgeInsets.all(2),
-                    //             child: Image.asset(
-                    //               adultIcon,
-                    //               width: 24,
-                    //               height: 24,
-                    //               color: btnColor,
-                    //             ),
-                    //           ),
-                    //         )),
-                    //     const SizedBox(width: 20),
-                    //     InkWell(
-                    //         onTap: childType
-                    //             ? () {
-                    //                 FocusScope.of(context).unfocus();
-
-                    //                 // Optionally, unfocus specific fields
-                    //                 focusNode4.unfocus();
-                    //                 focusNode5.unfocus();
-                    //                 couponFocus.unfocus();
-                    //                 _addMember(
-                    //                     title: 'Add Child',
-                    //                     ageUnit: 'Year',
-                    //                     type: 'Child');
-                    //               }
-                    //             : null,
-                    //         child: Material(
-                    //           elevation: 4,
-                    //           color: childType ? bgGreyColor : greyColor1,
-                    //           child: Container(
-                    //             decoration: BoxDecoration(
-                    //                 shape: BoxShape.rectangle,
-                    //                 borderRadius:
-                    //                     BorderRadius.circular(2),
-                    //                 border: Border.all(color: btnColor)),
-                    //             padding: const EdgeInsets.all(2),
-                    //             child: Image.asset(
-                    //               childIcon,
-                    //               width: 26,
-                    //               height: 26,
-                    //               color: btnColor,
-                    //               fit: BoxFit.fill,
-                    //             ),
-                    //           ),
-                    //         )),
-                    //     const SizedBox(width: 20),
-                    //     InkWell(
-                    //         onTap: infantType
-                    //             ? () {
-                    //                 FocusScope.of(context).unfocus();
-
-                    //                 // Optionally, unfocus specific fields
-                    //                 focusNode4.unfocus();
-                    //                 focusNode5.unfocus();
-                    //                 couponFocus.unfocus();
-                    //                 _addMember(
-                    //                     title: 'Add Infant',
-                    //                     ageUnit: 'Month',
-                    //                     type: 'Infant');
-                    //               }
-                    //             : null,
-                    //         child: Material(
-                    //           elevation: 4,
-                    //           color:
-                    //               infantType ? bgGreyColor : greyColor1,
-                    //           child: Container(
-                    //             decoration: BoxDecoration(
-                    //                 shape: BoxShape.rectangle,
-                    //                 // boxShadow: [
-                    //                 //   BoxShadow(offset: Offset(-2, 3))
-                    //                 // ],
-                    //                 borderRadius:
-                    //                     BorderRadius.circular(2),
-                    //                 border: Border.all(color: btnColor)),
-                    //             padding: const EdgeInsets.all(3),
-                    //             child: Stack(
-                    //               children: [
-                    //                 Image.asset(
-                    //                   infantIcon,
-                    //                   width: 24,
-                    //                   height: 24,
-                    //                   color: btnColor,
-                    //                 ),
-                    //                 const Positioned(
-                    //                   right: -4,
-                    //                   bottom: 0,
-                    //                   child: Icon(
-                    //                     Icons.add_circle_outline_sharp,
-                    //                     color: btnColor,
-                    //                     size: 12,
-                    //                   ),
-                    //                 )
-                    //               ],
-                    //             ),
-                    //           ),
-                    //         )),
-                    //   ],
-                    // ),
-                    //     ],
-                    //   ),
-                    // ),
-                    // const SizedBox(height: 10),
-                    // Divider(
-                    //   color: btnColor,
-                    //   indent: 10,
-                    //   endIndent: 10,
-                    // ),
-                    // members.isEmpty
-                    //     ? Center(
-                    //         child: Text('Not yet added travellers',
-                    //             style: TextStyle(
-                    //                 color: redColor,
-                    //                 fontWeight: FontWeight.bold)),
-                    //       )
-                    //     : ListView.builder(
-                    //         itemCount: members.length,
-                    //         shrinkWrap: true,
-                    //         physics: const NeverScrollableScrollPhysics(),
-                    //         itemBuilder: (context, index) {
-                    //           final t = members[index];
-                    //           return Card(
-                    //             color: background,
-                    //             shape: RoundedRectangleBorder(
-                    //                 borderRadius: BorderRadius.circular(16)),
-                    //             elevation: 3,
-                    //             margin: const EdgeInsets.symmetric(
-                    //                 vertical: 6, horizontal: 10),
-                    //             child: ListTile(
-                    //               contentPadding: const EdgeInsets.symmetric(
-                    //                   vertical: 5, horizontal: 10),
-                    //               horizontalTitleGap: 10,
-                    //               leading: const CircleAvatar(
-                    //                 backgroundColor: btnColor,
-                    //                 child:
-                    //                     Icon(Icons.person, color: Colors.white),
-                    //               ),
-                    //               title: Text("${t['name']} (${t['type']})",
-                    //                   style: const TextStyle(
-                    //                       fontWeight: FontWeight.bold)),
-                    //               subtitle: Text(
-                    //                   "Age: ${t['age']} • Gender: ${t['gender']}"),
-                    //               trailing: Column(
-                    //                 crossAxisAlignment: CrossAxisAlignment.end,
-                    //                 mainAxisAlignment:
-                    //                     MainAxisAlignment.spaceBetween,
-                    //                 children: [
-                    //                   Text("AED ${t['price']}",
-                    //                       style: const TextStyle(
-                    //                           fontWeight: FontWeight.w600)),
-                    //                   Spacer(),
-                    //                   Expanded(
-                    //                     child: Row(
-                    //                       mainAxisSize: MainAxisSize.min,
-                    //                       children: [
-                    //                         InkWell(
-                    //                           onTap: () {
-                    //                             int age = int.parse(
-                    //                                 t['age'].toString());
-                    //                             String ageunit =
-                    //                                 t['ageUnit'].toString();
-                    //                             if (ageunit == 'Month') {
-                    //                               // _editInfantdMember(index);
-                    //                               _editMember(
-                    //                                   title: 'Edit Infant',
-                    //                                   index: index,
-                    //                                   ageUnit: 'Month',
-                    //                                   type: 'Infant');
-                    //                             } else {
-                    //                               if (age >= 18) {
-                    //                                 // _editAdultMember(index);
-                    //                                 _editMember(
-                    //                                     title: 'Edit Adult',
-                    //                                     index: index,
-                    //                                     ageUnit: 'Year',
-                    //                                     type: 'Adult');
-                    //                               } else {
-                    //                                 // _editChildMember(index);
-                    //                                 _editMember(
-                    //                                     title: 'Edit Child',
-                    //                                     index: index,
-                    //                                     ageUnit: 'Year',
-                    //                                     type: 'Child');
-                    //                                 // addedChildCount++;
-                    //                               }
-                    //                             }
-                    //                             setState(() {
-                    //                               tableIcon = false;
-                    //                               // updateButtonStates();
-                    //                             });
-                    //                           },
-                    //                           child: Icon(
-                    //                             Icons.edit_square,
-                    //                             color: Colors.green,
-                    //                             size: 20,
-                    //                           ),
-                    //                         ),
-                    //                         SizedBox(
-                    //                           width: 22,
-                    //                         ),
-                    //                         InkWell(
-                    //                           onTap: () {
-                    //                             showDialog(
-                    //                                 context: context,
-                    //                                 barrierDismissible: false,
-                    //                                 builder: (context) {
-                    //                                   return Dialog(
-                    //                                     backgroundColor:
-                    //                                         background,
-                    //                                     child:
-                    //                                         SingleChildScrollView(
-                    //                                       child: Padding(
-                    //                                         padding:
-                    //                                             const EdgeInsets
-                    //                                                 .only(
-                    //                                                 left: 20,
-                    //                                                 right: 20,
-                    //                                                 top: 20,
-                    //                                                 bottom: 5),
-                    //                                         child: Column(
-                    //                                           children: [
-                    //                                             Text(
-                    //                                               'Are you sure you want to delete this traveler ?',
-                    //                                               // textAlign:
-                    //                                               //     TextAlign
-                    //                                               //         .center,
-                    //                                               style:
-                    //                                                   titleTextStyle,
-                    //                                             ),
-                    //                                             const SizedBox(
-                    //                                                 height: 20),
-                    //                                             const Divider(
-                    //                                                 height: 0),
-                    //                                             Row(
-                    //                                               mainAxisAlignment:
-                    //                                                   MainAxisAlignment
-                    //                                                       .center,
-                    //                                               children: [
-                    //                                                 IconButton(
-                    //                                                     padding:
-                    //                                                         EdgeInsets
-                    //                                                             .zero,
-                    //                                                     onPressed:
-                    //                                                         () {
-                    //                                                       context
-                    //                                                           .pop();
-                    //                                                     },
-                    //                                                     icon:
-                    //                                                         const Icon(
-                    //                                                       Icons
-                    //                                                           .close,
-                    //                                                       color:
-                    //                                                           redColor,
-                    //                                                       size:
-                    //                                                           24,
-                    //                                                     )),
-                    //                                                 const SizedBox(
-                    //                                                     width:
-                    //                                                         10),
-                    //                                                 IconButton(
-                    //                                                     padding:
-                    //                                                         EdgeInsets
-                    //                                                             .zero,
-                    //                                                     onPressed:
-                    //                                                         () {
-                    //                                                       setState(
-                    //                                                           () {
-                    //                                                         members.removeAt(index);
-                    //                                                         // addAmount(members);
-                    //                                                         // member['ageUnit'].toString() == 'Month' ? null : _subAmount();
-                    //                                                         _shouldDisableButton();
-                    //                                                         _addAmount();
-                    //                                                         tableIcon =
-                    //                                                             false;
-                    //                                                       });
-                    //                                                       context
-                    //                                                           .pop();
-                    //                                                     },
-                    //                                                     icon:
-                    //                                                         const Icon(
-                    //                                                       Icons
-                    //                                                           .check,
-                    //                                                       color:
-                    //                                                           greenColor,
-                    //                                                       size:
-                    //                                                           30,
-                    //                                                     ))
-                    //                                               ],
-                    //                                             )
-                    //                                           ],
-                    //                                         ),
-                    //                                       ),
-                    //                                     ),
-                    //                                   );
-                    //                                 });
-                    //                           },
-                    //                           child: Icon(
-                    //                             Icons.delete,
-                    //                             color: redColor,
-                    //                             size: 20,
-                    //                           ),
-                    //                         ),
-                    //                         // IconButton(
-                    //                         //   iconSize: 20,
-                    //                         //   icon: const Icon(Icons.edit_square,
-                    //                         //       color: Colors.green),
-                    //                         //   onPressed: () {},
-                    //                         // ),
-                    //                         // IconButton(
-                    //                         //   alignment: Alignment.centerRight,
-                    //                         //   iconSize: 20,
-                    //                         //   icon: const Icon(Icons.delete,
-                    //                         //       color: Colors.red),
-                    //                         //   onPressed: () {},
-                    //                         // ),
-                    //                       ],
-                    //                     ),
-                    //                   )
-                    //                 ],
-                    //               ),
-                    //             ),
-                    //           );
-                    //         },
-                    //       ),
-                    // Scrollbar(
-                    //   controller: _scrollController,
-                    //   // trackVisibility: true,
-                    //   thumbVisibility: members.isEmpty ? false : true,
-                    //   child: SingleChildScrollView(
-                    //     controller: _scrollController,
-                    //     scrollDirection: Axis.horizontal,
-                    //     child: Column(
-                    //       children: [
-                    //         Table(
-                    //           columnWidths: const {
-                    //             0: FixedColumnWidth(120),
-                    //             1: FixedColumnWidth(80),
-                    //             2: FixedColumnWidth(70),
-                    //             3: FixedColumnWidth(70),
-                    //             4: FixedColumnWidth(80),
-                    //             5: FixedColumnWidth(70),
-                    //           },
-                    //           // defaultColumnWidth: FixedColumnWidth(100),
-                    //           children: [
-                    //             TableRow(
-                    //                 decoration: const BoxDecoration(
-                    //                   color: btnColor,
-                    //                 ),
-                    //                 children: [
-                    //                   Padding(
-                    //                     padding: const EdgeInsets.only(
-                    //                         left: 15, bottom: 10, top: 10),
-                    //                     child: Text(
-                    //                       'Name',
-                    //                       style: tableheaderStyle,
-                    //                     ),
-                    //                   ),
-                    //                   Padding(
-                    //                     padding: const EdgeInsets.only(
-                    //                         top: 10, bottom: 10, right: 5),
-                    //                     child: Text(
-                    //                       'Age',
-                    //                       style: tableheaderStyle,
-                    //                     ),
-                    //                   ),
-                    //                   Padding(
-                    //                     padding: const EdgeInsets.only(
-                    //                         top: 10, bottom: 10),
-                    //                     child: Text(
-                    //                       'Gender',
-                    //                       style: tableheaderStyle,
-                    //                     ),
-                    //                   ),
-                    //                   Padding(
-                    //                     padding: const EdgeInsets.only(
-                    //                         left: 5, top: 10, bottom: 10),
-                    //                     child: Text(
-                    //                       'Type',
-                    //                       style: tableheaderStyle,
-                    //                     ),
-                    //                   ),
-                    //                   Padding(
-                    //                     padding: const EdgeInsets.only(
-                    //                         left: 5, top: 10, bottom: 10),
-                    //                     child: Text(
-                    //                       'Price',
-                    //                       style: tableheaderStyle,
-                    //                     ),
-                    //                   ),
-                    //                   Padding(
-                    //                     padding: const EdgeInsets.only(
-                    //                         top: 10, bottom: 10),
-                    //                     child: Text(
-                    //                       'Action',
-                    //                       style: tableheaderStyle,
-                    //                     ),
-                    //                   ),
-                    //                 ])
-                    //           ],
-                    //         ),
-                    //         members.isEmpty
-                    //             ? const Center(
-                    //                 child: Padding(
-                    //                 padding: EdgeInsets.only(top: 50),
-                    //                 child: Text(
-                    //                   'No Travellers Added',
-                    //                   style: TextStyle(
-                    //                       color: redColor,
-                    //                       fontWeight: FontWeight.bold),
-                    //                 ),
-                    //               ))
-                    //             : Table(
-                    //                 border: const TableBorder(
-                    //                   horizontalInside: BorderSide(
-                    //                     width: 1, // Width of the row separator
-                    //                     color: Colors
-                    //                         .grey, // Color of the row separator
-                    //                   ),
-                    //                   top: BorderSide(
-                    //                     width: 1,
-                    //                     color: Colors
-                    //                         .grey, // Bottom border of the table
-                    //                   ),
-                    //                 ),
-
-                    //                 columnWidths: const {
-                    //                   0: FixedColumnWidth(120),
-                    //                   1: FixedColumnWidth(80),
-                    //                   2: FixedColumnWidth(70),
-                    //                   3: FixedColumnWidth(70),
-                    //                   4: FixedColumnWidth(80),
-                    //                   5: FixedColumnWidth(70),
-                    //                 },
-                    //                 // defaultColumnWidth: FixedColumnWidth(100),
-                    //                 children: members.map((member) {
-                    //                   int index = members.indexOf(member);
-                    //                   debugPrint('objectindex$index');
-                    //                   return TableRow(
-                    //                       // decoration:
-                    //                       //     BoxDecoration(color: background),
-                    //                       children: [
-                    //                         Padding(
-                    //                           padding: const EdgeInsets.only(
-                    //                               left: 15,
-                    //                               bottom: 10,
-                    //                               top: 10,
-                    //                               right: 10),
-                    //                           child: Text(
-                    //                             member['name']
-                    //                                 .toString()
-                    //                                 .capitalizeFirstOfEach,
-                    //                             style: titleTextStyle1,
-                    //                           ),
-                    //                         ),
-                    //                         Padding(
-                    //                           padding: const EdgeInsets.only(
-                    //                             top: 10,
-                    //                             bottom: 10,
-                    //                           ),
-                    //                           child: Text(
-                    //                             '${member['age']} ${member['ageUnit']}',
-                    //                             style: titleTextStyle1,
-                    //                           ),
-                    //                         ),
-                    //                         Padding(
-                    //                           padding: const EdgeInsets.only(
-                    //                               top: 10, bottom: 10),
-                    //                           child: Text(
-                    //                             member['gender'],
-                    //                             style: titleTextStyle1,
-                    //                           ),
-                    //                         ),
-                    //                         Padding(
-                    //                           padding: const EdgeInsets.only(
-                    //                               left: 5, top: 10, bottom: 10),
-                    //                           child: Text(
-                    //                             member['type'],
-                    //                             style: TextStyle(
-                    //                                 fontSize: 16,
-                    //                                 fontWeight: FontWeight.w400,
-                    //                                 color: member['type'] ==
-                    //                                         'Senior'
-                    //                                     ? redColor
-                    //                                     : blackColor),
-                    //                           ),
-                    //                         ),
-                    //                         Padding(
-                    //                           padding: const EdgeInsets.only(
-                    //                               top: 10, bottom: 10),
-                    //                           child: Text(
-                    //                             member['price'] == 0
-                    //                                 ? 'Free'
-                    //                                 : member['price']
-                    //                                     .toStringAsFixed(2),
-                    //                             style: titleTextStyle1,
-                    //                           ),
-                    //                         ),
-                    //                         Padding(
-                    //                           padding: const EdgeInsets.only(
-                    //                               top: 10, bottom: 10),
-                    //                           child: Row(
-                    //                             mainAxisSize: MainAxisSize.min,
-                    //                             children: [
-                    //                               InkWell(
-                    //                                 child: const Icon(
-                    //                                     Icons.edit,
-                    //                                     color: greenColor),
-                    //                                 onTap: () {
-                    //                                   int age = int.parse(
-                    //                                       member['age']
-                    //                                           .toString());
-                    //                                   String ageunit =
-                    //                                       member['ageUnit']
-                    //                                           .toString();
-                    //                                   if (ageunit == 'Month') {
-                    //                                     // _editInfantdMember(index);
-                    //                                     _editMember(
-                    //                                         title:
-                    //                                             'Edit Infant',
-                    //                                         index: index,
-                    //                                         ageUnit: 'Month',
-                    //                                         type: 'Infant');
-                    //                                   } else {
-                    //                                     if (age >= 18) {
-                    //                                       // _editAdultMember(index);
-                    //                                       _editMember(
-                    //                                           title:
-                    //                                               'Edit Adult',
-                    //                                           index: index,
-                    //                                           ageUnit: 'Year',
-                    //                                           type: 'Adult');
-                    //                                     } else {
-                    //                                       // _editChildMember(index);
-                    //                                       _editMember(
-                    //                                           title:
-                    //                                               'Edit Child',
-                    //                                           index: index,
-                    //                                           ageUnit: 'Year',
-                    //                                           type: 'Child');
-                    //                                       // addedChildCount++;
-                    //                                     }
-                    //                                   }
-                    //                                   setState(() {
-                    //                                     tableIcon = false;
-                    //                                     // updateButtonStates();
-                    //                                   });
-                    //                                 },
-                    //                               ),
-                    //                               const SizedBox(width: 10),
-                    //                               InkWell(
-                    //                                 child: const Icon(
-                    //                                     Icons.delete,
-                    //                                     color: redColor),
-                    //                                 onTap: () {
-                    //                                   showDialog(
-                    //                                     context: context,
-                    //                                     barrierDismissible:
-                    //                                         false,
-                    //                                     builder: (context) {
-                    //                                       return Dialog(
-                    //                                         backgroundColor:
-                    //                                             background,
-                    //                                         child:
-                    //                                             SingleChildScrollView(
-                    //                                           child: Padding(
-                    //                                             padding:
-                    //                                                 const EdgeInsets
-                    //                                                     .only(
-                    //                                                     left:
-                    //                                                         20,
-                    //                                                     right:
-                    //                                                         20,
-                    //                                                     top: 20,
-                    //                                                     bottom:
-                    //                                                         5),
-                    //                                             child: Column(
-                    //                                               children: [
-                    //                                                 Text(
-                    //                                                   'Are you sure you want to delete this traveler ?',
-                    //                                                   // textAlign:
-                    //                                                   //     TextAlign
-                    //                                                   //         .center,
-                    //                                                   style:
-                    //                                                       titleTextStyle,
-                    //                                                 ),
-                    //                                                 const SizedBox(
-                    //                                                     height:
-                    //                                                         20),
-                    //                                                 const Divider(
-                    //                                                     height:
-                    //                                                         0),
-                    //                                                 Row(
-                    //                                                   mainAxisAlignment:
-                    //                                                       MainAxisAlignment
-                    //                                                           .center,
-                    //                                                   children: [
-                    //                                                     IconButton(
-                    //                                                         padding: EdgeInsets
-                    //                                                             .zero,
-                    //                                                         onPressed:
-                    //                                                             () {
-                    //                                                           context.pop();
-                    //                                                         },
-                    //                                                         icon:
-                    //                                                             const Icon(
-                    //                                                           Icons.close,
-                    //                                                           color: redColor,
-                    //                                                           size: 24,
-                    //                                                         )),
-                    //                                                     const SizedBox(
-                    //                                                         width:
-                    //                                                             10),
-                    //                                                     IconButton(
-                    //                                                         padding: EdgeInsets
-                    //                                                             .zero,
-                    //                                                         onPressed:
-                    //                                                             () {
-                    //                                                           setState(() {
-                    //                                                             members.removeAt(index);
-                    //                                                             // addAmount(members);
-                    //                                                             // member['ageUnit'].toString() == 'Month' ? null : _subAmount();
-                    //                                                             _shouldDisableButton();
-                    //                                                             _addAmount();
-                    //                                                             tableIcon = false;
-                    //                                                           });
-                    //                                                           context.pop();
-                    //                                                         },
-                    //                                                         icon:
-                    //                                                             const Icon(
-                    //                                                           Icons.check,
-                    //                                                           color: greenColor,
-                    //                                                           size: 30,
-                    //                                                         ))
-                    //                                                   ],
-                    //                                                 )
-                    //                                               ],
-                    //                                             ),
-                    //                                           ),
-                    //                                         ),
-                    //                                       );
-                    //                                     },
-                    //                                   );
-                    //                                 },
-                    //                               ),
-                    //                             ],
-                    //                           ),
-                    //                         ),
-                    //                       ]);
-                    //                 }).toList(),
-                    //               ),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
                     const SizedBox(height: 80)
                   ],
                 ),
@@ -2176,7 +1324,6 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                 elevation: 5,
                 loading: bookingStatus == Status.loading ||
                     createStatus == Status.loading,
-                    
                 elevationReq: true,
                 buttonColor: btnColor,
                 disable: _shouldDisableButton(),
@@ -2186,9 +1333,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                     Utils.toastMessage('Please add Members First');
                   } else if (controller[0].text.isEmpty) {
                     Utils.toastMessage('Please select date');
-                   
                   } else {
-                   
                     String razorpayId = '';
                     String bookingId = '';
                     Provider.of<PaymentCreateOrderIdViewModel>(context,
@@ -2249,9 +1394,7 @@ class _PackageBookingMemberPageState extends State<PackageBookingMemberPage> {
                             PaymentService paymentService = PaymentService(
                               context: context,
                               onPaymentError:
-                                  (PaymentFailureResponse response) {
-                              
-                              },
+                                  (PaymentFailureResponse response) {},
                               onPaymentSuccess:
                                   (PaymentSuccessResponse response) {
                                 Provider.of<PaymentVerifyViewModel>(context,

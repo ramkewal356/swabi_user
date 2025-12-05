@@ -23,13 +23,13 @@ class OfferRepository {
       var resp = OfferListModel.fromJson(response?.data);
       return resp;
     } catch (error) {
-      // http.handleErrorResponse(context: context, error: error);
+      http.handleErrorResponse(error: error);
       rethrow;
     }
   }
 
   Future<OfferDetailByIdModel?> offerDetailsApi(
-      {required BuildContext context,
+      {
       required Map<String, dynamic> query}) async {
     var http = HttpService(
         baseURL: AppUrl.baseUrl,
@@ -46,8 +46,8 @@ class OfferRepository {
     } catch (error) {
       // ignore: use_build_context_synchronously
       http.handleErrorResponse(error: error);
+      rethrow;
     }
-    return null;
   }
 
   Future<OfferDetailByIdModel?> validateOfferApi(
@@ -66,10 +66,10 @@ class OfferRepository {
       var resp = OfferDetailByIdModel.fromJson(response?.data);
       return resp;
     } catch (error) {
-      // ignore: use_build_context_synchronously
+    
       http.handleErrorResponse(error: error);
+      rethrow;
     }
-    return null;
   }
 
   Future<GetActivityOfferModel?> getActivityOfferApi() async {
@@ -86,7 +86,26 @@ class OfferRepository {
       return GetActivityOfferModel.fromJson(response?.data);
     } catch (error) {
       http.handleErrorResponse(error: error);
+      rethrow;
     }
-    return null;
+  }
+
+  Future<OfferListModel> getOfferByVendorIdApi(
+      {required Map<String, dynamic> query}) async {
+    var http = HttpService(
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.getOfferByVendorIdUrl,
+        methodType: HttpMethodType.GET,
+        bodyType: HttpBodyType.JSON,
+        isAuthorizeRequest: false,
+        queryParameters: query);
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint('response ${response?.data}');
+      return OfferListModel.fromJson(response?.data);
+    } catch (error) {
+      http.handleErrorResponse(error: error);
+      rethrow;
+    }
   }
 }

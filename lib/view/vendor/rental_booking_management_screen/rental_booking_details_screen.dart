@@ -295,9 +295,11 @@ class _RentalBookingDetailsScreenState
                     SectionCard(
                       title: "Vehicle Details",
                       children: [
-                        Center(
+                        data?.vehicle == null
+                            ? Center(
                             child: Text("Vehicle not Assigned",
-                                style: TextStyle(color: Colors.red))),
+                                    style: TextStyle(color: Colors.red)))
+                            : Text(data?.vehicle.carName ?? ''),
                       ],
                     ),
                   if (widget.userType == 'VENDOR')

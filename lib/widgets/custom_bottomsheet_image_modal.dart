@@ -66,12 +66,7 @@ class _CustomBottomsheetImageModalState
           if (compressedFile.path.isNotEmpty) {
             widget.onImagePicked(compressedFile); // ✅ Trigger parent callback
           }
-          // setState(() {
-          //   _image = compressedFile;
-          // });
-
-          // Step 4: Upload the image
-          // await _uploadImage(_image!);
+         
         }
       }
     } catch (e) {

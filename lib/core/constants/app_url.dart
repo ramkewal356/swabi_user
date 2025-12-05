@@ -4,7 +4,7 @@ class AppUrl {
   // static var baseUrl = 'https://dev-api.swabitours.com';
   // static var baseUrlForImage = "https://dev-api.swabitours.com";
   static var locationBaseUrl = 'https://www.universal-tutorial.com';
-  static var stateBaseUrl = 'https://countriesnow.space';
+  static var countryStateBaseUrl = 'https://countriesnow.space';
 
   ///registration URL
 
@@ -73,6 +73,7 @@ class AppUrl {
   static var getAllActivityList = '/activity/get_all_activity';
   static var getAllAcitivityListUrl = '/activity/get_all_activities';
   static var getStateWithImageList = '/state_image/get_list_state_with_image';
+  static var getCountryListUrl = '/api/v0.1/countries';
   static var getStateNameUrl = '/api/v0.1/countries/states';
 
   /// vendor url
@@ -108,6 +109,7 @@ class AppUrl {
   static var getActivityByIdUrl = '/activity/get_activity_by_id';
   static var addActivityUrl = '/activity/add_activity';
   static var updateActivityUrl = '/activity/update_activity';
+  static var getOfferByVendorIdUrl = '/offer/get_available_offer_by_vendor';
   // rental management
   static var getAllRentalListUrl = '/rental/get_all_rental_booking';
   //package booking management

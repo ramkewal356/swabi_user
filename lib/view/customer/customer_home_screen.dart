@@ -56,13 +56,12 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen>
 
   void getUser() async {
     // ignore: use_build_context_synchronously
-    final userProfile = await context
-        .read<UserProfileViewModel>()
-        .fetchUserProfileViewModelApi();
+    final vm = context.read<UserProfileViewModel>();
+    await vm.fetchUserProfileViewModelApi();
 
-    if (userProfile != null) {
+    if (vm.dataList.data?.data != null) {
       setState(() {
-        userdata = userProfile.data;
+        userdata = vm.dataList.data?.data;
       });
       getNotification();
     }
@@ -92,7 +91,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen>
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
-    const Packages(),
+    const PackageScreen(),
     const RentalForm(),
     const SendEnquiryScreen(),
     const AccountScreen()

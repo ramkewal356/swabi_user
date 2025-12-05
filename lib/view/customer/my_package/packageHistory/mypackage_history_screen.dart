@@ -30,13 +30,8 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
   List<String> tabList = ['ALL BOOKING', 'UPCOMING', 'COMPLETED', 'CANCELLED'];
   TabController? _tabController;
   int initialIndex = 0;
-  int currentPage = 0;
-  bool isLoadingMore = false;
   bool isVisibleIcon = false;
-  bool lastPage = false; // Assuming true at the start
-  final int pageSize = 10; // Set your page size
   final ScrollController _scrollController = ScrollController();
-  // List<PackageHistoryContent> bookedHistory = [];
   String status = 'ALL';
   String sortText = 'desc';
   Future<void> getPackageHistoryList(

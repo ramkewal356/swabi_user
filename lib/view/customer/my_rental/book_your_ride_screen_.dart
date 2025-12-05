@@ -96,11 +96,6 @@ class _BookYourCabState extends State<BookYourCab> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("${widget.userId}UserID");
-    debugPrint("${widget.bookingDate} Booking Date");
-    debugPrint("${widget.latitude} Booking latitude");
-    debugPrint("${widget.logitude} Booking logitude");
-
     rentalData =
         context.watch<RentalViewModel>().dataList.data?.data.body ?? [];
     rentalValidation = context
@@ -111,11 +106,6 @@ class _BookYourCabState extends State<BookYourCab> {
         .message;
     taxAmount = taxamount();
     payableAmount = double.parse(widget.totalAmt) + taxAmount;
-    debugPrint('fhjhjbdhdhjdhjdhjdjh${widget.totalAmt.toString()}');
-    debugPrint('taxamount.......$taxAmount');
-    debugPrint('payAbleamount.......$payableAmount');
-    debugPrint('discountamount.......$disAmount');
-
     ProfileData? profileUser =
         context.watch<UserProfileViewModel>().dataList.data?.data;
     List<Body> filteredData =
@@ -168,10 +158,7 @@ class _BookYourCabState extends State<BookYourCab> {
                         });
                       },
                       onCouponTap: () {
-                        // double? amount = double.parse(rental.totalPrice);
-                        // if (couponController.text.isEmpty) {
-                        //   Utils.toastMessage('Please Enter Offer Coupon');
-                        // } else {
+                       
                         Provider.of<OfferViewModel>(context, listen: false)
                             .validateOffer(
                                 context: context,

@@ -146,10 +146,8 @@ class _CommonOfferContainerState extends State<CommonOfferContainer> {
                       var data = offerListData?.data?[index];
                       return GestureDetector(
                         onTap: () {
-                          Provider.of<OfferViewModel>(context, listen: false)
-                              .getOfferDetails(
-                                  context: context,
-                                  offerId: data?.offerId ?? 0);
+                          context.read<OfferViewModel>().getOfferDetailsApi(
+                              offerId: data?.offerId.toString() ?? '');
                         },
                         child: Container(
                           padding: const EdgeInsets.all(10),

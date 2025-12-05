@@ -6,6 +6,7 @@ import 'package:flutter_cab/widgets/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/core/utils/validation.dart';
 import 'package:flutter_cab/view_model/enquiry_view_model.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class SendEnquiryScreen extends StatefulWidget {
@@ -25,6 +26,8 @@ class _SendEnquiryScreenState extends State<SendEnquiryScreen> {
   TextEditingController fullNametController = TextEditingController();
   TextEditingController specialRequestController = TextEditingController();
   TextEditingController dateController = TextEditingController();
+  TextEditingController tentetiveDateController = TextEditingController();
+
   TextEditingController accommodationController = TextEditingController();
   TextEditingController mealsController = TextEditingController();
   TextEditingController transpotationController = TextEditingController();
@@ -63,17 +66,7 @@ class _SendEnquiryScreenState extends State<SendEnquiryScreen> {
     FocusScope.of(context).unfocus();
   }
 
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   final viewModel = context.watch<EnquiryViewModel>();
-
-  //   if (viewModel.sendEnquiryResponse.status == Status.completed) {
-  //     WidgetsBinding.instance.addPostFrameCallback((_) {
-  //       _resetForm();
-  //     });
-  //   }
-  // }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -377,8 +370,41 @@ class _SendEnquiryScreenState extends State<SendEnquiryScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
-                              "How Long Do You Plan to Stay?",
+                              "Please Select Your Tantative Dates and Days",
                               style: TextStyle(fontWeight: FontWeight.w500),
+                            ),
+                            SizedBox(height: 10),
+                            TextField(
+                              readOnly: true,
+                              controller: tentetiveDateController,
+                              decoration: InputDecoration(
+                                hintText: 'Select Duration',
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 10),
+                                focusedBorder: const OutlineInputBorder(
+                                    borderSide: BorderSide(color: greyColor1)),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5)),
+                                prefixIcon:
+                                    const Icon(Icons.timer, color: Colors.grey),
+                              ),
+                              onTap: () async {
+                                final selectedDate = await showCustomDatePicker(
+                                  context,
+                                  initialDate:
+                                      DateTime.now().add(Duration(days: 1)),
+                                  firstDate:
+                                      DateTime.now().add(Duration(days: 1)),
+                                  lastDate: DateTime.now().add(
+                                    const Duration(days: 90),
+                                  ),
+                                );
+                                if (selectedDate != null) {
+                                  tentetiveDateController.text =
+                                      DateFormat('dd-MM-yyyy')
+                                          .format(selectedDate);
+                                }
+                              },
                             ),
                             const SizedBox(height: 10),
                             Wrap(
@@ -386,7 +412,7 @@ class _SendEnquiryScreenState extends State<SendEnquiryScreen> {
                               children: durationOptions.map((days) {
                                 final isSelected = selectedDuration == days;
                                 return ChoiceChip(
-                                  label: Text("+$days days"),
+                                  label: Text("± $days days"),
                                   checkmarkColor: background,
                                   selected: isSelected,
                                   onSelected: (_) {
@@ -448,6 +474,9 @@ class _SendEnquiryScreenState extends State<SendEnquiryScreen> {
                                 : "",
                             travelDate:
                                 selectedToggle == 0 ? dateController.text : "",
+                            tentativeDates: selectedToggle == 1
+                                ? tentetiveDateController.text
+                                : "",
                             tentativeDays: selectedToggle == 1
                                 ? selectedDuration.toString()
                                 : "")

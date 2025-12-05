@@ -49,11 +49,12 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> savecredential() async {
     final prefsData = await SharedPreferences.getInstance();
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
     setState(() {
       userNameControlller.text = prefsData.getString('email') ?? '';
       passwordControlller.text = prefsData.getString('password') ?? '';
       rememberMe = prefsData.getBool('remember') ?? false;
-      debugPrint('email id ${userNameControlller.text}');
+      });
     });
   }
 

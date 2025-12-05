@@ -89,8 +89,8 @@ Future<void> main() async {
             create: (context) => ConfirmRentalBookingViewModel()),
         ChangeNotifierProvider(
             create: (context) => GetCalculatePackagePriceViewModel()),
-        ChangeNotifierProvider(
-            create: (context) => GetCountryStateListViewModel()),
+        // ChangeNotifierProvider(
+        //     create: (context) => GetCountryStateListViewModel()),
         ChangeNotifierProvider(
             create: (context) => GetActivityCategoryListViewModel()),
         ChangeNotifierProvider(
