@@ -70,6 +70,7 @@ class Body {
   String pickUpLocation;
   String seats;
   String longitude;
+  String currency;
 
   Body({
     required this.date,
@@ -86,6 +87,7 @@ class Body {
     required this.pickUpLocation,
     required this.seats,
     required this.longitude,
+      required this.currency
   });
 
   factory Body.fromJson(Map<String, dynamic> json) => Body(
@@ -103,6 +105,7 @@ class Body {
         pickUpLocation: json["pickUpLocation"] ?? "",
         seats: json["seats"].toString(),
         longitude: json["longitude"].toString(),
+      currency: json["currency"].toString()
       );
 
   Map<String, dynamic> toJson() => {
@@ -120,6 +123,7 @@ class Body {
         "pickUpLocation": pickUpLocation,
         "seats": seats,
         "longitude": longitude,
+        "currency": currency
       };
 }
 
@@ -1108,39 +1112,39 @@ class RentalDetailsSingleData {
 
   factory RentalDetailsSingleData.fromJson(Map<String, dynamic> json) =>
       RentalDetailsSingleData(
-          id: json["id"].toString(),
-          rentalBookingId: json["rentalBookingId"] ?? "",
-          date: json["date"] ?? "",
-          pickupTime: json["pickupTime"] ?? "",
-          locationLongitude: json["locationLongitude"].toString(),
-          locationLatitude: json["locationLatitude"].toString(),
-          bookingStatus: json["bookingStatus"] ?? "",
-          totalRentTime: json["totalRentTime"].toString(),
-          kilometers: json["kilometers"].toString(),
-          paidStatus: json["paidStatus"].toString(),
-          userId: json["userId"].toString(),
-          rentalCharge: json["rentalCharge"].toString(),
-          carType: json["carType"] ?? "",
-          extraMinutes: json["extraMinutes"]?.toString() ?? '',
-          extraKilometers: json["extraKilometers"]?.toString() ?? '',
+        id: json["id"].toString(),
+        rentalBookingId: json["rentalBookingId"] ?? "",
+        date: json["date"] ?? "",
+        pickupTime: json["pickupTime"] ?? "",
+        locationLongitude: json["locationLongitude"].toString(),
+        locationLatitude: json["locationLatitude"].toString(),
+        bookingStatus: json["bookingStatus"] ?? "",
+        totalRentTime: json["totalRentTime"].toString(),
+        kilometers: json["kilometers"].toString(),
+        paidStatus: json["paidStatus"].toString(),
+        userId: json["userId"].toString(),
+        rentalCharge: json["rentalCharge"].toString(),
+        carType: json["carType"] ?? "",
+        extraMinutes: json["extraMinutes"]?.toString() ?? '',
+        extraKilometers: json["extraKilometers"]?.toString() ?? '',
         createdDate: json["createdDate"],
-          modifiedDate: json["modifiedDate"].toString(),
-          rentalManagement: json["rentalManagement"].toString(),
-          vehicle: RentalDetialsSingleVehicle.fromJson(json["vehicle"] ?? {}),
-          driver: RentalDetialsSingleDriver.fromJson(json["driver"] ?? {}),
-          rideStartTime: json["rideStartTime"]?.toString() ?? '',
-          rideEndTime: json["rideEndTime"].toString(),
-          pickupLocation: json["pickupLocation"] ?? "",
-          cancellationReason: json["cancellationReason"].toString(),
-          bookerId: json["bookerId"].toString(),
-          bookingForId: json["bookingForId"].toString(),
-          user: User.fromJson(json["user"] ?? {}),
+        modifiedDate: json["modifiedDate"].toString(),
+        rentalManagement: json["rentalManagement"].toString(),
+        vehicle: RentalDetialsSingleVehicle.fromJson(json["vehicle"] ?? {}),
+        driver: RentalDetialsSingleDriver.fromJson(json["driver"] ?? {}),
+        rideStartTime: json["rideStartTime"]?.toString() ?? '',
+        rideEndTime: json["rideEndTime"].toString(),
+        pickupLocation: json["pickupLocation"] ?? "",
+        cancellationReason: json["cancellationReason"].toString(),
+        bookerId: json["bookerId"].toString(),
+        bookingForId: json["bookingForId"].toString(),
+        user: User.fromJson(json["user"] ?? {}),
         guest: json["guest"] == null ? null : Guest.fromJson(json["guest"]),
-          cancelledBy: json["cancelledBy"].toString(),
-          paymentId: json["paymentId"].toString(),
-          discountAmount: json["discountAmount"]?.toString() ?? '',
-          taxAmount: json["taxAmount"] ?? 0.0,
-          taxPercentage: json["taxPercentage"]?.toString() ?? '',
+        cancelledBy: json["cancelledBy"].toString(),
+        paymentId: json["paymentId"].toString(),
+        discountAmount: json["discountAmount"]?.toString() ?? '',
+        taxAmount: json["taxAmount"] ?? 0.0,
+        taxPercentage: json["taxPercentage"]?.toString() ?? '',
         totalPayableAmount: json["totalPayableAmount"]?.toString() ?? '',
         vendorId: json["vendorId"]?.toString() ?? '',
       );

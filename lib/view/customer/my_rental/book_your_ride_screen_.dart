@@ -216,6 +216,7 @@ class _BookYourCabState extends State<BookYourCab> {
                                 countryCode: profileUser?.countryCode ?? '',
                                 mobile: profileUser?.mobile ?? '',
                                 email: profileUser?.email ?? '',
+                                currency: rental.currency,
                               )
                             : showConfirmation(
                                 context: context,
@@ -243,6 +244,7 @@ class _BookYourCabState extends State<BookYourCab> {
                                   countryCode: profileUser?.countryCode ?? '',
                                   mobile: profileUser?.mobile ?? '',
                                   email: profileUser?.email ?? '',
+                                  currency: rental.currency,
                                 )),
                       ),
 

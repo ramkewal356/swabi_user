@@ -92,6 +92,7 @@ class Content {
   String modifiedDate;
   List<PackageActivity> packageActivities;
   double? packageDiscountedAmount;
+  String? currency;
   Content({
     required this.packageId,
     required this.country,
@@ -106,6 +107,7 @@ class Content {
     required this.modifiedDate,
     required this.packageActivities,
     this.packageDiscountedAmount,
+    this.currency,
   });
 
   factory Content.fromJson(Map<String, dynamic> json) => Content(
@@ -122,7 +124,8 @@ class Content {
       modifiedDate: json["modifiedDate"].toString(),
       packageActivities: List<PackageActivity>.from(
           json["packageActivities"].map((x) => PackageActivity.fromJson(x))),
-      packageDiscountedAmount: json['packageDiscountedAmount'] ?? 0);
+      packageDiscountedAmount: json['packageDiscountedAmount'] ?? 0,
+      currency: json['currency']);
 
   Map<String, dynamic> toJson() => {
         "packageId": packageId,
@@ -138,7 +141,8 @@ class Content {
         "modifiedDate": modifiedDate,
         "packageActivities":
             List<dynamic>.from(packageActivities.map((x) => x.toJson())),
-        "packageDiscountedAmount": packageDiscountedAmount
+        "packageDiscountedAmount": packageDiscountedAmount,
+        "currency": currency,
       };
 }
 
@@ -800,7 +804,6 @@ class Pkg {
   String createdDate;
   String modifiedDate;
   List<BookPackageByMemberPackageActivity> packageActivities;
- 
 
   Pkg({
     required this.packageId,
@@ -833,7 +836,6 @@ class Pkg {
         packageActivities: List<BookPackageByMemberPackageActivity>.from(
             json["packageActivities"]
                 .map((x) => BookPackageByMemberPackageActivity.fromJson(x))),
-       
       );
 
   Map<String, dynamic> toJson() => {
@@ -850,7 +852,6 @@ class Pkg {
         "modifiedDate": modifiedDate,
         "packageActivities":
             List<dynamic>.from(packageActivities.map((x) => x.toJson())),
-       
       };
 }
 
@@ -1169,6 +1170,7 @@ class PackageHistoryContent {
   String taxPercentage;
   String paymentId;
   String totalPayableAmount;
+  String currency;
   String numberOfMembers;
   List<PackageHistoryMemberList> memberList;
 
@@ -1187,6 +1189,7 @@ class PackageHistoryContent {
     required this.taxPercentage,
     required this.paymentId,
     required this.totalPayableAmount,
+    required this.currency,
     required this.numberOfMembers,
     required this.memberList,
   });
@@ -1209,6 +1212,7 @@ class PackageHistoryContent {
         taxPercentage: json["taxPercentage"]?.toString() ?? '',
         paymentId: json["paymentId"]?.toString() ?? '',
         totalPayableAmount: json["totalPayableAmount"]?.toString() ?? '',
+        currency: json["currency"].toString(),
         numberOfMembers: json["numberOfMembers"].toString(),
         memberList: (json["memberList"] != null)
             ? List<PackageHistoryMemberList>.from(json["memberList"]
@@ -1233,6 +1237,7 @@ class PackageHistoryContent {
         "taxPercentage": taxPercentage,
         "paymentId": paymentId,
         "totalPayableAmount": totalPayableAmount,
+        "currency": currency,
         "numberOfMembers": numberOfMembers,
         "memberList": List<dynamic>.from(memberList.map((x) => x.toJson())),
       };
@@ -1917,6 +1922,7 @@ class PackageHIstoryDetailsData {
   String taxAmount;
   String taxPercentage;
   String totalPayableAmount;
+  String currency;
 
   PackageHIstoryDetailsData(
       {required this.packageBookingId,
@@ -1943,48 +1949,48 @@ class PackageHIstoryDetailsData {
       required this.discountAmount,
       required this.taxAmount,
       required this.taxPercentage,
-      required this.totalPayableAmount});
+      required this.totalPayableAmount,
+      required this.currency});
 
   factory PackageHIstoryDetailsData.fromJson(Map<String, dynamic> json) =>
       PackageHIstoryDetailsData(
-        packageBookingId: json["packageBookingId"].toString(),
-        bookingDate: json["bookingDate"] ?? "",
-        bookingStatus: json["bookingStatus"] ?? "",
-        cancellationReason: json["cancellationReason"] ?? "",
-        createdDate: json["createdDate"].toString(),
-        modifiedDate: json["modifiedDate"].toString(),
-        user: json["user"].toString(),
-        // pkg: json["pkg"].toString(),
-        // user: PackageHIstoryDetailsUser.fromJson(json["user"]),
-        pkg: PackageHIstoryDetailsPkg.fromJson(json["pkg"]),
-        packagePrice: json["packagePrice"].toString(),
-
-        numberOfMembers: json["numberOfMembers"].toString(),
-        memberList: List<PackageHIstoryDetailsMemberList>.from(
-            json["memberList"]
-                .map((x) => PackageHIstoryDetailsMemberList.fromJson(x))),
-        assignedVehicleOnPackageBookings:
-            List<AssignedVehicleOnPackageBooking>.from(
-                json["assignedVehicleOnPackageBookings"]
-                    .map((x) => AssignedVehicleOnPackageBooking.fromJson(x))),
-        assignedDriverOnPackageBookings:
-            List<AssignedDriverOnPackageBooking>.from(
-                json["assignedDriverOnPackageBookings"]
-                    .map((x) => AssignedDriverOnPackageBooking.fromJson(x))),
-        pickupLocation: json["pickupLocation"]?.toString() ?? "",
-        cancelledBy: json["cancelledBy"]?.toString() ?? "",
-        endDate: json["endDate"] ?? "",
-        paymentId: json["paymentId"].toString(),
-        countryCode: json["countryCode"]?.toString() ?? "",
-        mobile: json["mobile"]?.toString() ?? "",
-        alternateMobileCountryCode:
-            json["alternateMobileCountryCode"]?.toString() ?? "",
-        alternateMobile: json["alternateMobile"]?.toString() ?? "",
-        discountAmount: json["discountAmount"]?.toString() ?? '',
-        taxAmount: json["taxAmount"]?.toString() ?? '',
-        taxPercentage: json["taxPercentage"]?.toString() ?? '',
-        totalPayableAmount: json["totalPayableAmount"]?.toString() ?? '',
-      );
+          packageBookingId: json["packageBookingId"].toString(),
+          bookingDate: json["bookingDate"] ?? "",
+          bookingStatus: json["bookingStatus"] ?? "",
+          cancellationReason: json["cancellationReason"] ?? "",
+          createdDate: json["createdDate"].toString(),
+          modifiedDate: json["modifiedDate"].toString(),
+          user: json["user"].toString(),
+          // pkg: json["pkg"].toString(),
+          // user: PackageHIstoryDetailsUser.fromJson(json["user"]),
+          pkg: PackageHIstoryDetailsPkg.fromJson(json["pkg"]),
+          packagePrice: json["packagePrice"].toString(),
+          numberOfMembers: json["numberOfMembers"].toString(),
+          memberList: List<PackageHIstoryDetailsMemberList>.from(
+              json["memberList"]
+                  .map((x) => PackageHIstoryDetailsMemberList.fromJson(x))),
+          assignedVehicleOnPackageBookings:
+              List<AssignedVehicleOnPackageBooking>.from(
+                  json["assignedVehicleOnPackageBookings"]
+                      .map((x) => AssignedVehicleOnPackageBooking.fromJson(x))),
+          assignedDriverOnPackageBookings:
+              List<AssignedDriverOnPackageBooking>.from(
+                  json["assignedDriverOnPackageBookings"]
+                      .map((x) => AssignedDriverOnPackageBooking.fromJson(x))),
+          pickupLocation: json["pickupLocation"]?.toString() ?? "",
+          cancelledBy: json["cancelledBy"]?.toString() ?? "",
+          endDate: json["endDate"] ?? "",
+          paymentId: json["paymentId"].toString(),
+          countryCode: json["countryCode"]?.toString() ?? "",
+          mobile: json["mobile"]?.toString() ?? "",
+          alternateMobileCountryCode:
+              json["alternateMobileCountryCode"]?.toString() ?? "",
+          alternateMobile: json["alternateMobile"]?.toString() ?? "",
+          discountAmount: json["discountAmount"]?.toString() ?? '',
+          taxAmount: json["taxAmount"]?.toString() ?? '',
+          taxPercentage: json["taxPercentage"]?.toString() ?? '',
+          totalPayableAmount: json["totalPayableAmount"]?.toString() ?? '',
+          currency: json["currency"].toString());
 
   Map<String, dynamic> toJson() => {
         "packageBookingId": packageBookingId,
@@ -2016,6 +2022,7 @@ class PackageHIstoryDetailsData {
         "taxAmount": taxAmount,
         "taxPercentage": taxPercentage,
         "totalPayableAmount": totalPayableAmount,
+        "currency": currency
       };
 }
 
@@ -2280,21 +2287,20 @@ class PackageHIstoryDetailsPkg {
   String modifiedDate;
   List<PackageHIstoryDetailsPackageActivity> packageActivities;
   Vendor? vendor;
-  PackageHIstoryDetailsPkg({
-    required this.packageId,
-    required this.country,
-    required this.state,
-    required this.packageName,
-    required this.location,
-    required this.noOfDays,
-    required this.packageImageUrl,
-    required this.totalPrice,
-    required this.packageStatus,
-    required this.createdDate,
-    required this.modifiedDate,
-    required this.packageActivities,
-      this.vendor
-  });
+  PackageHIstoryDetailsPkg(
+      {required this.packageId,
+      required this.country,
+      required this.state,
+      required this.packageName,
+      required this.location,
+      required this.noOfDays,
+      required this.packageImageUrl,
+      required this.totalPrice,
+      required this.packageStatus,
+      required this.createdDate,
+      required this.modifiedDate,
+      required this.packageActivities,
+      this.vendor});
 
   factory PackageHIstoryDetailsPkg.fromJson(Map<String, dynamic> json) =>
       PackageHIstoryDetailsPkg(

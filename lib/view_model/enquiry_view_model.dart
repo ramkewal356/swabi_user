@@ -175,7 +175,7 @@ class EnquiryViewModel with ChangeNotifier {
     }
   }
 
-  Future<void> sendEnquiryApi(
+  Future<bool> sendEnquiryApi(
       {required String fullName,
       required String country,
       required String budget,
@@ -184,12 +184,14 @@ class EnquiryViewModel with ChangeNotifier {
       required String meals,
       required String transportation,
       required String specialRequest,
+      required String currency,
       required String travelDate,
       required String tentativeDates,
       required String tentativeDays}) async {
     String? userId = await UserViewModel().getUserId();
     Map<String, dynamic> body = {
       "accommodationPreferences": accommodation,
+      "currency": currency,
       "budget": budget,
       "country": country,
       "destinations": destination,
@@ -211,12 +213,15 @@ class EnquiryViewModel with ChangeNotifier {
         Utils.toastSuccessMessage(
           "Send Enquiry Successfully",
         );
+        return resp;
       } else {
         sendEnquiry(ApiResponse.error(resp.toString()));
+        return resp;
       }
     } catch (e) {
       debugPrint('error $e');
       sendEnquiry(ApiResponse.error(e.toString()));
+      return false;
     }
   }
 }

@@ -36,6 +36,7 @@ class CustomPaynowModal extends StatefulWidget {
   final String mobile;
   final String email;
   final String vendorId;
+  final String currency;
   const CustomPaynowModal(
       {super.key,
       required this.sumAmount,
@@ -57,7 +58,8 @@ class CustomPaynowModal extends StatefulWidget {
       required this.countryCode,
       required this.email,
       required this.mobile,
-      required this.vendorId});
+      required this.vendorId,
+      required this.currency});
 
   @override
   State<CustomPaynowModal> createState() => _CustomPaynowModalState();
@@ -81,13 +83,14 @@ class _CustomPaynowModalState extends State<CustomPaynowModal> {
     String bookingId = '';
     Provider.of<PaymentCreateOrderIdViewModel>(context, listen: false)
         .paymentCreateOrderIdViewModelApi(
-      context: context,
+            // context: context,
       amount: widget.sumAmount,
-      userId: widget.userId,
+            // userId: widget.userId,
       taxAmount: widget.taxAmount,
       taxPercentage: widget.taxPercentage,
       discountAmount: widget.discountAmount,
       totalPayableAmount: widget.totalPayableAmount,
+            currency: ''
     )
         .then((onValue) {
       if (onValue?.status.httpCode == '200') {
@@ -133,7 +136,7 @@ class _CustomPaynowModalState extends State<CustomPaynowModal> {
               bookingId = onValue?.data.id ?? '';
             });
             PaymentService paymentService = PaymentService(
-              context: context,
+              // context: context,
               onPaymentError: (PaymentFailureResponse response) {
                 setState(() {
                   debugPrint(
@@ -182,7 +185,8 @@ class _CustomPaynowModalState extends State<CustomPaynowModal> {
                 razorpayOrderId: razorpayId,
                 coutryCode: widget.countryCode,
                 mobileNo: widget.mobile,
-                email: widget.email);
+                email: widget.email,
+                currency: widget.currency);
           }
         });
       }

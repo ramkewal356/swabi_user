@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
+import 'package:flutter_cab/data/models/currency_model.dart';
 import 'package:intl/intl.dart';
 import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 // import 'package:intl_phone_field/phone_number.dart';
@@ -90,6 +91,22 @@ double taxAmount(double amount, double taxPer) {
 
 double payAbleAmount(double amount, double textAmount) {
   return amount + textAmount;
+}
+String? getCurrencyCodeByCountry(
+  List<CurrencyModel> list,
+  String countryName,
+) {
+  try {
+    return list
+        .firstWhere(
+          (e) =>
+              e.country != null &&
+              e.country!.toLowerCase() == countryName.toLowerCase(),
+        )
+        .code;
+  } catch (_) {
+    return null;
+  }
 }
 
 Future<DateTime?> showCustomDatePicker(BuildContext context,
@@ -219,12 +236,12 @@ Future<String?> pickSfDateRange(BuildContext context) async {
               if (startDate != null && endDate != null) {
                 if (startDate == endDate) {
                   Navigator.pop(context,
-                      DateFormat('dd/MM/yyyy').format(startDate!)); // single
+                      DateFormat('dd-MM-yyyy').format(startDate!)); // single
                 } else {
                   Navigator.pop(
                       context,
-                      "${DateFormat('dd/MM/yyyy').format(startDate!)} - "
-                      "${DateFormat('dd/MM/yyyy').format(endDate!)}"); // range
+                      "${DateFormat('dd-MM-yyyy').format(startDate!)} - "
+                      "${DateFormat('dd-MM-yyyy').format(endDate!)}"); // range
                 }
               } else {
                 Navigator.pop(context); // No selection

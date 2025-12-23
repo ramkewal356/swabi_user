@@ -9,7 +9,7 @@ import 'package:flutter_cab/core/services/http_service.dart';
 ///Payment Create OrderID Repo
 class PaymentCreateOrderIDRepository {
   Future<PaymentCreateOderIdModel?> paymentCreateOrderIdApi(
-      {required BuildContext context,
+      {
       required Map<String, dynamic> body}) async {
     var http = HttpService(
         isAuthorizeRequest: false,
@@ -26,7 +26,6 @@ class PaymentCreateOrderIDRepository {
       return resp;
     } catch (error) {
       debugPrint('error $error');
-      // ignore: use_build_context_synchronously
       http.handleErrorResponse(error: error);
       rethrow;
     }

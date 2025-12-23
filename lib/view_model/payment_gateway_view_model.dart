@@ -4,7 +4,7 @@ import 'package:flutter_cab/data/models/get_trasactionbyid_model.dart';
 import 'package:flutter_cab/data/models/payment_getway_model.dart';
 import 'package:flutter_cab/data/models/payment_refund_model.dart';
 import 'package:flutter_cab/data/repositories/payment_gateway_repository.dart';
-
+import 'package:flutter_cab/view_model/user_view_model.dart';
 
 /// Rental Booking View Model
 class PaymentCreateOrderIdViewModel with ChangeNotifier {
@@ -16,25 +16,25 @@ class PaymentCreateOrderIdViewModel with ChangeNotifier {
   }
 
   Future<PaymentCreateOderIdModel?> paymentCreateOrderIdViewModelApi(
-      {required BuildContext context,
-      required double amount,
-      required String userId,
+      {required double amount,
       required double taxAmount,
       required double taxPercentage,
       required double discountAmount,
-      required double totalPayableAmount}) async {
+      required double totalPayableAmount,
+      required String currency}) async {
+    String? userId = await UserViewModel().getUserId();
     Map<String, dynamic> body = {
       "price": amount,
       "taxAmount": taxAmount.toStringAsFixed(2),
       "userId": userId,
-      "taxPercentage": taxPercentage,
-      "discountAmount": discountAmount.toStringAsFixed(2),
-      "totalPayableAmount": totalPayableAmount
+      "taxPercentage": taxPercentage.toInt(),
+      "discountAmount": discountAmount.round(),
+      "totalPayableAmount": totalPayableAmount.round(),
+      "currency": currency
     };
     try {
       setDataList(ApiResponse.loading());
-      var resp =
-          await _myRepo.paymentCreateOrderIdApi(context: context, body: body);
+      var resp = await _myRepo.paymentCreateOrderIdApi(body: body);
       setDataList(ApiResponse.completed(resp));
       return resp;
     } catch (e) {
@@ -45,8 +45,6 @@ class PaymentCreateOrderIdViewModel with ChangeNotifier {
     }
     return null;
   }
-
- 
 }
 
 /// Rental Booking View Model
@@ -77,7 +75,7 @@ class PaymentVerifyViewModel with ChangeNotifier {
       setDataList(ApiResponse.loading());
       var resp = await _myRepo.paymentVerifyApi(context: context, body: body);
       setDataList(ApiResponse.completed(resp));
-        
+
       // Utils.flushBarSuccessMessage("Payment paymentVerify Success", context);
       return resp;
     } catch (e) {
@@ -85,8 +83,6 @@ class PaymentVerifyViewModel with ChangeNotifier {
     }
     return null;
   }
-
- 
 }
 
 class GetTranactionViewModel with ChangeNotifier {

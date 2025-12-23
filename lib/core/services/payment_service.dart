@@ -5,13 +5,14 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class PaymentService {
   late Razorpay _razorpay;
-  final BuildContext context;
+  // final BuildContext context;
   final Function onPaymentSuccess;
   final Function onPaymentError;
 
   bool islodingpayment = false;
   PaymentService(
-      {required this.context,
+      {
+      // required this.context,
       required this.onPaymentSuccess,
       required this.onPaymentError}) {
     _razorpay = Razorpay();
@@ -25,7 +26,8 @@ class PaymentService {
       required String mobileNo,
       required String email,
       required String razorpayOrderId,
-      required double payableAmount}) async {
+      required double payableAmount,
+      required String currency}) async {
     try {
       // var paymentOrderId;
 
@@ -35,7 +37,7 @@ class PaymentService {
       var options = {
         'key': 'rzp_test_6RDAELPDeFpXXx',
         'amount': (payableAmount).ceil() * 100,
-        'currency': 'AED',
+        'currency': currency,
         'name': 'SWABI',
         // 'order_id': widget.orderId,
         'order_id': razorpayOrderId,

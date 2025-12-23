@@ -48,6 +48,7 @@ class Data {
   User? user;
   List<Bid>? bids;
   bool? bidPlacedByVendor;
+  String? currency;
 
   Data({
     this.id,
@@ -66,6 +67,7 @@ class Data {
     this.user,
     this.bids,
     this.bidPlacedByVendor,
+    this.currency,                        
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
@@ -77,6 +79,7 @@ class Data {
             ? []
             : List<String>.from(json["destinations"]!.map((x) => x)),
         accommodationPreferences: json["accommodationPreferences"],
+        currency: json["currency"],
         meals: json["meals"],
         transportation: json["transportation"],
         budget: json["budget"],
@@ -112,6 +115,7 @@ class Data {
             ? []
             : List<dynamic>.from(bids!.map((x) => x.toJson())),
         "bidPlacedByVendor": bidPlacedByVendor,
+        "currency": currency,
       };
 }
 
@@ -135,6 +139,7 @@ class Bid {
   bool? paid;
   bool? verified;
   bool? expired;
+  String? currency;
 
   Bid({
     this.id,
@@ -156,6 +161,7 @@ class Bid {
     this.paid,
     this.verified,
     this.expired,
+    this.currency,
   });
 
   factory Bid.fromJson(Map<String, dynamic> json) => Bid(
@@ -178,6 +184,7 @@ class Bid {
         paid: json["paid"],
         verified: json["verified"],
         expired: json["expired"],
+        currency: json["currency"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -200,6 +207,7 @@ class Bid {
         "paid": paid,
         "verified": verified,
         "expired": expired,
+        "currency": currency,
       };
 }
 

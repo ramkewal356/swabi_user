@@ -77,10 +77,11 @@ class GetMyEnquiryModel {
 class MyEnquiryContent {
   TravelInquiry? travelInquiry;
   List<Bid>? bids;
-
+  String? currency;
   MyEnquiryContent({
     this.travelInquiry,
     this.bids,
+    this.currency,
   });
 
   factory MyEnquiryContent.fromJson(Map<String, dynamic> json) =>
@@ -91,6 +92,7 @@ class MyEnquiryContent {
         bids: json["bids"] == null
             ? []
             : List<Bid>.from(json["bids"]!.map((x) => Bid.fromJson(x))),
+        currency: json["currency"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -98,6 +100,7 @@ class MyEnquiryContent {
         "bids": bids == null
             ? []
             : List<dynamic>.from(bids!.map((x) => x.toJson())),
+        "currency": currency,
       };
 }
 
@@ -209,6 +212,7 @@ class TravelInquiry {
   String? tentativeDays;
   User? user;
   dynamic createdAt;
+  String? currency;
   dynamic updatedAt;
 
   TravelInquiry({
@@ -224,6 +228,7 @@ class TravelInquiry {
     this.travelDates,
     this.tentativeDays,
     this.user,
+    this.currency,
     this.createdAt,
     this.updatedAt,
   });
@@ -243,6 +248,7 @@ class TravelInquiry {
         travelDates: json["travelDates"],
         tentativeDays: json["tentativeDays"],
         user: json["user"] == null ? null : User.fromJson(json["user"]),
+        currency: json["currency"],
         createdAt: json["createdAt"],
         updatedAt: json["updatedAt"],
       );
@@ -262,6 +268,7 @@ class TravelInquiry {
         "travelDates": travelDates,
         "tentativeDays": tentativeDays,
         "user": user?.toJson(),
+        "currency": currency,
         "createdAt": createdAt,
         "updatedAt": updatedAt,
       };
@@ -291,31 +298,30 @@ class User {
   String? vendorProfileImageUrl;
   dynamic subscriptionStartDate;
   dynamic subscriptionEndDate;
-  User({
-    this.userId,
-    this.firstName,
-    this.lastName,
-    this.mobile,
-    this.address,
-    this.email,
-    this.gender,
-    this.createdDate,
-    this.modifiedDate,
-    this.status,
-    this.otp,
-    this.isOtpVerified,
-    this.userType,
-    this.profileImageUrl,
-    this.countryCode,
-    this.notificationToken,
-    this.lastLogin,
-    this.country,
-    this.state,
+  User(
+      {this.userId,
+      this.firstName,
+      this.lastName,
+      this.mobile,
+      this.address,
+      this.email,
+      this.gender,
+      this.createdDate,
+      this.modifiedDate,
+      this.status,
+      this.otp,
+      this.isOtpVerified,
+      this.userType,
+      this.profileImageUrl,
+      this.countryCode,
+      this.notificationToken,
+      this.lastLogin,
+      this.country,
+      this.state,
       this.vendorId,
       this.vendorProfileImageUrl,
       this.subscriptionStartDate,
-      this.subscriptionEndDate
-  });
+      this.subscriptionEndDate});
 
   factory User.fromJson(Map<String, dynamic> json) => User(
         userId: json["userId"],

@@ -125,7 +125,7 @@ class PackageListContent {
   double? taxPercentage;
   double? discountAmount;
   double? totalPayableAmount;
-
+  String? currency;
   PackageListContent({
     this.packageBookingId,
     this.bookingDate,
@@ -155,6 +155,7 @@ class PackageListContent {
     this.taxPercentage,
     this.discountAmount,
     this.totalPayableAmount,
+    this.currency,
   });
 
   factory PackageListContent.fromJson(Map<String, dynamic> json) =>
@@ -206,6 +207,7 @@ class PackageListContent {
         taxPercentage: json["taxPercentage"],
         discountAmount: json["discountAmount"],
         totalPayableAmount: json["totalPayableAmount"],
+      currency: json["currency"]
       );
 
   Map<String, dynamic> toJson() => {
@@ -246,6 +248,7 @@ class PackageListContent {
         "taxPercentage": taxPercentage,
         "discountAmount": discountAmount,
         "totalPayableAmount": totalPayableAmount,
+        "currency": currency
       };
 }
 

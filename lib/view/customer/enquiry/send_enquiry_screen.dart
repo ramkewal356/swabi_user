@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/status.dart';
+import 'package:flutter_cab/view_model/third_party_view_model.dart';
+import 'package:flutter_cab/view_model/user_profile_view_model.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/custom_multiselect_dropdown.dart';
+import 'package:flutter_cab/widgets/Custom%20%20Button/customdropdown_button.dart';
 import 'package:flutter_cab/widgets/Custom%20Widgets/custom_textformfield.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/core/utils/validation.dart';
 import 'package:flutter_cab/view_model/enquiry_view_model.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -16,14 +21,22 @@ class SendEnquiryScreen extends StatefulWidget {
   State<SendEnquiryScreen> createState() => _SendEnquiryScreenState();
 }
 
+enum PersonType { self, other }
+
+PersonType selectedPerson = PersonType.self;
+
 class _SendEnquiryScreenState extends State<SendEnquiryScreen> {
   int selectedToggle = 0; // 0 = Exact, 1 = Tentative
   int selectedDuration = 2;
   List<int> durationOptions = [1, 2, 3, 5, 7];
   bool hasSpecialRequest = false;
+  Key _destinationKey = UniqueKey();
+
   AutovalidateMode _autoValidateMode = AutovalidateMode.disabled;
   final _formKey = GlobalKey<FormState>();
   TextEditingController fullNametController = TextEditingController();
+  TextEditingController countryController = TextEditingController();
+  TextEditingController stateController = TextEditingController();
   TextEditingController specialRequestController = TextEditingController();
   TextEditingController dateController = TextEditingController();
   TextEditingController tentetiveDateController = TextEditingController();
@@ -34,17 +47,55 @@ class _SendEnquiryScreenState extends State<SendEnquiryScreen> {
   TextEditingController budgetController = TextEditingController();
 
   // final GlobalKey<FormFieldState> _multiSelectKey = GlobalKey();
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _prefillSelfData();
+      getCountry();
+    });
+  }
+
+  void getCountry() {
+    context.read<ThirdPartyViewModel>().getCountryList();
+  }
+
+  void getStateListApi(String country) {
+    context.read<ThirdPartyViewModel>().getStateList(country: country);
+  }
+
+  void getCurrencyListApi(String countryName) {
+    context
+        .read<ThirdPartyViewModel>()
+        .getAllCurrency(countryName: countryName);
+  }
 
   List<String> selectedDestinations = [];
-  List<String> destinations = [
-    'Abu Dhabi',
-    'Ajman',
-    'Dubai',
-    'Fujairah',
-    'Ras al-Khaimah',
-    'Sharjah',
-    'Umm al-Quwain',
-  ];
+
+  void _onPersonTypeChanged(PersonType type) {
+    setState(() {
+      selectedPerson = type;
+
+      if (type == PersonType.self) {
+        _prefillSelfData();
+      } else {
+        fullNametController.clear();
+        countryController.clear();
+        selectedDestinations.clear();
+      }
+    });
+  }
+
+  void _prefillSelfData() {
+    final data = context.read<UserProfileViewModel>().dataList.data?.data;
+    if (data != null) {
+      fullNametController.text = '${data.firstName} ${data.lastName}';
+      countryController.text = data.country;
+      stateController.text = data.state;
+    }
+    getCurrencyListApi(countryController.text);
+  }
+
   void _resetForm() {
     _formKey.currentState!.reset();
 
@@ -66,11 +117,34 @@ class _SendEnquiryScreenState extends State<SendEnquiryScreen> {
     FocusScope.of(context).unfocus();
   }
 
-  
+  void _onCountryChanged(String value) {
+    // Clear country text
+    countryController.text = value;
+
+    // Clear state & destination
+    stateController.clear();
+    selectedDestinations.clear();
+    _destinationKey = UniqueKey();
+    // Reset state list from Bloc (important)
+    context.read<ThirdPartyViewModel>().clearStateList();
+
+    // Fetch new data
+    getStateListApi(value);
+    getCurrencyListApi(value);
+
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     final status = context.watch<EnquiryViewModel>().sendEnquiryResponse.status;
+    var countryList =
+        context.watch<ThirdPartyViewModel>().getCountryListResponse.data;
+    var stateList = context.watch<ThirdPartyViewModel>().stateList.data;
+    var stateLoading =
+        context.watch<ThirdPartyViewModel>().stateList.status == Status.loading;
+    var currencyText =
+        context.watch<ThirdPartyViewModel>().currencyList.data ?? '';
     return Scaffold(
       backgroundColor: bgGreyColor,
       body: SingleChildScrollView(
@@ -81,6 +155,44 @@ class _SendEnquiryScreenState extends State<SendEnquiryScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: RadioListTile<PersonType>(
+                      dense: true,
+                      visualDensity:
+                          VisualDensity(horizontal: -4, vertical: -4),
+                      title: Text(
+                        "Self",
+                        style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w700, fontSize: 16),
+                      ),
+                      value: PersonType.self,
+                      groupValue: selectedPerson,
+                      onChanged: (value) => _onPersonTypeChanged(value!),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 3,
+                    child: RadioListTile<PersonType>(
+                      dense: true,
+                      visualDensity:
+                          VisualDensity(horizontal: -4, vertical: -4),
+                      title: Text(
+                        "Someone Else",
+                        style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w700, fontSize: 16),
+                      ),
+                      value: PersonType.other,
+                      groupValue: selectedPerson,
+                      onChanged: (value) => _onPersonTypeChanged(value!),
+                    ),
+                  ),
+                ],
+              ),
               _sectionCard(
                 "Personal Info",
                 Column(
@@ -101,23 +213,38 @@ class _SendEnquiryScreenState extends State<SendEnquiryScreen> {
                       },
                     ),
                     const SizedBox(height: 10),
-                    Customtextformfield(
-                        readOnly: true,
-                        fillColor: background,
-                        prefixIcon: const Icon(
-                          Icons.flag,
-                          color: Colors.grey,
-                        ),
-                        controller:
-                            TextEditingController(text: 'United Arab Emirates'),
-                        hintText: 'Select Country'),
+                    CustomDropdownButton(
+                      itemsList: countryList ?? [],
+                      hintText: 'Select Country',
+                      controller: countryController,
+                      onChanged: (value) {
+                        if (value != null && value.isNotEmpty) {
+                          _onCountryChanged(value);
+                        }
+                      },
+                    ),
+                    // Customtextformfield(
+                    //     readOnly: true,
+                    //     fillColor: background,
+                    //     prefixIcon: const Icon(
+                    //       Icons.flag,
+                    //       color: Colors.grey,
+                    //     ),
+                    //     controller:
+                    //         TextEditingController(text: 'United Arab Emirates'),
+                    //     hintText: 'Select Country'),
                     const SizedBox(height: 10),
                     CustomMultiselectDropdown(
+                      key: _destinationKey,
                       autovalidateMode: _autoValidateMode,
                       title: 'Destination',
                       hintText: 'Select destintaion',
                       icon: Icons.location_on,
-                      items: destinations,
+                      // items: destinations,
+                      items: stateList ?? [],
+                      isDisabled: countryController.text.isEmpty ||
+                          stateLoading ||
+                          (stateList ?? []).isEmpty,
                       onChanged: (p0) {
                         setState(() {
                           selectedDestinations = p0;
@@ -190,15 +317,25 @@ class _SendEnquiryScreenState extends State<SendEnquiryScreen> {
                       },
                     ),
                     const SizedBox(height: 10),
+                    // CustomDropdownButton(itemsList: itemsList, hintText: hintText, controller: controller),
                     Customtextformfield(
                       autovalidateMode: _autoValidateMode,
-                      prefixIcon: const Icon(
-                        Icons.attach_money,
-                        color: greyColor1,
+                      // prefixIcon: const Icon(
+                      //   Icons.attach_money,
+                      //   color: greyColor1,
+                      // ),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 14),
+                        child: Text(
+                          currencyText.isEmpty ? 'AED' : currencyText,
+                          style: TextStyle(
+                              color: greyColor1, fontWeight: FontWeight.bold),
+                        ),
                       ),
                       controller: budgetController,
-                      hintText: 'Budget (in AED)',
-                      lable: 'Budget (in AED) *',
+                      hintText: 'Budget (in $currencyText)',
+                      lable: 'Budget (in $currencyText) *',
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter budget( in AED)';
@@ -352,8 +489,7 @@ class _SendEnquiryScreenState extends State<SendEnquiryScreen> {
                             final selectedDate = await pickSfDateRange(context);
                             debugPrint('selected date $selectedDate');
                             if (selectedDate != null) {
-                              dateController.text =
-                                  selectedDate;
+                              dateController.text = selectedDate;
                             }
                           },
                           validator: (value) {
@@ -463,7 +599,8 @@ class _SendEnquiryScreenState extends State<SendEnquiryScreen> {
                         .read<EnquiryViewModel>()
                         .sendEnquiryApi(
                             fullName: fullNametController.text,
-                            country: 'United Arab Emirates',
+                            country: countryController.text,
+                            currency: currencyText,
                             budget: budgetController.text,
                             destination: selectedDestinations,
                             accommodation: accommodationController.text,
@@ -481,7 +618,14 @@ class _SendEnquiryScreenState extends State<SendEnquiryScreen> {
                                 ? selectedDuration.toString()
                                 : "")
                         .then((onValue) {
-                      _resetForm();
+                      // _resetForm();
+
+                      if (onValue == true) {
+                        // ignore: use_build_context_synchronously
+                        context.push('/my_enquiry').then((val) {
+                          _resetForm();
+                        });
+                      }
                     });
                   }
                 },

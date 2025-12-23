@@ -50,7 +50,8 @@ class Datum {
   String? offerStatus;
   String? offerType;
   String? imageUrl;
-
+  String? minCurrency;
+  String? maxCurrency;
   Datum(
       {this.offerId,
       this.offerName,
@@ -67,29 +68,33 @@ class Datum {
       this.modifiedDate,
       this.offerStatus,
       this.offerType,
-      this.imageUrl});
+      this.imageUrl,
+      this.minCurrency,
+      this.maxCurrency});
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-        offerId: json["offerId"],
-        offerName: json["offerName"],
-        description: json["description"],
-        discountPercentage: json["discountPercentage"],
-        offerCode: json["offerCode"],
-        startDate: json["startDate"],
-        endDate: json["endDate"],
-        minimumBookingAmount: json["minimumBookingAmount"],
-        maxDiscountAmount: json["maxDiscountAmount"],
-        usageLimitPerUser: json["usageLimitPerUser"],
-        termsAndConditions: json["termsAndConditions"],
-        createdDate: json["createdDate"] == null
-            ? null
-            : DateTime.parse(json["createdDate"]),
-        modifiedDate: json["modifiedDate"] == null
-            ? null
-            : DateTime.parse(json["modifiedDate"]),
-        offerStatus: json["offerStatus"],
-        offerType: json["offerType"],
-        imageUrl: json["imageUrl"],
+      offerId: json["offerId"],
+      offerName: json["offerName"],
+      description: json["description"],
+      discountPercentage: json["discountPercentage"],
+      offerCode: json["offerCode"],
+      startDate: json["startDate"],
+      endDate: json["endDate"],
+      minimumBookingAmount: json["minimumBookingAmount"],
+      maxDiscountAmount: json["maxDiscountAmount"],
+      usageLimitPerUser: json["usageLimitPerUser"],
+      termsAndConditions: json["termsAndConditions"],
+      createdDate: json["createdDate"] == null
+          ? null
+          : DateTime.parse(json["createdDate"]),
+      modifiedDate: json["modifiedDate"] == null
+          ? null
+          : DateTime.parse(json["modifiedDate"]),
+      offerStatus: json["offerStatus"],
+      offerType: json["offerType"],
+      imageUrl: json["imageUrl"],
+      minCurrency: json["minCurrency"],
+      maxCurrency: json["maxCurrency"]
       );
 
   Map<String, dynamic> toJson() => {
@@ -109,6 +114,8 @@ class Datum {
         "offerStatus": offerStatus,
         "offerType": offerType,
         "imageUrl": imageUrl,
+        "minCurrency": minCurrency,
+        "maxCurrency": maxCurrency
       };
 }
 

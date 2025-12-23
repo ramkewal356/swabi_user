@@ -46,7 +46,7 @@ class Data {
   List<PackageActivity>? packageActivities;
   double? packageDiscountedAmount;
   Vendor? vendor;
-
+  String? currency;
   Data({
     this.packageId,
     this.country,
@@ -61,7 +61,8 @@ class Data {
     this.modifiedDate,
     this.packageActivities,
     this.packageDiscountedAmount,
-      this.vendor
+    this.vendor,
+    this.currency,
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
@@ -84,6 +85,7 @@ class Data {
                 .map((x) => PackageActivity.fromJson(x))),
         packageDiscountedAmount: json["packageDiscountedAmount"],
         vendor: json["vendor"] == null ? null : Vendor.fromJson(json["vendor"]),
+        currency: json["currency"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -105,6 +107,7 @@ class Data {
             : List<dynamic>.from(packageActivities!.map((x) => x.toJson())),
         "packageDiscountedAmount": packageDiscountedAmount,
         "vendor": vendor?.toJson(),
+        "currency": currency,
       };
 }
 
@@ -162,7 +165,7 @@ class Activity {
   AgeGroupDiscountPercent? ageGroupDiscountPercent;
   ActivityOfferMapping? activityOfferMapping;
   double? discountedAmount;
-
+  String? currency;
   Activity({
     this.activityId,
     this.country,
@@ -186,6 +189,7 @@ class Activity {
     this.ageGroupDiscountPercent,
     this.activityOfferMapping,
     this.discountedAmount,
+    this.currency,
   });
 
   factory Activity.fromJson(Map<String, dynamic> json) => Activity(
@@ -225,6 +229,7 @@ class Activity {
             ? null
             : ActivityOfferMapping.fromJson(json["activityOfferMapping"]),
         discountedAmount: json["discountedAmount"],
+        currency: json["currency"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -259,6 +264,7 @@ class Activity {
         "ageGroupDiscountPercent": ageGroupDiscountPercent?.toJson(),
         "activityOfferMapping": activityOfferMapping?.toJson(),
         "discountedAmount": discountedAmount,
+        "currency": currency,
       };
 }
 

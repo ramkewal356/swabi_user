@@ -222,6 +222,7 @@ class _PackageBookingManagementState extends State<PackageBookingManagement>
                                       (val.activity?.activityImageUrl ?? [])
                                           .cast<String>())
                                   .toList(),
+                              currency: data?.currency ?? '',
                               loader: status == 'Status.loading' &&
                                   selectIndex == index,
                               onTap: () {

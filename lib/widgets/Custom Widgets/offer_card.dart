@@ -7,6 +7,8 @@ import 'package:google_fonts/google_fonts.dart';
 class OfferCard extends StatefulWidget {
   final String imageUrl;
   final String title;
+  final String minCurrency;
+  final String maxCurrency;
   final String minimumBookingAmount;
   final String discountPercentage;
   final String maxDiscountAmount;
@@ -19,6 +21,8 @@ class OfferCard extends StatefulWidget {
     super.key,
     required this.imageUrl,
     required this.title,
+    required this.minCurrency,
+    required this.maxCurrency,
     required this.minimumBookingAmount,
     required this.discountPercentage,
     required this.maxDiscountAmount,
@@ -82,11 +86,11 @@ class _OfferCardState extends State<OfferCard> {
                               fontSize: 16, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 4),
                       Text(
-                          '● Min. Booking Amount: AED ${widget.minimumBookingAmount}',
+                          '● Min. Booking Amount: ${widget.minCurrency} ${widget.minimumBookingAmount}',
                           style: GoogleFonts.poppins(
                               fontSize: 12, color: Colors.black54)),
                       Text(
-                          '● Max Discount Amount: AED ${widget.maxDiscountAmount}',
+                          '● Max Discount Amount: ${widget.maxCurrency} ${widget.maxDiscountAmount}',
                           style: GoogleFonts.poppins(
                               fontSize: 12, color: Colors.black54)),
                       Text('● Expire On: ${widget.endDate}',

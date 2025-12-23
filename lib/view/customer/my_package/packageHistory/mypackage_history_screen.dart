@@ -187,6 +187,7 @@ class _PackageHistoryManagementState extends State<PackageHistoryManagement>
                                           (e) => e.activity.activityImageUrl)
                                       .toList() ??
                                   [],
+                              currency: data?.currency ?? '',
                               loader: status == 'Status.loading' &&
                                   selectIndex == index,
                               onTap: () {

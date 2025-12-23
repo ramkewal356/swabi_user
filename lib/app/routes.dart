@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/models/get_all_bid_model.dart';
+import 'package:flutter_cab/view/customer/my_package/booking_payment_screen.dart';
 import 'package:flutter_cab/widgets/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/view/auth_screens/change_password.dart';
 import 'package:flutter_cab/view/customer/enquiry/my_enquiry_screen.dart';
@@ -16,7 +17,6 @@ import 'package:flutter_cab/view/help_and_support/term_condition_screen.dart';
 import 'package:flutter_cab/view/customer/my_tranaction/transaction.dart';
 import 'package:flutter_cab/view/customer/customer_home_screen.dart';
 import 'package:flutter_cab/view/customer/offers_pages/all_offers_screen.dart';
-import 'package:flutter_cab/view/customer/offers_pages/offer_details_screen.dart';
 import 'package:flutter_cab/view/customer/raiseIssue_pages/issue_view_details_screen.dart';
 import 'package:flutter_cab/view/customer/my_rental/book_your_ride_screen_.dart';
 import 'package:flutter_cab/view/customer/my_rental/cancel_booking.dart';
@@ -226,16 +226,7 @@ final GoRouter myRouter = GoRouter(
         );
       },
     ),
-    GoRoute(
-      path: '/offerDetails',
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (BuildContext context, GoRouterState state) {
-        var data = state.extra as Map<String, dynamic>;
-        return OfferdetailsScreen(
-          offerId: data["offerId"],
-        );
-      },
-    ),
+   
     GoRoute(
         path: '/my_enquiry',
         builder: (context, state) {
@@ -345,6 +336,30 @@ final GoRouter myRouter = GoRouter(
                 participantTypes: extra['participantTypes'],
                 packageActivityList: extra['activityList'],
                 venderId: extra["venderId"],
+                currency: extra["currency"],
+              );
+            },
+          ),
+          GoRoute(
+            path: 'pay_now',
+            builder: (context, state) {
+              // var data = state.extra as Map<String, dynamic>;
+              final data = state.extra as BookingPaymentScreen;
+              return BookingPaymentScreen(
+                venderId: data.venderId,
+                bookingId: data.bookingId,
+                bookingDate: data.bookingDate,
+                primaryCountryCode: data.primaryCountryCode,
+                primaryNumber: data.primaryNumber,
+                secondaryCountryCode: data.secondaryCountryCode,
+                secondaryNumber: data.secondaryNumber,
+                packageAmount: data.packageAmount,
+                sumAmount: data.sumAmount,
+                // taxAmount: data.taxAmount,
+                // payableAmount: data.payableAmount,
+                memberDetails: data.memberDetails,
+                packageActivityList: data.packageActivityList,
+                currency: data.currency,
               );
             },
           ),

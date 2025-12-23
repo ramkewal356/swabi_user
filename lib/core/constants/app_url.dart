@@ -148,6 +148,8 @@ class AppUrl {
   static var updateDriverUrl = '/driver/update_driver_details';
   static var activateDriverUrl = '/driver/activate_driver';
   static var deactivateDriverUrl = '/driver/deactivate_driver';
+  // currency URL
+  static var currencyUrl = '/swabi/get_all_currencies';
   // color url
   static var colorbaseUrl = 'https://www.csscolorsapi.com';
   static var colorUrl = '/api/colors';

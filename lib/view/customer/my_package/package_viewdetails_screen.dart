@@ -286,7 +286,7 @@ class _PackageDetailsState extends State<PackageDetails> {
                           ? const TextSpan()
                           : TextSpan(
                               text:
-                                  "AED ${packageActivity?.totalPrice?.round()}",
+                                  "${packageActivity?.currency} ${packageActivity?.totalPrice?.round()}",
                               style: GoogleFonts.lato(
                                   color: background,
                                   fontSize: (packageActivity
@@ -318,7 +318,7 @@ class _PackageDetailsState extends State<PackageDetails> {
                           ? const TextSpan()
                           : TextSpan(
                               text:
-                                  "AED ${packageActivity?.packageDiscountedAmount?.round()}",
+                                  "${packageActivity?.currency} ${packageActivity?.packageDiscountedAmount?.round()}",
                               style: GoogleFonts.lato(
                                 color: background,
                                 fontSize: 20,

@@ -274,8 +274,8 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                         ),
                         RichText(
                             text: TextSpan(children: [
-                          const TextSpan(
-                              text: ' AED ',
+                          TextSpan(
+                              text: '${data?.currency} ',
                               style: TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.w600)),
@@ -522,20 +522,21 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                               value: paymentDetails.id ?? ''),
                           textItem(
                               lable: 'Package Amount',
-                              value: 'AED ${data?.packagePrice}'),
+                              value: '${data?.currency} ${data?.packagePrice}'),
                           textItem(
                               lable: 'Tax Amount (5%)',
                               value:
-                                  'AED ${double.parse(data?.taxAmount ?? '').toStringAsFixed(2)}'),
+                                  '${data?.currency} ${double.parse(data?.taxAmount ?? '').toStringAsFixed(2)}'),
                           data?.discountAmount == '0.0'
                               ? const SizedBox()
                               : textItem(
                                   lable: 'Discount Amount',
-                                  value: 'AED ${data?.discountAmount}'),
+                                  value:
+                                      '${data?.currency} ${data?.discountAmount}'),
                           textItem(
                               lable: 'Total Amount',
                               value:
-                                  'AED ${(paymentDetails.amount ?? 0) / 100}'),
+                                  '${data?.currency} ${(paymentDetails.amount ?? 0) / 100}'),
                           textItem(
                             lable: 'Payment Date',
                             value: dateFormat(
@@ -576,7 +577,7 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                           textItem(
                               lable: 'Refund Amount',
                               value:
-                                  'AED ${paymentRefund.refundedAmount?.toStringAsFixed(2)}'),
+                                  '${data?.currency} ${paymentRefund.refundedAmount?.toStringAsFixed(2)}'),
                           textItem(
                               lable: 'Refund Status',
                               value: paymentRefund.refundStatus == 'created'

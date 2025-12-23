@@ -97,7 +97,7 @@ class OfferRepository {
         endURL: AppUrl.getOfferByVendorIdUrl,
         methodType: HttpMethodType.GET,
         bodyType: HttpBodyType.JSON,
-        isAuthorizeRequest: false,
+        isAuthorizeRequest: true,
         queryParameters: query);
     try {
       Response<dynamic>? response = await http.request<dynamic>();

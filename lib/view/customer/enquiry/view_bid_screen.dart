@@ -82,7 +82,7 @@ class _ViewBidScreenState extends State<ViewBidScreen> {
                                 'Enquiry ID : ${vm.getEnquiryById.data?.data?.id ?? 'N/A'}',
                               ),
                               Text(
-                                  "Budget : AED ${vm.getEnquiryById.data?.data?.budget ?? 'N/A'}"),
+                                  "Budget : ${vm.getEnquiryById.data?.data?.currency} ${vm.getEnquiryById.data?.data?.budget ?? 'N/A'}"),
                               Text(
                                   'Enquiry Date : ${dateFormat(vm.getEnquiryById.data?.data?.createdAt)}'),
                               Text(
@@ -149,16 +149,15 @@ class _ViewBidScreenState extends State<ViewBidScreen> {
                                                                 .read<
                                                                     PaymentCreateOrderIdViewModel>()
                                                                 .paymentCreateOrderIdViewModelApi(
-                                                                    context:
-                                                                        context,
+                                                                   
                                                                     amount: double.parse(
                                                                         bids?.price ??
                                                                             ''),
-                                                                    userId: bids
-                                                                            ?.user
-                                                                            ?.userId
-                                                                            .toString() ??
-                                                                        '',
+                                                                    // userId: bids
+                                                                    //         ?.user
+                                                                    //         ?.userId
+                                                                    //         .toString() ??
+                                                                    //     '',
                                                                     taxAmount:
                                                                         taxsAmount,
                                                                     taxPercentage:
@@ -166,7 +165,10 @@ class _ViewBidScreenState extends State<ViewBidScreen> {
                                                                     discountAmount:
                                                                         0,
                                                                     totalPayableAmount:
-                                                                        payableAmount)
+                                                                        payableAmount,
+                                                                    currency:
+                                                                        bids?.currency ??
+                                                                            '')
                                                                 .then(
                                                                     (onValue) {
                                                               if (onValue
@@ -176,8 +178,8 @@ class _ViewBidScreenState extends State<ViewBidScreen> {
                                                                 PaymentService
                                                                     paymentService =
                                                                     PaymentService(
-                                                                  context:
-                                                                      context,
+                                                                  // context:
+                                                                  //     context,
                                                                   onPaymentError:
                                                                       (PaymentFailureResponse
                                                                           response) {},
@@ -248,7 +250,10 @@ class _ViewBidScreenState extends State<ViewBidScreen> {
                                                                         onValue?.data.razorpayOrderId ??
                                                                             '',
                                                                     payableAmount:
-                                                                        payableAmount);
+                                                                        payableAmount,
+                                                                    currency:
+                                                                        bids?.currency ??
+                                                                            '');
                                                               }
                                                             });
                                                           } else if (value ==
@@ -342,7 +347,7 @@ class _ViewBidScreenState extends State<ViewBidScreen> {
                                                     'Transportation : ${bids?.transportation ?? 'N/A'}'),
                                                 const SizedBox(height: 8),
                                                 travelItem(Icons.attach_money,
-                                                    'Price : AED ${bids?.price ?? 'N/A'}'),
+                                                    'Price : ${bids?.currency} ${bids?.price ?? 'N/A'}'),
                                                 const SizedBox(height: 8),
                                                 travelItem(Icons.card_giftcard,
                                                     'Itinerary : ${bids?.itinerary ?? 'N/A'}'),

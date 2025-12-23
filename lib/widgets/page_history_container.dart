@@ -17,6 +17,7 @@ class PackageHistoryContainer extends StatelessWidget {
   final String pkgName;
   final String location;
   final String customerName;
+  final String currency;
   final List<String> imageList;
   final VoidCallback onTap;
   final bool loader;
@@ -32,7 +33,8 @@ class PackageHistoryContainer extends StatelessWidget {
       required this.onTap,
       this.customerName = '',
       required this.loader,
-      required this.price});
+      required this.price,
+      required this.currency});
   Color _statusColor(String status) {
     switch (status.toUpperCase()) {
       case "BOOKED":
@@ -167,7 +169,7 @@ class PackageHistoryContainer extends StatelessWidget {
                             fontSize: 15,
                             fontWeight: FontWeight.w700)),
                     TextSpan(
-                        text: " AED $price".toUpperCase(),
+                        text: " $currency $price".toUpperCase(),
                         style: GoogleFonts.nunito(
                             color: Colors.black,
                             fontSize: 15,

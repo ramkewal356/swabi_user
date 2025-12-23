@@ -64,8 +64,7 @@ class _CustomphonefieldState extends State<Customphonefield> {
     return IntlPhoneField(
       focusNode: widget.focusNode,
       key: widget.poneKey,
-      // style: titleTextStyle,
-      // invalidNumberMessage: 'fhghjjkjkllkllklklklk',
+    
       flagsButtonPadding: const EdgeInsets.only(left: 10),
       showCountryFlag: true,
       // dropdownTextStyle: titleTextStyle,

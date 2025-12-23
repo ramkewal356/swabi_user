@@ -109,6 +109,7 @@ class _PackageScreenState extends State<PackageScreen> {
         context.watch<ThirdPartyViewModel>().getCountryListResponse.data;
     var userStatus = context.watch<UserProfileViewModel>().dataList.status;
     var stateList = context.watch<ThirdPartyViewModel>().stateList.data;
+    // var status = context.watch<GetPackageListViewModel>().getPackageList.status;
     return Column(
       children: [
         const SizedBox(height: 10),
@@ -224,7 +225,8 @@ class _PackageScreenState extends State<PackageScreen> {
                       ],
                     ),
                     const SizedBox(height: 10),
-                    CustomButtonSmall(
+                    CustomButtonSmall(  
+                      // loading: status == Status.loading,                    
                       btnHeading: 'Search',
                       onTap: () {
                         if (_formKey.currentState!.validate()) {
@@ -312,7 +314,7 @@ class _PackageScreenState extends State<PackageScreen> {
                             discountPrice:
                                 getPackageList[index].packageDiscountedAmount,
                             loader: selectedIndex == index,
-
+                            currency: getPackageList[index].currency,
                             ontap: () {
                               setState(() {
                                 selectedIndex = index;
@@ -360,6 +362,7 @@ class PackageContainer extends StatefulWidget {
   final bool loader;
   final VoidCallback ontap;
   final double? discountPrice;
+  final String? currency;
   const PackageContainer(
       {super.key,
       required this.packageImg,
@@ -374,7 +377,8 @@ class PackageContainer extends StatefulWidget {
       required this.location,
       required this.loader,
       required this.ontap,
-      this.discountPrice});
+      this.discountPrice,
+      this.currency});
 
   @override
   State<PackageContainer> createState() => _PackageContainerState();
@@ -582,7 +586,7 @@ class _PackageContainerState extends State<PackageContainer> {
                                   ? const TextSpan()
                                   : TextSpan(
                                       text:
-                                          "AED ${double.tryParse(widget.total)?.round()}"
+                                          "${widget.currency} ${double.tryParse(widget.total)?.round()}"
                                               .toUpperCase(),
                                       style: GoogleFonts.nunito(
                                           color: Colors.black,
@@ -610,7 +614,7 @@ class _PackageContainerState extends State<PackageContainer> {
                                   ? const TextSpan()
                                   : TextSpan(
                                       text:
-                                          'AED ${widget.discountPrice?.round()}',
+                                          '${widget.currency} ${widget.discountPrice?.round()}',
                                       style: GoogleFonts.nunito(
                                           color: Colors.black,
                                           fontSize: 15,

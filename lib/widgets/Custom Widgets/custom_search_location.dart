@@ -149,7 +149,7 @@ class _SearchLocationPageState extends State<SearchLocationPage> {
     try {
       final result = await googlePlace.autocomplete(
         input,
-        components: [Component("country", "ae")],
+        // components: [Component("country", "ae")],
       );
 
       if (result.predictions != []) {

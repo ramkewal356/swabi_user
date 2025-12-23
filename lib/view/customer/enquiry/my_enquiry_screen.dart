@@ -108,7 +108,7 @@ class _MyEnquiryScreenState extends State<MyEnquiryScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                                "Budget : AED ${enquiryData?.travelInquiry?.budget ?? 'NA'}",
+                                      "Budget : ${enquiryData?.travelInquiry?.currency} ${enquiryData?.travelInquiry?.budget ?? 'NA'}",
                                 style: const TextStyle(
                                     fontSize: 12, fontWeight: FontWeight.w500)),
                             Text(enquiryData?.travelInquiry?.country ?? 'NA',

@@ -50,7 +50,6 @@ class _PackageViewScreenState extends State<PackageViewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('cvbnxm,c,vcx ${widget.userType}');
     return Scaffold(
       backgroundColor: bgGreyColor,
       appBar: AppBar(
@@ -160,7 +159,7 @@ class _PackageViewScreenState extends State<PackageViewScreen> {
                             packageData?.totalPrice == null
                                 ? const SizedBox.shrink()
                                 : Text(
-                                    'AED ${packageData?.totalPrice?.round()}',
+                                    '${packageData?.currency} ${packageData?.totalPrice?.round()}',
                                     style: (packageData
                                                     ?.packageDiscountedAmount ==
                                                 null ||
@@ -185,7 +184,7 @@ class _PackageViewScreenState extends State<PackageViewScreen> {
                                     packageData?.packageDiscountedAmount == 0)
                                 ? const SizedBox.shrink()
                                 : Text(
-                                    'AED ${packageData?.packageDiscountedAmount?.round()}',
+                                    '${packageData?.currency} ${packageData?.packageDiscountedAmount?.round()}',
                                     style: buttonText,
                                   )
                           ],
@@ -211,28 +210,14 @@ class _PackageViewScreenState extends State<PackageViewScreen> {
                     itemCount: packageData?.packageActivities?.length ?? 0,
                     itemBuilder: (context, index) {
                       var activityData = packageData?.packageActivities?[index];
-                      allParticipantTypes = activityData
-                              ?.activity?.participantType
-                              ?.map((e) => e.toString())
+                      allParticipantTypes = packageData?.packageActivities
+                              ?.expand((activity) =>
+                                  (activity.activity?.participantType ?? [])
+                                      .cast<String>())
+                              .toSet()
                               .toList() ??
                           [];
-                      // for (var activity in packageData?.packageActivities??[]) {
-                      //   List<String> activityParticipantTypes =
-                      //       activity.activity?.participantType ??
-                      //           [].map((e) => e.toString()).toList();
-                      //   allParticipantTypes.addAll(activityParticipantTypes);
-                      // }
-
-                      // // Remove duplicates if needed
-                      // allParticipantTypes =
-                      //     allParticipantTypes.toSet().toList();
-                      // sutableFor = packageData?.packageActivities
-                      //         ?.expand((activity) =>
-                      //             activity.activity?.participantType ??
-                      //             [].map((type) => type.toString()).toList())
-                      //         .toSet()
-                      //         .toList() ??
-                      //     [];
+                     
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 10),
                         child: CommonContainer(
@@ -416,7 +401,7 @@ class _PackageViewScreenState extends State<PackageViewScreen> {
                                   activityData?.activity?.activityPrice == null
                                       ? const SizedBox.shrink()
                                       : Text(
-                                          'AED ${activityData?.activity?.activityPrice?.round()}',
+                                          '${activityData?.activity?.currency} ${activityData?.activity?.activityPrice?.round()}',
                                           style: (activityData?.activity
                                                           ?.discountedAmount ==
                                                       null ||
@@ -446,7 +431,7 @@ class _PackageViewScreenState extends State<PackageViewScreen> {
                                               0)
                                       ? const SizedBox.shrink()
                                       : Text(
-                                          'AED ${activityData?.activity?.discountedAmount?.round()}',
+                                          '${activityData?.activity?.currency} ${activityData?.activity?.discountedAmount?.round()}',
                                           style: buttonText,
                                         )
                                 ],
@@ -475,7 +460,7 @@ class _PackageViewScreenState extends State<PackageViewScreen> {
                                     ? const TextSpan()
                                     : TextSpan(
                                         text:
-                                            "AED ${packageData?.totalPrice?.round()}",
+                                            "${packageData?.currency} ${packageData?.totalPrice?.round()}",
                                         style: GoogleFonts.lato(
                                             color: background,
                                             fontSize: (packageData
@@ -509,7 +494,7 @@ class _PackageViewScreenState extends State<PackageViewScreen> {
                                     ? const TextSpan()
                                     : TextSpan(
                                         text:
-                                            "AED ${packageData?.packageDiscountedAmount?.round()}",
+                                            "${packageData?.currency} ${packageData?.packageDiscountedAmount?.round()}",
                                         style: GoogleFonts.lato(
                                           color: background,
                                           fontSize: 20,
@@ -543,7 +528,8 @@ class _PackageViewScreenState extends State<PackageViewScreen> {
                                       "activityList":
                                           packageData?.packageActivities,
                                       "venderId": packageData?.vendor?.vendorId
-                                          .toString()
+                                          .toString(),
+                                      "currency": packageData?.currency
                                     }),
                               )
                             ],

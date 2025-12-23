@@ -15,6 +15,7 @@ class CustomMultiselectDropdown extends StatefulWidget {
   final String? Function(List<dynamic>?)? validator;
   final AutovalidateMode? autovalidateMode;
   final Color? bgColor;
+  final bool isDisabled;
   const CustomMultiselectDropdown(
       {super.key,
       required this.title,
@@ -26,6 +27,7 @@ class CustomMultiselectDropdown extends StatefulWidget {
       required this.selectedItems,
       this.autovalidateMode,
       this.validator,
+      this.isDisabled = false,
       this.bgColor});
 
   @override
@@ -41,34 +43,36 @@ class _CustomMultiselectDropdownState extends State<CustomMultiselectDropdown> {
       children: [
         Stack(
           children: [
-            MultiSelectDialogField(
-              key: widget.fieldKey,
-              items: widget.items
-                  .map((destination) =>
-                      MultiSelectItem<String>(destination, destination))
-                  .toList(),
-              selectedColor: btnColor,
-              initialValue: widget.selectedItems,
-              dialogWidth: MediaQuery.of(context).size.width * 0.9,
-              dialogHeight: MediaQuery.of(context).size.height * 0.5,
-              title: Text(widget.title),
-              searchable: false,
-              buttonText: const Text(""),
-              buttonIcon: const Icon(Icons.arrow_drop_down),
-              backgroundColor: background,
-              decoration: BoxDecoration(
-                color: widget.bgColor ?? Colors.grey[100],
-               
-                borderRadius: BorderRadius.circular(5),
-                border: Border.all(color: Colors.grey),
-              ),
-              chipDisplay: MultiSelectChipDisplay.none(), // Hide default chip
+            IgnorePointer(
+              ignoring: widget.isDisabled,
+              child: MultiSelectDialogField(
+                key: widget.fieldKey,
+                items: widget.items
+                    .map((destination) =>
+                        MultiSelectItem<String>(destination, destination))
+                    .toList(),
+                selectedColor: btnColor,
+                initialValue: widget.selectedItems,
+                dialogWidth: MediaQuery.of(context).size.width * 0.9,
+                dialogHeight: MediaQuery.of(context).size.height * 0.5,
+                title: Text(widget.title),
+                searchable: false,
+                buttonText: const Text(""),
+                buttonIcon: const Icon(Icons.arrow_drop_down),
+                backgroundColor: background,
+                decoration: BoxDecoration(
+                  color: widget.bgColor ?? Colors.grey[100],
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(color: Colors.grey),
+                ),
+                chipDisplay: MultiSelectChipDisplay.none(), // Hide default chip
 
-              onConfirm: (values) =>
-                  widget.onChanged(List<String>.from(values)),
-              validator: widget.validator,
-              autovalidateMode:
-                  widget.autovalidateMode ?? AutovalidateMode.onUserInteraction,
+                onConfirm: (values) =>
+                    widget.onChanged(List<String>.from(values)),
+                validator: widget.validator,
+                autovalidateMode: widget.autovalidateMode ??
+                    AutovalidateMode.onUserInteraction,
+              ),
             ),
             Positioned.fill(
               child: IgnorePointer(

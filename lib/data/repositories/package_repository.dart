@@ -86,7 +86,7 @@ class CalculatePriceRepository {
 ///Post Package Booking By Id Repo
 class GetPackageBookedByIdRepository {
   Future<BookPackageByMemberModel> getPackageBookedByIdRepositoryApi(
-      {required BuildContext context,
+      {
       required Map<String, dynamic> body}) async {
     var http = HttpService(
         baseURL: AppUrl.baseUrl,
@@ -102,14 +102,13 @@ class GetPackageBookedByIdRepository {
       return resp;
     } catch (e) {
       debugPrint("Get Package Booked By Id Repo Field $e");
-      // ignore: use_build_context_synchronously
       http.handleErrorResponse(error: e);
       rethrow;
     }
   }
 
   Future<BookPackageByMemberModel> confirmPackageBookingRepositoryApi(
-      {required BuildContext context,
+      {
       required Map<String, dynamic> query}) async {
     var http = HttpService(
         baseURL: AppUrl.baseUrl,
@@ -125,7 +124,7 @@ class GetPackageBookedByIdRepository {
       return resp;
     } catch (e) {
       debugPrint("Get Package Booked By Id Repo Field $e");
-      // ignore: use_build_context_synchronously
+   
       http.handleErrorResponse(error: e);
       rethrow;
     }

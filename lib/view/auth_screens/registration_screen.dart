@@ -318,6 +318,10 @@ void getStateListApi(String country) {
                       controller: controller[5],
                       hintText: 'Enter phone number',
                       fillColor: background,
+                      onCountryChanged: (country) {
+                        countryCode = country.fullCountryCode;
+                        debugPrint('Country code changed: $countryCode');
+                      },
                     ),
                     // CustomMobilenumber(
                     //     controller: controller[5],

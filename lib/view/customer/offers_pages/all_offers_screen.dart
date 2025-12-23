@@ -2,13 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/widgets/Custom%20Page%20Layout/common_page_layout.dart';
+import 'package:flutter_cab/widgets/Custom%20Widgets/offer_card.dart';
 import 'package:flutter_cab/widgets/custom_appbar_widget.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
 import 'package:flutter_cab/view_model/offer_view_model.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -140,201 +139,33 @@ class _AlloffersScreenState extends State<AlloffersScreen>
                                     itemCount:
                                         viewModel.offerListModel?.data?.length,
                                     itemBuilder: (context, index) {
-                                      var data = viewModel
+                                      var offer = viewModel
                                           .offerListModel?.data?[index];
-                                      return Container(
-                                        margin:
-                                            const EdgeInsets.only(bottom: 10),
-                                        padding: const EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                            color: Colors.white),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            // Text(
-                                            //   data?.offerName ?? '',
-                                            //   style: titleTextStyle,
-                                            // ),
-                                            // const SizedBox(height: 10),
-                                            Container(
-                                              width: double.infinity,
-                                              height: 200,
-                                              decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      color: naturalGreyColor
-                                                          .withOpacity(0.3)),
-                                                  borderRadius:
-                                                      BorderRadius.circular(5)),
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                                child: Image.network(
-                                                  data?.imageUrl ??
-                                                      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS23qSvFQm2bH4nUAwxBk7ZzBQm5Qi__4imxg&s',
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(height: 10),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 5),
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.red[100],
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20),
-                                                  ),
-                                                  child: Text(
-                                                    data?.offerType ==
-                                                            'PACKAGE_BOOKING'
-                                                        ? "PACKAGE OFFER"
-                                                        : "RENTAL OFFER",
-                                                    style: textTitleHeading,
-                                                  ),
-                                                ),
-                                                Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 5,
-                                                      horizontal: 15),
-                                                  decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                          color: Colors.black
-                                                              .withOpacity(
-                                                                  0.5)),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20)),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      isCopied &&
-                                                              selectIndex ==
-                                                                  index
-                                                          ? const Text(
-                                                              'Copied',
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .green),
-                                                            )
-                                                          : Text(
-                                                              data?.offerCode ??
-                                                                  '',
-                                                              style:
-                                                                  titleTextStyle,
-                                                            ),
-                                                      const SizedBox(width: 20),
-                                                      GestureDetector(
-                                                        onTap: () {
-                                                          setState(() {
-                                                            selectIndex = index;
-                                                          });
-                                                          copyToClipboard(
-                                                              data?.offerCode ??
-                                                                  '');
-                                                        },
-                                                        child: Row(
-                                                          children: [
-                                                            isCopied &&
-                                                                    selectIndex ==
-                                                                        index
-                                                                ? const Icon(
-                                                                    Icons.check,
-                                                                    color: Colors
-                                                                        .green,
-                                                                  )
-                                                                : const Icon(
-                                                                    Icons.copy)
-                                                          ],
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 5),
-                                            Text(
-                                              '${data?.offerName}',
-                                              style: textTitleHeading,
-                                            ),
-                                            Text(
-                                              'Save up to AED ${data?.maxDiscountAmount?.toInt()}',
-                                              style: titleTextStyle1,
-                                            ),
-                                            Text(
-                                              'Min booking AED ${data?.minimumBookingAmount?.toInt()}',
-                                              style: titleTextStyle1,
-                                            ),
-                                            // const SizedBox(height: 10),
-
-                                            const SizedBox(height: 10),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Container(
-                                                  height: 40,
-                                                  padding:
-                                                      const EdgeInsets.all(10),
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.black,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5)),
-                                                  child: Text(
-                                                    'Expire on : ${data?.endDate}',
-                                                    style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                ),
-                                                CustomButtonSmall(
-                                                    height: 40,
-                                                    width: 120,
-                                                    loading: 
-                                                        selectIndex == index,
-                                                    btnHeading: 'View Details',
-                                                    onTap: () {
-                                                      setState(() {
-                                                        selectIndex = index;
-                                                      });
-                                                      context.push(
-                                                          '/offerDetails',
-                                                          extra: {
-                                                            "offerId": data
-                                                                    ?.offerId
-                                                                    .toString() ??
-                                                                ''
-                                                          });
-                                                      setState(() {
-                                                        selectIndex = null;
-                                                      });
-                                                    })
-                                              ],
-                                            ),
-                                            const SizedBox(height: 10),
-                                          ],
-                                        ),
+                                      return OfferCard(
+                                        imageUrl: offer?.imageUrl ?? '',
+                                        title: offer?.offerName ?? '',
+                                        minimumBookingAmount: offer
+                                                ?.minimumBookingAmount
+                                                .toString() ??
+                                            "",
+                                        discountPercentage: offer
+                                                ?.discountPercentage
+                                                ?.toInt()
+                                                .toString() ??
+                                            '0',
+                                        maxDiscountAmount: offer
+                                                ?.maxDiscountAmount
+                                                .toString() ??
+                                            "",
+                                        code: offer?.offerCode ?? '',
+                                        description: offer?.description ?? '',
+                                        endDate: offer?.endDate ?? '',
+                                        termsAndConditions:
+                                            offer?.termsAndConditions ?? '',
+                                        maxCurrency: offer?.maxCurrency ?? '',
+                                        minCurrency: offer?.minCurrency ?? '',
                                       );
+                                     
                                     })
                                 : Center(
                                     child: Text(

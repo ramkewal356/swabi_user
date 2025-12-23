@@ -8,9 +8,8 @@ import 'package:flutter_cab/data/models/get_package_details_by_id_model.dart';
 import 'package:flutter_cab/data/models/package_models.dart';
 import 'package:flutter_cab/data/repositories/package_repository.dart';
 import 'package:flutter_cab/core/utils/utils.dart';
-import 'package:flutter_cab/view_model/notification_view_model.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+
 
 // Get Package List View Model
 class GetPackageListViewModel with ChangeNotifier {
@@ -117,12 +116,12 @@ class GetPackageBookingByIdViewModel with ChangeNotifier {
   }
 
   Future<BookPackageByMemberModel?> fetchGetPackageBookingByIdViewModelApi(
-      BuildContext context, data, String urId) async {
+    Map<String, dynamic> data,
+  ) async {
     try {
       setDataList(ApiResponse.loading());
 
-      var rsep = await _myRepo.getPackageBookedByIdRepositoryApi(
-          context: context, body: data);
+      var rsep = await _myRepo.getPackageBookedByIdRepositoryApi(body: data);
       setDataList(ApiResponse.completed(rsep));
 
       return rsep;
@@ -192,24 +191,12 @@ class ConfirmPackageBookingViewModel with ChangeNotifier {
     try {
       setDataList(ApiResponse.loading());
 
-      await _myRepo
-          .confirmPackageBookingRepositoryApi(context: context, query: query)
-          .then((onValue) {
-        if (onValue.status.httpCode == '200') {
-          setDataList(ApiResponse.completed(onValue));
-          Utils.toastSuccessMessage("Your Package Booked successfully");
-          context.pushReplacement("/package/packageHistoryManagement",
+      var resp = await _myRepo.confirmPackageBookingRepositoryApi(query: query);
+      setDataList(ApiResponse.completed(resp));
+      Utils.toastSuccessMessage("Your Package Booked successfully");
+      context.pushReplacement("/package/packageHistoryManagement",
               extra: {"userID": userId});
-
-          debugPrint('Get Package Booking By Id ViewModel Success');
-          Provider.of<NotificationViewModel>(context, listen: false)
-              .getAllNotificationList(
-                  context: context,
-                  pageNumber: 0,
-                  pageSize: 100,
-                  readStatus: 'FALSE');
-        }
-      });
+  
     } catch (e) {
       debugPrint(e.toString());
 
@@ -371,7 +358,7 @@ class AddPickUpLocationPackageViewModel with ChangeNotifier {
       BuildContext context, data) async {
     try {
       setDataList(ApiResponse.loading());
-     
+
       var resp = await _myRepo.addPickUpLocationPackageRepositoryApi(
           context: context, query: data);
       setDataList(ApiResponse.completed(resp));
