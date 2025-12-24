@@ -400,12 +400,11 @@ final GoRouter myRouter = GoRouter(
             parentNavigatorKey: _rootNavigatorKey,
             builder: (BuildContext context, GoRouterState state) {
               var data = state.extra as Map<String, dynamic>;
-              var logi = state.extra as Map<String, dynamic>;
-              var lati = state.extra as Map<String, dynamic>;
+            
               return CarsDetailsAvailable(
                 id: data['id'],
-                longitude: logi['logitude'],
-                latitude: lati['latitude'],
+                longitude: data['logitude'],
+                latitude: data['latitude'],
               );
             },
           ),

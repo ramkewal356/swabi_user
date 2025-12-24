@@ -103,6 +103,7 @@ class PackageContent {
   String? noOfDays;
   List<dynamic>? packageImageUrl;
   double? totalPrice;
+  String? currency;
   String? packageStatus;
   DateTime? createdDate;
   DateTime? modifiedDate;
@@ -120,6 +121,7 @@ class PackageContent {
     this.noOfDays,
     this.packageImageUrl,
     this.totalPrice,
+    this.currency,
     this.packageStatus,
     this.createdDate,
     this.modifiedDate,
@@ -140,6 +142,7 @@ class PackageContent {
             ? []
             : List<dynamic>.from(json["packageImageUrl"]!.map((x) => x)),
         totalPrice: json["totalPrice"],
+        currency: json["currency"],
         packageStatus: json["packageStatus"],
         createdDate: json["createdDate"] == null
             ? null
@@ -167,6 +170,7 @@ class PackageContent {
             ? []
             : List<dynamic>.from(packageImageUrl!.map((x) => x)),
         "totalPrice": totalPrice,
+        "currency": currency,
         "packageStatus": packageStatus,
         "createdDate": createdDate?.toIso8601String(),
         "modifiedDate": modifiedDate?.toIso8601String(),

@@ -185,7 +185,7 @@ class _PackageManagementScreenState extends State<PackageManagementScreen> {
                                   Text(
                                       'Activities : ${packageList?.packageActivities?.length}, Days : ${packageList?.noOfDays}'),
                                   Text(
-                                      "Price : AED ${packageList?.totalPrice?.toInt()}",
+                                      "Price : ${packageList?.currency} ${packageList?.totalPrice?.toInt()}",
                                       style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           color: btnColor)),

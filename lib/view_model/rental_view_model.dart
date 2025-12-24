@@ -18,44 +18,60 @@ import '../core/utils/utils.dart';
 // Rental View Model
 class RentalViewModel with ChangeNotifier {
   final _myRepo = RentalRepository();
-  bool _loading = false;
-  bool get loading => _loading;
+  // bool _loading = false;
+  // bool get loading => _loading;
   ApiResponse<RentalCarListStatusModel> dataList = ApiResponse.initial();
 
-  void setLoading(bool value) {
-    _loading = value;
-    notifyListeners();
-  }
+  // void setLoading(bool value) {
+  //   _loading = value;
+  //   notifyListeners();
+  // }
 
   void setDataList(ApiResponse<RentalCarListStatusModel> response) {
     dataList = response;
     notifyListeners();
   }
 
-  Future<void> fetchRentalViewModelApi(
-      BuildContext context, data, double lati, double logi) async {
+  Future<void> fetchRentalViewModelApi(BuildContext context,
+      Map<String, dynamic> data, double lati, double logi) async {
     String? userId = await UserViewModel().getUserId();
-    setLoading(true);
-    setDataList(ApiResponse.loading());
-    _myRepo
-        .rentalRepositoryApi(context: context, query: data)
-        .then((value) async {
-      setLoading(false);
-      setDataList(ApiResponse.completed(value));
-      // debugPrint('Rental Api Success');
-      (dataList.data?.data.body ?? []).isEmpty
-          ? Utils.toastMessage(
-              dataList.data?.data.errorMessage ?? "Something went wrong")
-          : null;
-      (dataList.data?.data.body ?? []).isNotEmpty
-          ? context.push('/rentalForm/carsDetails',
-              extra: {'id': userId, 'logitude': logi, "latitude": lati})
-          : null;
-      // (DataList.data?.data.body ?? []).isEmpty ? Utils.flushBarErrorMessage(DataList.data?.data.errorMessage ?? "Something went wrong", context, redColor) : null;
-    }).onError((error, stackTrace) {
-      setLoading(false);
+    try {
+      setDataList(ApiResponse.loading());
+      var resp =
+          await _myRepo.rentalRepositoryApi(context: context, query: data);
+      setDataList(ApiResponse.completed(resp));
+
+      if (dataList.data?.data.statusCodeValue == '200') {
+        context.push('/rentalForm/carsDetails',
+            extra: {'id': userId, 'logitude': logi, "latitude": lati});
+      } else {
+        Utils.toastMessage(
+            dataList.data?.data.errorMessage ?? "Something went wrong");
+      }
+    } catch (error) {
       setDataList(ApiResponse.error(error.toString()));
-    });
+    }
+    // // setLoading(true);
+    // setDataList(ApiResponse.loading());
+    // _myRepo
+    //     .rentalRepositoryApi(context: context, query: data)
+    //     .then((value) async {
+    //   // setLoading(false);
+    //   setDataList(ApiResponse.completed(value));
+    //   // debugPrint('Rental Api Success');
+    //   (dataList.data?.data.body ?? []).isEmpty
+    //       ? Utils.toastMessage(
+    //           dataList.data?.data.errorMessage ?? "Something went wrong")
+    //       : null;
+    //   (dataList.data?.data.body ?? []).isNotEmpty
+    //       ? context.push('/rentalForm/carsDetails',
+    //           extra: {'id': userId, 'logitude': logi, "latitude": lati})
+    //       : null;
+    //   // (DataList.data?.data.body ?? []).isEmpty ? Utils.flushBarErrorMessage(DataList.data?.data.errorMessage ?? "Something went wrong", context, redColor) : null;
+    // }).onError((error, stackTrace) {
+    //   // setLoading(false);
+    //   setDataList(ApiResponse.error(error.toString()));
+    // });
   }
 }
 
@@ -63,26 +79,21 @@ class RentalViewModel with ChangeNotifier {
 class GetRentalRangeListViewModel with ChangeNotifier {
   final _myRepo = GetRentalRangeListRepository();
   ApiResponse<GetRentalRangeListModel> getRentalRangeList =
-      ApiResponse.loading();
+      ApiResponse.initial();
 
   void setDataList(ApiResponse<GetRentalRangeListModel> response) {
     getRentalRangeList = response;
     notifyListeners();
   }
 
-  Future<void> fetchGetRentalRangeListViewModelApi(BuildContext context) async {
-    setDataList(ApiResponse.loading());
-    _myRepo
-        .getRentalRangeListRepositoryApi(context: context)
-        .then((value) async {
-      setDataList(ApiResponse.completed(value));
-    }).onError((error, stackTrace) {
-      // debugPrint(error.toString());
-      if (error.toString() == "Null check operator used on a null value") {
-        // Utils.flushBarErrorMessage("", context);
-      }
+  Future<void> fetchGetRentalRangeListViewModelApi() async {
+    try {
+      setDataList(ApiResponse.loading());
+      var resp = await _myRepo.getRentalRangeListRepositoryApi();
+      setDataList(ApiResponse.completed(resp));
+    } catch (error) {
       setDataList(ApiResponse.error(error.toString()));
-    });
+    }
   }
 }
 
@@ -246,8 +257,8 @@ class RentalBookingListViewModel with ChangeNotifier {
 
   void updateDayStatus({required String newStatus, required String bookingId}) {
     if (rentalBookingList.data != null) {
-      var booking =
-          rentalBookingList.data?.firstWhere((e) => e.id.toString() == bookingId);
+      var booking = rentalBookingList.data
+          ?.firstWhere((e) => e.id.toString() == bookingId);
       debugPrint('bookingStatus>>>>>>>>>2222 ${booking?.bookingStatus}');
       if (booking != null) {
         booking.bookingStatus = newStatus;
@@ -325,53 +336,17 @@ class RentalViewDetailViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  // Future<RentalDetailsSingleModel?> fetchRentalBookedViewDetialViewModelApi(
-  //   BuildContext context,
-  //   data,
-  // ) async {
-  //   try {
-  //     setDataList(ApiResponse.loading());
-  //     // debugPrint(bookid);
-  //     var resp = await _myRepo.rentalViewDetailsRepositoryApi(
-  //         context: context, query: data);
-  //     setDataList(ApiResponse.completed(resp));
-  //     return resp;
-  //   } catch (error) {
-  //     setDataList(ApiResponse.error(error.toString()));
-  //   }
-
-  //   return null;
-  // }
-
   Future<void> fetchRentalBookedViewDetialViewModelApi(
       BuildContext context, Map<String, dynamic> query) async {
     try {
       setDataList(ApiResponse.loading());
       debugPrint('bookingId,,,,$query');
-      var resp = await _myRepo.rentalViewDetailsRepositoryApi(
-           query: query);
+      var resp = await _myRepo.rentalViewDetailsRepositoryApi(query: query);
       setDataList(ApiResponse.completed(resp));
     } catch (e) {
       setDataList(ApiResponse.error(e.toString()));
     }
   }
-
-  // Future<void> fetchRentalCancelledViewDetialViewModelApi(
-  //     BuildContext context, data, String cancelId) async {
-  //   setDataList1(ApiResponse.loading());
-  //   _myRepo
-  //       .rentalViewDetailsRepositoryApi( query: data)
-  //       .then((value) async {
-  //     setDataList1(ApiResponse.completed(value));
-  //     context.push('/rentalForm/rentalCancelledPageView',
-  //         extra: {"cancelledId": cancelId});
-  //     // Utils.toastMessage("Rental Car View Detail Booking");
-  //   }).onError((error, stackTrace) {
-  //     debugPrint(error.toString());
-  //     // Utils.flushBarErrorMessage(error.toString(), context);
-  //     setDataList1(ApiResponse.error(error.toString()));
-  //   });
-  // }
 }
 
 ///Rental booking payment  detail view model

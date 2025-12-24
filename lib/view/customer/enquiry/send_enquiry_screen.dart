@@ -328,7 +328,7 @@ class _SendEnquiryScreenState extends State<SendEnquiryScreen> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 14),
                         child: Text(
-                          currencyText.isEmpty ? 'AED' : currencyText,
+                          currencyText.isEmpty ? '' : currencyText,
                           style: TextStyle(
                               color: greyColor1, fontWeight: FontWeight.bold),
                         ),
@@ -338,7 +338,7 @@ class _SendEnquiryScreenState extends State<SendEnquiryScreen> {
                       lable: 'Budget (in $currencyText) *',
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter budget( in AED)';
+                          return 'Please enter budget( in $currencyText)';
                         }
                         return null;
                       },

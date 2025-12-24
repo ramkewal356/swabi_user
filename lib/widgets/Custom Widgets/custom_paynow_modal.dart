@@ -6,7 +6,6 @@ import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/customdropdown_button.dart';
 import 'package:flutter_cab/widgets/Custom%20Widgets/custom_phonefield.dart';
 import 'package:flutter_cab/widgets/Custom%20Widgets/custom_textformfield.dart';
-// import 'package:flutter_cab/widgets/custom_mobile_number.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
@@ -90,7 +89,7 @@ class _CustomPaynowModalState extends State<CustomPaynowModal> {
       taxPercentage: widget.taxPercentage,
       discountAmount: widget.discountAmount,
       totalPayableAmount: widget.totalPayableAmount,
-            currency: ''
+            currency: widget.currency
     )
         .then((onValue) {
       if (onValue?.status.httpCode == '200') {
@@ -120,6 +119,7 @@ class _CustomPaynowModalState extends State<CustomPaynowModal> {
           "taxAmount": widget.taxAmount,
           "taxPercentage": widget.taxPercentage,
           "totalPayableAmount": widget.totalPayableAmount.ceil(),
+          "currency": widget.currency
         };
         Provider.of<RentalBookingViewModel>(
           context,
@@ -198,7 +198,7 @@ class _CustomPaynowModalState extends State<CustomPaynowModal> {
     bool bookingStatus =
         context.watch<ConfirmRentalBookingViewModel>().isLoading;
     bool orderStatus = context.watch<RentalBookingViewModel>().isLoading;
-
+ 
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Column(

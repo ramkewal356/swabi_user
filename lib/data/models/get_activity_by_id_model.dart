@@ -41,6 +41,7 @@ class Data {
   String? bestTimeToVisit;
   double? activityHours;
   double? activityPrice;
+  String? currency;
   String? startTime;
   String? endTime;
   String? description;
@@ -65,6 +66,7 @@ class Data {
     this.bestTimeToVisit,
     this.activityHours,
     this.activityPrice,
+    this.currency,
     this.startTime,
     this.endTime,
     this.description,
@@ -90,6 +92,7 @@ class Data {
         bestTimeToVisit: json["bestTimeToVisit"],
         activityHours: json["activityHours"],
         activityPrice: json["activityPrice"],
+        currency: json["currency"],
         startTime: json["startTime"],
         endTime: json["endTime"],
         description: json["description"],
@@ -133,6 +136,7 @@ class Data {
         "bestTimeToVisit": bestTimeToVisit,
         "activityHours": activityHours,
         "activityPrice": activityPrice,
+        "currency": currency,
         "startTime": startTime,
         "endTime": endTime,
         "description": description,
@@ -323,6 +327,7 @@ class ActivityReligiousOffDate {
         "modifiedDate": modifiedDate?.toIso8601String(),
       };
 }
+
 class AgeGroupDiscountPercent {
   double? infant;
   double? child;

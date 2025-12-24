@@ -12,8 +12,6 @@ import 'package:flutter_cab/view_model/rental_view_model.dart';
 import 'package:provider/provider.dart';
 
 class RentalForm extends StatefulWidget {
-  // final String userId;
-
   const RentalForm({
     super.key,
   });
@@ -41,38 +39,9 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
 
   List<String> items = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
   List<String> mins = ['00', '15', '30', '45'];
-  List<String> hours = [
-    "00",
-    "01",
-    "02",
-    "03",
-    "04",
-    "05",
-    "06",
-    "07",
-    "08",
-    "09",
-    "10",
-    "11",
-    "12",
-    "13",
-    "14",
-    "15",
-    "16",
-    "17",
-    "18",
-    "19",
-    "20",
-    "21",
-    "22",
-    "23",
-  ];
-  String apiKey = 'AIzaSyADRdiTbSYUR8oc6-ryM1F1NDNjkHDr0Yo';
   String sourceLocation = "Source Location";
   String? logitude1;
   String? latitude1;
-  // double logitude1 = 0.0;
-  // double latitude1 = 0.0;
   double logi = 0.0;
   double lati = 0.0;
   String country = 'United Arab Emirates';
@@ -81,8 +50,7 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<GetRentalRangeListViewModel>(context, listen: false)
-          .fetchGetRentalRangeListViewModelApi(context);
+      getRentalRengeList();
       rentalController.addListener(_onRentalControllerChanged);
       pickupdateController.addListener(_onRentalControllerChanged);
       seatController.addListener(_onRentalControllerChanged);
@@ -91,6 +59,12 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
       getCountry();
       getStateListApi(_countryController.text);
     });
+  }
+
+  void getRentalRengeList() {
+    context
+        .read<GetRentalRangeListViewModel>()
+        .fetchGetRentalRangeListViewModelApi();
   }
 
   void _unfocusLocationField() {
@@ -130,6 +104,23 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
     setState(() {});
   }
 
+  void _searchRide() {
+    context.read<RentalViewModel>().fetchRentalViewModelApi(
+        context,
+        {
+          "date": pickupdateController.text,
+          "pickupTime": '$selectHour:$selectMin',
+          "seat": seatController.text,
+          "hours": rentalController.text.split(' ')[0],
+          "kilometers": rentalController.text.split(' ')[2],
+          "pickUpLocation": pickuplocationController.text,
+          "latitude": lati.toString(),
+          "longitude": logi.toString(),
+        },
+        logi,
+        lati);
+  }
+
   bool onTap = false;
   String? selectValue;
   String? vehicle;
@@ -149,7 +140,6 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
         context.watch<ThirdPartyViewModel>().getCountryListResponse.data;
     var stateList = context.watch<ThirdPartyViewModel>().stateList.data;
     String status = context.watch<RentalViewModel>().dataList.status.toString();
-    // var state = context.watch<ThirdPartyViewModel>().stateList.data;
 
     return SingleChildScrollView(
       child: Form(
@@ -157,17 +147,8 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // const SizedBox(height: 10),
-            // const CommonOfferContainer(
-            //   bookingType: 'RENTAL_BOOKING',
-            // ),
             const SizedBox(height: 10),
-            Padding(
-                padding: const EdgeInsets.only(bottom: 5, left: 10, right: 10),
-                child: Text.rich(TextSpan(children: [
-                  TextSpan(text: 'Country', style: titleTextStyle),
-                  const TextSpan(text: ' *', style: TextStyle(color: redColor))
-                ]))),
+            lableText('Country'),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: CustomDropdownButton(
@@ -192,13 +173,7 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
 
             const SizedBox(height: 10),
 
-            Padding(
-                padding: const EdgeInsets.only(bottom: 5, left: 10, right: 10),
-                child: Text.rich(TextSpan(children: [
-                  TextSpan(text: 'State', style: titleTextStyle),
-                  const TextSpan(text: ' *', style: TextStyle(color: redColor))
-                ]))),
-
+            lableText('State'),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: CustomDropdownButton(
@@ -208,7 +183,6 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
                 itemsList:
                     stateList?.map((stateName) => stateName).toList() ?? [],
 
-                // itemsList: [],
                 onChanged: (value) {
                   setState(() {
                     stateController.text = value ?? '';
@@ -226,15 +200,8 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
               ),
             ),
             const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Text.rich(TextSpan(children: [
-                TextSpan(text: 'Pickup Location', style: titleTextStyle),
-                const TextSpan(text: ' *', style: TextStyle(color: redColor))
-              ])),
-              // child: Text("Pickup Location", style: titleTextStyle),
-            ),
-            const SizedBox(height: 5),
+
+            lableText('Pickup Location'),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: CustomSearchLocation(
@@ -283,18 +250,8 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
                   }),
             ),
             const SizedBox(height: 10),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: Text.rich(TextSpan(children: [
-                  TextSpan(text: 'Pickup Time', style: titleTextStyle),
-                  const TextSpan(text: ' *', style: TextStyle(color: redColor))
-                ])),
-              ),
-            ),
-            const SizedBox(height: 5),
 
+            lableText('Pickup Time'),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -306,7 +263,8 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
                       // selecteValue: selectHour,
 
                       controller: hoursController,
-                      itemsList: hours,
+                      itemsList: List.generate(
+                          24, (index) => index.toString().padLeft(2, '0')),
                       onChanged: (p0) {
                         setState(() {
                           selectHour = p0 ?? '';
@@ -353,20 +311,9 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
                 )
               ],
             ),
-            // TimePickerDropdown(
-            //   hrcontroller: controllers[2],
-            //   mincontroller: controllers[3],
-            // ),
+
             const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Text.rich(TextSpan(children: [
-                TextSpan(text: 'Select seats', style: titleTextStyle),
-                const TextSpan(text: ' *', style: TextStyle(color: redColor))
-              ])),
-              // child: Text("Pickup Location", style: titleTextStyle),
-            ),
-            const SizedBox(height: 5),
+            lableText('Select seats'),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: CustomDropdownButton(
@@ -389,15 +336,9 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
               ),
             ),
             const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Text.rich(TextSpan(children: [
-                TextSpan(text: 'Select Rental Package', style: titleTextStyle),
-                const TextSpan(text: ' *', style: TextStyle(color: redColor))
-              ])),
-              // child: Text("Pickup Location", style: titleTextStyle),
-            ),
-            const SizedBox(height: 5),
+
+            lableText('Select Rental Package'),
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: CustomDropdownButton(
@@ -435,23 +376,8 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
                 onTap: () {
                   if (_formKey.currentState!.validate()) {
                     onTap = true;
-                    // print(pickupTime);
-                    Provider.of<RentalViewModel>(context, listen: false)
-                        .fetchRentalViewModelApi(
-                            context,
-                            {
-                              "date": pickupdateController.text,
-                              "pickupTime": '$selectHour:$selectMin',
-                              "seat": seatController.text,
-                              "hours": rentalController.text.split(' ')[0],
-                              "kilometers": rentalController.text.split(' ')[2],
-                              "pickUpLocation": pickuplocationController.text,
-                              "latitude": lati.toString(),
-                              "longitude": logi.toString(),
-                            },
-                            // widget.userId,
-                            logi,
-                            lati);
+                   
+                    _searchRide();
                     debugPrint("${status}Status Hai Ye");
                   }
                 },
@@ -460,6 +386,16 @@ class _RentalFormState extends State<RentalForm> with RouteAware {
           ],
         ),
       ),
+    );
+  }
+
+  Widget lableText(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 5.0, left: 10, right: 10),
+      child: Text.rich(TextSpan(children: [
+        TextSpan(text: title, style: titleTextStyle),
+        const TextSpan(text: ' *', style: TextStyle(color: redColor))
+      ])),
     );
   }
 }

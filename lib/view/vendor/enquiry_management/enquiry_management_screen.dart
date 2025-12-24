@@ -215,7 +215,7 @@ class _EnquiryManagementScreenState extends State<EnquiryManagementScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                    "Budget : AED ${enquiryData?.budget ?? 'NA'}",
+                                    "Budget : ${enquiryData?.currency} ${enquiryData?.budget ?? 'NA'}",
                                     style: const TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w500)),

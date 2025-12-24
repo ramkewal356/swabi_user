@@ -119,7 +119,8 @@ class _ViewActivityScreenState extends State<ViewActivityScreen> {
                                     title: "State", value: "${data?.state}"),
                                 InfoRow(
                                     title: "Price",
-                                    value: "AED ${data?.activityPrice}"),
+                                    value:
+                                        "${data?.currency} ${data?.activityPrice}"),
                                 InfoRow(
                                     title: "Category",
                                     value: "${data?.activityCategory}"),

@@ -124,8 +124,6 @@ class _MyTransactionState extends State<MyTransaction>
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('userId....${widget.userId}');
-
     return Customtabbar(
         titleHeading: 'My Transactions',
         controller: _tabController,
@@ -194,7 +192,7 @@ class _MyTransactionState extends State<MyTransaction>
                                         style: titleTextStyle,
                                       ),
                                       Text(
-                                        'AED ${data.amountPaid.toString()}',
+                                        '${data.currency} ${data.amountPaid.toString()}',
                                         style: titleTextStyle,
                                       )
                                     ],

@@ -261,6 +261,10 @@ class _PackageDetailsState extends State<PackageDetails> {
                                         true
                                     ? 'Active'
                                     : "Inactive",
+                                currency: packageActivityList[index]
+                                        .activity
+                                        ?.currency ??
+                                    '',
                               );
                             },
                           )

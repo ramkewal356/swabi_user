@@ -111,6 +111,7 @@ class ActivityContent {
   String? bestTimeToVisit;
   double? activityHours;
   double? activityPrice;
+  String? currency;
   String? startTime;
   String? endTime;
   String? description;
@@ -126,7 +127,6 @@ class ActivityContent {
   String? activityCategory;
 
   ActivityContent({
-
     this.activityId,
     this.packageActivityId,
     this.country,
@@ -137,6 +137,7 @@ class ActivityContent {
     this.bestTimeToVisit,
     this.activityHours,
     this.activityPrice,
+    this.currency,
     this.startTime,
     this.endTime,
     this.description,
@@ -164,6 +165,7 @@ class ActivityContent {
         bestTimeToVisit: json["bestTimeToVisit"],
         activityHours: json["activityHours"],
         activityPrice: json["activityPrice"],
+        currency: json["currency"],
         startTime: json["startTime"],
         endTime: json["endTime"],
         description: json["description"],
@@ -209,6 +211,7 @@ class ActivityContent {
         "bestTimeToVisit": bestTimeToVisit,
         "activityHours": activityHours,
         "activityPrice": activityPrice,
+        "currency": currency,
         "startTime": startTime,
         "endTime": endTime,
         "description": description,
@@ -401,8 +404,6 @@ class ActivityReligiousOffDate {
       };
 }
 
-
-
 class AgeGroupDiscountPercent {
   double? infant;
   double? senior;
@@ -427,8 +428,6 @@ class AgeGroupDiscountPercent {
         "CHILD": child,
       };
 }
-
-
 
 enum ParticipantType { ADULT, CHILD, INFANT, SENIOR }
 

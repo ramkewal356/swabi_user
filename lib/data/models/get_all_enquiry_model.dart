@@ -104,6 +104,7 @@ class EnquiryContent {
   String? meals;
   String? transportation;
   String? budget;
+  String? currency;
   String? specialRequests;
   String? travelDates;
   String? tentativeDays;
@@ -121,6 +122,7 @@ class EnquiryContent {
     this.meals,
     this.transportation,
     this.budget,
+    this.currency,
     this.specialRequests,
     this.travelDates,
     this.tentativeDays,
@@ -141,6 +143,7 @@ class EnquiryContent {
         meals: json["meals"],
         transportation: json["transportation"],
         budget: json["budget"],
+        currency: json["currency"],
         specialRequests: json["specialRequests"],
         travelDates: json["travelDates"],
         tentativeDays: json["tentativeDays"],
@@ -161,6 +164,7 @@ class EnquiryContent {
         "meals": meals,
         "transportation": transportation,
         "budget": budget,
+        "currency": currency,
         "specialRequests": specialRequests,
         "travelDates": travelDates,
         "tentativeDays": tentativeDays,
@@ -169,10 +173,6 @@ class EnquiryContent {
         "bidPlacedByVendor": bidPlacedByVendor,
       };
 }
-
-
-
-
 
 class User {
   int? userId;

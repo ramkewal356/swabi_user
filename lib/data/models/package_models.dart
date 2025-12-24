@@ -2380,6 +2380,7 @@ class PackageHIstoryDetailsActivity {
   String bestTimeToVisit;
   String activityHours;
   String activityPrice;
+  String currency;
   String startTime;
   String endTime;
   String description;
@@ -2401,6 +2402,7 @@ class PackageHIstoryDetailsActivity {
       required this.bestTimeToVisit,
       required this.activityHours,
       required this.activityPrice,
+      required this.currency,
       required this.startTime,
       required this.endTime,
       required this.description,
@@ -2424,6 +2426,7 @@ class PackageHIstoryDetailsActivity {
           bestTimeToVisit: json["bestTimeToVisit"] ?? "",
           activityHours: json["activityHours"].toString(),
           activityPrice: json["activityPrice"].toString(),
+          currency: json["currency"].toString(),
           startTime: json["startTime"] ?? "",
           endTime: json["endTime"] ?? "",
           description: json["description"] ?? "",
@@ -2452,6 +2455,7 @@ class PackageHIstoryDetailsActivity {
         "bestTimeToVisit": bestTimeToVisit,
         "activityHours": activityHours,
         "activityPrice": activityPrice,
+        "currency": currency,
         "startTime": startTime,
         "endTime": endTime,
         "description": description,
@@ -3280,6 +3284,7 @@ class GetPackageItineraryActivity {
   String bestTimeToVisit;
   String activityHours;
   String activityPrice;
+  String currency;
   String startTime;
   String endTime;
   String description;
@@ -3301,6 +3306,7 @@ class GetPackageItineraryActivity {
       required this.bestTimeToVisit,
       required this.activityHours,
       required this.activityPrice,
+      required this.currency,
       required this.startTime,
       required this.endTime,
       required this.description,
@@ -3324,6 +3330,7 @@ class GetPackageItineraryActivity {
           bestTimeToVisit: json["bestTimeToVisit"] ?? "",
           activityHours: json["activityHours"].toString(),
           activityPrice: json["activityPrice"].toString(),
+          currency: json["currency"].toString(),
           startTime: json["startTime"] ?? "",
           endTime: json["endTime"] ?? "",
           description: json["description"] ?? "",
@@ -3348,6 +3355,7 @@ class GetPackageItineraryActivity {
         "bestTimeToVisit": bestTimeToVisit,
         "activityHours": activityHours,
         "activityPrice": activityPrice,
+        "currency": currency,
         "startTime": startTime,
         "endTime": endTime,
         "description": description,

@@ -736,6 +736,7 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                           activityOfferDate:
                               packageActivityList.activity.startTime,
                           activityStatus: packageActivityList.dayStatus,
+                          currency: packageActivityList.activity.currency,
                           visible: false,
                         );
                       },
@@ -800,6 +801,8 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                           address: packageActivityList?.activity.address ?? "",
                           activityOfferDate: packageActivityList?.startTime,
                           activityStatus: '',
+                          currency:
+                              packageActivityList?.activity.currency ?? '',
                           visible: false,
                         );
                       },

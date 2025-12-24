@@ -107,7 +107,7 @@ class Content {
   String? transactionStatus;
   int? userId;
   double? amountPaid;
-
+  String? currency;
   Content({
     this.transactionId,
     this.paymentId,
@@ -121,6 +121,7 @@ class Content {
     this.transactionStatus,
     this.userId,
     this.amountPaid,
+      this.currency
   });
 
   factory Content.fromJson(Map<String, dynamic> json) => Content(
@@ -136,6 +137,7 @@ class Content {
         transactionStatus: json["transactionStatus"],
         userId: json["userId"],
         amountPaid: json["amountPaid"],
+      currency: json["currency"]
       );
 
   Map<String, dynamic> toJson() => {
@@ -151,6 +153,7 @@ class Content {
         "transactionStatus": transactionStatus,
         "userId": userId,
         "amountPaid": amountPaid,
+        "currency": currency
       };
 }
 

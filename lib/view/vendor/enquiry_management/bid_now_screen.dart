@@ -105,7 +105,7 @@ class _BidNowScreenState extends State<BidNowScreen> {
                           'Transportation : ${widget.enquiryData?.transportation ?? widget.bidData?.travelInquiry?.transportation ?? 'N/A'}'),
                       const SizedBox(height: 8),
                       travelItem(Icons.attach_money,
-                          'Budget : AED ${widget.enquiryData?.budget ?? widget.bidData?.travelInquiry?.budget ?? 'N/A'}'),
+                          'Budget : ${widget.enquiryData?.currency} ${widget.enquiryData?.budget ?? widget.bidData?.travelInquiry?.budget ?? 'N/A'}'),
                       const SizedBox(height: 8),
                       travelItem(Icons.card_giftcard,
                           'Special Requests : ${widget.enquiryData?.specialRequests ?? widget.bidData?.travelInquiry?.specialRequests ?? 'N/A'}'),
@@ -150,10 +150,7 @@ class _BidNowScreenState extends State<BidNowScreen> {
                                     style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold)),
-                                // Text(
-                                //     "Country: ${widget.enquiryData?.user?.country ?? 'N/A'}"),
-                                // Text(
-                                //     "State: ${widget.enquiryData?.user?.state ?? 'N/A'}"),
+                               
                                 Text(
                                     "Address: ${widget.enquiryData?.user?.address ?? widget.bidData?.travelInquiry?.user?.address ?? 'N/A'}"),
                               ],
@@ -192,7 +189,7 @@ class _BidNowScreenState extends State<BidNowScreen> {
                         Customtextformfield(
                           controller: priceController,
                           hintText: '',
-                          lable: 'Price (AED) *',
+                          lable: 'Price (${widget.bidData?.currency}) *',
                           // prefixiconvisible: true,
                           prefixIcon: const Icon(
                             Icons.monetization_on,

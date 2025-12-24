@@ -234,7 +234,7 @@ class _BidManagementScreenState extends State<BidManagementScreen> {
                             _infoRow(
                                 Icons.add_box, "Extras", bid?.extras ?? 'N/A'),
                             _infoRow(Icons.currency_exchange, "Quotation Price",
-                                "AED ${bid?.price ?? 'N/A'}"),
+                                "${bid?.currency} ${bid?.price ?? 'N/A'}"),
 
                             const SizedBox(height: 14),
 
@@ -265,125 +265,7 @@ class _BidManagementScreenState extends State<BidManagementScreen> {
                         ),
                       ),
                     );
-                    // return Card(
-                    //   color: background,
-                    //   surfaceTintColor: background,
-                    //   shape: RoundedRectangleBorder(
-                    //       borderRadius: BorderRadius.circular(12)),
-                    //   elevation: 3,
-                    //   margin: const EdgeInsets.symmetric(vertical: 6),
-                    //   child: Padding(
-                    //     padding: const EdgeInsets.all(12),
-                    //     child: Column(
-                    //       crossAxisAlignment: CrossAxisAlignment.start,
-                    //       children: [
-                    //         /// Header Row
-                    //         Row(
-                    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //           children: [
-                    //             // Expanded(
-                    //             //   child: Text(
-                    //             //     "Bid Id: ${bid?.id}",
-                    //             //     style: const TextStyle(
-                    //             //         fontWeight: FontWeight.bold,
-                    //             //         fontSize: 16),
-                    //             //   ),
-                    //             // ),
-                    //             Text(
-                    //               "Bid Id: ${bid?.id}",
-                    //             ),
-                    //             (bid?.accepted == true || bid?.rejected == true)
-                    //                 ? const SizedBox.shrink()
-                    //                 : GradientButton(
-                    //                     icon: Icons.edit,
-                    //                     onPressed: () {
-                    //                       context
-                    //                           .push(
-                    //                         '/vendor_dashboard/bidNow',
-                    //                         extra: bid,
-                    //                       )
-                    //                           .then((onValue) {
-                    //                         // Refresh the bids after creating a new bid
-                    //                         _getAllBids(
-                    //                           isFilter: true,
-                    //                           isSearch: false,
-                    //                           isPagination: false,
-                    //                         );
-                    //                       });
-                    //                     },
-                    //                     label: 'Update')
-                    //           ],
-                    //         ),
-
-                    //         // const SizedBox(height: 8),
-
-                    //         /// Details
-                    //         Text(
-                    //             'Name: ${bid?.user?.firstName ?? 'N/A'} ${bid?.user?.lastName ?? 'N/A'}'),
-                    //         Text("Email: ${bid?.user?.email ?? 'N/A'}"),
-                    //         Text(
-                    //             'Enquiry For : ${bid?.travelInquiry?.name ?? 'N/A'}'),
-                    //         Text(
-                    //             "Accommodation: ${bid?.accommodation ?? 'N/A'}"),
-                    //         Text(
-                    //             "Transportation: ${bid?.transportation ?? 'N/A'}"),
-                    //         Text("Meals: ${bid?.meals ?? 'N/A'}"),
-                    //         Text("Extras: ${bid?.extras ?? 'N/A'}"),
-                    //         Text("Quotation Price: AED ${bid?.price ?? 'N/A'}"),
-
-                    //         const SizedBox(height: 8),
-
-                    //         /// Status Row
-                    //         Row(
-                    //           children: [
-                    //             Chip(
-                    //               side: BorderSide(
-                    //                   color: bid?.paid == true
-                    //                       ? Colors.green
-                    //                       : Colors.red),
-                    //               label: Text(
-                    //                   bid?.paid == true ? 'Paid' : 'Not Paid'),
-                    //               backgroundColor: bid?.paid == true
-                    //                   ? Colors.green.shade100
-                    //                   : Colors.red.shade100,
-
-                    //               //  Colors.yellow.shade100,
-                    //               labelStyle: const TextStyle(
-                    //                   color: Colors.brown, fontSize: 12),
-                    //             ),
-                    //             const SizedBox(width: 8),
-                    //             Chip(
-                    //               side: BorderSide(
-                    //                   color: bid?.accepted == true
-                    //                       ? Colors.green
-                    //                       : bid?.rejected == true
-                    //                           ? Colors.red
-                    //                           : Colors.orange),
-                    //               label: Text(bid?.accepted == true
-                    //                   ? 'Accepted'
-                    //                   : bid?.rejected == true
-                    //                       ? 'Rejected'
-                    //                       : 'Pending'),
-                    //               backgroundColor: bid?.accepted == true
-                    //                   ? Colors.green.shade100
-                    //                   : bid?.rejected == true
-                    //                       ? Colors.red.shade100
-                    //                       : Colors.orange.shade100,
-                    //               labelStyle: TextStyle(
-                    //                 color: bid?.accepted == true
-                    //                     ? Colors.green
-                    //                     : bid?.rejected == true
-                    //                         ? Colors.red
-                    //                         : Colors.orange,
-                    //                 fontSize: 12,
-                    //               ),
-                    //             ),
-                    //           ],
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // );
+                   
                   },
                 );
               },

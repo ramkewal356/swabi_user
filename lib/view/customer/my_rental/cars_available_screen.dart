@@ -1,7 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/data/models/rental_booking_model.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/widgets/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/widgets/custom_appbar_widget.dart';
@@ -13,9 +12,9 @@ import 'package:flutter_cab/view_model/rental_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import '../../../data/response/status.dart';
 
 class CarsDetailsAvailable extends StatefulWidget {
-  // final Datum data;
   final String id;
   final double longitude;
   final double latitude;
@@ -37,62 +36,72 @@ class _CarsDetailsAvailableState extends State<CarsDetailsAvailable> {
     super.initState();
   }
 
-  bool load = false;
-  List<Body> rentalData = [];
 
-  String message = "";
-  int selectIndex = -1;
+  int? selectIndex;
   @override
   Widget build(BuildContext context) {
-    debugPrint("${widget.latitude}Latii");
-    debugPrint("${widget.longitude}Logii");
-    var status = context.watch<RentalViewModel>().dataList.status.toString();
-    if (status == "Status.completed") {
-      rentalData =
-          context.watch<RentalViewModel>().dataList.data?.data.body ?? [];
-    }
     return Scaffold(
       backgroundColor: bgGreyColor,
       appBar: const CustomAppBar(
         heading: "Cars Available",
       ),
-      body: PageLayoutPage(
-          child: ListView.builder(
-              itemCount: rentalData.length,
-              itemBuilder: (context, index) {
-                return TransContainer(
-                    carName: rentalData[index].carName,
-                    carImage: rentalData[index].carImage,
-                    pickTime: rentalData[index].pickupTime,
-                    price: rentalData[index].price,
-                    pickDate: rentalData[index].date,
-                    totalPrice: rentalData[index].totalPrice,
-                    hour: rentalData[index].hours,
-                    seats: rentalData[index].seats,
-                    kilometers: rentalData[index].kilometers,
-                    pickUpLocation: rentalData[index].pickUpLocation,
-                    loading: load && selectIndex == index,
-                    onTap: () {
-                      setState(() {
-                        load = true;
-                        selectIndex = index;
-                      });
-                      // double amount =
-                      //     double.parse(rentalData[index].totalPrice);
+      body: PageLayoutPage(child: Consumer<RentalViewModel>(
+        builder: (context, value, child) {
+          if (value.dataList.status == Status.loading) {
+            return CircularProgressIndicator(
+              color: greenColor,
+            );
+          } else if (value.dataList.status == Status.completed) {
+            var rentalData = value.dataList.data?.data.body ?? [];
+            return rentalData.isEmpty
+                ? Center(
+                    child: Text(
+                    value.dataList.data?.data.errorMessage ?? '',
+                    style: nodataTextStyle,
+                  ))
+                : ListView.builder(
+                    itemCount: rentalData.length,
+                    itemBuilder: (context, index) {
+                      return TransContainer(
+                          carName: rentalData[index].carName,
+                          carImage: rentalData[index].carImage,
+                          pickTime: rentalData[index].pickupTime,
+                          price: rentalData[index].price,
+                          pickDate: rentalData[index].date,
+                          totalPrice: rentalData[index].totalPrice,
+                          hour: rentalData[index].hours,
+                          seats: rentalData[index].seats,
+                          kilometers: rentalData[index].kilometers,
+                          currency: rentalData[index].currency,
+                          pickUpLocation: rentalData[index].pickUpLocation,
+                          loading: selectIndex == index,
+                          onTap: () {
+                            setState(() {
+                              // load = true;
+                              selectIndex = index;
+                            });
+                            // double amount =
+                            //     double.parse(rentalData[index].totalPrice);
 
-                      context.push('/rentalForm/bookYourCab', extra: {
-                        "carType": rentalData[index].carName,
-                        "userId": widget.id.toString(),
-                        "bookdate": rentalData[index].date,
-                        "totalAmt": rentalData[index].totalPrice,
-                        "longitude": rentalData[index].longitude,
-                        "latitude": rentalData[index].latitude
-                      });
-                      setState(() {
-                        load = false;
-                      });
+                            context.push('/rentalForm/bookYourCab', extra: {
+                              "carType": rentalData[index].carName,
+                              "userId": widget.id.toString(),
+                              "bookdate": rentalData[index].date,
+                              "totalAmt": rentalData[index].totalPrice,
+                              "longitude": rentalData[index].longitude,
+                              "latitude": rentalData[index].latitude
+                            });
+                            setState(() {
+                              // load = false;
+                              selectIndex = null;
+                            });
+                          });
                     });
-              })),
+          } else {
+            return Container();
+          }
+        },
+      )),
     );
   }
 }
@@ -110,7 +119,7 @@ class TransContainer extends StatelessWidget {
   final String kilometers;
   final bool loading;
   final String pickUpLocation;
-
+  final String currency;
   final VoidCallback onTap;
 
   const TransContainer(
@@ -123,6 +132,7 @@ class TransContainer extends StatelessWidget {
       this.seats = "",
       this.price = "",
       this.totalPrice = "",
+      required this.currency,
       this.kilometers = "",
       this.pickUpLocation = "",
       required this.onTap,
@@ -296,7 +306,7 @@ class TransContainer extends StatelessWidget {
                   children: [
                     RichText(
                         text: TextSpan(children: [
-                      TextSpan(text: "AED", style: appbarTextStyle),
+                      TextSpan(text: currency, style: appbarTextStyle),
                       TextSpan(
                           text: " $totalPrice".toUpperCase(),
                           style: appbarTextStyle),

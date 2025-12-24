@@ -174,20 +174,11 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
                             "userType": "USER"
                           }).then((onValue) {
                               getRentalHistoryList(isSort: true);
-                            });
-                          // context.push('/rentalForm/rentalBookedPageView',
-                          //     extra: {
-                          //       "bookedId": data.id,
-                          //       "useriD": widget.myId,
-                          //       "paymentId": data.paymentId
-
-                          //     }).then((onValue) {
-                          //   getRentalHistoryList(isSort: true);
-                          // });
+                          });
+                         
                          
                         },
-                        // loader: data.id == index.toString() &&
-                        //     intialloadingIndex == index,
+                      
                         time: data.pickupTime ?? '',
                         bookingID: data.id.toString(),
                         // images: data.vehicle.images,
@@ -196,8 +187,8 @@ class _RentalHistoryManagmentState extends State<RentalHistoryManagment>
                         status: data.bookingStatus ?? '',
                         date: data.date ?? '',
                         chargeOrCarTpe: data.totalPayableAmount == 0
-                            ? 'AED ${data.rentalCharge}'
-                            : 'AED ${data.totalPayableAmount}',
+                            ? '${data.currency} ${data.rentalCharge}'
+                            : '${data.currency} ${data.totalPayableAmount}',
                       ),
                     );
                   },

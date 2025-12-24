@@ -265,15 +265,16 @@ class _RentalBookingDetailsScreenState
                       ),
                       InfoRow(
                         label: "Amount",
-                        value: "AED ${data?.rentalCharge}",
+                        value: "${data?.currency} ${data?.rentalCharge}",
                       ),
                       InfoRow(
                         label: "Tax Amount(5%)",
-                        value: "AED ${data?.taxAmount}",
+                        value: "${data?.currency} ${data?.taxAmount}",
                       ),
                       InfoRow(
                           label: "Total Amount",
-                          value: "AED ${data?.totalPayableAmount}",
+                          value:
+                              "${data?.currency} ${data?.totalPayableAmount}",
                           isHighlight: true),
                     ],
                   ),
@@ -283,7 +284,8 @@ class _RentalBookingDetailsScreenState
                       children: [
                         InfoRow(
                             label: "Refund Amount",
-                            value: "AED ${refundData.refundedAmount}"),
+                            value:
+                                "${refundData.currency} ${refundData.refundedAmount}"),
                         InfoRow(
                           label: "Refund Status",
                           value: "${refundData.refundStatus?.toUpperCase()}",

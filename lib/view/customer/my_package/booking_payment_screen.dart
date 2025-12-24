@@ -215,6 +215,7 @@ class _BookingPaymentScreenState extends State<BookingPaymentScreen> {
         backgroundColor: bgGreyColor,
         appBar: AppBar(
           title: Text('Payment screen'),
+          backgroundColor: background,
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -325,19 +326,23 @@ class _BookingPaymentScreenState extends State<BookingPaymentScreen> {
                 itemCount: offerList.length,
                 itemBuilder: (context, index) {
                   var offer = offerList[index];
-                  return OfferCard(
-                    imageUrl: offer.imageUrl ?? '',
-                    title: offer.offerName ?? '',
-                    minimumBookingAmount: offer.minimumBookingAmount.toString(),
-                    discountPercentage:
-                        offer.discountPercentage?.toInt().toString() ?? '0',
-                    maxDiscountAmount: offer.maxDiscountAmount.toString(),
-                    code: offer.offerCode ?? '',
-                    description: offer.description ?? '',
-                    endDate: offer.endDate ?? '',
-                    termsAndConditions: offer.termsAndConditions ?? '',
-                    maxCurrency: offer.maxCurrency ?? '',
-                    minCurrency: offer.minCurrency ?? '',
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: OfferCard(
+                      imageUrl: offer.imageUrl ?? '',
+                      title: offer.offerName ?? '',
+                      minimumBookingAmount:
+                          offer.minimumBookingAmount.toString(),
+                      discountPercentage:
+                          offer.discountPercentage?.toInt().toString() ?? '0',
+                      maxDiscountAmount: offer.maxDiscountAmount.toString(),
+                      code: offer.offerCode ?? '',
+                      description: offer.description ?? '',
+                      endDate: offer.endDate ?? '',
+                      termsAndConditions: offer.termsAndConditions ?? '',
+                      maxCurrency: offer.maxCurrency ?? '',
+                      minCurrency: offer.minCurrency ?? '',
+                    ),
                   );
                 },
               ),

@@ -228,9 +228,7 @@ class RentalValidationRepository {
 class GetRentalRangeListRepository {
   // final BaseApiServices _apiServices = NetworkApiService();
 
-  Future<dynamic> getRentalRangeListRepositoryApi({
-    required BuildContext context,
-  }) async {
+  Future<GetRentalRangeListModel> getRentalRangeListRepositoryApi() async {
     var http = HttpService(
       baseURL: AppUrl.baseUrl,
       endURL: AppUrl.getRentalmatricsListUrl,
@@ -245,7 +243,6 @@ class GetRentalRangeListRepository {
       var resp = GetRentalRangeListModel.fromJson(response?.data);
       return resp;
     } catch (e) {
-      // ignore: use_build_context_synchronously
       http.handleErrorResponse(error: e);
       debugPrint('get rental Matrics List Repo Field $e');
       rethrow;

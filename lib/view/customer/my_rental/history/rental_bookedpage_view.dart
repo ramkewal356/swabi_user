@@ -142,7 +142,7 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                   .watch<GetPaymentRefundViewModel>()
                   .getPaymentRefund
                   .data;
-              debugPrint('paymentdewatil.......${paymentDetails?.amount}');
+             
               return ListView(
                 children: [
                   RentalBookingContainer(
@@ -196,6 +196,7 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                               '${fulldata?.taxAmount.toStringAsFixed(1) ?? 0.0}',
                           discountAmount: fulldata?.discountAmount ?? '',
                           rentalAmount: fulldata?.rentalCharge ?? '',
+                          currency: fulldata?.currency ?? '',
                           paymentTime: formattedTime)
                       : Container(),
                   paymentRefund?.data != null &&
@@ -206,6 +207,7 @@ class _RentalBookedPageViewState extends State<RentalBookedPageView> {
                               paymentRefund?.data?.refundedAmount.toString() ??
                                   '',
                           refundStatus: paymentRefund?.data?.refundStatus ?? '',
+                          refundCurrency: paymentRefund?.data?.currency ?? '',
                           // refundDate: paymentRefund?.data?.createdAt ?? 0
                         )
                       : Container(),
@@ -555,10 +557,7 @@ class _RentalBookingContainerState extends State<RentalBookingContainer> {
                       value: widget.vehicleType.isEmpty
                           ? widget.carType
                           : widget.vehicleType),
-                  // const SizedBox(height: 5),
-                  // bookingItem(
-                  //     lable: 'Booking Price',
-                  //     value: 'AED ${widget.bookingPrice}'),
+                 
                   widget.status != 'CANCELLED'
                       ? const SizedBox()
                       : const SizedBox(height: 5),

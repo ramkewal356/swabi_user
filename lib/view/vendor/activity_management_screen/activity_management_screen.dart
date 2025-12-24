@@ -187,7 +187,7 @@ class _ActivityManagementScreenState extends State<ActivityManagementScreen> {
                                   Text(
                                       "Time : ${activityList?.startTime} - ${activityList?.endTime}"),
                                   Text(
-                                      "Price : AED ${activityList?.activityPrice?.toInt()}",
+                                      "Price : ${activityList?.currency} ${activityList?.activityPrice?.toInt()}",
                                       style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           color: btnColor)),

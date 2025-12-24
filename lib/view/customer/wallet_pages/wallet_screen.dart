@@ -58,7 +58,7 @@ class _WalletScreenState extends State<WalletScreen> {
                         style: titleTextStyle,
                       ),
                       Text(
-                        'AED 00',
+                        '00',
                         style: titleTextStyle,
                       )
                     ],
@@ -107,22 +107,7 @@ class _WalletScreenState extends State<WalletScreen> {
                             return null;
                           },
                         ),
-                        // TextField(
-                        //   controller: amountcontroller,
-                        //   decoration: const InputDecoration(
-                        //       contentPadding: EdgeInsets.symmetric(
-                        //           vertical: 6, horizontal: 10),
-                        //       border: OutlineInputBorder(),
-                        //       hintText: 'Enter Amount'),
-                        //   keyboardType: TextInputType.number,
-                        //   onChanged: (value) {
-                        //     setState(() {
-                        //       result = value;
-
-                        //       debugPrint('object$result');
-                        //     });
-                        //   },
-                        // ),
+                       
                         const SizedBox(
                           height: 20,
                         ),

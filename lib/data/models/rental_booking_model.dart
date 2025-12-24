@@ -72,41 +72,39 @@ class Body {
   String longitude;
   String currency;
 
-  Body({
-    required this.date,
-    required this.carName,
-    required this.vendorId,
-    required this.pickupTime,
-    required this.hours,
-    required this.carType,
-    required this.totalPrice,
-    required this.price,
-    required this.carImage,
-    required this.latitude,
-    required this.kilometers,
-    required this.pickUpLocation,
-    required this.seats,
-    required this.longitude,
-      required this.currency
-  });
+  Body(
+      {required this.date,
+      required this.carName,
+      required this.vendorId,
+      required this.pickupTime,
+      required this.hours,
+      required this.carType,
+      required this.totalPrice,
+      required this.price,
+      required this.carImage,
+      required this.latitude,
+      required this.kilometers,
+      required this.pickUpLocation,
+      required this.seats,
+      required this.longitude,
+      required this.currency});
 
   factory Body.fromJson(Map<String, dynamic> json) => Body(
-        date: json["date"] ?? "",
-        pickupTime: json["pickupTime"],
-        carName: json["carName"] ?? '',
-        vendorId: json["vendorId"].toString(),
-        hours: json["hours"].toString(),
-        carType: json["carType"] ?? "",
-        carImage: json["carImage"] ?? "",
-        totalPrice: json["totalPrice"].toString(),
-        price: json["price"].toString(),
-        latitude: json["latitude"] ?? "",
-        kilometers: json["kilometers"].toString(),
-        pickUpLocation: json["pickUpLocation"] ?? "",
-        seats: json["seats"].toString(),
-        longitude: json["longitude"].toString(),
-      currency: json["currency"].toString()
-      );
+      date: json["date"] ?? "",
+      pickupTime: json["pickupTime"],
+      carName: json["carName"] ?? '',
+      vendorId: json["vendorId"].toString(),
+      hours: json["hours"].toString(),
+      carType: json["carType"] ?? "",
+      carImage: json["carImage"] ?? "",
+      totalPrice: json["totalPrice"].toString(),
+      price: json["price"].toString(),
+      latitude: json["latitude"] ?? "",
+      kilometers: json["kilometers"].toString(),
+      pickUpLocation: json["pickUpLocation"] ?? "",
+      seats: json["seats"].toString(),
+      longitude: json["longitude"].toString(),
+      currency: json["currency"].toString());
 
   Map<String, dynamic> toJson() => {
         "date": date,
@@ -1072,6 +1070,7 @@ class RentalDetailsSingleData {
   double taxAmount;
   String taxPercentage;
   String totalPayableAmount;
+  String currency;
   String vendorId;
   RentalDetailsSingleData(
       {required this.id,
@@ -1108,6 +1107,7 @@ class RentalDetailsSingleData {
       required this.taxAmount,
       required this.taxPercentage,
       required this.totalPayableAmount,
+      required this.currency,
       required this.vendorId});
 
   factory RentalDetailsSingleData.fromJson(Map<String, dynamic> json) =>
@@ -1146,6 +1146,7 @@ class RentalDetailsSingleData {
         taxAmount: json["taxAmount"] ?? 0.0,
         taxPercentage: json["taxPercentage"]?.toString() ?? '',
         totalPayableAmount: json["totalPayableAmount"]?.toString() ?? '',
+        currency: json["currency"]?.toString() ?? '',
         vendorId: json["vendorId"]?.toString() ?? '',
       );
 
@@ -1184,6 +1185,7 @@ class RentalDetailsSingleData {
         "taxAmount": taxAmount,
         "taxPercentage": taxPercentage,
         "totalPayableAmount": totalPayableAmount,
+        "currency": currency,
         "vendorId": vendorId
       };
 }

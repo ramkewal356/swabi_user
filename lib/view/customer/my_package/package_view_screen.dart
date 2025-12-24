@@ -54,6 +54,7 @@ class _PackageViewScreenState extends State<PackageViewScreen> {
       backgroundColor: bgGreyColor,
       appBar: AppBar(
         title: Text('Package View'),
+        backgroundColor: background,
       ),
       body: Consumer<GetPackageActivityByIdViewModel>(
         builder: (context, value, child) {

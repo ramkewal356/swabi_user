@@ -75,6 +75,7 @@ class GetAllBidModel {
 class BidContent {
   int? id;
   String? price;
+  String? currency;
   String? accommodation;
   String? meals;
   String? itinerary;
@@ -97,6 +98,7 @@ class BidContent {
   BidContent({
     this.id,
     this.price,
+    this.currency,
     this.accommodation,
     this.meals,
     this.itinerary,
@@ -120,6 +122,7 @@ class BidContent {
   factory BidContent.fromJson(Map<String, dynamic> json) => BidContent(
         id: json["id"],
         price: json["price"],
+        currency: json["currency"],
         accommodation: json["accommodation"],
         meals: json["meals"],
         itinerary: json["itinerary"],
@@ -145,6 +148,7 @@ class BidContent {
   Map<String, dynamic> toJson() => {
         "id": id,
         "price": price,
+        "currency": currency,
         "accommodation": accommodation,
         "meals": meals,
         "itinerary": itinerary,
@@ -346,7 +350,6 @@ class User {
       };
 }
 
-
 class Pageable {
   Sort? sort;
   int? offset;
@@ -406,4 +409,3 @@ class Sort {
         "unsorted": unsorted,
       };
 }
-

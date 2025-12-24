@@ -28,6 +28,7 @@ class ActivityContainer extends StatefulWidget {
   final double? seniorDiscount;
   final String activityStatus;
   final String? activityOfferDate;
+  final String currency;
   final bool visible;
   const ActivityContainer(
       {required this.actyImage,
@@ -45,6 +46,7 @@ class ActivityContainer extends StatefulWidget {
       this.activityPrice,
       this.discountPrice,
       this.activityDiscountPer,
+      required this.currency,
       this.infantDiscount,
       this.childDiscount,
       this.seniorDiscount,
@@ -273,7 +275,7 @@ class _ActivityContainerState extends State<ActivityContainer> {
                 widget.activityPrice == null
                     ? const SizedBox.shrink()
                     : Text(
-                        'AED ${widget.activityPrice?.round()}',
+                        '${widget.currency} ${widget.activityPrice?.round()}',
                         style: (widget.discountPrice == null ||
                                 widget.discountPrice == 0)
                             ? buttonText
@@ -289,7 +291,7 @@ class _ActivityContainerState extends State<ActivityContainer> {
                 (widget.discountPrice == null || widget.discountPrice == 0)
                     ? const SizedBox.shrink()
                     : Text(
-                        'AED ${widget.discountPrice?.round()}',
+                        '${widget.currency} ${widget.discountPrice?.round()}',
                         style: buttonText,
                       )
               ],

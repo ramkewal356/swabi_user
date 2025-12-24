@@ -128,6 +128,7 @@ class RentalContent {
   double? taxPercentage;
   double? discountAmount;
   double? totalPayableAmount;
+  String? currency;
   int? vendorId;
 
   RentalContent({
@@ -166,6 +167,7 @@ class RentalContent {
     this.taxPercentage,
     this.discountAmount,
     this.totalPayableAmount,
+    this.currency,
     this.vendorId,
   });
 
@@ -206,6 +208,7 @@ class RentalContent {
         taxPercentage: json["taxPercentage"],
         discountAmount: json["discountAmount"],
         totalPayableAmount: json["totalPayableAmount"],
+        currency: json["currency"],
         vendorId: json["vendorId"],
       );
 
@@ -245,6 +248,7 @@ class RentalContent {
         "taxPercentage": taxPercentage,
         "discountAmount": discountAmount,
         "totalPayableAmount": totalPayableAmount,
+        "currency": currency,
         "vendorId": vendorId,
       };
 }

@@ -129,7 +129,7 @@ class _BookYourCabState extends State<BookYourCab> {
               shrinkWrap: true,
               itemBuilder: (context, index) {
                 final rental = filteredData[index];
-
+               
                 return Stack(
                   children: [
                     BookingContainer(
@@ -142,6 +142,7 @@ class _BookYourCabState extends State<BookYourCab> {
                       pickTime: rental.pickupTime,
                       pickUpLocation: rental.pickUpLocation,
                       // price: rental.price,
+                      currency: rental.currency,
                       loading: false,
                       totalPrice: rental.totalPrice,
                       couponController: couponController,
@@ -158,7 +159,6 @@ class _BookYourCabState extends State<BookYourCab> {
                         });
                       },
                       onCouponTap: () {
-                       
                         Provider.of<OfferViewModel>(context, listen: false)
                             .validateOffer(
                                 context: context,
@@ -177,8 +177,7 @@ class _BookYourCabState extends State<BookYourCab> {
                             setState(() {
                               visibleCoupon = true;
                               discountedAmount = getPercentage();
-                              debugPrint(
-                                  'discountpercentage.....,..,.,$discountedAmount');
+                             
                             });
                           } else {
                             setState(() {
@@ -350,6 +349,7 @@ class BookingContainer extends StatefulWidget {
   final double taxAmount;
   final double payableAmount;
   final Widget confirmBooking;
+  final String currency;
   const BookingContainer(
       {this.carName = "",
       this.carImage = "",
@@ -362,6 +362,7 @@ class BookingContainer extends StatefulWidget {
       this.totalPrice = "",
       this.kilometers = "",
       this.pickUpLocation = "",
+      required this.currency,
       required this.couponController,
       required this.onTap,
       required this.onCouponTap,
@@ -382,7 +383,6 @@ class _BookingContainerState extends State<BookingContainer> {
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    debugPrint('payableAmount...............,,,, ${widget.payableAmount}');
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -551,7 +551,7 @@ class _BookingContainerState extends State<BookingContainer> {
                             style: titleText,
                           ),
                           Text(
-                            "AED ${widget.totalPrice}",
+                            "${widget.currency} ${widget.totalPrice}",
                             style: titleText,
                           ),
                         ],
@@ -564,7 +564,7 @@ class _BookingContainerState extends State<BookingContainer> {
                             style: titleText,
                           ),
                           Text(
-                            "+ AED ${widget.taxAmount.toStringAsFixed(2)}",
+                            "+ ${widget.currency} ${widget.taxAmount.toStringAsFixed(2)}",
                             style: titleText,
                           ),
                         ],
@@ -579,7 +579,7 @@ class _BookingContainerState extends State<BookingContainer> {
                                   style: titleText,
                                 ),
                                 Text(
-                                  "- AED ${widget.offerDisAmount}",
+                                  "- ${widget.currency} ${widget.offerDisAmount}",
                                   style: titleText,
                                 ),
                               ],
@@ -594,8 +594,8 @@ class _BookingContainerState extends State<BookingContainer> {
                           ),
                           Text(
                             widget.discountedAmount == 0
-                                ? 'AED ${widget.payableAmount.ceil()}'
-                                : "AED ${widget.discountedAmount.ceil()}",
+                                ? '${widget.currency} ${widget.payableAmount.ceil()}'
+                                : "${widget.currency} ${widget.discountedAmount.ceil()}",
                             style: pageHeadingTextStyle,
                           ),
                         ],
@@ -663,7 +663,7 @@ class _BookingContainerState extends State<BookingContainer> {
                   ),
                   widget.couponVisible
                       ? Text(
-                          'Congrats!  You have availed discount of AED ${widget.offerDisAmount.toInt()}.',
+                          'Congrats!  You have availed discount of ${widget.currency} ${widget.offerDisAmount.toInt()}.',
                           style: const TextStyle(color: greenColor),
                         )
                       : Container()
@@ -724,7 +724,7 @@ class _BookingContainerState extends State<BookingContainer> {
                           fontWeight: FontWeight.w700,
                           textColor: textColor),
                       CustomText(
-                          content: "AED ${widget.totalPrice}",
+                          content: "${widget.currency} ${widget.totalPrice}",
                           fontSize: 16,
                           maxline: 2,
                           align: TextAlign.start,
@@ -756,7 +756,7 @@ class _BookingContainerState extends State<BookingContainer> {
                           fontWeight: FontWeight.w500,
                           textColor: textColor),
                       CustomText(
-                          content: "AED ${widget.totalPrice}",
+                          content: "${widget.currency} ${widget.totalPrice}",
                           fontSize: 16,
                           maxline: 2,
                           align: TextAlign.start,
@@ -775,8 +775,8 @@ class _BookingContainerState extends State<BookingContainer> {
                           align: TextAlign.start,
                           fontWeight: FontWeight.w500,
                           textColor: textColor),
-                      const CustomText(
-                          content: "AED 15 / km",
+                      CustomText(
+                          content: "${widget.currency} 15 / km",
                           fontSize: 16,
                           maxline: 2,
                           align: TextAlign.start,
@@ -795,8 +795,8 @@ class _BookingContainerState extends State<BookingContainer> {
                           align: TextAlign.start,
                           fontWeight: FontWeight.w500,
                           textColor: textColor),
-                      const CustomText(
-                          content: "AED 3 / min",
+                      CustomText(
+                          content: "${widget.currency} 3 / min",
                           fontSize: 16,
                           maxline: 2,
                           align: TextAlign.start,

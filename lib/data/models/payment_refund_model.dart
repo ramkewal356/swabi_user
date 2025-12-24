@@ -37,6 +37,7 @@ class Data {
   String? paymentId;
   String? refundStatus;
   double? refundedAmount;
+  String? currency;
   int? createdAt;
   int? updatedAt;
 
@@ -46,6 +47,7 @@ class Data {
     this.paymentId,
     this.refundStatus,
     this.refundedAmount,
+    this.currency,
     this.createdAt,
     this.updatedAt,
   });
@@ -56,6 +58,7 @@ class Data {
         paymentId: json["paymentId"],
         refundStatus: json["refundStatus"],
         refundedAmount: json["refundedAmount"]?.toDouble(),
+        currency: json["currency"],
         createdAt: json["createdAt"],
         updatedAt: json["updatedAt"],
       );
@@ -66,6 +69,7 @@ class Data {
         "paymentId": paymentId,
         "refundStatus": refundStatus,
         "refundedAmount": refundedAmount,
+        "currency": currency,
         "createdAt": createdAt,
         "updatedAt": updatedAt,
       };

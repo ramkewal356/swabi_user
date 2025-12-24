@@ -12,6 +12,7 @@ class Custompaymentdetailscontainer extends StatelessWidget {
   final String taxAmount;
   final String discountAmount;
   final String rentalAmount;
+  final String currency;
   const Custompaymentdetailscontainer(
       {super.key,
       required this.paymentId,
@@ -20,7 +21,8 @@ class Custompaymentdetailscontainer extends StatelessWidget {
       required this.paymentTime,
       required this.taxAmount,
       required this.discountAmount,
-      required this.rentalAmount});
+      required this.rentalAmount,
+      required this.currency});
 
   @override
   Widget build(BuildContext context) {
@@ -53,13 +55,14 @@ class Custompaymentdetailscontainer extends StatelessWidget {
               )),
             ),
             textItem(lable: 'Payment Id', value: paymentId),
-            textItem(lable: 'Rental Amount', value: 'AED $rentalAmount'),
-            textItem(lable: 'Tax Amount (5%)', value: 'AED $taxAmount'),
+            textItem(lable: 'Rental Amount', value: '$currency $rentalAmount'),
+            textItem(lable: 'Tax Amount (5%)', value: '$currency $taxAmount'),
             discountAmount == '0.0'
                 ? const SizedBox.shrink()
                 : textItem(
-                    lable: 'Discount Amount', value: 'AED $discountAmount'),
-            textItem(lable: 'Total Amount', value: 'AED $amount'),
+                    lable: 'Discount Amount',
+                    value: '$currency $discountAmount'),
+            textItem(lable: 'Total Amount', value: '$currency $amount'),
             textItem(lable: 'Payment Date', value: paymentDate),
             textItem(lable: 'Payment Time', value: paymentTime),
             const SizedBox(
@@ -71,7 +74,7 @@ class Custompaymentdetailscontainer extends StatelessWidget {
     );
   }
 
-Widget textItem({required String lable, required String value}) {
+  Widget textItem({required String lable, required String value}) {
     return Padding(
       padding:
           const EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 5.0),

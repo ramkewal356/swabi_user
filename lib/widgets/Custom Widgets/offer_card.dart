@@ -57,7 +57,7 @@ class _OfferCardState extends State<OfferCard> {
     return Card(
       color: background,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
       child: Column(
         children: [
           Padding(

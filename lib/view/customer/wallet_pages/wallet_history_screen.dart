@@ -115,8 +115,6 @@ class _WalletHistoryScreenState extends State<WalletHistoryScreen>
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('userId....${widget.userId}');
-
     return Customtabbar(
         titleHeading: 'My Wallet History',
         controller: _tabController,
@@ -176,7 +174,7 @@ class _WalletHistoryScreenState extends State<WalletHistoryScreen>
                                         style: titleTextStyle,
                                       ),
                                       Text(
-                                        'AED ${data.amountPaid.toString()}',
+                                        '${data.currency} ${data.amountPaid.toString()}',
                                         style: titleTextStyle,
                                       )
                                     ],

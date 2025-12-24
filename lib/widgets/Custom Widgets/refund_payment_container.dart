@@ -6,12 +6,12 @@ class RefundPaymentContainer extends StatelessWidget {
   // final String refundId;
   final String refundAmount;
   final String refundStatus;
-  // final int refundDate;
+  final String refundCurrency;
   const RefundPaymentContainer(
       {super.key,
       // required this.refundId,
       required this.refundAmount,
-      // required this.refundDate
+      required this.refundCurrency,
       required this.refundStatus});
 
   @override
@@ -48,7 +48,9 @@ class RefundPaymentContainer extends StatelessWidget {
                 )),
               ),
               // textItem(lable: 'Refund Id', value: refundId),
-              textItem(lable: 'Refund Amount', value: 'AED $refundAmount'),
+              textItem(
+                  lable: 'Refund Amount',
+                  value: '$refundCurrency $refundAmount'),
               textItem(
                   lable: 'Refund Status',
                   value: refundStatus == "created"
