@@ -17,7 +17,9 @@ import '../../../data/models/get_all_enquiry_model.dart' hide Status;
 class BidNowScreen extends StatefulWidget {
   final EnquiryContent? enquiryData;
   final BidContent? bidData;
-  const BidNowScreen({super.key, this.enquiryData, this.bidData});
+  final bool viewPage;
+  const BidNowScreen(
+      {super.key, this.enquiryData, this.bidData, this.viewPage = false});
 
   @override
   State<BidNowScreen> createState() => _BidNowScreenState();
@@ -89,9 +91,9 @@ class _BidNowScreenState extends State<BidNowScreen> {
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold)),
                       const Divider(),
-                      travelItem(Icons.person,
-                          'Name : ${widget.enquiryData?.name ?? widget.bidData?.travelInquiry?.name ?? 'N/A'}'),
-                      const SizedBox(height: 8),
+                      // travelItem(Icons.person,
+                      //     'Name : ${widget.enquiryData?.name ?? widget.bidData?.travelInquiry?.name ?? 'N/A'}'),
+                      // const SizedBox(height: 8),
                       travelItem(Icons.calendar_today,
                           "Travel Date : ${widget.enquiryData?.travelDates ?? widget.bidData?.travelInquiry?.travelDates ?? 'N/A'}"),
                       const SizedBox(height: 8),
@@ -105,12 +107,11 @@ class _BidNowScreenState extends State<BidNowScreen> {
                           'Transportation : ${widget.enquiryData?.transportation ?? widget.bidData?.travelInquiry?.transportation ?? 'N/A'}'),
                       const SizedBox(height: 8),
                       travelItem(Icons.attach_money,
-                          'Budget : ${widget.enquiryData?.currency} ${widget.enquiryData?.budget ?? widget.bidData?.travelInquiry?.budget ?? 'N/A'}'),
+                          'Budget : ${widget.enquiryData?.currency ?? widget.bidData?.currency} ${widget.enquiryData?.budget ?? widget.bidData?.travelInquiry?.budget ?? 'N/A'}'),
                       const SizedBox(height: 8),
                       travelItem(Icons.card_giftcard,
                           'Special Requests : ${widget.enquiryData?.specialRequests ?? widget.bidData?.travelInquiry?.specialRequests ?? 'N/A'}'),
                       const SizedBox(height: 8),
-                    
                       travelItem(Icons.location_on,
                           'Destination : ${widget.enquiryData?.destinations?.join(',') ?? widget.bidData?.travelInquiry?.destinations?.join(',') ?? 'N/A'}'),
                       const SizedBox(height: 8),
@@ -150,7 +151,6 @@ class _BidNowScreenState extends State<BidNowScreen> {
                                     style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold)),
-                               
                                 Text(
                                     "Address: ${widget.enquiryData?.user?.address ?? widget.bidData?.travelInquiry?.user?.address ?? 'N/A'}"),
                               ],
@@ -181,12 +181,15 @@ class _BidNowScreenState extends State<BidNowScreen> {
                         Text(
                             widget.bidData == null
                                 ? "Submit Your Bid"
-                                : "Update Your Bid",
+                                : widget.viewPage
+                                    ? 'View Your Bid Details'
+                                    : "Update Your Bid",
                             style: const TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold)),
                         const Divider(),
                         const SizedBox(height: 10),
                         Customtextformfield(
+                          readOnly: widget.viewPage,
                           controller: priceController,
                           hintText: '',
                           lable: 'Price (${widget.bidData?.currency}) *',
@@ -204,6 +207,7 @@ class _BidNowScreenState extends State<BidNowScreen> {
                         ),
                         const SizedBox(height: 10),
                         Customtextformfield(
+                          readOnly: widget.viewPage,
                           controller: mealsController,
                           hintText: '',
                           lable: 'Meals *',
@@ -220,6 +224,7 @@ class _BidNowScreenState extends State<BidNowScreen> {
                         ),
                         const SizedBox(height: 10),
                         Customtextformfield(
+                          readOnly: widget.viewPage,
                           controller: transportController,
                           hintText: '',
                           lable: 'Transportation *',
@@ -236,12 +241,13 @@ class _BidNowScreenState extends State<BidNowScreen> {
                         ),
                         const SizedBox(height: 10),
                         Customtextformfield(
-                            controller: extrasController,
-                            hintText: '',
+                          readOnly: widget.viewPage,
+                          controller: extrasController,
+                          hintText: '',
                           lable: 'Extras *',
-                            prefixIcon: const Icon(
-                              Icons.card_giftcard,
-                              color: btnColor,
+                          prefixIcon: const Icon(
+                            Icons.card_giftcard,
+                            color: btnColor,
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -252,6 +258,7 @@ class _BidNowScreenState extends State<BidNowScreen> {
                         ),
                         const SizedBox(height: 10),
                         Customtextformfield(
+                            readOnly: widget.viewPage,
                             controller: accommodationController,
                             hintText: '',
                             lable: 'Accommodation *',
@@ -268,6 +275,7 @@ class _BidNowScreenState extends State<BidNowScreen> {
                             maxLines: 2),
                         const SizedBox(height: 10),
                         Customtextformfield(
+                          readOnly: widget.viewPage,
                           controller: itineraryController,
                           hintText: '',
                           lable: 'Itinerary *',
@@ -284,6 +292,7 @@ class _BidNowScreenState extends State<BidNowScreen> {
                           },
                         ),
                         const SizedBox(height: 16),
+                        if (widget.viewPage == false)
                         CustomButtonSmall(
                           loading: status == Status.loading ||
                               bidStatus == Status.loading,
@@ -341,7 +350,7 @@ class _BidNowScreenState extends State<BidNowScreen> {
     );
   }
 
-Widget travelItem(IconData? icon, String title) {
+  Widget travelItem(IconData? icon, String title) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

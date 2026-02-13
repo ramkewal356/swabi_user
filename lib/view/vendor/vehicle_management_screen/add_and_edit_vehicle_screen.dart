@@ -389,24 +389,25 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
                                                     },
                                                   ),
                                                   const SizedBox(height: 10),
-                                                  lableText('Emirates id'),
+                                                  lableText('Government Id'),
                                                   Customtextformfield(
                                                     controller:
                                                         _emiratesController,
                                                     fillColor: background,
                                                     hintText:
-                                                        '784-YYYY-NNNNNNN-C',
+                                                        'Enter Government Id (e.g., 784-2000-9876543-2)',
                                                     keyboardType:
                                                         TextInputType.number,
                                                     validator: (value) {
                                                       if (value == null ||
                                                           value.isEmpty) {
-                                                        return 'Please enter Emirates ID';
-                                                      } else if (!Validation()
-                                                          .isValidEmiratesId(
-                                                              value)) {
-                                                        return 'Enter a valid Emirates ID (e.g., 784-2000-9876543-2)';
+                                                        return 'Please enter Government Id';
                                                       }
+                                                      //  else if (!Validation()
+                                                      //     .isValidEmiratesId(
+                                                      //         value)) {
+                                                      //   return 'Enter a valid Government Id (e.g., 784-2000-9876543-2)';
+                                                      // }
 
                                                       return null; // valid
                                                     },
@@ -784,10 +785,11 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
                                       validator: (p0) {
                                         if (p0 == null || p0.isEmpty) {
                                           return 'Please enter vehicle no';
-                                        } else if (!Validation()
-                                            .isValidUaeVehicleNumber(p0)) {
-                                          return 'Invalid UAE vehicle number (e.g. A 12345)';
-                                        }
+                                        } 
+                                        // else if (!Validation()
+                                        //     .isValidUaeVehicleNumber(p0)) {
+                                        //   return 'Invalid UAE vehicle number (e.g. A 12345)';
+                                        // }
                                         return null;
                                       },
                                     ),

@@ -129,7 +129,7 @@ class Data {
 
 class UnavailableDate {
   int? vehicleUnavailableId;
-  DateTime? date;
+  String? date;
   String? vehicleUnavailableReason;
   DateTime? createdDate;
   DateTime? modifiedDate;
@@ -149,7 +149,8 @@ class UnavailableDate {
   factory UnavailableDate.fromJson(Map<String, dynamic> json) =>
       UnavailableDate(
         vehicleUnavailableId: json["vehicleUnavailableId"],
-        date: json["date"] == null ? null : DateTime.parse(json["date"]),
+        // date: json["date"] == null ? null : DateTime.parse(json["date"]),
+        date: json["date"],
         vehicleUnavailableReason: json["vehicleUnavailableReason"],
         createdDate: json["createdDate"] == null
             ? null
@@ -163,8 +164,9 @@ class UnavailableDate {
 
   Map<String, dynamic> toJson() => {
         "vehicleUnavailableId": vehicleUnavailableId,
-        "date":
-            "${date!.year.toString().padLeft(4, '0')}-${date!.month.toString().padLeft(2, '0')}-${date!.day.toString().padLeft(2, '0')}",
+        // "date":
+        //     "${date!.year.toString().padLeft(4, '0')}-${date!.month.toString().padLeft(2, '0')}-${date!.day.toString().padLeft(2, '0')}",
+        "date": date,
         "vehicleUnavailableReason": vehicleUnavailableReason,
         "createdDate": createdDate?.toIso8601String(),
         "modifiedDate": modifiedDate?.toIso8601String(),

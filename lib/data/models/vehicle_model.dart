@@ -138,12 +138,14 @@ class Content {
         color: json["color"],
         vehicleNumber: json["vehicleNumber"],
         modelNo: json["modelNo"],
-        createdDate: json["createdDate"] == null
-            ? null
-            : DateTime.parse(json["createdDate"]),
-        modifiedDate: json["modifiedDate"] == null
-            ? null
-            : DateTime.parse(json["modifiedDate"]),
+        createdDate: parseDate(json["createdDate"]),
+        modifiedDate: parseDate(json["modifiedDate"]),
+        // createdDate: json["createdDate"] == null
+        //     ? null
+        //     : DateTime.parse(json["createdDate"]),
+        // modifiedDate: json["modifiedDate"] == null
+        //     ? null
+        //     : DateTime.parse(json["modifiedDate"]),
         images: json["images"] == null
             ? []
             : List<String>.from(json["images"]!.map((x) => x)),
@@ -264,4 +266,18 @@ class EnumValues<T> {
     reverseMap = map.map((k, v) => MapEntry(v, k));
     return reverseMap;
   }
+}
+DateTime? parseDate(dynamic value) {
+  if (value == null) return null;
+
+  if (value is int) {
+    // epoch milliseconds
+    return DateTime.fromMillisecondsSinceEpoch(value);
+  }
+
+  if (value is String) {
+    return DateTime.tryParse(value.replaceAll(' ', 'T'));
+  }
+
+  return null;
 }

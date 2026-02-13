@@ -130,7 +130,7 @@ class _BookingPaymentScreenState extends State<BookingPaymentScreen> {
         "numberOfMembers": widget.memberDetails.length.toString(),
         "memberList": memberListPayload,
         "packagePrice": widget.sumAmount.toStringAsFixed(2),
-        "taxAmount": taxAmount.toStringAsFixed(2),
+        "taxAmount": taxAmount.toInt().toStringAsFixed(2),
         "taxPercentage": taxPercent,
         "totalPayableAmount": payAbleAmount.round(),
         "currency": widget.currency

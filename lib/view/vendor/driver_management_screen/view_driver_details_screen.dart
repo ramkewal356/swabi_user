@@ -176,7 +176,7 @@ class _ViewDriverDetailsScreenState extends State<ViewDriverDetailsScreen> {
                                   value:
                                       "+${data?.countryCode} ${data?.mobile}"),
                               InfoRow(
-                                  label: "Emirates ID",
+                                  label: "Government Id",
                                   value: "${data?.emiratesId}"),
                               InfoRow(
                                   label: "Licence No.",
@@ -197,6 +197,19 @@ class _ViewDriverDetailsScreenState extends State<ViewDriverDetailsScreen> {
                   ),
 
                   const SizedBox(height: 20),
+                  _sectionTitle('Driver Documents'),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      _documentImage(
+                          label: "License Image",
+                          imageUrl: data?.licenseImageUrl ?? ''),
+                      const SizedBox(width: 10),
+                      _documentImage(
+                          label: "Government Id Image",
+                          imageUrl: data?.governmentIdImageUrl ?? ''),
+                    ],
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -267,6 +280,28 @@ class _ViewDriverDetailsScreenState extends State<ViewDriverDetailsScreen> {
     );
   }
 
+  Widget _documentImage({required String label, required String imageUrl}) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label,
+              style: GoogleFonts.poppins(
+                  fontSize: 13, fontWeight: FontWeight.w600)),
+          const SizedBox(height: 6),
+          Container(
+            height: 120,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.grey[300]!)),
+            child: (imageUrl).isEmpty
+                ? Image.asset(user, fit: BoxFit.cover)
+                : Image.network(imageUrl, fit: BoxFit.cover),
+          )
+        ],
+      ),
+    );
+  }
   // --- SECTION TITLE ---
   Widget _sectionTitle(String title) {
     return Container(

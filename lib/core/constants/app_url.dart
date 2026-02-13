@@ -5,6 +5,9 @@ class AppUrl {
   // static var baseUrlForImage = "https://dev-api.swabitours.com";
   static var locationBaseUrl = 'https://www.universal-tutorial.com';
   static var countryStateBaseUrl = 'https://countriesnow.space';
+  static var countryListByRegionBaseUrl =
+      'https://restcountries.com/v3.1/region';
+  static var getCountryListByRegionUrl = '/asia';
 
   ///registration URL
 
@@ -148,6 +151,11 @@ class AppUrl {
   static var updateDriverUrl = '/driver/update_driver_details';
   static var activateDriverUrl = '/driver/activate_driver';
   static var deactivateDriverUrl = '/driver/deactivate_driver';
+  // wallet url
+  static var getWalletBalanceUrl = '/wallet/get_wallet_balance';
+  static var getWalletTransactionUrl =
+      '/wallet/get_wallet_transaction_by_userId';
+  static var payfoviewbidUrl = '/wallet/spend';
   // currency URL
   static var currencyUrl = '/swabi/get_all_currencies';
   // color url

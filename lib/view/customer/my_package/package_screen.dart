@@ -126,6 +126,8 @@ class _PackageScreenState extends State<PackageScreen> {
                 child: Column(
                   children: [
                     CustomDropdownButton(
+                      isLoading:
+                          userStatus == Status.loading || countryList == null,
                       itemsList: countryList ?? [],
                       hintText: 'Select Country',
                       controller: countrycontroller,
@@ -155,6 +157,8 @@ class _PackageScreenState extends State<PackageScreen> {
                           child: CustomDropdownButton(
                             key: stateDropdownKey,
                             controller: statecontroller,
+                            isLoading: userStatus == Status.loading ||
+                                stateList == null,
                             itemsList: stateList
                                     ?.map((stateName) => stateName)
                                     .toSet()
@@ -363,6 +367,7 @@ class PackageContainer extends StatefulWidget {
   final VoidCallback ontap;
   final double? discountPrice;
   final String? currency;
+  final bool isHorizontal;
   const PackageContainer(
       {super.key,
       required this.packageImg,
@@ -378,7 +383,9 @@ class PackageContainer extends StatefulWidget {
       required this.loader,
       required this.ontap,
       this.discountPrice,
-      this.currency});
+    this.currency,
+    this.isHorizontal = false,
+  });
 
   @override
   State<PackageContainer> createState() => _PackageContainerState();
@@ -421,6 +428,7 @@ class _PackageContainerState extends State<PackageContainer> {
           child: InkWell(
             borderRadius: BorderRadius.circular(5),
             child: Column(
+             
               children: [
                 widget.packageImg.isNotEmpty
                     ? SizedBox(
@@ -446,12 +454,12 @@ class _PackageContainerState extends State<PackageContainer> {
                               fit: BoxFit.cover,
                             )),
                       ),
-                Container(
+                Padding(
                   padding:
                       const EdgeInsets.symmetric(vertical: 5, horizontal: 05),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -509,8 +517,8 @@ class _PackageContainerState extends State<PackageContainer> {
                                 textColor: greyColor1,
                               ),
                             ),
-                            // const Spacer(),
-
+                         
+                            
                             Container(
                               height: 15,
                               width: 15,
@@ -535,7 +543,7 @@ class _PackageContainerState extends State<PackageContainer> {
                       ),
                       Column(
                         children: List.generate(
-                            widget.activityList.take(3).length,
+                            widget.activityList.take(1).length,
                             (index) => Padding(
                                   padding: const EdgeInsets.only(bottom: 10),
                                   child: Row(
@@ -570,7 +578,20 @@ class _PackageContainerState extends State<PackageContainer> {
                                   ),
                                 )),
                       ),
+                      if (widget.activityList.length > 1)
+                        CustomText(
+                          content:
+                              "+ ${widget.activityList.length - 1} more activities",
+                          fontSize: 13,
+                          textColor: greyColor1,
+                          align: TextAlign.start,
+                        ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      // if (widget.isHorizontal) const Spacer(),
                       Container(
+                      
                         padding: const EdgeInsets.symmetric(
                             vertical: 5, horizontal: 5),
                         width: double.infinity,

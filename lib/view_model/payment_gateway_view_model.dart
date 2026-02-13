@@ -28,7 +28,7 @@ class PaymentCreateOrderIdViewModel with ChangeNotifier {
       "taxAmount": taxAmount.toStringAsFixed(2),
       "userId": userId,
       "taxPercentage": taxPercentage.toInt(),
-      "discountAmount": discountAmount.round(),
+      "discountAmount": discountAmount.toStringAsFixed(2),
       "totalPayableAmount": totalPayableAmount.round(),
       "currency": currency
     };

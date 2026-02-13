@@ -205,7 +205,7 @@ class _ViewVehicleDetailsScreenState extends State<ViewVehicleDetailsScreen> {
                                 value: "${data?.vehicleOwnerInfo?.email}"),
                             SizedBox(height: 5),
                             InfoRow(
-                                title: 'Emirates Id',
+                                title: 'Government Id',
                                 value: '${data?.vehicleOwnerInfo?.emiratesId}'),
                             SizedBox(height: 5),
                             InfoRow(

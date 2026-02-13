@@ -4,6 +4,7 @@ import 'package:flutter_cab/common/styles/text_styles.dart';
 import 'package:flutter_cab/core/utils/utils.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_google_maps_webservices/places.dart';
+import 'package:country_picker/country_picker.dart';
 
 
 class CustomSearchLocation extends StatefulWidget {
@@ -15,6 +16,7 @@ class CustomSearchLocation extends StatefulWidget {
   // final bool stateValidation;
   final bool withoutBorder;
   final bool isEditable;
+  final String? country;
   const CustomSearchLocation(
       {super.key,
       required this.controller,
@@ -23,8 +25,9 @@ class CustomSearchLocation extends StatefulWidget {
       this.fillColor,
       this.focusNode,
       this.withoutBorder = false,
-      this.isEditable = true
+      this.isEditable = true,
       // required this.stateValidation,
+      this.country
       });
 
   @override
@@ -38,6 +41,7 @@ class _CustomSearchLocationState extends State<CustomSearchLocation> {
       MaterialPageRoute(
           builder: (context) => SearchLocationPage(
                 state: widget.state,
+                country: widget.country,
               )),
     );
 
@@ -125,7 +129,8 @@ class _CustomSearchLocationState extends State<CustomSearchLocation> {
 
 class SearchLocationPage extends StatefulWidget {
   final String state;
-  const SearchLocationPage({super.key, required this.state});
+  final String? country;
+  const SearchLocationPage({super.key, required this.state, this.country});
 
   @override
   State<SearchLocationPage> createState() => _SearchLocationPageState();
@@ -145,11 +150,27 @@ class _SearchLocationPageState extends State<SearchLocationPage> {
     googlePlace = GoogleMapsPlaces(apiKey: kGoogleApiKey);
   }
 
+
+String? getCountryCodeFromName(String countryName) {
+    try {
+      final country = CountryService().getAll().firstWhere(
+            (c) => c.name.toLowerCase() == countryName.toLowerCase(),
+          );
+
+      return country.countryCode.toLowerCase(); // "IN" → "in"
+    } catch (e) {
+      return null;
+    }
+  }
   void _searchPlaces(String input) async {
+    var countryCode =
+        widget.country != null ? getCountryCodeFromName(widget.country!) : null;
     try {
       final result = await googlePlace.autocomplete(
         input,
-        // components: [Component("country", "ae")],
+        components: widget.country != null && widget.country!.isNotEmpty
+            ? [Component("country", countryCode ?? "")]
+            : [],
       );
 
       if (result.predictions != []) {

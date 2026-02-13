@@ -22,8 +22,8 @@ class UserProfileViewModel with ChangeNotifier {
 
 
   Future<void> fetchUserProfileViewModelApi() async {
-    String vendorId = await UserViewModel().getUserId() ?? '';
-    Map<String, dynamic> query = {"userId": vendorId};
+    String userId = await UserViewModel().getUserId() ?? '';
+    Map<String, dynamic> query = {"userId": userId};
     try {
       setDataList(ApiResponse.loading());
       var resp = await _myRepo.userProfileRepositoryApi(query: query);

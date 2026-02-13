@@ -151,6 +151,8 @@ class DriverViewModel extends ChangeNotifier {
   Future<bool> addEditDriverApi(
       {required Map<String, dynamic> driverRequest,
       required File? selectedImageFile,
+      required String? selectedGovermentIdImage,
+      required String? selectedLicenceImage,
       required bool isEdit}) async {
     String? vendorId = await UserViewModel().getUserId();
     driverRequest["vendorId"] = vendorId;
@@ -164,6 +166,18 @@ class DriverViewModel extends ChangeNotifier {
             )
           : null,
     };
+    if (selectedGovermentIdImage != null) {
+      body["governmentId"] = await MultipartFile.fromFile(
+        selectedGovermentIdImage,
+        filename: selectedGovermentIdImage.split('/').last,
+      );
+    }
+    if (selectedLicenceImage != null) {
+      body["license"] = await MultipartFile.fromFile(
+        selectedLicenceImage,
+        filename: selectedLicenceImage.split('/').last,
+      );
+    }
     debugPrint('bodydata   :$body');
     setAddEditDriver(ApiResponse.loading());
     try {

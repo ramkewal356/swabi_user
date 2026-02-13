@@ -16,6 +16,7 @@ class CustomMultiselectDropdown extends StatefulWidget {
   final AutovalidateMode? autovalidateMode;
   final Color? bgColor;
   final bool isDisabled;
+  final bool isLoading;
   const CustomMultiselectDropdown(
       {super.key,
       required this.title,
@@ -28,7 +29,8 @@ class CustomMultiselectDropdown extends StatefulWidget {
       this.autovalidateMode,
       this.validator,
       this.isDisabled = false,
-      this.bgColor});
+      this.bgColor,
+      this.isLoading = false});
 
   @override
   State<CustomMultiselectDropdown> createState() =>
@@ -44,10 +46,12 @@ class _CustomMultiselectDropdownState extends State<CustomMultiselectDropdown> {
         Stack(
           children: [
             IgnorePointer(
-              ignoring: widget.isDisabled,
+              ignoring: widget.isDisabled || widget.isLoading,
               child: MultiSelectDialogField(
                 key: widget.fieldKey,
-                items: widget.items
+                items: widget.isLoading
+                    ? []
+                    : widget.items
                     .map((destination) =>
                         MultiSelectItem<String>(destination, destination))
                     .toList(),
@@ -58,7 +62,12 @@ class _CustomMultiselectDropdownState extends State<CustomMultiselectDropdown> {
                 title: Text(widget.title),
                 searchable: false,
                 buttonText: const Text(""),
-                buttonIcon: const Icon(Icons.arrow_drop_down),
+                buttonIcon: const Icon(
+                  Icons.arrow_drop_down,
+                  color: Colors.transparent,
+                ),
+
+              
                 backgroundColor: background,
                 decoration: BoxDecoration(
                   color: widget.bgColor ?? Colors.grey[100],
@@ -88,10 +97,38 @@ class _CustomMultiselectDropdownState extends State<CustomMultiselectDropdown> {
                         Icon(widget.icon, color: Colors.grey),
                         const SizedBox(width: 8),
                       ],
-                      Text(
-                        widget.hintText,
-                        style: TextStyle(color: greyColor1),
-                      )
+                      Expanded(
+                        child: Text(
+                          widget.isLoading
+                              ? "Loading..."
+                              : widget.selectedItems.isEmpty
+                                  ? widget.hintText
+                                  : widget.selectedItems.join(", "),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: widget.isLoading ? greyColor1 : textColor,
+                          ),
+                        ),
+                      ),
+
+                      if (widget.isLoading) ...[
+                        const SizedBox(width: 10),
+                        const SizedBox(
+                          height: 18,
+                          width: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: btnColor,
+                          ),
+                        ),
+                      ] else ...[
+                        const Icon(Icons.arrow_drop_down, color: greyColor1),
+                      ],
+                      // Text(
+                      //   widget.hintText,
+                      //   style: TextStyle(color: greyColor1),
+                      // )
                       // Expanded(
                       //   child: Text(
                       //     widget.selectedItems.isEmpty

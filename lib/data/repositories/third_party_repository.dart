@@ -46,6 +46,24 @@ class ThirdPartyRepository {
       rethrow;
     }
   }
+  Future<dynamic> getCountryListByRegionApi({required String region}) async {
+    var http = HttpService(
+      isAuthorizeRequest: false,
+      baseURL: AppUrl.countryListByRegionBaseUrl,
+      endURL: '/$region',
+      methodType: HttpMethodType.GET,
+      bodyType: HttpBodyType.JSON,
+    );
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("getcountry List response ${response?.data}");
+      return response?.data;
+    } catch (error) {
+      debugPrint('error.. $error');
+      http.handleErrorResponse(error: error);
+      rethrow;
+    }
+  }
 
   Future<GetStateNameModel> getStateListApi({
     required Map<String, dynamic> body,

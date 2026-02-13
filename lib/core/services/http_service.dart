@@ -45,21 +45,25 @@ class HttpService<T> {
       this.headers = <String, String>{};
     }
     var prefsToken = await SharedPreferences.getInstance();
-    dynamic token = prefsToken.getString('token');
-    this.headers?.addAll({"Token": token});
-
+    final token = prefsToken.getString('token');
+    if (token != null && token.isNotEmpty) {
+      this.headers?.addAll({
+        // "Token": token
+        "Authorization": "Bearer $token",
+      });
+    }
     // this.headers!.addAll({"token": "${_auth.authenticationToken}"});
-    // print({'token....jhjh': this.headers});
+    debugPrint('token....jhjh ${this.headers}');
   }
 
   // ignore: avoid_shadowing_type_parameters
-  Future<Response<T>>? request<T>() {
+  Future<Response<T>?>? request<T>() async {
     dynamic bodyData;
     if (this.headers == null) {
       this.headers = <String, String>{};
     }
     if (isAuthorizeRequest) {
-      authorizeRequest();
+      await authorizeRequest();
     }
 
     // Body Type check

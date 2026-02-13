@@ -89,6 +89,8 @@ class EnquiryViewModel with ChangeNotifier {
 
   Future<void> getMyEnquiryApi({
     required bool isPagination,
+    int? pageNumber,
+    int? pageSize1,
   }) async {
     if (isLoadingMore) return; // Prevent multiple calls
 
@@ -101,8 +103,8 @@ class EnquiryViewModel with ChangeNotifier {
     String? userId = await UserViewModel().getUserId();
     Map<String, dynamic> query = {
       "userId": userId,
-      "page": page,
-      "size": pageSize,
+      "page": pageNumber ?? page,
+      "size": pageSize1 ?? pageSize,
     };
 
     if (isLastPage) return;
@@ -176,43 +178,35 @@ class EnquiryViewModel with ChangeNotifier {
   }
 
   Future<bool> sendEnquiryApi(
-      {required String fullName,
-      required String country,
-      required String budget,
-      required List<String> destination,
-      required String accommodation,
-      required String meals,
-      required String transportation,
-      required String specialRequest,
-      required String currency,
-      required String travelDate,
-      required String tentativeDates,
-      required String tentativeDays}) async {
+      {required Map<String, dynamic> body}) async {
     String? userId = await UserViewModel().getUserId();
-    Map<String, dynamic> body = {
-      "accommodationPreferences": accommodation,
-      "currency": currency,
-      "budget": budget,
-      "country": country,
-      "destinations": destination,
-      "meals": meals,
-      "name": fullName,
-      "specialRequests": specialRequest,
-      "tentativeDates": tentativeDates,
-      "tentativeDays": tentativeDays,
-      "transportation": transportation,
-      "travelDates": travelDate,
-      "userId": userId
-    };
+    // Map<String, dynamic> body = {
+    //   "accommodationPreferences": accommodation,
+    //   "currency": currency,
+    //   "budget": budget,
+    //   "country": country,
+    //   "destinations": destination,
+    //   "meals": meals,
+    //   "name": fullName,
+    //   "specialRequests": specialRequest,
+    //   "tentativeDates": tentativeDates,
+    //   "tentativeDays": tentativeDays,
+    //   "transportation": transportation,
+    //   "travelDates": travelDate,
+    //   "userId": userId
+    // };
+    if (userId != null) {
+      body["userId"] = userId;
+    }
     sendEnquiry(ApiResponse.loading());
     try {
       var resp = await _myRepo.sendEnquiryApi(body: body);
       if (resp == true) {
         sendEnquiry(ApiResponse.completed(resp));
         debugPrint("Send Enquiry Api success");
-        Utils.toastSuccessMessage(
-          "Send Enquiry Successfully",
-        );
+        // Utils.toastSuccessMessage(
+        //   "Send Enquiry Successfully",
+        // );
         return resp;
       } else {
         sendEnquiry(ApiResponse.error(resp.toString()));

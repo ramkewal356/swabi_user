@@ -74,7 +74,8 @@ class ActivityManagementViewModel with ChangeNotifier {
       "pageSize": pageSize,
       "activityStatus": activityStatus,
       "vendorId": vendorId,
-      "search": searchText
+      "search": searchText,
+      "country": "",
     };
     if (isLastPage) return;
     isLoadingMore = true;
@@ -108,14 +109,16 @@ class ActivityManagementViewModel with ChangeNotifier {
     }
   }
 
-  Future<GetAllActivityListModel?> getAllActivityApi() async {
+  Future<GetAllActivityListModel?> getAllActivityApi(
+      {required String country}) async {
     String? vendorId = await UserViewModel().getUserId();
     Map<String, dynamic> query = {
       "pageNumber": -1,
       "pageSize": -1,
       "activityStatus": "TRUE",
       "vendorId": vendorId,
-      "search": ""
+      "search": "",
+      "country": country,
     };
     try {
       setActivityList(ApiResponse.loading());

@@ -201,7 +201,8 @@ class Bid {
 class TravelInquiry {
   int? id;
   String? name;
-  String? country;
+  String? region;
+  List<String>? countries;
   List<String>? destinations;
   String? accommodationPreferences;
   String? meals;
@@ -210,6 +211,7 @@ class TravelInquiry {
   String? specialRequests;
   String? travelDates;
   String? tentativeDays;
+  String? tentativeDates;
   User? user;
   dynamic createdAt;
   String? currency;
@@ -218,7 +220,8 @@ class TravelInquiry {
   TravelInquiry({
     this.id,
     this.name,
-    this.country,
+    this.region,
+    this.countries,
     this.destinations,
     this.accommodationPreferences,
     this.meals,
@@ -227,6 +230,7 @@ class TravelInquiry {
     this.specialRequests,
     this.travelDates,
     this.tentativeDays,
+    this.tentativeDates,
     this.user,
     this.currency,
     this.createdAt,
@@ -236,7 +240,10 @@ class TravelInquiry {
   factory TravelInquiry.fromJson(Map<String, dynamic> json) => TravelInquiry(
         id: json["id"],
         name: json["name"],
-        country: json["country"],
+        region: json["region"],
+        countries: json["countries"] == null
+            ? []
+            : List<String>.from(json["countries"]!.map((x) => x)),
         destinations: json["destinations"] == null
             ? []
             : List<String>.from(json["destinations"]!.map((x) => x)),
@@ -247,6 +254,7 @@ class TravelInquiry {
         specialRequests: json["specialRequests"],
         travelDates: json["travelDates"],
         tentativeDays: json["tentativeDays"],
+        tentativeDates: json["tentativeDates"],
         user: json["user"] == null ? null : User.fromJson(json["user"]),
         currency: json["currency"],
         createdAt: json["createdAt"],
@@ -256,7 +264,10 @@ class TravelInquiry {
   Map<String, dynamic> toJson() => {
         "id": id,
         "name": name,
-        "country": country,
+        "region": region,
+        "countries": countries == null
+            ? []
+            : List<dynamic>.from(countries!.map((x) => x)),
         "destinations": destinations == null
             ? []
             : List<dynamic>.from(destinations!.map((x) => x)),
@@ -267,6 +278,7 @@ class TravelInquiry {
         "specialRequests": specialRequests,
         "travelDates": travelDates,
         "tentativeDays": tentativeDays,
+        "tentativeDates": tentativeDates,
         "user": user?.toJson(),
         "currency": currency,
         "createdAt": createdAt,

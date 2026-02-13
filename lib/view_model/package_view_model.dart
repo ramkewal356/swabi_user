@@ -37,6 +37,8 @@ class GetPackageListViewModel with ChangeNotifier {
       {required String date,
       required String country,
       required String state,
+      int? pageNumber,
+      int? pageSize1,
       required bool isPagination,
       required bool isSearch}) async {
     if (isLoadingMore) return;
@@ -49,8 +51,8 @@ class GetPackageListViewModel with ChangeNotifier {
     isLoadingMore = true;
     notifyListeners();
     Map<String, dynamic> query = {
-      "pageNumber": currentPage,
-      "pageSize": pageSize,
+      "pageNumber": pageNumber ?? currentPage,
+      "pageSize": pageSize1 ?? pageSize,
       "date": date,
       "search": "",
       "days": "",

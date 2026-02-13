@@ -135,7 +135,7 @@ class _ViewVehicleOwnerDetailsScreenState
                                     value:
                                         "+${vehicleOwnerDetails.countryCode} ${vehicleOwnerDetails.mobile}"),
                                 InfoRow(
-                                    label: "Emirates ID",
+                                    label: "Government Id",
                                     value: "${vehicleOwnerDetails.emiratesId}"),
                                 InfoRow(
                                     label: 'Country',

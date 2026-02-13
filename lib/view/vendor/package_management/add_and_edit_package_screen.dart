@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/status.dart';
 import 'package:flutter_cab/data/models/get_all_activity_list_model.dart'
     hide Status;
+import 'package:flutter_cab/view_model/third_party_view_model.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/customdropdown_button.dart';
 import 'package:flutter_cab/widgets/Custom%20Widgets/custom_textformfield.dart';
@@ -27,9 +28,10 @@ class AddAndEditPackageScreen extends StatefulWidget {
 class _AddAndEditPackageScreenState extends State<AddAndEditPackageScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _noOfDayController = TextEditingController();
+  final TextEditingController _countryController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
-  String _selectedCountry = 'United Arab Emirates';
+  // String _selectedCountry = 'United Arab Emirates';
   int? packageId;
 
   @override
@@ -39,7 +41,12 @@ class _AddAndEditPackageScreenState extends State<AddAndEditPackageScreen> {
       if (widget.isEdit && widget.packageId != null) {
         viewPackage();
       }
+      getCountry();
     });
+  }
+
+  void getCountry() {
+    context.read<ThirdPartyViewModel>().getCountryList();
   }
 
   int calculateTotalPrice(List<ActivityContent> activities) {
@@ -60,7 +67,8 @@ class _AddAndEditPackageScreenState extends State<AddAndEditPackageScreen> {
         packageId = package.packageId;
         _nameController.text = package.packageName ?? '';
         _noOfDayController.text = package.noOfDays?.toString() ?? '';
-        _selectedCountry = package.country ?? 'United Arab Emirates';
+        // _selectedCountry = package.country ?? 'United Arab Emirates';
+        _countryController.text = package.country ?? 'United Arab Emirates';
 
         // Set activities list
         activities.clear();
@@ -72,6 +80,7 @@ class _AddAndEditPackageScreenState extends State<AddAndEditPackageScreen> {
                       activityName: e.activity?.activityName,
                       activityHours: e.activity?.activityHours,
                       activityPrice: e.activity?.activityPrice,
+                      currency: e.activity?.currency,
                     ))
                 .toList() ??
             []);
@@ -82,6 +91,10 @@ class _AddAndEditPackageScreenState extends State<AddAndEditPackageScreen> {
   final List<ActivityContent> activities = []; // dynamic list
 
   void _openAddActivityModal() async {
+    if (_countryController.text.isEmpty) {
+      Utils.toastMessage('Please select country first');
+      return;
+    }
     final result = await showModalBottomSheet<ActivityContent>(
       context: context,
       isScrollControlled: true,
@@ -89,7 +102,7 @@ class _AddAndEditPackageScreenState extends State<AddAndEditPackageScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => const AddActivityModal(),
+      builder: (context) => AddActivityModal(country: _countryController.text),
     );
 
     if (result != null) {
@@ -106,7 +119,13 @@ class _AddAndEditPackageScreenState extends State<AddAndEditPackageScreen> {
         context.watch<PackageManagementViewModel>().addedPackage.status;
     final updateStatus =
         context.watch<PackageManagementViewModel>().updatedPackage.status;
-
+    var countryList =
+        context.watch<ThirdPartyViewModel>().getCountryListResponse.data;
+    var countryStatus =
+        context.watch<ThirdPartyViewModel>().getCountryListResponse.status;
+ 
+    String currency =
+        activities.isNotEmpty ? activities.first.currency ?? "AED" : "AED";
     return Scaffold(
       backgroundColor: bgGreyColor,
       appBar: AppBar(
@@ -154,11 +173,30 @@ class _AddAndEditPackageScreenState extends State<AddAndEditPackageScreen> {
                       const TextSpan(
                           text: ' *', style: TextStyle(color: redColor))
                     ]))),
-                Customtextformfield(
-                    readOnly: true,
-                    fillColor: background,
-                    controller: TextEditingController(text: _selectedCountry),
-                    hintText: 'Country name'),
+                // Customtextformfield(
+                //     readOnly: true,
+                //     fillColor: background,
+                //     controller: TextEditingController(text: _selectedCountry),
+                //     hintText: 'Country name'),
+                CustomDropdownButton(
+                  itemsList: countryList ?? [],
+                  isLoading: countryStatus == Status.loading,
+                  hintText: 'Select Country',
+                  controller: _countryController,
+                  onChanged: (value) {
+                    setState(() {
+                      _countryController.text = value ?? '';
+                      activities
+                          .clear(); // Clear activities when country changes
+                    });
+                  },
+                  validator: (p0) {
+                    if (p0 == null || p0.isEmpty) {
+                      return 'Please select country';
+                    }
+                    return null;
+                  },
+                ),
 
                 const SizedBox(height: 10),
 
@@ -243,7 +281,7 @@ class _AddAndEditPackageScreenState extends State<AddAndEditPackageScreen> {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   Text(
-                                    "AED ${activity.activityPrice?.toInt()}",
+                                    " ${activity.currency} ${activity.activityPrice?.toInt()}",
                                     style: activityPrice,
                                   ),
                                   IconButton(
@@ -267,7 +305,7 @@ class _AddAndEditPackageScreenState extends State<AddAndEditPackageScreen> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: Text(
-                      "Total: AED ${(activities.fold<num>(0, (sum, item) => sum + (item.activityPrice?.toInt() ?? 0)) as int)}",
+                      "Total: $currency ${(activities.fold<num>(0, (sum, item) => sum + (item.activityPrice?.toInt() ?? 0)) as int)}",
                       style: theme.textTheme.titleMedium!
                           .copyWith(fontWeight: FontWeight.bold),
                     ),
@@ -286,7 +324,7 @@ class _AddAndEditPackageScreenState extends State<AddAndEditPackageScreen> {
                     int totalPrice = calculateTotalPrice(activities);
                     Map<String, dynamic> packageRequest = {
                       "packageId": widget.isEdit ? packageId : "",
-                      "country": _selectedCountry,
+                      "country": _countryController.text,
                       "state": "",
                       "packageName": _nameController.text,
                       "location": "",
@@ -304,6 +342,7 @@ class _AddAndEditPackageScreenState extends State<AddAndEditPackageScreen> {
                           "activityId": activity.activityId,
                         };
                       }).toList(),
+                      "currency": currency,
                       if (widget.isEdit) "packageImageUrl": [],
                       if (widget.isEdit) "deletePackageActivityId": []
                     };
@@ -337,7 +376,8 @@ class _AddAndEditPackageScreenState extends State<AddAndEditPackageScreen> {
 }
 
 class AddActivityModal extends StatefulWidget {
-  const AddActivityModal({super.key});
+  final String country;
+  const AddActivityModal({super.key, required this.country});
 
   @override
   State<AddActivityModal> createState() => _AddActivityModalState();
@@ -348,11 +388,6 @@ class _AddActivityModalState extends State<AddActivityModal> {
 
   String? selectedActivity;
 
-  // final List<Map<String, dynamic>> sampleActivities = [
-  //   {"name": "Dubai Desert Safari", "hours": 2, "price": 4999},
-  //   {"name": "City Tour", "hours": 4, "price": 2999},
-  //   {"name": "Burj Khalifa Visit", "hours": 1, "price": 1999},
-  // ];
   @override
   void initState() {
     super.initState();
@@ -360,7 +395,9 @@ class _AddActivityModalState extends State<AddActivityModal> {
   }
 
   void getAllActivity() {
-    context.read<ActivityManagementViewModel>().getAllActivityApi();
+    context
+        .read<ActivityManagementViewModel>()
+        .getAllActivityApi(country: widget.country);
   }
 
   @override
@@ -390,7 +427,9 @@ class _AddActivityModalState extends State<AddActivityModal> {
           //         .toList(),
           //     hintText: 'Select Activity',
           //     controller: _activityController),
-          Padding(
+          sampleActivities.isEmpty
+              ? Center(child: Text("No Activities Available"))
+              : Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: DropdownButtonFormField<String>(
               isExpanded: true,

@@ -23,6 +23,7 @@ import 'package:flutter_cab/view_model/vehicle_owner_view_model.dart';
 import 'package:flutter_cab/view_model/vehicle_view_model.dart';
 import 'package:flutter_cab/view_model/vendor_dashboard_view_model.dart';
 import 'package:flutter_cab/view_model/vendor_view_model.dart';
+import 'package:flutter_cab/view_model/wallet_view_model.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:provider/provider.dart';
@@ -111,7 +112,8 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (create) => VehicleViewModel()),
         ChangeNotifierProvider(create: (create) => DriverViewModel()),
         ChangeNotifierProvider(create: (create) => ThirdPartyViewModel()),
-        ChangeNotifierProvider(create: (create) => VehicleOwnerViewModel())
+        ChangeNotifierProvider(create: (create) => VehicleOwnerViewModel()),
+        ChangeNotifierProvider(create: (create) => WalletViewModel()),
       ],
       child: const MyApp(),
     ));

@@ -65,7 +65,6 @@ class VehicleRepository {
       return CommonModel.fromJson(response?.data);
     } catch (e) {
       debugPrint("Get Activity List Repo Field $e");
-
       http.handleErrorResponse(error: e);
       rethrow;
     }
@@ -82,10 +81,10 @@ class VehicleRepository {
         isAuthorizeRequest: false);
     try {
       Response<dynamic>? response = await http.request<dynamic>();
-      debugPrint("Get Activity List Repo Success ${response?.data}");
+      debugPrint("Get Vehicle By Id Repo Success ${response?.data}");
       return GetVehicleByIdModel.fromJson(response?.data);
     } catch (e) {
-      debugPrint("Get Activity List Repo Field $e");
+      debugPrint("Get Vehicle By Id Repo Field $e");
 
       http.handleErrorResponse(error: e);
       rethrow;

@@ -14,6 +14,7 @@ import 'package:flutter_cab/common/styles/text_styles.dart';
 import 'package:flutter_cab/core/utils/utils.dart';
 import 'package:flutter_cab/core/utils/validation.dart';
 import 'package:flutter_cab/view_model/driver_view_model.dart';
+import 'package:flutter_cab/widgets/single_image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../../../data/response/status.dart';
@@ -49,6 +50,10 @@ class _AddAndEditDriverScreenState extends State<AddAndEditDriverScreen> {
   File? imagePath;
   String initialImage = '';
   String country = 'United Arab Emirates';
+  String? initialGovermentIdImage;
+  String? selectedGovermentIdImage;
+  String? initialLicenceImage;
+  String? selectedLicenceImage;
   @override
   void initState() {
     getDriverDetails();
@@ -90,6 +95,8 @@ class _AddAndEditDriverScreenState extends State<AddAndEditDriverScreen> {
           _genderController.text = driverData?.gender ?? '';
           _phoneController.text = driverData?.mobile ?? '';
           countryCode = driverData?.countryCode ?? '971';
+          initialGovermentIdImage = driverData?.governmentIdImageUrl;
+          initialLicenceImage = driverData?.licenseImageUrl;
           setState(() {});
           getCountry();
           getStateListApi(_countryController.text);
@@ -193,20 +200,63 @@ class _AddAndEditDriverScreenState extends State<AddAndEditDriverScreen> {
                         },
                       ),
                       const SizedBox(height: 10),
-                      lableText('Emirates id'),
+                      lableText('Government Id'),
                       Customtextformfield(
                         controller: _emiratesController,
                         fillColor: background,
-                        hintText: '784-YYYY-NNNNNNN-C',
+                        hintText:
+                            'Enter Government Id (e.g., 784-2000-9876543-2)',
                         keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter Emirates ID';
-                          } else if (!Validation().isValidEmiratesId(value)) {
-                            return 'Enter a valid Emirates ID (e.g., 784-2000-9876543-2)';
+                            return 'Please enter Government Id';
                           }
+                          //  else if (!Validation().isValidEmiratesId(value)) {
+                          //   return 'Enter a valid Government Id (e.g., 784-2000-9876543-2)';
+                          // }
 
                           return null; // valid
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      lableText('Upload Goverment Id Image'),
+                      FormField<String>(
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        initialValue: initialGovermentIdImage,
+                        builder: (field) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SingleImagePicker(
+                                initialImageUrl: initialGovermentIdImage,
+                                noteText:
+                                    '* For the best viewing experience, please upload an image with a resolution of 1080x1350 pixels.',
+                                onImageSelected: (file) {
+                                  setState(() {
+                                    selectedGovermentIdImage = file?.path;
+                                  });
+                                  field.didChange(file?.path);
+                                  debugPrint('Selected image: ${file?.path}');
+                                },
+                              ),
+                              if (field.hasError)
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.only(top: 5, left: 10),
+                                  child: Text(
+                                    field.errorText ?? '',
+                                    style: TextStyle(
+                                        color: Colors.red[700], fontSize: 12),
+                                  ),
+                                ),
+                            ],
+                          );
+                        },
+                        validator: (value) {
+                          if (value == null) {
+                            return 'Please select image';
+                          }
+                          return null;
                         },
                       ),
                       const SizedBox(height: 10),
@@ -270,15 +320,56 @@ class _AddAndEditDriverScreenState extends State<AddAndEditDriverScreen> {
                         controller: _licenceController,
                         fillColor: background,
                         hintText: 'Enter licence number',
-                        validator: (value) {
-                          return Validatorclass().validateUaeLicence(value);
-                        },
                         // validator: (value) {
-                        //   if (value == null || value.isEmpty) {
-                        //     return 'Please enter licence number';
-                        //   }
-                        //   return null;
+                        //   return Validatorclass().validateUaeLicence(value);
                         // },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter licence number';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      lableText('Upload Driver Licence Image'),
+                      FormField<String>(
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        initialValue: initialLicenceImage,
+                        builder: (field) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SingleImagePicker(
+                                initialImageUrl: initialLicenceImage,
+                                noteText:
+                                    '* For the best viewing experience, please upload an image with a resolution of 1080x1350 pixels.',
+                                onImageSelected: (file) {
+                                  setState(() {
+                                    selectedLicenceImage = file?.path;
+                                  });
+                                  field.didChange(file?.path);
+                                  debugPrint('Selected image: ${file?.path}');
+                                },
+                              ),
+                              if (field.hasError)
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.only(top: 5, left: 10),
+                                  child: Text(
+                                    field.errorText ?? '',
+                                    style: TextStyle(
+                                        color: Colors.red[700], fontSize: 12),
+                                  ),
+                                ),
+                            ],
+                          );
+                        },
+                        validator: (value) {
+                          if (value == null) {
+                            return 'Please select image';
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 10),
                       lableText('Status'),
@@ -404,7 +495,10 @@ class _AddAndEditDriverScreenState extends State<AddAndEditDriverScreen> {
                                       // "imagePath": imagePath,
                                       "notAvailableDates": selectedDate ?? []
                                     },
-                                    selectedImageFile: imagePath)
+                                    selectedImageFile: imagePath,
+                                    selectedGovermentIdImage:
+                                        selectedGovermentIdImage,
+                                    selectedLicenceImage: selectedLicenceImage)
                                 .then((onValue) {
                               if (widget.isEdit) {
                                 Utils.toastSuccessMessage(

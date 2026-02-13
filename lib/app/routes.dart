@@ -1,7 +1,8 @@
 // routes.dart
 
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/data/models/get_all_bid_model.dart';
+// import 'package:flutter_cab/data/models/get_all_bid_model.dart';
+import 'package:flutter_cab/view/customer/enquiry/send_enquiry_screen.dart';
 import 'package:flutter_cab/view/customer/my_package/booking_payment_screen.dart';
 import 'package:flutter_cab/widgets/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/view/auth_screens/change_password.dart';
@@ -15,7 +16,7 @@ import 'package:flutter_cab/view/profile/profile_page_screen.dart';
 import 'package:flutter_cab/view/help_and_support/raiseissue_details_screen.dart';
 import 'package:flutter_cab/view/help_and_support/term_condition_screen.dart';
 import 'package:flutter_cab/view/customer/my_tranaction/transaction.dart';
-import 'package:flutter_cab/view/customer/customer_home_screen.dart';
+import 'package:flutter_cab/view/customer/bottom_navigation_bar_screen.dart';
 import 'package:flutter_cab/view/customer/offers_pages/all_offers_screen.dart';
 import 'package:flutter_cab/view/customer/raiseIssue_pages/issue_view_details_screen.dart';
 import 'package:flutter_cab/view/customer/my_rental/book_your_ride_screen_.dart';
@@ -60,7 +61,7 @@ import 'package:flutter_cab/view/vendor/vehicle_owner_management/view_vehicle_ow
 import 'package:flutter_cab/view/vendor/vendor_dashboard_screen.dart';
 import 'package:go_router/go_router.dart';
 
-import '../data/models/get_all_enquiry_model.dart';
+// import '../data/models/get_all_enquiry_model.dart';
 import '../view/customer/my_package/packageHistory/package_booking_details.dart';
 import '../view/vendor/bid_management_screen/bid_management_screen.dart';
 
@@ -97,9 +98,12 @@ final GoRouter myRouter = GoRouter(
       path: '/user_dashboard',
       builder: (BuildContext context, GoRouterState state) {
         // var data = state.extra as Map<String, dynamic>;
-        return const CustomerHomeScreen();
+        return const BottomNavigationBarScreen();
       },
     ),
+    GoRoute(
+        path: '/send_enquiry',
+        builder: (context, state) => const SendEnquiryScreen()),
     GoRoute(
       path: '/notification',
       builder: (BuildContext context, GoRouterState state) {
@@ -226,7 +230,7 @@ final GoRouter myRouter = GoRouter(
         );
       },
     ),
-   
+
     GoRoute(
         path: '/my_enquiry',
         builder: (context, state) {
@@ -400,7 +404,7 @@ final GoRouter myRouter = GoRouter(
             parentNavigatorKey: _rootNavigatorKey,
             builder: (BuildContext context, GoRouterState state) {
               var data = state.extra as Map<String, dynamic>;
-            
+
               return CarsDetailsAvailable(
                 id: data['id'],
                 longitude: data['logitude'],
@@ -493,17 +497,26 @@ final GoRouter myRouter = GoRouter(
           GoRoute(
             path: 'bidNow',
             builder: (context, state) {
-              final extra = state.extra;
-
-              if (extra is EnquiryContent) {
-                return BidNowScreen(enquiryData: extra);
-              } else if (extra is BidContent) {
-                return BidNowScreen(bidData: extra);
-              } else {
+              final extra = state.extra as BidNowScreen?;
+              if (extra == null) {
                 return const Scaffold(
                   body: Center(child: Text("Invalid navigation data")),
                 );
               }
+              return BidNowScreen(
+                bidData: extra.bidData,
+                enquiryData: extra.enquiryData,
+                viewPage: extra.viewPage,
+              );
+              // if (extra is EnquiryContent) {
+              //   return BidNowScreen(enquiryData: extra);
+              // } else if (extra is BidContent) {
+              //   return BidNowScreen(bidData: extra);
+              // } else {
+              //   return const Scaffold(
+              //     body: Center(child: Text("Invalid navigation data")),
+              //   );
+              // }
             },
           ),
           GoRoute(

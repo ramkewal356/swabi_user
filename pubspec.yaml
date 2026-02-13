@@ -44,7 +44,7 @@ dependencies:
   delightful_toast: ^1.1.0
   uuid: ^4.4.0
   google_places_flutter: ^2.0.8
- 
+  country_picker: ^2.0.27
 
  #otp verification
   pin_code_fields: ^8.0.1

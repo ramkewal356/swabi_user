@@ -471,6 +471,8 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                                           context,
                                           (setState) => _formContainer(
                                                 title: 'Add Pickup Location',
+                                                country:
+                                                    data?.pkg.country ?? '',
                                                 onTap: () {
                                                   getAddPickUpLocation();
                                                 },
@@ -1110,6 +1112,7 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
     required String title,
     required VoidCallback onTap,
     required bool isChangeContact,
+    String? country,
   }) {
     return Container(
         margin: const EdgeInsets.all(20),
@@ -1171,6 +1174,7 @@ class _PackagePageViewDetailsState extends State<PackagePageViewDetails> {
                     CustomSearchLocation(
                         controller: searchLocationController,
                         state: '',
+                        country: country ?? '',
                         // stateValidation: false,
                         hintText: 'Search your location'),
                   const SizedBox(

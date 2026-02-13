@@ -1,4 +1,10 @@
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+import 'package:flutter_cab/core/utils/utils.dart';
+import 'package:flutter_cab/data/models/get_all_enquiry_model.dart' hide Status;
+import 'package:flutter_cab/view/vendor/enquiry_management/bid_now_screen.dart';
+import 'package:flutter_cab/view_model/wallet_view_model.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/gradient_button.dart';
 import 'package:flutter_cab/widgets/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/widgets/custom_filter_popup_widget.dart';
@@ -219,7 +225,8 @@ class _EnquiryManagementScreenState extends State<EnquiryManagementScreen> {
                                     style: const TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w500)),
-                                Text(enquiryData?.country ?? 'NA',
+                                Text(
+                                    enquiryData?.countries?.join(' , ') ?? 'NA',
                                     style: const TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w500)),
@@ -239,19 +246,29 @@ class _EnquiryManagementScreenState extends State<EnquiryManagementScreen> {
                                   : GradientButton(
                                       icon: Icons.monetization_on_outlined,
                                       onPressed: () {
-                                        context
-                                            .push(
-                                          '/vendor_dashboard/bidNow',
-                                          extra: enquiryData,
-                                        )
-                                            .then((onValue) {
-                                          // Refresh the enquiry list after bid creation
-                                          _getAllEnquirys(
-                                            isFilter: true,
-                                            isSearch: false,
-                                            isPagination: false,
-                                          );
-                                        });
+                                        if (enquiryData?.show == true) {
+                                          context
+                                              .push(
+                                            '/vendor_dashboard/bidNow',
+                                            extra: BidNowScreen(
+                                              enquiryData: enquiryData,
+                                            ),
+                                          )
+                                              .then((onValue) {
+                                            // Refresh the enquiry list after bid creation
+                                            _getAllEnquirys(
+                                              isFilter: true,
+                                              isSearch: false,
+                                              isPagination: false,
+                                            );
+                                          });
+                                        } else {
+                                          showPaymentConfirmationModal(
+                                              payableAmount:
+                                                  enquiryData?.viewAmount ?? 0,
+                                              enquiryId: enquiryData?.id ?? 0,
+                                              enquiryData: enquiryData);
+                                        }
                                       },
                                       label: 'Bid Now',
                                     ),
@@ -265,25 +282,37 @@ class _EnquiryManagementScreenState extends State<EnquiryManagementScreen> {
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600)),
                               const SizedBox(height: 10),
+                              if (enquiryData?.travelDates != null &&
+                                  enquiryData!.travelDates!.isNotEmpty)
                               textItem(
                                   label: "Travel Dates",
-                                  value: enquiryData?.travelDates ?? 'NA'),
-                              textItem(
-                                  label: "Tentative Days",
-                                  value:
-                                      enquiryData?.tentativeDays ?? 'NA'),
+                                    value: enquiryData.travelDates ?? 'NA'),
+                              if (enquiryData?.tentativeDates != null &&
+                                  enquiryData!.tentativeDates!.isNotEmpty)
+                                textItem(
+                                    label: "Tentative Dates",
+                                    value: enquiryData.tentativeDates ?? 'NA'),
+                              if (enquiryData?.tentativeDates != null &&
+                                  enquiryData!.tentativeDates!.isNotEmpty)
+                                textItem(
+                                    label: "Tentative Days",
+                                    value: enquiryData.tentativeDays ?? 'NA'),
                               textItem(
                                   label: "Accommodation",
                                   value:
                                       enquiryData?.accommodationPreferences ??
                                           'NA'),
+                              if (enquiryData?.specialRequests != null &&
+                                  enquiryData!.specialRequests!.isNotEmpty)
                               textItem(
                                   label: "Special Request",
-                                  value: enquiryData?.specialRequests ?? 'NA'),
+                                    value: enquiryData.specialRequests ?? 'NA'),
+                              if (enquiryData?.destinations != null &&
+                                  enquiryData!.destinations!.isNotEmpty)
                               textItem(
                                   label: "Destinations",
                                   value:
-                                      "${enquiryData?.destinations?.join(', ')}"),
+                                        "${enquiryData.destinations?.join(' , ')}"),
                               textItem(
                                   label: "Meals",
                                   value: enquiryData?.meals ?? 'NA'),
@@ -302,7 +331,214 @@ class _EnquiryManagementScreenState extends State<EnquiryManagementScreen> {
     );
   }
 
-Widget textItem({String label = 'Label', String value = 'Value'}) {
+  void showPaymentConfirmationModal(
+      {required int payableAmount,
+      required int enquiryId,
+      EnquiryContent? enquiryData}) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return StatefulBuilder(builder: (context, setStateA) {
+          var status =
+              context.watch<WalletViewModel>().viewBidPaymentData.status;
+
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                /// Drag Handle
+                Container(
+                  width: 50,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                /// Icon
+                Container(
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.orange.shade400,
+                        Colors.deepOrange.shade600
+                      ],
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.monetization_on_rounded,
+                    size: 35,
+                    color: Colors.white,
+                  ),
+                ),
+
+                const SizedBox(height: 18),
+
+                /// Title
+                const Text(
+                  "Unlock & View Bid",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                const SizedBox(height: 8),
+
+                const Text(
+                  "To view this enquiry details and place your bid, please proceed with payment.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.grey),
+                ),
+
+                const SizedBox(height: 20),
+
+                /// Amount Card
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 18),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    color: Colors.orange.withOpacity(.08),
+                  ),
+                  child: Column(
+                    children: [
+                      const Text(
+                        "Payable Amount",
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        "USD $payableAmount",
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.deepOrange,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 25),
+
+                /// Buttons
+                Row(
+                  children: [
+                    /// Cancel
+                    Expanded(
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text("Cancel"),
+                      ),
+                    ),
+
+                    const SizedBox(width: 15),
+
+                    /// Pay Button
+                    Expanded(
+                      child: Container(
+                        height: 48,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.orange.shade500,
+                              Colors.deepOrange.shade700
+                            ],
+                          ),
+                        ),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onPressed: status == Status.loading
+                              ? null
+                              : () async {
+                                  // Navigator.pop(context);
+                                  var resp = context.read<WalletViewModel>();
+                                  final success =
+                                      await resp.viewBidPaymentApi(body: {
+                                    "amount": payableAmount,
+                                    "currency": "USD",
+                                    "paymentType": "Inquiry View",
+                                    "travelInquiryId": enquiryId
+                                  });
+                                  if (success) {
+                                    Navigator.pop(context);
+                                    // Navigate to the bid now screen with the enquiry data
+                                    Utils.toastSuccessMessage(
+                                        'Payment successfully');
+                                    context
+                                        .push(
+                                      '/vendor_dashboard/bidNow',
+                                      extra: BidNowScreen(
+                                        enquiryData: enquiryData,
+                                      ),
+                                    )
+                                        .then((onValue) {
+                                      // Refresh the enquiry list after bid creation
+                                      _getAllEnquirys(
+                                        isFilter: true,
+                                        isSearch: false,
+                                        isPagination: false,
+                                      );
+                                    });
+                                  }
+
+                                  /// 🔥 Add your payment logic here
+                                },
+                          child: status == Status.loading
+                              ? Center(
+                                  child: const CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : const Text(
+                                  "Proceed to Pay",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 10),
+              ],
+            ),
+          );
+        });
+      },
+    );
+  }
+
+  Widget textItem({String label = 'Label', String value = 'Value'}) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -321,5 +557,4 @@ Widget textItem({String label = 'Label', String value = 'Value'}) {
       ],
     );
   }
-
 }

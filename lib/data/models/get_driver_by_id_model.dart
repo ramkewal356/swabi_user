@@ -45,6 +45,8 @@ class Data {
   int? createdDate;
   int? modifiedDate;
   String? profileImageUrl;
+  String? licenseImageUrl;
+  String? governmentIdImageUrl;
   String? userType;
   int? vendorId;
   List<UnavailableDate>? unavailableDates;
@@ -67,6 +69,8 @@ class Data {
     this.createdDate,
     this.modifiedDate,
     this.profileImageUrl,
+    this.licenseImageUrl,
+    this.governmentIdImageUrl,
     this.userType,
     this.vendorId,
     this.unavailableDates,
@@ -90,6 +94,8 @@ class Data {
         createdDate: json["createdDate"],
         modifiedDate: json["modifiedDate"],
         profileImageUrl: json["profileImageUrl"],
+        licenseImageUrl: json["licenseImageUrl"],
+        governmentIdImageUrl: json["governmentIdImageUrl"],
         userType: json["userType"],
         vendorId: json["vendorId"],
         unavailableDates: json["unavailableDates"] == null
@@ -116,6 +122,8 @@ class Data {
         "createdDate": createdDate,
         "modifiedDate": modifiedDate,
         "profileImageUrl": profileImageUrl,
+        "licenseImageUrl": licenseImageUrl,
+        "governmentIdImageUrl": governmentIdImageUrl,
         "userType": userType,
         "vendorId": vendorId,
         "unavailableDates": unavailableDates == null

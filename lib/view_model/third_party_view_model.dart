@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cab/data/models/currency_model.dart';
 // import 'package:flutter_cab/data/models/currency_model.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
 import 'package:flutter_cab/data/models/color_model.dart';
@@ -19,7 +20,12 @@ class ThirdPartyViewModel with ChangeNotifier {
     getCountryListResponse = response;
     notifyListeners();
   }
+  ApiResponse<List<String>> getCountryListByRegion = ApiResponse.initial();
 
+  void setOnCountryListByRegion(ApiResponse<List<String>> response) {
+    getCountryListByRegion = response;
+    notifyListeners();
+  }
   ApiResponse<List<String>> stateList = ApiResponse.initial();
 
   void setOnStateList(ApiResponse<List<String>> response) {
@@ -27,9 +33,9 @@ class ThirdPartyViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  ApiResponse<String> currencyList = ApiResponse.initial();
+  ApiResponse<List<CurrencyModel>> currencyList = ApiResponse.initial();
 
-  void setOnCurrencyList(ApiResponse<String> response) {
+  void setOnCurrencyList(ApiResponse<List<CurrencyModel>> response) {
     currencyList = response;
     notifyListeners();
   }
@@ -63,7 +69,27 @@ void clearStateList() {
     stateList = ApiResponse.completed([]);
     notifyListeners();
   }
+Future<void> getCountryListByRegionApi({required String region}) async {
+    try {
+      setOnCountryListByRegion(ApiResponse.loading());
+      var resp = await _myRepo.getCountryListByRegionApi(region: region);
+      debugPrint('countryListByRegion$resp');
+      final List data = resp;
 
+      List<String> countryList =
+          data.map((e) => e["name"]["common"].toString()).toList();
+      debugPrint('countryListByRegion$countryList');
+      setOnCountryListByRegion(ApiResponse.completed(countryList));
+    } catch (e) {
+      debugPrint('error$e');
+      setOnCountryListByRegion(ApiResponse.error(e.toString()));
+    }
+  }
+
+  void clearCountriesList() {
+    getCountryListByRegion = ApiResponse.completed([]);
+    notifyListeners();
+  }
   Future<void> getStateList({
     required String country,
   }) async {
@@ -99,10 +125,10 @@ void clearStateList() {
       setOnCurrencyList(ApiResponse.loading());
       var resp = await _myRepo.getAllCurrencyApi();
 
-      var currencyCode =
-          resp.firstWhere((element) => element.country == countryName).code;
-      debugPrint('currencyList$currencyCode');
-      setOnCurrencyList(ApiResponse.completed(currencyCode));
+      // var currencyCode =
+      //     resp.firstWhere((element) => element.country == countryName).code;
+      // debugPrint('currencyList$currencyCode');
+      setOnCurrencyList(ApiResponse.completed(resp));
     } catch (e) {
       debugPrint('error$e');
       setOnCurrencyList(ApiResponse.error(e.toString()));

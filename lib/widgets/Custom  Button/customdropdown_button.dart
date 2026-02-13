@@ -1,3 +1,4 @@
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
@@ -15,6 +16,7 @@ class CustomDropdownButton extends StatefulWidget {
   final String? Function(String?)? validator;
   final bool withoutBorder;
   final bool isEditable;
+  final bool isLoading;
   CustomDropdownButton(
       {super.key,
       required this.itemsList,
@@ -26,7 +28,8 @@ class CustomDropdownButton extends StatefulWidget {
       this.selectedItemBuilder,
       this.validator,
       this.withoutBorder = false,
-      this.isEditable = true});
+      this.isEditable = true,
+      this.isLoading = false});
 
   @override
   State<CustomDropdownButton> createState() => _CustomDropdownButtonState();
@@ -56,10 +59,13 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
 
   @override
   Widget build(BuildContext context) {
+    final items = widget.itemsList.toSet().toList();
+
+
     return FormField<String>(
         autovalidateMode: AutovalidateMode.onUserInteraction,
         validator: widget.validator,
-        initialValue: widget.controller.text, 
+        initialValue: widget.controller.text,
         builder: (FormFieldState<String> field) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,14 +73,23 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
               DropdownButton2<String>(
                 underline: Container(),
                 isExpanded: true,
-                
                 hint: Text(
-                  widget.hintText ?? 'Select item',
-                  textAlign: TextAlign.start,
+                  widget.isLoading
+                      ? "Loading..."
+                      : (widget.hintText ?? 'Select item'),
                   style: textTitleHint,
                   overflow: TextOverflow.ellipsis,
                 ),
-                items: widget.itemsList
+
+                // hint: Text(
+                //   widget.hintText ?? 'Select item',
+                //   textAlign: TextAlign.start,
+                //   style: textTitleHint,
+                //   overflow: TextOverflow.ellipsis,
+                // ),
+                items: widget.isLoading
+                    ? []
+                    : widget.itemsList
                     .toSet()
                     .map((String item) => DropdownMenuItem<String>(
                           value: item,
@@ -84,23 +99,24 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ))
-                    .toList(),
-                    
-                value: widget.controller.text == ''
-                    ? null
-                    : widget.controller.text,
-                onChanged: widget.isEditable
+                        .toList(),
+                // value: widget.controller.text == ''
+                //     ? null
+                //     : widget.controller.text,
+                value: items.contains(widget.controller.text)
+                    ? widget.controller.text
+                    : null,
+                onChanged: (widget.isEditable && !widget.isLoading)
                     ? (value) {
-                  setState(() {
-                    // widget.selecteValue = value;
+                        setState(() {
+                          // widget.selecteValue = value;
                           widget.controller.text = value ?? '';
-                  });
-                  field.didChange(value);
-                        setState(() {});
-                  if (widget.onChanged != null) {
-                    widget.onChanged!(value);
-                         
-                  }
+                        });
+                        field.didChange(value);
+                        // setState(() {});
+                        // if (widget.onChanged != null) {
+                        widget.onChanged?.call(value);
+                        // }
                       }
                     : null,
                 buttonStyleData: ButtonStyleData(
@@ -128,14 +144,30 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
                         ),
                   elevation: 0,
                 ),
-                iconStyleData: const IconStyleData(
-                  icon: Icon(
-                    Icons.keyboard_arrow_down_outlined,
-                  ),
+                iconStyleData: IconStyleData(
+                  icon: widget.isLoading
+                      ? const SizedBox(
+                          height: 18,
+                          width: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: btnColor,
+                          ),
+                        )
+                      : const Icon(Icons.keyboard_arrow_down_outlined),
                   iconSize: 24,
                   iconEnabledColor: Colors.black38,
                   iconDisabledColor: Colors.grey,
                 ),
+
+                // iconStyleData: const IconStyleData(
+                //   icon: Icon(
+                //     Icons.keyboard_arrow_down_outlined,
+                //   ),
+                //   iconSize: 24,
+                //   iconEnabledColor: Colors.black38,
+                //   iconDisabledColor: Colors.grey,
+                // ),
                 dropdownStyleData: DropdownStyleData(
                   maxHeight: 250,
                   // width: 160,
