@@ -1,5 +1,8 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:multi_select_flutter/chip_display/multi_select_chip_display.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
@@ -150,12 +153,17 @@ class _CustomMultiselectDropdownState extends State<CustomMultiselectDropdown> {
           runSpacing: 0,
           children: widget.selectedItems.map((value) {
             return Chip(
-              backgroundColor: const Color(0xff7B1E34),
+              // backgroundColor: const Color(0xff7B1E34),
+              backgroundColor: background,
+              side: BorderSide(color: blackColor.withOpacity(0.06)),
               label: Text(
                 value,
-                style: const TextStyle(color: Colors.white),
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-              deleteIcon: const Icon(Icons.close, color: Colors.white),
+              deleteIcon: const Icon(Icons.close),
               onDeleted: () {
                 final updatedList = List<String>.from(widget.selectedItems)
                   ..remove(value);

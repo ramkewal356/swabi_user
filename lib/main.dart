@@ -16,6 +16,7 @@ import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
 import 'package:flutter_cab/view_model/raise_issue_view_model.dart';
 import 'package:flutter_cab/view_model/rental_management_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
+import 'package:flutter_cab/view_model/subscription_view_model.dart';
 import 'package:flutter_cab/view_model/third_party_view_model.dart';
 import 'package:flutter_cab/view_model/user_profile_view_model.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
@@ -114,6 +115,8 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (create) => ThirdPartyViewModel()),
         ChangeNotifierProvider(create: (create) => VehicleOwnerViewModel()),
         ChangeNotifierProvider(create: (create) => WalletViewModel()),
+        ChangeNotifierProvider(create: (create) => SubscriptionViewModel()),
+
       ],
       child: const MyApp(),
     ));

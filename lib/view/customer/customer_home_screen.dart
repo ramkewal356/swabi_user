@@ -30,6 +30,8 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
   String? selectedState;
   String? selectedCountry;
 
+  bool _isLoading = true;
+
   List carouselData = [
     {
       "title": "Travel Bid System",
@@ -51,12 +53,16 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
       "type": "rental"
     },
   ];
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadData();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _loadData();
       getEnquiry();
+      setState(() {
+        _isLoading = false;
+      });
     });
   }
 
@@ -65,7 +71,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
         isPagination: isPagination, pageNumber: 0, pageSize1: 3);
   }
 
-  void _loadData() async {
+  Future<void> _loadData() async {
     var vm = context.read<UserProfileViewModel>();
 
     await vm.fetchUserProfileViewModelApi();
@@ -91,36 +97,53 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final enquiryStatus =
+        context.watch<EnquiryViewModel>().myEnquiryResponse.status;
+    final packageStatus =
+        context.watch<GetPackageListViewModel>().getPackageList.status;
+    final profileStatus = context.watch<UserProfileViewModel>().dataList.status;
+
+    final isAnyLoading = _isLoading ||
+        enquiryStatus == Status.loading ||
+        packageStatus == Status.loading ||
+        profileStatus == Status.loading;
+
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            /// 🔥 TOP CAROUSEL
-            _carouselSection(),
+      body: isAnyLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                color: btnColor,
+              ),
+            )
+          : SingleChildScrollView(
+              child: Column(
+                children: [
+                  /// 🔥 TOP CAROUSEL
+                  _carouselSection(),
 
-            const SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
-            /// ⭐ CTA SECTION
-            _ctaSection(),
-            const SizedBox(height: 15),
+                  /// ⭐ CTA SECTION
+                  _ctaSection(),
+                  const SizedBox(height: 15),
 
-            /// 💼 BID CARDS
-            _bidSection(),
-            const SizedBox(height: 15),
+                  /// 💼 BID CARDS
+                  _bidSection(),
+                  const SizedBox(height: 15),
 
-            /// 📦 PACKAGE SEARCH + LIST
-            _packageSection(),
+                  /// 📦 PACKAGE SEARCH + LIST
+                  _packageSection(),
 
-            const SizedBox(height: 15),
+                  const SizedBox(height: 15),
 
-            /// 🚗 RENTAL LIST
-            _rentalSection(),
+                  /// 🚗 RENTAL LIST
+                  _rentalSection(),
 
-            const SizedBox(height: 40),
-          ],
-        ),
-      ),
+                  const SizedBox(height: 40),
+                ],
+              ),
+            ),
     );
   }
 
@@ -148,7 +171,6 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
                     borderRadius: BorderRadius.circular(20),
                     gradient: LinearGradient(
                       colors: [
-                        // Colors.blue.shade400, Colors.purple.shade400
                         btnColor,
                         btnColor.withOpacity(0.75),
                       ],
@@ -170,8 +192,6 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
                         style: const TextStyle(color: Colors.white),
                       ),
 
-                      /// 👉 Bid Enquiry Button only on first page
-                      // if (index == 0) ...[
                       const Spacer(),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -181,7 +201,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
                         onPressed: () {
                           if (item["type"] == "bid") {
                             context
-                                .push('/send_enquiry')
+                                .push('/enquiry_form')
                                 .then((value) => getEnquiry());
                           } else if (item["type"] == "package") {
                             context.push('/package_booking');
@@ -191,7 +211,6 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
                         },
                         child: Text(item["btnText"]),
                       )
-                      // ]
                     ],
                   ),
                 ),
@@ -264,14 +283,31 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
   // ---------------- BID ----------------
 
   Widget _bidSection() {
-    var enquiryData = context.watch<EnquiryViewModel>().myEnquiryResponse.data;
+    final model = context.watch<EnquiryViewModel>();
+    var enquiryData = model.myEnquiryResponse.data;
+    if (model.myEnquiryResponse.status == Status.loading) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 32),
+        child: Center(
+          child: CircularProgressIndicator(
+            color: btnColor,
+          ),
+        ),
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _sectionTitle("Bid Requests"),
         (enquiryData ?? []).isEmpty
-            ? Center(
-                child: Text('data'),
+            ? Container(
+                width: double.infinity,
+                margin: EdgeInsets.symmetric(horizontal: 10),
+                padding: EdgeInsets.all(40),
+                decoration: BoxDecoration(
+                    color: background, borderRadius: BorderRadius.circular(15)),
+                child: Center(child: Text('No data found')),
               )
             : ListView.builder(
                 shrinkWrap: true,
@@ -287,7 +323,17 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
                       onTap: () {
                         context.push('/my_enquiry/view_bid', extra: {
                           "enquiryId": enquiryData?[i].travelInquiry?.id
+                        }).then((onValue) => getEnquiry());
+                      },
+                      onEditTap: () {
+                        context.push('/my_enquiry/update_enquiry', extra: {
+                          "enquiryId": enquiryData?[i].travelInquiry?.id
+                        }).then((onValue) {
+                          getEnquiry();
                         });
+                      },
+                      onConfirmClose: () {
+                        getEnquiry();
                       },
                     ),
                   );
@@ -307,7 +353,11 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
           height: 455,
           child: Consumer<GetPackageListViewModel>(
             builder: (context, value, child) {
-            
+              if (value.getPackageList.status == Status.loading) {
+                return Center(
+                  child: CircularProgressIndicator(color: btnColor),
+                );
+              }
               if (value.getPackageList.status == Status.completed) {
                 var getPackageList = value.getPackageList.data ?? [];
                 return (value.getPackageList.data ?? []).isEmpty
@@ -329,15 +379,12 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
                         ))
                     : ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        // shrinkWrap: true,
-                        // physics: const NeverScrollableScrollPhysics(),
                         padding: const EdgeInsets.symmetric(
                             vertical: 0, horizontal: 10),
                         itemCount: getPackageList.length,
                         itemBuilder: (context, index) {
                           List<PackageActivity> activityData =
                               getPackageList[index].packageActivities;
-                          // return _packageCard();
                           return Padding(
                             padding: EdgeInsets.only(
                                 right: index == getPackageList.length - 1
@@ -353,7 +400,6 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
                                     .toList(),
                                 packageName: getPackageList[index].packageName,
                                 noOfDays: getPackageList[index].noOfDays,
-                                // noOfNights: "0",
                                 country: getPackageList[index].country,
                                 state: getPackageList[index].state,
                                 location: getPackageList[index].location,
@@ -392,7 +438,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
                         },
                       );
               } else {
-                return SizedBox(height: 10);
+                return const SizedBox(height: 10);
               }
             },
           ),
@@ -408,7 +454,6 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _sectionTitle("Rentals"),
-        // _rentalInfoCard(context),
         _rentalCard(context)
       ],
     );
@@ -492,12 +537,6 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
               ),
               onPressed: () {
                 // 🔥 Navigate to Rental Search Page
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (_) => const RentalSearchPage(),
-                //   ),
-                // );
               },
             ),
           ),
@@ -518,5 +557,3 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
     );
   }
 }
-
-

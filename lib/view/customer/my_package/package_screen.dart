@@ -16,7 +16,6 @@ import 'package:flutter_cab/core/utils/dimensions.dart';
 import 'package:flutter_cab/core/utils/validation.dart';
 import 'package:flutter_cab/view_model/package_view_model.dart';
 import 'package:flutter_cab/view_model/user_profile_view_model.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -250,11 +249,14 @@ class _PackageScreenState extends State<PackageScreen> {
                 userStatus == Status.loading) {
               return Expanded(
                 child: Center(
-                  child: SpinKitFadingCube(
-                    size: 50,
-                    duration: const Duration(milliseconds: 1200),
-                    color: Colors.red,
+                  child: CircularProgressIndicator(
+                    color: greenColor,
                   ),
+                  // child: SpinKitFadingCube(
+                  //   size: 50,
+                  //   duration: const Duration(milliseconds: 1200),
+                  //   color: Colors.red,
+                  // ),
                 ),
               );
             }

@@ -1,6 +1,9 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/data/models/currency_model.dart';
+import 'package:flutter_cab/data/models/get_all_enquiry_model.dart';
 import 'package:intl/intl.dart';
 import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 // import 'package:intl_phone_field/phone_number.dart';
@@ -77,6 +80,90 @@ class Validation {
     final RegExp modelRegex = RegExp(r'^[A-Z]{2,}[A-Z0-9]{2,13}$');
     return modelRegex.hasMatch(value.trim().toUpperCase());
   }
+  static DateTime? _parse(String val) {
+    try {
+      if (val.contains('-')) {
+        return DateFormat('dd-MM-yyyy').parseStrict(val);
+      } else {
+        return DateFormat('dd/MM/yyyy').parseStrict(val);
+      }
+    } catch (_) {
+      return null;
+    }
+  }
+
+  static String? validateTravelDates(
+    String? value, {
+    dynamic countryType,
+    List<String>? selectedCountries,
+    int? minDaysPerCountry,
+    bool useStartEndDates = false,
+    String? startDate,
+    String? endDate,
+  }) {
+    if (value == null || value.isEmpty) {
+      return 'Please select your travel dates';
+    }
+
+    // Parse dates
+    // Accept both "-" and "/" delimiters but standardize as " - "
+    final parts = value.split('-').map((e) => e.trim()).toList();
+    // final dateFormat1 = RegExp(r'^\d{2}[\/-]\d{2}[\/-]\d{4}$');
+    if (parts.isEmpty) {
+      return "Please select your travel dates";
+    }
+
+    // Helper to parse a single date
+
+    DateTime? start, end;
+    if (useStartEndDates) {
+      // Prefer to use explicit passed-in startDate, endDate (from controller split)
+      if (startDate != null && startDate.isNotEmpty) start = _parse(startDate);
+      if (endDate != null && endDate.isNotEmpty) end = _parse(endDate);
+      // If only one available, treat as single day
+      end ??= start;
+    } else {
+      if (parts.length == 2) {
+        start = _parse(parts[0]);
+        end = _parse(parts[1]);
+      } else if (parts.length == 1) {
+        start = _parse(parts[0]);
+        end = start;
+      }
+    }
+
+    if (start == null) {
+      return "Start date is invalid or missing";
+    }
+
+    if (end == null) {
+      return "End date is invalid or missing";
+    }
+
+    // Check: both must be today or future
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    if (start.isBefore(today)) {
+      return "Start date cannot be before today";
+    }
+    if (end.isBefore(start)) {
+      return "End date cannot be before start date";
+    }
+
+    // Optional: check minimum number of days per country (for multicountry trips)
+    if (selectedCountries != null &&
+        selectedCountries.length > 1 &&
+        minDaysPerCountry != null &&
+        minDaysPerCountry > 0) {
+      int days = end.difference(start).inDays + 1;
+      if (days < (minDaysPerCountry * selectedCountries.length)) {
+        return "Minimum $minDaysPerCountry days per country required for ${selectedCountries.length} countries";
+      }
+    }
+
+    return null;
+  }
+
 }
 
 String dateFormat(int? time) {
@@ -181,77 +268,115 @@ String formatDateRange(DateTimeRange range) {
   return "${formatter.format(range.start)} - ${formatter.format(range.end)}";
 }
 
-Future<String?> pickSfDateRange(BuildContext context) async {
-  DateTime? startDate;
-  DateTime? endDate;
+/// Show selected start and end date in the SfDateRangePicker dialog and set text controller appropriately.
+/// Returns the formatted selected date range string to be put in controller ("dd-MM-yyyy" or "dd-MM-yyyy - dd-MM-yyyy")
+Future<String?> pickSfDateRange(
+    BuildContext context, String? startDate, String? endDate) async {
+  DateTime? selectedStart = (startDate != null && startDate.isNotEmpty)
+      ? parseSimpleDate(startDate)
+      : null;
+  DateTime? selectedEnd =
+      (endDate != null && endDate.isNotEmpty) ? parseSimpleDate(endDate) : null;
+
+  PickerDateRange? preselect;
+  if (selectedStart != null) {
+    preselect = PickerDateRange(selectedStart, selectedEnd ?? selectedStart);
+  }
+
+  DateTime? resultStart;
+  DateTime? resultEnd;
 
   return await showDialog<String>(
     context: context,
     builder: (context) {
-      return Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        child: Container(
-          // width: MediaQuery.of(context).size.width * 0.9,
-          padding: const EdgeInsets.all(16),
-          width: 350,
-          height: 400,
-          child: SfDateRangePicker(
-            view: DateRangePickerView.month,
-            selectionMode: DateRangePickerSelectionMode.range,
-            showActionButtons: true,
-            selectionShape: DateRangePickerSelectionShape.circle,
-            selectionColor: btnColor,
-            startRangeSelectionColor: btnColor,
-            endRangeSelectionColor: btnColor,
-            // ignore: deprecated_member_use
-            rangeSelectionColor: btnColor.withOpacity(0.2),
-            todayHighlightColor: btnColor,
-            monthCellStyle: DateRangePickerMonthCellStyle(
-              todayCellDecoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: btnColor, width: 1.5),
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return Dialog(
+            insetPadding:
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              width: 350,
+              height: 450,
+              child: SfDateRangePicker(
+              
+                view: DateRangePickerView.month,
+                selectionMode: DateRangePickerSelectionMode.range,
+                showActionButtons: true,
+                selectionShape: DateRangePickerSelectionShape.circle,
+                selectionColor: btnColor,
+                startRangeSelectionColor: btnColor,
+                endRangeSelectionColor: btnColor,
+                rangeSelectionColor: btnColor.withOpacity(0.2),
+                todayHighlightColor: btnColor,
+                minDate: DateTime.now(),
+                monthCellStyle: DateRangePickerMonthCellStyle(
+                  todayCellDecoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: btnColor, width: 1.5),
+                  ),
+                  todayTextStyle: const TextStyle(color: Colors.black),
+                  cellDecoration: const BoxDecoration(shape: BoxShape.circle),
+                  textStyle: const TextStyle(fontSize: 14, color: Colors.black),
+                  disabledDatesTextStyle: const TextStyle(color: Colors.grey),
+                ),
+                monthViewSettings: const DateRangePickerMonthViewSettings(
+                  firstDayOfWeek: 1,
+                  viewHeaderStyle: DateRangePickerViewHeaderStyle(),
+                ),
+                initialSelectedRange: preselect,
+                headerStyle: DateRangePickerHeaderStyle(
+                    textStyle: TextStyle(fontWeight: FontWeight.bold)),
+                onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
+                  if (args.value is PickerDateRange) {
+                    setState(() {
+                      resultStart = args.value.startDate;
+                      resultEnd = args.value.endDate ?? args.value.startDate;
+                    });
+                  }
+                },
+                onCancel: () {
+                  Navigator.pop(context);
+                },
+                onSubmit: (val) {
+                  if (resultStart != null && resultEnd != null) {
+                    if (resultStart == resultEnd) {
+                      Navigator.pop(
+                        context,
+                        DateFormat('dd-MM-yyyy').format(resultStart!),
+                      );
+                    } else {
+                      Navigator.pop(
+                          context,
+                          "${DateFormat('dd-MM-yyyy').format(resultStart!)} - "
+                          "${DateFormat('dd-MM-yyyy').format(resultEnd!)}");
+                    }
+                  } else {
+                    Navigator.pop(context);
+                  }
+                },
               ),
-              todayTextStyle: const TextStyle(color: Colors.black),
-              cellDecoration: const BoxDecoration(shape: BoxShape.circle),
-              textStyle: const TextStyle(fontSize: 14, color: Colors.black),
-              disabledDatesTextStyle: const TextStyle(color: Colors.grey),
             ),
-
-            monthViewSettings: const DateRangePickerMonthViewSettings(
-              firstDayOfWeek: 1, // Monday
-              viewHeaderStyle: DateRangePickerViewHeaderStyle(),
-            ),
-            initialSelectedRange: null, // No preselection
-            onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
-              if (args.value is PickerDateRange) {
-                startDate = args.value.startDate;
-                endDate = args.value.endDate ?? args.value.startDate;
-              }
-            },
-            onCancel: () {
-              Navigator.pop(context); // Close without selection
-            },
-            onSubmit: (val) {
-              if (startDate != null && endDate != null) {
-                if (startDate == endDate) {
-                  Navigator.pop(context,
-                      DateFormat('dd-MM-yyyy').format(startDate!)); // single
-                } else {
-                  Navigator.pop(
-                      context,
-                      "${DateFormat('dd-MM-yyyy').format(startDate!)} - "
-                      "${DateFormat('dd-MM-yyyy').format(endDate!)}"); // range
-                }
-              } else {
-                Navigator.pop(context); // No selection
-              }
-            },
-          ),
-        ),
+          );
+        },
       );
     },
   );
+}
+
+/// Helper: Parses a simple date string "dd-MM-yyyy" or "dd/MM/yyyy"
+DateTime? parseSimpleDate(String input) {
+  try {
+    if (input.contains('-')) {
+      return DateFormat('dd-MM-yyyy').parseStrict(input);
+    } else {
+      return DateFormat('dd/MM/yyyy').parseStrict(input);
+    }
+  } catch (_) {
+    return null;
+  }
 }
 
 Future<List<String>?> selectMultipleSfDate(BuildContext context) async {
@@ -276,7 +401,7 @@ Future<List<String>?> selectMultipleSfDate(BuildContext context) async {
             selectionColor: btnColor,
             startRangeSelectionColor: btnColor,
             endRangeSelectionColor: btnColor,
-            // ignore: deprecated_member_use
+          
             rangeSelectionColor: btnColor.withOpacity(0.2),
             todayHighlightColor: btnColor,
             monthCellStyle: DateRangePickerMonthCellStyle(
@@ -486,4 +611,19 @@ Future<String?> globalPhoneValidator(String fullNumber) async {
   } catch (e) {
     return "Invalid phone number";
   }
+}
+String formatParticipantType(ParticipantType? participantType) {
+  if (participantType == null) return "--";
+  var types = [
+    if (participantType.adult != null && (participantType.adult ?? 0) > 0)
+      "${participantType.adult} Adult",
+    if (participantType.child != null && (participantType.child ?? 0) > 0)
+      "${participantType.child} Child",
+    if (participantType.infant != null && (participantType.infant ?? 0) > 0)
+      "${participantType.infant} Infant",
+    if (participantType.senior != null && (participantType.senior ?? 0) > 0)
+      "${participantType.senior} Senior",
+  ];
+  if (types.isEmpty) return "--";
+  return types.join(', ');
 }

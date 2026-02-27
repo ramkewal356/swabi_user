@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/status.dart';
-// import 'package:flutter_cab/widgets/Custom%20%20Button/gradient_button.dart';
 import 'package:flutter_cab/widgets/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
@@ -45,7 +44,10 @@ class _MyEnquiryScreenState extends State<MyEnquiryScreen> {
     return PageLayoutPage(
         bgColor: bgGreyColor,
         appBar: AppBar(
-          title: const Text('My Enquiry'),
+          title: Text(
+            'My Enquiry',
+            style: appBarTitleStyle,
+          ),
           backgroundColor: background,
         ),
         onRefresh: () async {},
@@ -87,6 +89,16 @@ class _MyEnquiryScreenState extends State<MyEnquiryScreen> {
                             }).then((onValue) {
                               getEnquiry();
                             });
+                          },
+                          onEditTap: () {
+                            context.push('/my_enquiry/update_enquiry', extra: {
+                              "enquiryId": enquiryData?.travelInquiry?.id
+                            }).then((onValue) {
+                              getEnquiry();
+                            });
+                          },
+                          onConfirmClose: () {
+                            getEnquiry();
                           },
                         );
                       },

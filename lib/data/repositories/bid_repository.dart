@@ -70,6 +70,24 @@ class BidRepository {
       rethrow;
     }
   }
+  Future<bool> createBidApi({required Map<String, dynamic> body}) async {
+    var http = HttpService(
+        isAuthorizeRequest: true,
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.createBidUrl,
+        methodType: HttpMethodType.POST,
+        bodyType: HttpBodyType.JSON,
+        body: body);
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("Create Bid Resp api success ${response?.data}");
+      return true;
+    } catch (e) {
+      debugPrint("Create Bid Resp api not success");
+      http.handleErrorResponse(error: e);
+      rethrow;
+    }
+  }
 
   Future<bool> updateBidApi(
       {required Map<String, dynamic> body,
@@ -141,6 +159,25 @@ class BidRepository {
       }
     } catch (e) {
       debugPrint("Accept or Reject Bid Resp api not success");
+      http.handleErrorResponse(error: e);
+      rethrow;
+    }
+  }
+  
+  Future<bool> cancelBidApi({required Map<String, dynamic> body}) async {
+    var http = HttpService(
+        isAuthorizeRequest: true,
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.cancelBidUrl,
+        methodType: HttpMethodType.PATCH,
+        bodyType: HttpBodyType.JSON,
+        body: body);
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("Cancel Bid Resp api success ${response?.data}");
+      return true;
+    } catch (e) {
+      debugPrint("Cancel Bid Resp api not success");
       http.handleErrorResponse(error: e);
       rethrow;
     }

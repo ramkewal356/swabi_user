@@ -1,9 +1,10 @@
 // routes.dart
 
 import 'package:flutter/material.dart';
-// import 'package:flutter_cab/data/models/get_all_bid_model.dart';
-import 'package:flutter_cab/view/customer/enquiry/send_enquiry_screen.dart';
+
+import 'package:flutter_cab/view/customer/enquiry/enquiry_form_screen.dart';
 import 'package:flutter_cab/view/customer/my_package/booking_payment_screen.dart';
+import 'package:flutter_cab/view/vendor/subscription_management/subscription_screen.dart';
 import 'package:flutter_cab/widgets/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/view/auth_screens/change_password.dart';
 import 'package:flutter_cab/view/customer/enquiry/my_enquiry_screen.dart';
@@ -30,9 +31,8 @@ import 'package:flutter_cab/view/customer/my_package/package_screen.dart';
 import 'package:flutter_cab/view/customer/my_package/package_booking_member_screen.dart';
 import 'package:flutter_cab/view/customer/my_package/package_viewdetails_screen.dart';
 import 'package:flutter_cab/view/customer/my_package/packageHistory/mypackage_history_screen.dart';
-// import 'package:flutter_cab/view/profile/edit_profile_screen.dart';
-import 'package:flutter_cab/view/customer/wallet_pages/wallet_history_screen.dart';
-import 'package:flutter_cab/view/customer/wallet_pages/wallet_screen.dart';
+import 'package:flutter_cab/view/vendor/wallet_pages/wallet_history_screen.dart';
+import 'package:flutter_cab/view/vendor/wallet_pages/wallet_screen.dart';
 import 'package:flutter_cab/view/auth_screens/forgot_screen.dart';
 import 'package:flutter_cab/view/auth_screens/login_screen.dart';
 import 'package:flutter_cab/view/auth_screens/otp_verification_screen.dart';
@@ -60,8 +60,6 @@ import 'package:flutter_cab/view/vendor/vehicle_owner_management/vehicle_owner_m
 import 'package:flutter_cab/view/vendor/vehicle_owner_management/view_vehicle_owner_details_screen.dart';
 import 'package:flutter_cab/view/vendor/vendor_dashboard_screen.dart';
 import 'package:go_router/go_router.dart';
-
-// import '../data/models/get_all_enquiry_model.dart';
 import '../view/customer/my_package/packageHistory/package_booking_details.dart';
 import '../view/vendor/bid_management_screen/bid_management_screen.dart';
 
@@ -101,9 +99,22 @@ final GoRouter myRouter = GoRouter(
         return const BottomNavigationBarScreen();
       },
     ),
+    // Enquiry form: send (no extra) or update (extra: {'enquiryId': int})
+    GoRoute(
+      path: '/enquiry_form',
+      builder: (context, state) {
+        final extra = state.extra is Map<String, dynamic>
+            ? state.extra as Map<String, dynamic>
+            : null;
+        final id = extra?['enquiryId'];
+        final enquiryId =
+            id is int ? id : (id != null ? int.tryParse(id.toString()) : null);
+        return EnquiryFormScreen(enquiryId: enquiryId);
+      },
+    ),
     GoRoute(
         path: '/send_enquiry',
-        builder: (context, state) => const SendEnquiryScreen()),
+        builder: (context, state) => const EnquiryFormScreen()),
     GoRoute(
       path: '/notification',
       builder: (BuildContext context, GoRouterState state) {
@@ -243,6 +254,13 @@ final GoRouter myRouter = GoRouter(
               var data = state.extra as Map<String, dynamic>;
               return ViewBidScreen(enquiryId: data["enquiryId"]);
             },
+          ),
+          GoRoute(
+            path: 'update_enquiry',
+            builder: (context, state) {
+              var data = state.extra as Map<String, dynamic>;
+              return EnquiryFormScreen(enquiryId: data["enquiryId"]);
+            },
           )
         ]),
     GoRoute(
@@ -256,28 +274,7 @@ final GoRouter myRouter = GoRouter(
         );
       },
     ),
-    GoRoute(
-      path: '/myWallet',
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (BuildContext context, GoRouterState state) {
-        var userId = state.extra as Map<String, dynamic>;
-
-        return WalletScreen(
-          userId: userId["userId"],
-        );
-      },
-    ),
-    GoRoute(
-      path: '/walletHistory',
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (BuildContext context, GoRouterState state) {
-        var userId = state.extra as Map<String, dynamic>;
-
-        return WalletHistoryScreen(
-          userId: userId["userId"],
-        );
-      },
-    ),
+   
     GoRoute(
       path: '/setting',
       parentNavigatorKey: _rootNavigatorKey,
@@ -493,6 +490,32 @@ final GoRouter myRouter = GoRouter(
           GoRoute(
             path: 'enquiryManagement',
             builder: (context, state) => const EnquiryManagementScreen(),
+          ),
+          GoRoute(
+            path: 'subscription',
+            builder: (context, state) => SubscriptionScreen(),
+          ),
+          GoRoute(
+            path: '/myWallet',
+            parentNavigatorKey: _rootNavigatorKey,
+            builder: (BuildContext context, GoRouterState state) {
+              // var userId = state.extra as Map<String, dynamic>;
+
+              return WalletScreen(
+                  // userId: userId["userId"],
+                  );
+            },
+          ),
+          GoRoute(
+            path: '/walletHistory',
+            parentNavigatorKey: _rootNavigatorKey,
+            builder: (BuildContext context, GoRouterState state) {
+              var data = state.extra as WalletHistoryScreen;
+
+              return WalletHistoryScreen(
+                transactionList: data.transactionList,
+              );
+            },
           ),
           GoRoute(
             path: 'bidNow',

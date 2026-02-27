@@ -1,72 +1,53 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
 
 import 'package:flutter/material.dart';
-import 'package:flutter_cab/data/response/status.dart';
-import 'package:flutter_cab/data/models/get_all_bid_model.dart';
-import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
-import 'package:flutter_cab/widgets/Custom%20Widgets/custom_textformfield.dart';
+import 'package:flutter_cab/data/models/get_all_bid_model.dart' as bid_model;
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
-import 'package:flutter_cab/view_model/bid_view_model.dart';
-import 'package:flutter_cab/view_model/enquiry_view_model.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_cab/core/utils/validation.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-import '../../../data/models/get_all_enquiry_model.dart' hide Status;
+import '../../../data/models/get_all_enquiry_model.dart';
+import 'bid_form_card.dart';
 
 class BidNowScreen extends StatefulWidget {
   final EnquiryContent? enquiryData;
-  final BidContent? bidData;
+  final bid_model.BidContent? bidData;
   final bool viewPage;
-  const BidNowScreen(
-      {super.key, this.enquiryData, this.bidData, this.viewPage = false});
+
+  const BidNowScreen({
+    super.key,
+    this.enquiryData,
+    this.bidData,
+    this.viewPage = false,
+  });
 
   @override
   State<BidNowScreen> createState() => _BidNowScreenState();
 }
 
 class _BidNowScreenState extends State<BidNowScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController priceController = TextEditingController();
-  // final TextEditingController controller = TextEditingController();
-  final TextEditingController mealsController = TextEditingController();
-  final TextEditingController transportController = TextEditingController();
-  final TextEditingController extrasController = TextEditingController();
-  final TextEditingController accommodationController = TextEditingController();
-  final TextEditingController itineraryController = TextEditingController();
-  @override
-  void initState() {
-    super.initState();
-    getBidById();
-  }
-
-  void getBidById() {
-    if (widget.bidData != null) {
-      // Editing existing bid → prefill fields
-      priceController.text = widget.bidData?.price ?? '';
-      mealsController.text = widget.bidData?.meals ?? '';
-      transportController.text = widget.bidData?.transportation ?? '';
-      extrasController.text = widget.bidData?.extras ?? '';
-      accommodationController.text = widget.bidData!.accommodation ?? '';
-      itineraryController.text = widget.bidData!.itinerary ?? '';
-    }
-    // String? bidId = widget.enquiryData?.id.toString();
-    // if (bidId != null) {
-    //   context.read<BidViewModel>().getBidByIdApi(bidId: bidId);
-    // } else {
-    //   Utils.toastMessage("Bid ID is null");
-    // }
+  EnquiryContent? get _enquiry {
+    final direct = widget.enquiryData;
+    if (direct != null) return direct;
+    final travelInquiry = widget.bidData?.travelInquiry;
+    if (travelInquiry != null) return travelInquiry;
+    return null;
   }
 
   @override
   Widget build(BuildContext context) {
-    final status = context.watch<EnquiryViewModel>().createBid.status;
-    final bidStatus = context.watch<BidViewModel>().updateBid.status;
+    final enquiry = _enquiry;
+    final isClosed = enquiry?.status == false;
     return Scaffold(
       backgroundColor: bgGreyColor,
       appBar: AppBar(
         title: Text(
-          widget.bidData == null ? "Enquiry Details" : "Bid Details",
+          widget.bidData == null
+              ? "Show Enquiry & Send Bid"
+              : widget.viewPage
+                  ? "View Enquiry & Bid"
+                  : "Show Enquiry & Update Bid",
           style: appBarTitleStyle,
         ),
         backgroundColor: background,
@@ -76,70 +57,26 @@ class _BidNowScreenState extends State<BidNowScreen> {
           padding: const EdgeInsets.all(10.0),
           child: Column(
             children: [
-              /// Travel Inquiry Details Card
-              Card(
-                color: background,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                elevation: 3,
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
+              /// Enquiry Card (or Bid's Enquiry Data)
+              if (enquiry != null)
+                _sectionCard(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Travel Inquiry Details",
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold)),
-                      const Divider(),
-                      // travelItem(Icons.person,
-                      //     'Name : ${widget.enquiryData?.name ?? widget.bidData?.travelInquiry?.name ?? 'N/A'}'),
-                      // const SizedBox(height: 8),
-                      travelItem(Icons.calendar_today,
-                          "Travel Date : ${widget.enquiryData?.travelDates ?? widget.bidData?.travelInquiry?.travelDates ?? 'N/A'}"),
-                      const SizedBox(height: 8),
-                      travelItem(Icons.date_range,
-                          'Tentative Days : ${widget.enquiryData?.tentativeDays ?? widget.bidData?.travelInquiry?.tentativeDays ?? 'N/A'}'),
-                      const SizedBox(height: 8),
-                      travelItem(Icons.restaurant,
-                          'Meals : ${widget.enquiryData?.meals ?? widget.bidData?.travelInquiry?.meals ?? 'N/A'}'),
-                      const SizedBox(height: 8),
-                      travelItem(Icons.directions_bus,
-                          'Transportation : ${widget.enquiryData?.transportation ?? widget.bidData?.travelInquiry?.transportation ?? 'N/A'}'),
-                      const SizedBox(height: 8),
-                      travelItem(Icons.attach_money,
-                          'Budget : ${widget.enquiryData?.currency ?? widget.bidData?.currency} ${widget.enquiryData?.budget ?? widget.bidData?.travelInquiry?.budget ?? 'N/A'}'),
-                      const SizedBox(height: 8),
-                      travelItem(Icons.card_giftcard,
-                          'Special Requests : ${widget.enquiryData?.specialRequests ?? widget.bidData?.travelInquiry?.specialRequests ?? 'N/A'}'),
-                      const SizedBox(height: 8),
-                      travelItem(Icons.location_on,
-                          'Destination : ${widget.enquiryData?.destinations?.join(',') ?? widget.bidData?.travelInquiry?.destinations?.join(',') ?? 'N/A'}'),
-                      const SizedBox(height: 8),
-                      travelItem(Icons.hotel,
-                          'Accommodation : ${widget.enquiryData?.accommodationPreferences ?? widget.bidData?.travelInquiry?.accommodationPreferences ?? 'N/A'}'),
-                      const SizedBox(height: 16),
-                      const Text("User Information",
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold)),
-                      const Divider(),
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          CircleAvatar(
-                            radius: 30,
-                            backgroundColor: btnColor,
-                            child: ClipOval(
-                                child: Image.network(
-                                    widget.enquiryData?.user?.profileImageUrl ??
-                                        widget.bidData?.travelInquiry?.user
-                                            ?.profileImageUrl ??
-                                        'https://via.placeholder.com/150',
-                                    fit: BoxFit.cover,
-                                    height: 60,
-                                    width: 60,
-                                    errorBuilder: (context, error, stackTrace) {
-                              return const Icon(Icons.person,
-                                  size: 40, color: Colors.white);
-                            })),
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: btnColor.withOpacity(0.10),
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: Icon(
+                              Icons.travel_explore_rounded,
+                              size: 18,
+                              color: btnColor,
+                            ),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
@@ -147,201 +84,180 @@ class _BidNowScreenState extends State<BidNowScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                    '${widget.enquiryData?.user?.firstName ?? widget.bidData?.travelInquiry?.user?.firstName ?? 'N/A'} ${widget.enquiryData?.user?.lastName ?? widget.bidData?.travelInquiry?.user?.lastName ?? 'N/A'}',
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold)),
+                                  "Enquiry Details",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: greyColor,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
                                 Text(
-                                    "Address: ${widget.enquiryData?.user?.address ?? widget.bidData?.travelInquiry?.user?.address ?? 'N/A'}"),
+                                  "Created ${dateFormat(enquiry.createdAt)}",
+                                  style: GoogleFonts.poppins(fontSize: 11),
+                                ),
                               ],
                             ),
-                          )
+                          ),
+                          _statusPill(isClosed: isClosed),
                         ],
                       ),
+                      const SizedBox(height: 14),
+                      _infoRow(
+                          _miniInfo(
+                              Icons.tag_rounded, 'ID', '${enquiry.id ?? '-'}'),
+                          _miniInfo(Icons.currency_rupee_rounded, 'Budget',
+                              '${enquiry.currency ?? ''} ${enquiry.budget ?? 'N/A'}')),
+                      const SizedBox(height: 14),
+                      _infoRow(
+                          _miniInfo(
+                              Icons.group_rounded,
+                              'Guests',
+                              formatParticipantType(
+                                enquiry.participantType,
+                              )),
+                          _miniInfo(
+                              Icons.date_range_rounded,
+                              (enquiry.travelDates ?? '').isEmpty
+                                  ? 'Tentative'
+                                  : 'Travel Dates',
+                              (enquiry.travelDates ?? '').isEmpty
+                                  ? "${enquiry.tentativeDates ?? '--'}${(enquiry.tentativeDays ?? '').isNotEmpty ? ' (${enquiry.tentativeDays} days)' : ''}"
+                                  : (enquiry.travelDates ?? '--'))),
+                      const SizedBox(height: 14),
+                      _infoRow(
+                        _miniInfo(
+                          Icons.hotel_rounded,
+                          "Accommodation",
+                          enquiry.accommodationPreferences ?? '--',
+                        ),
+                        _miniInfo(
+                          Icons.directions_bus_rounded,
+                          'Transportation',
+                          enquiry.transportation == 'Sheared'
+                              ? 'Sheared (${enquiry.shareCount} People)'
+                              : enquiry.transportation ?? '',
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _infoRow(
+                        _miniInfo(
+                          Icons.restaurant_rounded,
+                          'Meal Type',
+                          (enquiry.mealType ?? '').isNotEmpty
+                              ? enquiry.mealType ?? ''
+                              : '--',
+                        ),
+                        _miniInfo(
+                          Icons.map_outlined,
+                          'Meals Per Day',
+                          enquiry.mealsPerDay ?? "--",
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      _infoRow(
+                        _miniInfo(
+                          Icons.public_rounded,
+                          "Region",
+                          enquiry.region ?? '--',
+                        ),
+                        _miniInfo(
+                          Icons.flight_rounded,
+                          "Country Type",
+                          enquiry.countryType ?? '--',
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      if (enquiry.countryType == 'MULTI')
+                        _chipsRow(
+                          title: 'Countries',
+                          icon: Icons.flag_rounded,
+                          items: enquiry.countries ?? [],
+                          emptyText: '--',
+                        )
+                      else
+                        Column(
+                          children: [
+                            _chipsRow(
+                              title: 'Country',
+                              icon: Icons.flag_rounded,
+                              items: enquiry.countries ?? [],
+                              emptyText: '--',
+                            ),
+                            const SizedBox(height: 10),
+                            _chipsRow(
+                              title: 'Destinations',
+                              icon: Icons.location_on_rounded,
+                              items: enquiry.destinations ?? [],
+                              emptyText: '--',
+                            ),
+                          ],
+                        ),
+                      const SizedBox(height: 14),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.note_alt_rounded,
+                                  size: 18, color: btnColor.withOpacity(0.7)),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Special Requests',
+                                style: GoogleFonts.inter(
+                                  fontSize: 11,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          if (enquiry.specialRequests == null ||
+                              enquiry.specialRequests!.isEmpty)
+                            Text(
+                              '--',
+                              style: GoogleFonts.inter(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: greyColor,
+                              ),
+                            )
+                          else
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: List.generate(
+                                enquiry.specialRequests!.length,
+                                (index) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 4.0),
+                                  child: Text(
+                                    '${index + 1}. ${enquiry.specialRequests![index].request?.toString() ?? ""}',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                      if (enquiry.user?.firstName != null ||
+                          enquiry.user?.email != null ||
+                          enquiry.user?.address != null) ...[
+                        const SizedBox(height: 16),
+                        _subTitle('Customer'),
+                        const SizedBox(height: 8),
+                        _userTile(enquiry),
+                      ],
                     ],
                   ),
                 ),
-              ),
-
               const SizedBox(height: 10),
-
-              /// Submit Bid Card
-              Card(
-                color: background,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                elevation: 3,
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                            widget.bidData == null
-                                ? "Submit Your Bid"
-                                : widget.viewPage
-                                    ? 'View Your Bid Details'
-                                    : "Update Your Bid",
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
-                        const Divider(),
-                        const SizedBox(height: 10),
-                        Customtextformfield(
-                          readOnly: widget.viewPage,
-                          controller: priceController,
-                          hintText: '',
-                          lable: 'Price (${widget.bidData?.currency}) *',
-                          // prefixiconvisible: true,
-                          prefixIcon: const Icon(
-                            Icons.monetization_on,
-                            color: btnColor,
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a price';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        Customtextformfield(
-                          readOnly: widget.viewPage,
-                          controller: mealsController,
-                          hintText: '',
-                          lable: 'Meals *',
-                          prefixIcon: const Icon(
-                            Icons.restaurant,
-                            color: btnColor,
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter meals';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        Customtextformfield(
-                          readOnly: widget.viewPage,
-                          controller: transportController,
-                          hintText: '',
-                          lable: 'Transportation *',
-                          prefixIcon: const Icon(
-                            Icons.directions_bus,
-                            color: btnColor,
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter transportation details';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        Customtextformfield(
-                          readOnly: widget.viewPage,
-                          controller: extrasController,
-                          hintText: '',
-                          lable: 'Extras *',
-                          prefixIcon: const Icon(
-                            Icons.card_giftcard,
-                            color: btnColor,
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter extras';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        Customtextformfield(
-                            readOnly: widget.viewPage,
-                            controller: accommodationController,
-                            hintText: '',
-                            lable: 'Accommodation *',
-                            prefixIcon: const Icon(
-                              Icons.hotel,
-                              color: btnColor,
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter accommodation';
-                              }
-                              return null;
-                            },
-                            maxLines: 2),
-                        const SizedBox(height: 10),
-                        Customtextformfield(
-                          readOnly: widget.viewPage,
-                          controller: itineraryController,
-                          hintText: '',
-                          lable: 'Itinerary *',
-                          prefixIcon: const Icon(
-                            Icons.list,
-                            color: btnColor,
-                          ),
-                          maxLines: 3,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter itinerary details';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        if (widget.viewPage == false)
-                        CustomButtonSmall(
-                          loading: status == Status.loading ||
-                              bidStatus == Status.loading,
-                          btnHeading: widget.bidData == null
-                              ? 'Submit Bid'
-                              : "Update Bid",
-                          onTap: () {
-                            if (_formKey.currentState?.validate() ?? false) {
-                              if (widget.bidData == null) {
-                                context
-                                    .read<EnquiryViewModel>()
-                                    .createBidApi(
-                                      travelEnquiryId:
-                                          widget.enquiryData?.id ?? 0,
-                                      price: priceController.text,
-                                      accommodation:
-                                          accommodationController.text,
-                                      meals: mealsController.text,
-                                      transportation: transportController.text,
-                                      extra: extrasController.text,
-                                      itinerary: itineraryController.text,
-                                    )
-                                    .then((onValue) {
-                                  context.pop();
-                                });
-                              } else {
-                                context
-                                    .read<BidViewModel>()
-                                    .updateBidApi(
-                                      bidId: widget.bidData?.id ?? 0,
-                                      price: priceController.text,
-                                      accommodation:
-                                          accommodationController.text,
-                                      meals: mealsController.text,
-                                      transportation: transportController.text,
-                                      extra: extrasController.text,
-                                      itinerary: itineraryController.text,
-                                    )
-                                    .then((onValue) {
-                                  context.pop();
-                                });
-                              }
-                            }
-                          },
-                        )
-                      ],
-                    ),
-                  ),
-                ),
+              VendorBidFormCard(
+                enquiryData: widget.enquiryData,
+                bidData: widget.bidData,
+                viewPage: widget.viewPage,
               ),
             ],
           ),
@@ -350,19 +266,228 @@ class _BidNowScreenState extends State<BidNowScreen> {
     );
   }
 
-  Widget travelItem(IconData? icon, String title) {
+  Widget _infoRow(Widget left, Widget right) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, color: btnColor),
+        Expanded(child: left),
+        const SizedBox(width: 16),
+        Expanded(child: right),
+      ],
+    );
+  }
+
+  Widget _miniInfo(IconData icon, String title, String value) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: btnColor.withOpacity(0.7)),
         const SizedBox(width: 6),
         Expanded(
-          child: Text(
-            title,
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                title,
+                style: GoogleFonts.inter(
+                  fontSize: 11,
+                  color: Colors.grey,
+                ),
+              ),
+              Text(
+                value,
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: greyColor,
+                ),
+              ),
+            ],
           ),
         ),
       ],
+    );
+  }
+
+  Widget _sectionCard({required Widget child}) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+
+  Widget _statusPill({required bool isClosed}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: isClosed
+            ? btnColor.withOpacity(0.08)
+            : greenColor.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Text(
+        isClosed ? 'Closed' : "Active",
+        style: GoogleFonts.inter(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: isClosed ? btnColor : greenColor,
+        ),
+      ),
+    );
+  }
+
+  Widget _subTitle(String title) {
+    return Text(
+      title,
+      style: GoogleFonts.poppins(
+        fontSize: 13,
+        fontWeight: FontWeight.w600,
+        color: greyColor,
+      ),
+    );
+  }
+
+  Widget _chipsRow({
+    required String title,
+    required IconData icon,
+    required List<String> items,
+    String emptyText = '--',
+  }) {
+    final cleaned =
+        items.map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 18, color: btnColor.withOpacity(0.7)),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: GoogleFonts.inter(
+                  fontSize: 11,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 6),
+              if (cleaned.isEmpty)
+                Text(
+                  emptyText,
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: greyColor,
+                  ),
+                )
+              else
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 0,
+                  children: cleaned
+                      .map(
+                        (t) => Chip(
+                          label: Text(
+                            t,
+                            style: GoogleFonts.inter(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          side:
+                              BorderSide(color: Colors.black.withOpacity(0.06)),
+                          backgroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                        ),
+                      )
+                      .toList(),
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _userTile(EnquiryContent enquiry) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: bgGreyColor.withOpacity(0.6),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.black.withOpacity(0.04)),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 26,
+            backgroundColor: btnColor,
+            child: ClipOval(
+              child: Image.network(
+                enquiry.user?.profileImageUrl ??
+                    'https://via.placeholder.com/150',
+                fit: BoxFit.cover,
+                height: 52,
+                width: 52,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(
+                    Icons.person,
+                    size: 34,
+                    color: Colors.white,
+                  );
+                },
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${enquiry.user?.firstName} ${enquiry.user?.lastName}',
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: greyColor,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  enquiry.user?.email ?? 'Email: N/A',
+                  style: GoogleFonts.inter(
+                    fontSize: 10,
+                    color: greyColor.withOpacity(0.75),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  enquiry.user?.address ?? 'Address: N/A',
+                  style: GoogleFonts.inter(
+                    fontSize: 10,
+                    color: greyColor.withOpacity(0.75),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 }

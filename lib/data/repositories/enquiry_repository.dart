@@ -105,25 +105,7 @@ class EnquiryRepository {
     }
   }
 
-  Future<bool> createBidApi({required Map<String, dynamic> body}) async {
-    var http = HttpService(
-        isAuthorizeRequest: true,
-        baseURL: AppUrl.baseUrl,
-        endURL: AppUrl.createBidUrl,
-        methodType: HttpMethodType.POST,
-        bodyType: HttpBodyType.JSON,
-        body: body);
-    try {
-      Response<dynamic>? response = await http.request<dynamic>();
-      debugPrint("Create Bid Resp api success ${response?.data}");
-      return true;
-    } catch (e) {
-      debugPrint("Create Bid Resp api not success");
-      http.handleErrorResponse(error: e);
-      rethrow;
-    }
-  }
-
+ 
   Future<bool> sendEnquiryApi({required Map<String, dynamic> body}) async {
     var http = HttpService(
         isAuthorizeRequest: true,
@@ -142,4 +124,43 @@ class EnquiryRepository {
       rethrow;
     }
   }
+
+  Future<bool> updateEnquiryApi({required Map<String, dynamic> body}) async {
+    var http = HttpService(
+        isAuthorizeRequest: true,
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.updateEnquiryUrl,
+        methodType: HttpMethodType.PUT,
+        bodyType: HttpBodyType.JSON,
+        body: body);
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("Update Enquiry Resp api success ${response?.data}");
+      return true;
+    } catch (e) {
+      debugPrint("Update Enquiry Resp api not success");
+      http.handleErrorResponse(error: e);
+      rethrow;
+    }
+  }
+
+  Future<bool> closeEnquiryApi({required Map<String, dynamic> body}) async {
+    var http = HttpService(
+        isAuthorizeRequest: true,
+        baseURL: AppUrl.baseUrl,
+        endURL: AppUrl.closeEnquiryUrl,
+        methodType: HttpMethodType.PATCH,
+        bodyType: HttpBodyType.JSON,
+        body: body);
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("Close Enquiry Resp api success ${response?.data}");
+      return true;
+    } catch (e) {
+      debugPrint("Close Enquiry Resp api not success");
+      http.handleErrorResponse(error: e);
+      rethrow;
+    }
+  }
+
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/core/constants/assets.dart';
@@ -137,8 +139,8 @@ class _AccountScreenState extends State<AccountScreen> {
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFFEF4444), Color(0xff7B1E34)],
+          gradient: LinearGradient(
+            colors: [btnColor, btnColor.withOpacity(0.75)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),

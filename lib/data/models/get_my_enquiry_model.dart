@@ -13,8 +13,8 @@ String getMyEnquiryModelToJson(GetMyEnquiryModel data) =>
 class GetMyEnquiryModel {
   List<MyEnquiryContent>? content;
   Pageable? pageable;
-  int? totalElements;
   int? totalPages;
+  int? totalElements;
   bool? last;
   int? number;
   Sort? sort;
@@ -26,8 +26,8 @@ class GetMyEnquiryModel {
   GetMyEnquiryModel({
     this.content,
     this.pageable,
-    this.totalElements,
     this.totalPages,
+    this.totalElements,
     this.last,
     this.number,
     this.sort,
@@ -46,8 +46,8 @@ class GetMyEnquiryModel {
         pageable: json["pageable"] == null
             ? null
             : Pageable.fromJson(json["pageable"]),
-        totalElements: json["totalElements"],
         totalPages: json["totalPages"],
+        totalElements: json["totalElements"],
         last: json["last"],
         number: json["number"],
         sort: json["sort"] == null ? null : Sort.fromJson(json["sort"]),
@@ -62,8 +62,8 @@ class GetMyEnquiryModel {
             ? []
             : List<dynamic>.from(content!.map((x) => x.toJson())),
         "pageable": pageable?.toJson(),
-        "totalElements": totalElements,
         "totalPages": totalPages,
+        "totalElements": totalElements,
         "last": last,
         "number": number,
         "sort": sort?.toJson(),
@@ -78,6 +78,7 @@ class MyEnquiryContent {
   TravelInquiry? travelInquiry;
   List<Bid>? bids;
   String? currency;
+
   MyEnquiryContent({
     this.travelInquiry,
     this.bids,
@@ -104,6 +105,182 @@ class MyEnquiryContent {
       };
 }
 
+// SpecialRequest model to hold special request objects
+class SpecialRequest {
+  int? id;
+  String? request;
+  String? status;
+
+  SpecialRequest({
+    this.id,
+    this.request,
+    this.status,
+  });
+
+  factory SpecialRequest.fromJson(Map<String, dynamic> json) => SpecialRequest(
+        id: json["id"],
+        request: json["request"],
+        status: json["status"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "request": request,
+        "status": status,
+      };
+}
+
+class TravelInquiry {
+  int? id;
+  String? name;
+  String? region;
+  String? subRegion;
+  List<String>? countries;
+  List<String>? destinations;
+  String? accommodationPreferences;
+  dynamic meals;
+  String? transportation;
+  String? budget;
+  List<SpecialRequest>? specialRequests;
+  String? travelDates;
+  String? tentativeDays;
+  String? tentativeDates;
+  User? user;
+  int? createdAt;
+  int? updatedAt;
+  String? currency;
+  dynamic viewCurrency;
+  dynamic viewAmount;
+  dynamic paymentType;
+  ParticipantType? participantType;
+  String? countryType;
+  String? mealType;
+  String? mealsPerDay;
+  String? mealPreferenceNotes;
+  bool? status;
+  String? reason;
+  List<Bid>? bids;
+
+  TravelInquiry({
+    this.id,
+    this.name,
+    this.region,
+    this.subRegion,
+    this.countries,
+    this.destinations,
+    this.accommodationPreferences,
+    this.meals,
+    this.transportation,
+    this.budget,
+    this.specialRequests,
+    this.travelDates,
+    this.tentativeDays,
+    this.tentativeDates,
+    this.user,
+    this.createdAt,
+    this.updatedAt,
+    this.currency,
+    this.viewCurrency,
+    this.viewAmount,
+    this.paymentType,
+    this.participantType,
+    this.countryType,
+    this.mealType,
+    this.mealsPerDay,
+    this.mealPreferenceNotes,
+    this.status,
+    this.reason,
+    this.bids,
+  });
+
+  factory TravelInquiry.fromJson(Map<String, dynamic> json) => TravelInquiry(
+        id: json["id"],
+        name: json["name"],
+        region: json["region"],
+        subRegion: json["subRegion"],
+        countries: json["countries"] == null
+            ? []
+            : List<String>.from(json["countries"]!.map((x) => x)),
+        destinations: json["destinations"] == null
+            ? []
+            : List<String>.from(json["destinations"]!.map((x) => x)),
+        accommodationPreferences: json["accommodationPreferences"],
+        meals: json["meals"],
+        transportation: json["transportation"],
+        budget: json["budget"],
+        // FIX: specialRequests can be a list in the API, so parse as List<SpecialRequest>
+        specialRequests: json["specialRequests"] == null
+            ? []
+            : (json["specialRequests"] is String
+                ? []
+                : List<SpecialRequest>.from((json["specialRequests"] as List)
+                    .map((x) => SpecialRequest.fromJson(x)))),
+        travelDates: json["travelDates"],
+        tentativeDays: json["tentativeDays"],
+        tentativeDates: json["tentativeDates"],
+        user: json["user"] == null ? null : User.fromJson(json["user"]),
+        createdAt: json["createdAt"],
+        updatedAt: json["updatedAt"],
+        currency: json["currency"],
+        viewCurrency: json["viewCurrency"],
+        viewAmount: json["viewAmount"],
+        paymentType: json["paymentType"],
+        participantType: json["participantType"] == null
+            ? null
+            : ParticipantType.fromJson(json["participantType"]),
+        countryType: json["countryType"],
+        mealType: json["mealType"],
+        mealsPerDay: json["mealsPerDay"],
+        mealPreferenceNotes: json["mealPreferenceNotes"],
+        status: json["status"],
+        reason: json["reason"],
+        bids: json["bids"] == null
+            ? []
+            : List<Bid>.from(json["bids"]!.map((x) => Bid.fromJson(x))),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "name": name,
+        "region": region,
+        "subRegion": subRegion,
+        "countries": countries == null
+            ? []
+            : List<dynamic>.from(countries!.map((x) => x)),
+        "destinations": destinations == null
+            ? []
+            : List<dynamic>.from(destinations!.map((x) => x)),
+        "accommodationPreferences": accommodationPreferences,
+        "meals": meals,
+        "transportation": transportation,
+        "budget": budget,
+        // Serialize specialRequests as a list of maps (if available)
+        "specialRequests": specialRequests == null
+            ? []
+            : List<dynamic>.from(specialRequests!.map((x) => x.toJson())),
+        "travelDates": travelDates,
+        "tentativeDays": tentativeDays,
+        "tentativeDates": tentativeDates,
+        "user": user?.toJson(),
+        "createdAt": createdAt,
+        "updatedAt": updatedAt,
+        "currency": currency,
+        "viewCurrency": viewCurrency,
+        "viewAmount": viewAmount,
+        "paymentType": paymentType,
+        "participantType": participantType?.toJson(),
+        "countryType": countryType,
+        "mealType": mealType,
+        "mealsPerDay": mealsPerDay,
+        "mealPreferenceNotes": mealPreferenceNotes,
+        "status": status,
+        "reason": reason,
+        "bids": bids == null
+            ? []
+            : List<dynamic>.from(bids!.map((x) => x.toJson())),
+      };
+}
+
 class Bid {
   int? id;
   String? price;
@@ -118,13 +295,16 @@ class Bid {
   User? user;
   int? createdAt;
   int? updatedAt;
+  String? currency;
+  bool? status;
+  dynamic reason;
   bool? cancelled;
   bool? accepted;
-  bool? submitted;
-  bool? rejected;
-  bool? paid;
-  bool? expired;
   bool? verified;
+  bool? paid;
+  bool? submitted;
+  bool? expired;
+  bool? rejected;
 
   Bid({
     this.id,
@@ -140,13 +320,16 @@ class Bid {
     this.user,
     this.createdAt,
     this.updatedAt,
+    this.currency,
+    this.status,
+    this.reason,
     this.cancelled,
     this.accepted,
-    this.submitted,
-    this.rejected,
-    this.paid,
-    this.expired,
     this.verified,
+    this.paid,
+    this.submitted,
+    this.expired,
+    this.rejected,
   });
 
   factory Bid.fromJson(Map<String, dynamic> json) => Bid(
@@ -165,13 +348,16 @@ class Bid {
         user: json["user"] == null ? null : User.fromJson(json["user"]),
         createdAt: json["createdAt"],
         updatedAt: json["updatedAt"],
+        currency: json["currency"],
+        status: json["status"],
+        reason: json["reason"],
         cancelled: json["cancelled"],
         accepted: json["accepted"],
-        submitted: json["submitted"],
-        rejected: json["rejected"],
-        paid: json["paid"],
-        expired: json["expired"],
         verified: json["verified"],
+        paid: json["paid"],
+        submitted: json["submitted"],
+        expired: json["expired"],
+        rejected: json["rejected"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -188,101 +374,49 @@ class Bid {
         "user": user?.toJson(),
         "createdAt": createdAt,
         "updatedAt": updatedAt,
+        "currency": currency,
+        "status": status,
+        "reason": reason,
         "cancelled": cancelled,
         "accepted": accepted,
-        "submitted": submitted,
-        "rejected": rejected,
-        "paid": paid,
-        "expired": expired,
         "verified": verified,
+        "paid": paid,
+        "submitted": submitted,
+        "expired": expired,
+        "rejected": rejected,
       };
 }
 
-class TravelInquiry {
-  int? id;
-  String? name;
-  String? region;
-  List<String>? countries;
-  List<String>? destinations;
-  String? accommodationPreferences;
-  String? meals;
-  String? transportation;
-  String? budget;
-  String? specialRequests;
-  String? travelDates;
-  String? tentativeDays;
-  String? tentativeDates;
-  User? user;
-  dynamic createdAt;
-  String? currency;
-  dynamic updatedAt;
+class ParticipantType {
+  int? infant;
+  int? guests;
+  int? adult;
+  int? child;
+  int? senior;
 
-  TravelInquiry({
-    this.id,
-    this.name,
-    this.region,
-    this.countries,
-    this.destinations,
-    this.accommodationPreferences,
-    this.meals,
-    this.transportation,
-    this.budget,
-    this.specialRequests,
-    this.travelDates,
-    this.tentativeDays,
-    this.tentativeDates,
-    this.user,
-    this.currency,
-    this.createdAt,
-    this.updatedAt,
+  ParticipantType({
+    this.infant,
+    this.guests,
+    this.adult,
+    this.child,
+    this.senior,
   });
 
-  factory TravelInquiry.fromJson(Map<String, dynamic> json) => TravelInquiry(
-        id: json["id"],
-        name: json["name"],
-        region: json["region"],
-        countries: json["countries"] == null
-            ? []
-            : List<String>.from(json["countries"]!.map((x) => x)),
-        destinations: json["destinations"] == null
-            ? []
-            : List<String>.from(json["destinations"]!.map((x) => x)),
-        accommodationPreferences: json["accommodationPreferences"],
-        meals: json["meals"],
-        transportation: json["transportation"],
-        budget: json["budget"],
-        specialRequests: json["specialRequests"],
-        travelDates: json["travelDates"],
-        tentativeDays: json["tentativeDays"],
-        tentativeDates: json["tentativeDates"],
-        user: json["user"] == null ? null : User.fromJson(json["user"]),
-        currency: json["currency"],
-        createdAt: json["createdAt"],
-        updatedAt: json["updatedAt"],
+  factory ParticipantType.fromJson(Map<String, dynamic> json) =>
+      ParticipantType(
+        infant: json["INFANT"],
+        guests: json["GUESTS"],
+        adult: json["ADULT"],
+        child: json["CHILD"],
+        senior: json["SENIOR"],
       );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "name": name,
-        "region": region,
-        "countries": countries == null
-            ? []
-            : List<dynamic>.from(countries!.map((x) => x)),
-        "destinations": destinations == null
-            ? []
-            : List<dynamic>.from(destinations!.map((x) => x)),
-        "accommodationPreferences": accommodationPreferences,
-        "meals": meals,
-        "transportation": transportation,
-        "budget": budget,
-        "specialRequests": specialRequests,
-        "travelDates": travelDates,
-        "tentativeDays": tentativeDays,
-        "tentativeDates": tentativeDates,
-        "user": user?.toJson(),
-        "currency": currency,
-        "createdAt": createdAt,
-        "updatedAt": updatedAt,
+        "INFANT": infant,
+        "GUESTS": guests,
+        "ADULT": adult,
+        "CHILD": child,
+        "SENIOR": senior,
       };
 }
 
@@ -302,38 +436,52 @@ class User {
   String? userType;
   String? profileImageUrl;
   String? countryCode;
-  String? notificationToken;
+  dynamic notificationToken;
   String? lastLogin;
   String? country;
   String? state;
+  String? rideOtp;
+  DateTime? rideOtpExpiry;
+  bool? isRideOtpVerified;
+  bool? accountVerified;
   int? vendorId;
   String? vendorProfileImageUrl;
-  dynamic subscriptionStartDate;
-  dynamic subscriptionEndDate;
-  User(
-      {this.userId,
-      this.firstName,
-      this.lastName,
-      this.mobile,
-      this.address,
-      this.email,
-      this.gender,
-      this.createdDate,
-      this.modifiedDate,
-      this.status,
-      this.otp,
-      this.isOtpVerified,
-      this.userType,
-      this.profileImageUrl,
-      this.countryCode,
-      this.notificationToken,
-      this.lastLogin,
-      this.country,
-      this.state,
-      this.vendorId,
-      this.vendorProfileImageUrl,
-      this.subscriptionStartDate,
-      this.subscriptionEndDate});
+  DateTime? subscriptionStartDate;
+  DateTime? subscriptionEndDate;
+  String? verificationToken;
+  DateTime? tokenExpiry;
+
+  User({
+    this.userId,
+    this.firstName,
+    this.lastName,
+    this.mobile,
+    this.address,
+    this.email,
+    this.gender,
+    this.createdDate,
+    this.modifiedDate,
+    this.status,
+    this.otp,
+    this.isOtpVerified,
+    this.userType,
+    this.profileImageUrl,
+    this.countryCode,
+    this.notificationToken,
+    this.lastLogin,
+    this.country,
+    this.state,
+    this.rideOtp,
+    this.rideOtpExpiry,
+    this.isRideOtpVerified,
+    this.accountVerified,
+    this.vendorId,
+    this.vendorProfileImageUrl,
+    this.subscriptionStartDate,
+    this.subscriptionEndDate,
+    this.verificationToken,
+    this.tokenExpiry,
+  });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
         userId: json["userId"],
@@ -359,10 +507,24 @@ class User {
         lastLogin: json["lastLogin"],
         country: json["country"],
         state: json["state"],
+        rideOtp: json["rideOtp"],
+        rideOtpExpiry: json["rideOtpExpiry"] == null
+            ? null
+            : DateTime.parse(json["rideOtpExpiry"]),
+        isRideOtpVerified: json["isRideOtpVerified"],
+        accountVerified: json["accountVerified"],
         vendorId: json["vendorId"],
         vendorProfileImageUrl: json["vendorProfileImageUrl"],
-        subscriptionStartDate: json["subscriptionStartDate"],
-        subscriptionEndDate: json["subscriptionEndDate"],
+        subscriptionStartDate: json["subscriptionStartDate"] == null
+            ? null
+            : DateTime.parse(json["subscriptionStartDate"]),
+        subscriptionEndDate: json["subscriptionEndDate"] == null
+            ? null
+            : DateTime.parse(json["subscriptionEndDate"]),
+        verificationToken: json["verificationToken"],
+        tokenExpiry: json["tokenExpiry"] == null
+            ? null
+            : DateTime.parse(json["tokenExpiry"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -385,10 +547,16 @@ class User {
         "lastLogin": lastLogin,
         "country": country,
         "state": state,
+        "rideOtp": rideOtp,
+        "rideOtpExpiry": rideOtpExpiry?.toIso8601String(),
+        "isRideOtpVerified": isRideOtpVerified,
+        "accountVerified": accountVerified,
         "vendorId": vendorId,
         "vendorProfileImageUrl": vendorProfileImageUrl,
-        "subscriptionStartDate": subscriptionStartDate,
-        "subscriptionEndDate": subscriptionEndDate,
+        "subscriptionStartDate": subscriptionStartDate?.toIso8601String(),
+        "subscriptionEndDate": subscriptionEndDate?.toIso8601String(),
+        "verificationToken": verificationToken,
+        "tokenExpiry": tokenExpiry?.toIso8601String(),
       };
 }
 
@@ -430,24 +598,25 @@ class Pageable {
 
 class Sort {
   bool? empty;
-  bool? sorted;
   bool? unsorted;
+  bool? sorted;
 
   Sort({
     this.empty,
-    this.sorted,
     this.unsorted,
+    this.sorted,
   });
 
   factory Sort.fromJson(Map<String, dynamic> json) => Sort(
         empty: json["empty"],
-        sorted: json["sorted"],
         unsorted: json["unsorted"],
+        sorted: json["sorted"],
       );
 
   Map<String, dynamic> toJson() => {
         "empty": empty,
-        "sorted": sorted,
         "unsorted": unsorted,
+        "sorted": sorted,
       };
 }
+

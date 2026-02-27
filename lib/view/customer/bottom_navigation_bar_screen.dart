@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/models/offer_list_model.dart';
@@ -110,7 +112,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
   Widget build(BuildContext context) {
     userdata = context.watch<UserProfileViewModel>().dataList.data?.data;
 
-    // ignore: deprecated_member_use
+ 
     return WillPopScope(
         onWillPop: () async {
           debugPrint('exziiiiiiiiii');
@@ -180,7 +182,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
                       child: Image.asset(
                         // appIcon1,
                         appLogo1,
-                        height: 24,
+                        height: 35,
                         // width: 50,
                         fit: BoxFit.cover,
                       ),

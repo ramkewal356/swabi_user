@@ -11,12 +11,18 @@ class BidViewModel with ChangeNotifier {
   int page = 0;
   int pageSize = 10;
   bool isLastPage = false;
-  bool isLoadingMore = false; 
+  bool isLoadingMore = false;
 
   final _myRepo = BidRepository();
   ApiResponse<List<BidContent>> bidData = ApiResponse.initial();
   void setBidData(ApiResponse<List<BidContent>> response) {
     bidData = response;
+    notifyListeners();
+  }
+
+  ApiResponse<bool> createBid = ApiResponse.initial();
+  void createBidResponse(ApiResponse<bool> response) {
+    createBid = response;
     notifyListeners();
   }
 
@@ -54,8 +60,8 @@ class BidViewModel with ChangeNotifier {
     bool newSearch = (isFilter || isSearch);
     if (!isPagination && newSearch) {
       page = 0;
-      isLastPage = false; 
-    
+      isLastPage = false;
+
       setBidData(ApiResponse.loading());
     }
     String? vendorId = await UserViewModel().getUserId();
@@ -102,25 +108,51 @@ class BidViewModel with ChangeNotifier {
     }
   }
 
-  Future<void> updateBidApi(
-      {required String price,
-      required String accommodation,
-      required String meals,
-      required String transportation,
-      required String extra,
-      required String itinerary,
-      required int bidId}) async {
+  Future<void> createBidApi({required Map<String, dynamic> body}) async {
     String? vendorId = await UserViewModel().getUserId();
-    Map<String, dynamic> body = {
-      "price": price,
-      "accommodation": accommodation,
-      "meals": meals,
-      "transportation": transportation,
-      "extras": extra,
-      "itinerary": itinerary,
-      "bidId": bidId,
-      "vendorId": vendorId
-    };
+    // Map<String, dynamic> body = {
+    //   // "price": price,
+    //   // "accommodation": accommodation,
+    //   // "meals": meals,
+    //   // "transportation": transportation,
+    //   // "extras": extra,
+    //   // "itinerary": itinerary,
+    //   // "travelInquiryId": travelEnquiryId,
+    //   // "vendorId": vendorId
+    // };
+    body["vendorId"] = vendorId;
+    createBidResponse(ApiResponse.loading());
+    try {
+      var resp = await _myRepo.createBidApi(body: body);
+      if (resp == true) {
+        createBidResponse(ApiResponse.completed(resp));
+        debugPrint("Create Bid Api success");
+        Utils.toastSuccessMessage(
+          "Bid created successfully",
+        );
+      } else {
+        createBidResponse(ApiResponse.error(resp.toString()));
+      }
+    } catch (e) {
+      debugPrint('error $e');
+      createBidResponse(ApiResponse.error(e.toString()));
+    }
+  }
+
+  Future<void> updateBidApi(
+      {required Map<String, dynamic> body, required int bidId}) async {
+    String? vendorId = await UserViewModel().getUserId();
+    // Map<String, dynamic> body = {
+    //   "price": price,
+    //   "accommodation": accommodation,
+    //   "meals": meals,
+    //   "transportation": transportation,
+    //   "extras": extra,
+    //   "itinerary": itinerary,
+    //   "bidId": bidId,
+    //   "vendorId": vendorId
+    // };
+    body["vendorId"] = vendorId;
     updateBidData(ApiResponse.loading());
     try {
       var resp = await _myRepo.updateBidApi(
@@ -141,20 +173,7 @@ class BidViewModel with ChangeNotifier {
   }
 
   Future<bool?> confirmBookingBidApi(
-      {required int bidId,
-      required String paymentId,
-      required String orderId,
-      required String signature,
-      required String transactionStatus,
-      required int vendorId}) async {
-    Map<String, dynamic> body = {
-      "bidId": bidId,
-      "paymentId": paymentId,
-      "razorpayOrderId": orderId,
-      "razorpaySignature": signature,
-      "transactionStatus": transactionStatus,
-      "vendorId": vendorId
-    };
+      {required Map<String, dynamic> body}) async {
     try {
       bookBid(ApiResponse.loading());
       var resp = await _myRepo.confirmBookingBidApi(body: body);
@@ -180,6 +199,22 @@ class BidViewModel with ChangeNotifier {
       }
     } catch (e) {
       acceptOrRejectBids(ApiResponse.error(e.toString()));
+    }
+  }
+
+  Future<bool> cancelBidApi({required Map<String, dynamic> body}) async {
+    try {
+      var resp = await _myRepo.cancelBidApi(body: body);
+      if (resp == true) {
+        debugPrint("Cancel Bid Api success");
+        return resp;
+      } else {
+        debugPrint("Cancel Bid Api error: $resp");
+        return false;
+      }
+    } catch (e) {
+      debugPrint('Cancel Bid Api exception: $e');
+      return false;
     }
   }
 }

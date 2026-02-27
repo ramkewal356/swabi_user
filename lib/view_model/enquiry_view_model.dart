@@ -4,7 +4,6 @@ import 'package:flutter_cab/data/models/get_all_enquiry_model.dart';
 import 'package:flutter_cab/data/models/get_enquiry_by_id_model.dart';
 import 'package:flutter_cab/data/models/get_my_enquiry_model.dart';
 import 'package:flutter_cab/data/repositories/enquiry_repository.dart';
-import 'package:flutter_cab/core/utils/utils.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
 
 class EnquiryViewModel with ChangeNotifier {
@@ -20,15 +19,17 @@ class EnquiryViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  ApiResponse<bool> createBid = ApiResponse.initial();
-  void createBidResponse(ApiResponse<bool> response) {
-    createBid = response;
-    notifyListeners();
-  }
+ 
 
   ApiResponse<bool> sendEnquiryResponse = ApiResponse.initial();
   void sendEnquiry(ApiResponse<bool> response) {
     sendEnquiryResponse = response;
+    notifyListeners();
+  }
+
+  ApiResponse<bool> updateEnquiryResponse = ApiResponse.initial();
+  void updateEnquiry(ApiResponse<bool> response) {
+    updateEnquiryResponse = response;
     notifyListeners();
   }
 
@@ -129,42 +130,7 @@ class EnquiryViewModel with ChangeNotifier {
     }
   }
 
-  Future<void> createBidApi(
-      {required int travelEnquiryId,
-      required String price,
-      required String accommodation,
-      required String meals,
-      required String transportation,
-      required String extra,
-      required String itinerary}) async {
-    String? vendorId = await UserViewModel().getUserId();
-    Map<String, dynamic> body = {
-      "price": price,
-      "accommodation": accommodation,
-      "meals": meals,
-      "transportation": transportation,
-      "extras": extra,
-      "itinerary": itinerary,
-      "travelInquiryId": travelEnquiryId,
-      "vendorId": vendorId
-    };
-    createBidResponse(ApiResponse.loading());
-    try {
-      var resp = await _myRepo.createBidApi(body: body);
-      if (resp == true) {
-        createBidResponse(ApiResponse.completed(resp));
-        debugPrint("Create Bid Api success");
-        Utils.toastSuccessMessage(
-          "Bid created successfully",
-        );
-      } else {
-        createBidResponse(ApiResponse.error(resp.toString()));
-      }
-    } catch (e) {
-      debugPrint('error $e');
-      createBidResponse(ApiResponse.error(e.toString()));
-    }
-  }
+
 
   Future<void> getEnquiryByIdApi({required int enquiryId}) async {
     Map<String, dynamic> query = {"inquiryId": enquiryId};
@@ -177,8 +143,7 @@ class EnquiryViewModel with ChangeNotifier {
     }
   }
 
-  Future<bool> sendEnquiryApi(
-      {required Map<String, dynamic> body}) async {
+  Future<bool> sendEnquiryApi({required Map<String, dynamic> body}) async {
     String? userId = await UserViewModel().getUserId();
     // Map<String, dynamic> body = {
     //   "accommodationPreferences": accommodation,
@@ -218,4 +183,45 @@ class EnquiryViewModel with ChangeNotifier {
       return false;
     }
   }
+
+  Future<bool> updateEnquiryApi({required Map<String, dynamic> body}) async {
+    String? userId = await UserViewModel().getUserId();
+    if (userId != null) {
+      body["userId"] = userId;
+    }
+    updateEnquiry(ApiResponse.loading());
+    try {
+      var resp = await _myRepo.updateEnquiryApi(body: body);
+      if (resp == true) {
+        updateEnquiry(ApiResponse.completed(resp));
+        debugPrint("Update Enquiry Api success");
+        return resp;
+      } else {
+        updateEnquiry(ApiResponse.error(resp.toString()));
+        return resp;
+      }
+    } catch (e) {
+      debugPrint('error $e');
+      updateEnquiry(ApiResponse.error(e.toString()));
+      return false;
+    }
+  }
+
+  Future<bool> closeEnquiryApi({required Map<String, dynamic> body}) async {
+    // Optionally: You could introduce an ApiResponse for closeEnquiry if you want
+    try {
+      var resp = await _myRepo.closeEnquiryApi(body: body);
+      if (resp == true) {
+        debugPrint("Close Enquiry Api success");
+        return resp;
+      } else {
+        debugPrint("Close Enquiry Api error: $resp");
+        return false;
+      }
+    } catch (e) {
+      debugPrint('Close Enquiry Api exception: $e');
+      return false;
+    }
+  }
+
 }

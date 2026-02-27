@@ -126,6 +126,13 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                 }
               },
               {
+                "imgUrl": dollorIcon,
+                "label": "Subscription",
+                "onTap": () {
+                  context.push("/vendor_dashboard/subscription");
+                }
+              },
+              {
                 "imgUrl": rentalbooking,
                 "label": "Rental Management",
                 "onTap": () {
@@ -174,14 +181,19 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                   context.push('/vendor_dashboard/package_management');
                 }
               },
-              
               {
                 "imgUrl": moneyTransaction,
                 "label": "Payment Management",
                 "onTap": () {}
               },
+              {
+                "imgUrl": myWallet,
+                "label": "Wallet management",
+                "onTap": () {
+                  context.push('/vendor_dashboard/myWallet');
+                }
+              },
               {"imgUrl": offers, "label": "Offers Management", "onTap": () {}},
-             
               {
                 "imgUrl": helpSupport,
                 "label": "Help & Support",

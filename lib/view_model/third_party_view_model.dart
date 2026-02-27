@@ -120,7 +120,7 @@ Future<void> getCountryListByRegionApi({required String region}) async {
     }
   }
 
-  Future<void> getAllCurrency({required String countryName}) async {
+  Future<void> getAllCurrency() async {
     try {
       setOnCurrencyList(ApiResponse.loading());
       var resp = await _myRepo.getAllCurrencyApi();

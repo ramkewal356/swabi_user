@@ -91,6 +91,9 @@ class AppUrl {
   static var vendorUpdateProfileUrl = '/vendor/update_vendor';
   // bid management
   static var sendEnquiryUrl = '/travel/sendInquiry';
+  static var updateEnquiryUrl = '/travel/update-inquiry';
+  static var closeEnquiryUrl = '/travel/disable_inquiry';
+  static var cancelBidUrl = '/bids/disable_bid';
   static var getAllEnquiryUrl = '/travel/inquiries';
   static var getAllMyEnquiryUrl = '/bids/user/bids';
   static var getEnquiryById = '/travel/get_inquiry';
@@ -156,6 +159,12 @@ class AppUrl {
   static var getWalletTransactionUrl =
       '/wallet/get_wallet_transaction_by_userId';
   static var payfoviewbidUrl = '/wallet/spend';
+  static var getTransactionUrl = '/wallet/transactions';
+  static var createWalletPaymentOrderUrl = '/wallet/create-order';
+  static var verifyPaymentUrl = '/wallet/verify-payment';
+  // Subscription URL
+  static var getSubscriptionUrl = '/vendor/subscription/get_subscriptions';
+  static var getSubscriptionByVendorId = '/vendor/subscription';
   // currency URL
   static var currencyUrl = '/swabi/get_all_currencies';
   // color url

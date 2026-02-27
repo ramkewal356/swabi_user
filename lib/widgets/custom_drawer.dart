@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/core/constants/assets.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
@@ -24,6 +26,7 @@ class CustomDrawer extends StatefulWidget {
 
 class _CustomDrawerState extends State<CustomDrawer> {
   int selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -82,57 +85,102 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 itemCount: widget.menuItems.length,
                 itemBuilder: (context, index) {
                   final item = widget.menuItems[index];
-                  return Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                    child: ListTile(
-                      horizontalTitleGap: 10,
-                      tileColor: background,
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 10),
-                      dense: true,
-                      minTileHeight: 50,
-                      shape: RoundedRectangleBorder(
-                          side: BorderSide(color: greyColor1.shade400),
-                          borderRadius: BorderRadius.circular(10)),
-                      // selected: widget.selectedIndex == index,
-                      selected: widget.menuItems.length - 1 == index,
-                      selectedTileColor: btnColor,
-                      onTap: () {
-                        // widget.onItemSelected(index);
-                        if (item['onTap'] != null) {
-                          item['onTap']();
-                          context.pop();
-                        }
+                  return _buildMenuItem(item, index);
+                  // return Padding(
+                  //   padding:
+                  //       const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                  //   child: ListTile(
+                  //     horizontalTitleGap: 10,
+                  //     tileColor: background,
+                  //     contentPadding:
+                  //         const EdgeInsets.symmetric(horizontal: 10),
+                  //     dense: true,
+                  //     minTileHeight: 50,
+                  //     shape: RoundedRectangleBorder(
+                  //         side: BorderSide(color: greyColor1.shade400),
+                  //         borderRadius: BorderRadius.circular(10)),
+                  //     // selected: widget.selectedIndex == index,
+                  //     selected: widget.menuItems.length - 1 == index,
+                  //     selectedTileColor: btnColor,
+                  //     onTap: () {
+                  //       // widget.onItemSelected(index);
+                  //       if (item['onTap'] != null) {
+                  //         item['onTap']();
+                  //         context.pop();
+                  //       }
 
-                        setState(() {
-                          selectedIndex = index;
-                        });
-                      },
-                      leading: Image.asset(
-                        item['imgUrl'],
-                        height: 20,
-                        color: widget.menuItems.length - 1 == index
-                            ? Colors.white
-                            : btnColor,
-                      ),
-                      title: Text(
-                        item['label'],
-                        style: widget.menuItems.length - 1 == index
-                            ? landingtitleStyle
-                            : customListTileTextStyle,
-                      ),
-                      trailing: Icon(
-                        Icons.keyboard_arrow_right_outlined,
-                        color: widget.menuItems.length - 1 == index
-                            ? Colors.white
-                            : Colors.black,
-                      ),
-                    ),
-                  );
+                  //       setState(() {
+                  //         selectedIndex = index;
+                  //       });
+                  //     },
+                  //     leading: Image.asset(
+                  //       item['imgUrl'],
+                  //       height: 20,
+                  //       color: widget.menuItems.length - 1 == index
+                  //           ? Colors.white
+                  //           : btnColor,
+                  //     ),
+                  //     title: Text(
+                  //       item['label'],
+                  //       style: widget.menuItems.length - 1 == index
+                  //           ? landingtitleStyle
+                  //           : customListTileTextStyle,
+                  //     ),
+                  //     trailing: Icon(
+                  //       Icons.keyboard_arrow_right_outlined,
+                  //       color: widget.menuItems.length - 1 == index
+                  //           ? Colors.white
+                  //           : Colors.black,
+                  //     ),
+                  //   ),
+                  // );
                 }),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildMenuItem(
+    dynamic item,
+    int index,
+  ) {
+    final bool isSelected = selectedIndex == index;
+
+    return ListTile(
+      splashColor: btnColor.withOpacity(0.18),
+      selectedTileColor: btnColor.withOpacity(0.08),
+      selected: isSelected,
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 4,
+      ),
+      onTap: () {
+        item['onTap']?.call();
+        context.pop();
+
+        setState(() => selectedIndex = index);
+      },
+      leading: Image.asset(
+                        item['imgUrl'],
+                        height: 20,
+        color: isSelected ? btnColor : Colors.grey.shade700,
+      ),
+      // : Icon(
+      //     item['imgUrl'],
+      //     color: isSelected ? btnColor : Colors.grey.shade700,
+      //   ),
+      title: Text(
+        item['label'],
+        style: isSelected
+            ? textTitleHeading.copyWith(
+                color: btnColor,
+              )
+            : textTitleHeading,
+      ),
+      trailing: Icon(
+        Icons.chevron_right_rounded,
+        color: Colors.grey,
       ),
     );
   }
