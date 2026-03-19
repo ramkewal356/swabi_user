@@ -6,6 +6,7 @@ class SingleImagePicker extends StatefulWidget {
   final String? noteText;
   final String? hintText;
   final String? initialImageUrl;
+  final bool isEdit;
   final ValueChanged<File?>? onImageSelected;
 
   const SingleImagePicker({
@@ -13,6 +14,7 @@ class SingleImagePicker extends StatefulWidget {
     this.noteText,
     this.hintText,
     this.initialImageUrl,
+    this.isEdit = false,
     this.onImageSelected,
   });
 
@@ -45,7 +47,7 @@ class _SingleImagePickerState extends State<SingleImagePicker> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         GestureDetector(
-          onTap: _pickImage,
+          onTap: widget.isEdit ? () {} : _pickImage,
           child: Stack(
             alignment: Alignment.topRight,
             children: [
@@ -91,7 +93,7 @@ class _SingleImagePickerState extends State<SingleImagePicker> {
                   top: 8,
                   right: 8,
                   child: InkWell(
-                    onTap: _pickImage,
+                    onTap: widget.isEdit ? () {} : _pickImage,
                     child: Container(
                       padding: const EdgeInsets.all(6),
                       decoration: const BoxDecoration(

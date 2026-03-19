@@ -134,13 +134,16 @@ class _AlloffersScreenState extends State<AlloffersScreen>
                                 child: CircularProgressIndicator(
                                 color: greenColor,
                               ))
-                            : (viewModel.offerListModel?.data ?? []).isNotEmpty
+                            : (viewModel.offerListModel?.data?.content ?? [])
+                                    .isNotEmpty
                                 ? ListView.builder(
                                     itemCount:
-                                        viewModel.offerListModel?.data?.length,
+                                        viewModel
+                                        .offerListModel?.data?.content?.length,
                                     itemBuilder: (context, index) {
                                       var offer = viewModel
-                                          .offerListModel?.data?[index];
+                                          .offerListModel?.data
+                                          ?.content?[index];
                                       return OfferCard(
                                         imageUrl: offer?.imageUrl ?? '',
                                         title: offer?.offerName ?? '',

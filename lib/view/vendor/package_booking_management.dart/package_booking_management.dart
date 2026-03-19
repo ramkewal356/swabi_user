@@ -11,10 +11,9 @@ import 'package:provider/provider.dart';
 
 import '../../../data/response/status.dart';
 
-
 class PackageBookingManagement extends StatefulWidget {
-  const PackageBookingManagement({super.key});
- 
+  final String? userId;
+  const PackageBookingManagement({super.key, this.userId});
 
   @override
   State<PackageBookingManagement> createState() =>
@@ -50,7 +49,8 @@ class _PackageBookingManagementState extends State<PackageBookingManagement>
         packageStatus: packageStatus,
         isSort: isSort,
         sortDirection: sortDirection,
-        searchText: searchText);
+        searchText: searchText,
+        userId: widget.userId ?? '');
   }
 
   @override

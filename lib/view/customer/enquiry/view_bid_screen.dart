@@ -237,8 +237,8 @@ class _ViewBidScreenState extends State<ViewBidScreen> {
                               _miniInfo(
                                   Icons.group_rounded,
                                   "Guests",
-                                  formatParticipantType(enquiry.participantType
-                                      as ParticipantType?)),
+                                  formatParticipantType(
+                                      enquiry.participantType!)),
                               //     Icons.group_rounded,
                               //     "Guests",
                               //     _formatParticipantType(

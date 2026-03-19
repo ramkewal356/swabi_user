@@ -18,7 +18,8 @@ import '../../../widgets/custom_filter_popup_widget.dart';
 import '../../../widgets/custom_search_field.dart';
 
 class BidManagementScreen extends StatefulWidget {
-  const BidManagementScreen({super.key});
+  final String? userId;
+  const BidManagementScreen({super.key, this.userId});
 
   @override
   State<BidManagementScreen> createState() => _BidManagementScreenState();
@@ -62,6 +63,7 @@ class _BidManagementScreenState extends State<BidManagementScreen> {
           isPagination: isPagination,
           searchText: searchText,
           filterText: _selectedbidding ?? '',
+        userId: widget.userId ?? ''
         );
     debugPrint("Fetching all bids");
   }
@@ -174,7 +176,7 @@ class _BidManagementScreenState extends State<BidManagementScreen> {
     );
   }
 
-Widget modernBidCard({
+  Widget modernBidCard({
     required BuildContext context,
     required dynamic bid,
     required VoidCallback onRefresh,
@@ -220,7 +222,6 @@ Widget modernBidCard({
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           /// 🔹 TOP ROW (ID + ACTIONS)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -345,8 +346,7 @@ Widget modernBidCard({
                 if (isMultiCountry)
                   Text(
                     "Multi Country",
-                    style: TextStyle(
-                        fontSize: 11, color: Colors.grey.shade600),
+                    style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
                   ),
               ],
             ),

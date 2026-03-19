@@ -89,7 +89,7 @@ class _CommonOfferContainerState extends State<CommonOfferContainer> {
       child: Column(
         children: [
           ///Top Offer Container
-          (offerListData?.data ?? []).isNotEmpty
+          (offerListData?.data?.content ?? []).isNotEmpty
               ? Padding(
                   padding:
                       const EdgeInsets.only(left: 15, bottom: 10, right: 10),
@@ -133,7 +133,7 @@ class _CommonOfferContainerState extends State<CommonOfferContainer> {
                   ),
                 )
               : Container(),
-          (offerListData?.data ?? []).isNotEmpty
+          (offerListData?.data?.content ?? []).isNotEmpty
               ? SizedBox(
                   height: 160,
                   child: ListView.separated(
@@ -141,9 +141,9 @@ class _CommonOfferContainerState extends State<CommonOfferContainer> {
                     shrinkWrap: true,
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     scrollDirection: Axis.horizontal,
-                    itemCount: offerListData?.data?.length ?? 0,
+                    itemCount: offerListData?.data?.content?.length ?? 0,
                     itemBuilder: (context, index) {
-                      var data = offerListData?.data?[index];
+                      var data = offerListData?.data?.content?[index];
                       return GestureDetector(
                         onTap: () {
                           context.read<OfferViewModel>().getOfferDetailsApi(
@@ -275,13 +275,14 @@ class _CommonOfferContainerState extends State<CommonOfferContainer> {
                   ),
                 )
               : Container(),
-          (offerListData?.data ?? []).isNotEmpty
+          (offerListData?.data?.content ?? []).isNotEmpty
               ? const SizedBox(height: 10)
               : const SizedBox(),
-          (offerListData?.data ?? []).isNotEmpty
+          (offerListData?.data?.content ?? []).isNotEmpty
               ? Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate((offerListData?.data ?? []).length,
+                  children: List.generate(
+                      (offerListData?.data?.content ?? []).length,
                       (index) {
                     return AnimatedContainer(
                       height: initialIndex == index ? 12 : 10,

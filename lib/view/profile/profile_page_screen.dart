@@ -150,6 +150,9 @@ class _ProfilePageState extends State<ProfilePage> {
     var stateList = context.watch<ThirdPartyViewModel>().stateList.data;
     var countryList =
         context.watch<ThirdPartyViewModel>().getCountryListResponse.data;
+    var isLoadingCountry =
+        context.watch<ThirdPartyViewModel>().getCountryListResponse.status ==
+            Status.loading;
     bool isLoadingState =
         context.watch<ThirdPartyViewModel>().stateList.status == Status.loading;
     final updateStatus =
@@ -231,38 +234,41 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: ChangePassword(
                                   userId: widget.user,
                                   userType: widget.userType)),
-                          TextButton.icon(
-                            style: ButtonStyle(
-                              // ignore: deprecated_member_use
-                              side: MaterialStateProperty.all(
-                                const BorderSide(
-                                  color: btnColor, // Border color
-                                  width: 1.5, // Border width
-                                ),
+                          ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor:
+                                  isEditing ? Colors.grey : btnColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                              // ignore: deprecated_member_use
-                              shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      8), // Optional: Rounded corners
-                                ),
+                              elevation: isEditing ? 0 : 4,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 18, vertical: 10),
+                              side: BorderSide(
+                                color:
+                                    isEditing ? Colors.grey.shade400 : btnColor,
+                                width: 1.5,
                               ),
                             ),
-                            onPressed: () {
-                              // context.push("/profilePage/editProfilePage",
-                              //     extra: {'uId': userdata.userId});
-                              setState(() {
-                                isEditing = true;
-                              });
-                            },
-                            label: const Text(
-                              'Edit Profile',
-                              style: TextStyle(
-                                  color: btnColor, fontWeight: FontWeight.w600),
-                            ),
-                            icon: const Icon(
+                            onPressed: isEditing
+                                ? null
+                                : () {
+                                    setState(() {
+                                      isEditing = true;
+                                    });
+                                  },
+                            icon: Icon(
                               Icons.edit,
-                              color: btnColor,
+                              color: Colors.white,
+                            ),
+                            label: Text(
+                              isEditing ? 'Editing...' : 'Edit Profile',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                              ),
                             ),
                           )
                         ],
@@ -333,15 +339,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             fillColor: background,
                             initalCountryCode: countryCode,
                             controller: contactController),
-                        // child: CustomMobilenumber(
-                        //     readOnly: !isEditing,
-                        //     withoutBorder: true,
-                        //     fillColor: background,
-                        //     textLength: 9,
-                        //     keyboardType: TextInputType.phone,
-                        //     countryCode: countryCode,
-                        //     controller: contactController,
-                        //     hintText: 'Enter contact number'),
+                        
                       ),
                       DetailItem(
                         readOnly: true,
@@ -365,6 +363,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: CustomDropdownButton(
                           isEditable: isEditing,
                           withoutBorder: true,
+                          isLoading: isLoadingCountry,
                           itemsList: countryList ?? [],
                           hintText: 'Select Country',
                           controller: _countryController,
@@ -396,6 +395,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           isEditable: isEditing,
                           controller: stateController,
                           // focusNode: focusNode3,
+                          isLoading: isLoadingState,
                           itemsList:
                               stateList
                                   ?.map((stateName) => stateName)

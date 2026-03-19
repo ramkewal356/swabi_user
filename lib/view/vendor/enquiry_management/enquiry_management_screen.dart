@@ -19,7 +19,8 @@ import 'package:provider/provider.dart';
 import '../../../data/response/status.dart';
 
 class EnquiryManagementScreen extends StatefulWidget {
-  const EnquiryManagementScreen({super.key});
+  final String? userId;
+  const EnquiryManagementScreen({super.key, this.userId});
 
   @override
   State<EnquiryManagementScreen> createState() =>
@@ -63,6 +64,7 @@ class _EnquiryManagementScreenState extends State<EnquiryManagementScreen> {
           isPagination: isPagination,
           searchText: searchText,
           filterText: _selectedbidding ?? '',
+        userId: widget.userId ?? ''
         );
     debugPrint("Fetching all bids");
   }
@@ -178,155 +180,7 @@ class _EnquiryManagementScreenState extends State<EnquiryManagementScreen> {
                       }
                       var enquiryData = vm.bidData.data?[index];
                       return premiumEnquiryCard(enquiryData!);
-                      // return Card(
-                      //   color: Colors.white,
-                      //   margin: EdgeInsets.only(top: index == 0 ? 10 : 10),
-                      //   child: Theme(
-                      //     data: Theme.of(context)
-                      //         .copyWith(dividerColor: Colors.transparent),
-                      //     child: ExpansionTile(
-                      //       dense: true,
-                      //       onExpansionChanged: (value) {
-                      //         setState(() {
-                      //           isExpanded = value;
-                      //         });
-                      //       },
-                      //       childrenPadding: const EdgeInsets.symmetric(
-                      //           horizontal: 15, vertical: 10),
-                      //       visualDensity: const VisualDensity(
-                      //           vertical: VisualDensity.maximumDensity),
-                      //       tilePadding: const EdgeInsets.symmetric(
-                      //           horizontal: 8, vertical: 5),
-                      //       leading: CircleAvatar(
-                      //         radius: 28,
-                      //         backgroundColor: btnColor,
-                      //         // child: Icon(
-                      //         //   Icons.business_center,
-                      //         //   color: background,
-                      //         // ),
-                      //         child: enquiryData?.user?.profileImageUrl == null
-                      //             ? const Icon(Icons.business_center,
-                      //                 color: background)
-                      //             : ClipOval(
-                      //                 child: Image.network(
-                      //                   // imageAssets.bidManagement!,
-                      //                   '${enquiryData?.user?.profileImageUrl}',
-                      //                   // width: double.infinity,
-                      //                   height: double.infinity,
-                      //                   fit: BoxFit.cover,
-                      //                 ),
-                      //               ),
-                      //       ),
-                      //       title: Text(
-                      //           '${enquiryData?.name} [${enquiryData?.id}]',
-                      //           style: const TextStyle(
-                      //               fontSize: 15, fontWeight: FontWeight.w600)),
-                      //       subtitle: Column(
-                      //         crossAxisAlignment: CrossAxisAlignment.start,
-                      //         children: [
-                      //           Text(
-                      //               "Budget : ${enquiryData?.currency} ${enquiryData?.budget ?? 'NA'}",
-                      //               style: const TextStyle(
-                      //                   fontSize: 12,
-                      //                   fontWeight: FontWeight.w500)),
-                      //           Text(
-                      //               enquiryData?.countries?.join(' , ') ?? 'NA',
-                      //               style: const TextStyle(
-                      //                   fontSize: 12,
-                      //                   fontWeight: FontWeight.w500)),
-                      //         ],
-                      //       ),
-                      //       trailing: Column(children: [
-                      //         enquiryData?.bidPlacedByVendor == true
-                      //             ? GradientButton(
-                      //                 icon: Icons.done_all_rounded,
-                      //                 onPressed: () {},
-                      //                 label: 'Bid Sent',
-                      //                 colors: [
-                      //                   Colors.green.shade700,
-                      //                   Colors.green.shade900
-                      //                 ],
-                      //               )
-                      //             : GradientButton(
-                      //                 icon: Icons.monetization_on_outlined,
-                      //                 onPressed: () {
-                      //                   if (enquiryData?.show == true) {
-                      //                     context
-                      //                         .push(
-                      //                       '/vendor_dashboard/bidNow',
-                      //                       extra: BidNowScreen(
-                      //                         enquiryData: enquiryData,
-                      //                       ),
-                      //                     )
-                      //                         .then((onValue) {
-                      //                       // Refresh the enquiry list after bid creation
-                      //                       _getAllEnquirys(
-                      //                         isFilter: true,
-                      //                         isSearch: false,
-                      //                         isPagination: false,
-                      //                       );
-                      //                     });
-                      //                   } else {
-                      //                     showPaymentConfirmationModal(
-                      //                         payableAmount:
-                      //                             enquiryData?.viewAmount ?? 0,
-                      //                         enquiryId: enquiryData?.id ?? 0,
-                      //                         enquiryData: enquiryData);
-                      //                   }
-                      //                 },
-                      //                 label: 'Bid Now',
-                      //               ),
-                      //         const SizedBox(height: 5),
-                      //         Icon(Icons.keyboard_arrow_down,
-                      //             color: Colors.grey.shade600)
-                      //       ]),
-                      //       children: [
-                      //         const Text('Enquiry Details',
-                      //             style: TextStyle(
-                      //                 fontSize: 14,
-                      //                 fontWeight: FontWeight.w600)),
-                      //         const SizedBox(height: 10),
-                      //         if (enquiryData?.travelDates != null &&
-                      //             enquiryData!.travelDates!.isNotEmpty)
-                      //           textItem(
-                      //               label: "Travel Dates",
-                      //               value: enquiryData.travelDates ?? 'NA'),
-                      //         if (enquiryData?.tentativeDates != null &&
-                      //             enquiryData!.tentativeDates!.isNotEmpty)
-                      //           textItem(
-                      //               label: "Tentative Dates",
-                      //               value: enquiryData.tentativeDates ?? 'NA'),
-                      //         if (enquiryData?.tentativeDates != null &&
-                      //             enquiryData!.tentativeDates!.isNotEmpty)
-                      //           textItem(
-                      //               label: "Tentative Days",
-                      //               value: enquiryData.tentativeDays ?? 'NA'),
-                      //         textItem(
-                      //             label: "Accommodation",
-                      //             value:
-                      //                 enquiryData?.accommodationPreferences ??
-                      //                     'NA'),
-                      //         if (enquiryData?.specialRequests != null &&
-                      //             enquiryData!.specialRequests!.isNotEmpty)
-                      //           textItem(
-                      //             label: "Special Request",
-                      //               value: enquiryData.specialRequests!
-                      //                   .map((toElement) =>
-                      //                       toElement.request.toString())
-                      //                   .join(', ')),
-                      //         if (enquiryData?.destinations != null &&
-                      //             enquiryData!.destinations!.isNotEmpty)
-                      //           textItem(
-                      //               label: "Destinations",
-                      //               value:
-                      //                   "${enquiryData.destinations?.join(' , ')}"),
-                      //         textItem(
-                      //             label: "Meals",
-                      //             value: enquiryData?.meals ?? 'NA'),
-                      //       ],
-                      //     ),
-                      //   ),
-                      // );
+                     
                     },
                   );
                 }
@@ -523,37 +377,7 @@ class _EnquiryManagementScreenState extends State<EnquiryManagementScreen> {
     );
   }
 
-  // Widget _premiumBidButton(EnquiryContent enquiryData) {
-  //   return Container(
-  //     height: 36,
-  //     decoration: BoxDecoration(
-  //       borderRadius: BorderRadius.circular(20),
-  //       gradient: LinearGradient(
-  //         colors: [Colors.deepPurple.shade400, Colors.deepPurple.shade700],
-  //       ),
-  //     ),
-  //     child: ElevatedButton(
-  //       style: ElevatedButton.styleFrom(
-  //         backgroundColor: Colors.transparent,
-  //         shadowColor: Colors.transparent,
-  //         shape: RoundedRectangleBorder(
-  //           borderRadius: BorderRadius.circular(20),
-  //         ),
-  //       ),
-  //       onPressed: () {
-  //         // your navigation logic
-  //       },
-  //       child: const Text(
-  //         "Bid Now",
-  //         style: TextStyle(
-  //           fontSize: 12,
-  //           fontWeight: FontWeight.bold,
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-
+ 
   Widget _statusBadge(String text, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),

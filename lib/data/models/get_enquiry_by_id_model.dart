@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 
+// Changing import/export signature to avoid cross-file type issues
 GetEnquiryByIdModel getEnquiryByIdModelFromJson(String str) =>
     GetEnquiryByIdModel.fromJson(json.decode(str));
 
@@ -156,7 +157,7 @@ class Data {
   dynamic viewCurrency;
   dynamic viewAmount;
   dynamic paymentType;
-  ParticipantType? participantType;
+  EnquiryParticipantType? participantType;
   String? countryType;
   bool? show;
   bool? bidPlacedByVendor;
@@ -236,7 +237,7 @@ class Data {
         paymentType: json["paymentType"],
         participantType: json["participantType"] == null
             ? null
-            : ParticipantType.fromJson(json["participantType"]),
+            : EnquiryParticipantType.fromJson(json["participantType"]),
         countryType: json["countryType"],
         show: json["show"],
         bidPlacedByVendor: json["bidPlacedByVendor"],
@@ -456,17 +457,18 @@ class User {
       };
 }
 
-class ParticipantType {
+// Rename class to avoid type conflicts with the similarly-named "ParticipantType" in get_all_enquiry_model.dart
+class EnquiryParticipantType {
   int? senior;
   int? adult;
   int? child;
   int? infant;
   int? guests;
-  ParticipantType(
+  EnquiryParticipantType(
       {this.senior, this.adult, this.child, this.infant, this.guests});
 
-  factory ParticipantType.fromJson(Map<String, dynamic> json) =>
-      ParticipantType(
+  factory EnquiryParticipantType.fromJson(Map<String, dynamic> json) =>
+      EnquiryParticipantType(
           senior: json["SENIOR"],
           adult: json["ADULT"],
           child: json["CHILD"],

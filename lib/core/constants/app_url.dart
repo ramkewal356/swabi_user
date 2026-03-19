@@ -162,11 +162,25 @@ class AppUrl {
   static var getTransactionUrl = '/wallet/transactions';
   static var createWalletPaymentOrderUrl = '/wallet/create-order';
   static var verifyPaymentUrl = '/wallet/verify-payment';
+  //payment management url
+
+  static var getPaymentTransactionListUrl = '/payment/get_transaction_list';
+  static var getRefundTransactionListUrl = '/payment/get_refund_list';
+  static var getPaymentByIdUrl = '/payment/get_payment_by_payment_id';
+  static var getRefundByIdUrl = '/payment/get_refund_by_payment_id';
   // Subscription URL
   static var getSubscriptionUrl = '/vendor/subscription/get_subscriptions';
   static var getSubscriptionByVendorId = '/vendor/subscription';
+  // Offer management URL
+  static var getAllOfferListUrl = '/offer/get_offer_list';
+  static var addOfferUrl = '/offer/create_offer';
+  static var updateOfferUrl = '/offer/update_offer';
+  static var activateOfferUrl = '/offer/activate_offer';
+  static var deactivateOfferUrl = '/offer/delete_offer';
   // currency URL
   static var currencyUrl = '/swabi/get_all_currencies';
+  static const String currencyApiUrl =
+      'https://openexchangerates.org/api/currencies.json';
   // color url
   static var colorbaseUrl = 'https://www.csscolorsapi.com';
   static var colorUrl = '/api/colors';

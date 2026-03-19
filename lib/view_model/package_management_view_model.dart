@@ -102,7 +102,8 @@ class PackageManagementViewModel with ChangeNotifier {
       required String packageStatus,
       required bool isSort,
       required String sortDirection,
-      required String searchText}) async {
+      required String searchText,
+      required String userId}) async {
     if (isLoadingMore) return;
     bool newSearch = (isFilter || isSearch || isSort);
     if (!isPagination && newSearch) {
@@ -118,7 +119,8 @@ class PackageManagementViewModel with ChangeNotifier {
       "sortBy": "bookingId",
       "sortDirection": sortDirection,
       "search": searchText,
-      "vendorId": vendorId
+      "vendorId": vendorId,
+      if (userId.isNotEmpty) "userId": userId
     };
     if (isLastPage) return;
     isLoadingMore = true;

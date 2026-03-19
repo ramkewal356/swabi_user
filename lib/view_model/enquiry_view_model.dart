@@ -50,7 +50,8 @@ class EnquiryViewModel with ChangeNotifier {
       required bool isSearch,
       required bool isPagination,
       required String searchText,
-      required String filterText}) async {
+      required String filterText,
+      required String userId}) async {
     if (isLoadingMore) return; // Prevent multiple calls
     bool newSearch = (isFilter || isSearch);
     if (!isPagination && newSearch) {
@@ -63,8 +64,10 @@ class EnquiryViewModel with ChangeNotifier {
     Map<String, dynamic> query = {
       "vendorId": vendorId,
       "page": page,
+      "size": pageSize,
       "query": searchText,
-      "status": filterText
+      "status": filterText,
+      if (userId.isNotEmpty) "userId": userId
     };
 
     if (isLastPage) return;

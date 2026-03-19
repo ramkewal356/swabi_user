@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cab/core/services/notification_service.dart';
 import 'package:flutter_cab/data/response/status.dart';
 import 'package:flutter_cab/core/utils/validatorclass.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
@@ -39,23 +40,30 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final FocusNode focusNode1 = FocusNode();
   final FocusNode focusNode2 = FocusNode();
-
+  String fcmToken = '';
   @override
   void initState() {
     super.initState();
-    savecredential();
+    WidgetsBinding.instance.addPostFrameCallback((callback) {
+      savecredential();
+      getToken();
+    });
   }
 
   Future<void> savecredential() async {
     final prefsData = await SharedPreferences.getInstance();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-    setState(() {
-      userNameControlller.text = prefsData.getString('email') ?? '';
-      passwordControlller.text = prefsData.getString('password') ?? '';
-      rememberMe = prefsData.getBool('remember') ?? false;
+      setState(() {
+        userNameControlller.text = prefsData.getString('email') ?? '';
+        passwordControlller.text = prefsData.getString('password') ?? '';
+        rememberMe = prefsData.getBool('remember') ?? false;
       });
     });
+  }
+
+  void getToken() async {
+    fcmToken = await NotificationService.getToken() ?? '';
   }
 
   @override
@@ -201,18 +209,21 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   CustomButtonBig(
                     btnHeading: "Sign In",
-                    loading:
-                        authViewMode.loginResponse.status ==
+                    loading: authViewMode.loginResponse.status ==
                             Status.loading ||
                         authViewMode.sendOtpResponse.status == Status.loading,
                     onTap: () {
+                      String platformType =
+                          NotificationService().getPlatformType();
                       if (_formKey.currentState!.validate()) {
                         authViewMode.userLoginApi(
                             context: context,
                             email: userNameControlller.text,
                             password: passwordControlller.text,
                             rememberMe: rememberMe,
-                            userType: _userType.name);
+                            userType: _userType.name,
+                            fcmToken: fcmToken,
+                            plateformType: platformType);
                       }
                     },
                   ),

@@ -192,7 +192,13 @@ class _BookingPaymentScreenState extends State<BookingPaymentScreen> {
   @override
   Widget build(BuildContext context) {
     var offerList =
-        context.watch<OfferViewModel>().getOfferListByVender.data?.data ?? [];
+        context
+            .watch<OfferViewModel>()
+            .getOfferListByVender
+            .data
+            ?.data
+            ?.content ??
+        [];
     var paymentStatus =
         context.watch<PaymentCreateOrderIdViewModel>().paymentOrderID.status;
     var bookingStatus = context

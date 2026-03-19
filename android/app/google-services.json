@@ -1,0 +1,29 @@
+{
+    "project_info": {
+        "project_number": "397051185951",
+        "project_id": "swabi-92720",
+        "storage_bucket": "swabi-92720.firebasestorage.app"
+    },
+    "client": [
+        {
+            "client_info": {
+                "mobilesdk_app_id": "1:397051185951:android:a6092c0bb13dc4d7587e2a",
+                "android_client_info": {
+                    "package_name": "com.example.swabiapp"
+                }
+            },
+            "oauth_client": [],
+            "api_key": [
+                {
+                    "current_key": "AIzaSyCUC8I5AJbD3tA2RsEvkBkini8RsK7gxmE"
+                }
+            ],
+            "services": {
+                "appinvite_service": {
+                    "other_platform_oauth_client": []
+                }
+            }
+        }
+    ],
+    "configuration_version": "1"
+}

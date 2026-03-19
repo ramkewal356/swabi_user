@@ -25,7 +25,8 @@ class RentalManagementViewModel with ChangeNotifier {
       required String searchText,
       required String sortDirection,
       required String bookingStatus,
-      required bool isSort}) async {
+      required bool isSort,
+      required String userId}) async {
     if (isLoadingMore) return; // Prevent multiple calls
     bool newSearch = (isFilter || isSearch || isSort);
     if (!isPagination && newSearch) {
@@ -42,7 +43,8 @@ class RentalManagementViewModel with ChangeNotifier {
       "search": searchText,
       "sortBy": "id",
       "sortDirection": sortDirection,
-      "bookingStatus": bookingStatus
+      "bookingStatus": bookingStatus,
+      if (userId.isNotEmpty) "userId": userId
     };
 
     if (isLastPage) return;

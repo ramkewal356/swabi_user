@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/status.dart';
+import 'package:flutter_cab/view/vendor/enquiry_management/enquiry_management_screen.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/widgets/custom_drawer.dart';
 import 'package:flutter_cab/core/constants/assets.dart';
@@ -100,6 +101,8 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
             lastLogin: 'Last login: ${allVenderData?.lastLogin}',
             menuItems: [
               {
+                "imgUrl": Icons.dashboard, "label": "Dashboard", "onTap": () {}},
+              {
                 "imgUrl": profile,
                 "label": "My Profile",
                 "onTap": () {
@@ -115,11 +118,12 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                 "imgUrl": transaction,
                 "label": "Enquiry Management",
                 "onTap": () {
-                  context.push("/vendor_dashboard/enquiryManagement");
+                  context.push("/vendor_dashboard/enquiryManagement",
+                      extra: EnquiryManagementScreen());
                 }
               },
               {
-                "imgUrl": dollorIcon,
+                "imgUrl": Icons.gavel_rounded,
                 "label": "Bid Management",
                 "onTap": () {
                   context.push("/vendor_dashboard/bidManagement");
@@ -184,7 +188,9 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
               {
                 "imgUrl": moneyTransaction,
                 "label": "Payment Management",
-                "onTap": () {}
+                "onTap": () {
+                  context.push("/vendor_dashboard/payment_management");
+                }
               },
               {
                 "imgUrl": myWallet,
@@ -193,7 +199,20 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                   context.push('/vendor_dashboard/myWallet');
                 }
               },
-              {"imgUrl": offers, "label": "Offers Management", "onTap": () {}},
+              {
+                "imgUrl": offers,
+                "label": "Offers Management",
+                "onTap": () {
+                  context.push("/vendor_dashboard/offer_management");
+                }
+              },
+              {
+                "imgUrl": Icons.groups_3_outlined,
+                "label": "Customer Management",
+                "onTap": () {
+                  context.push("/vendor_dashboard/customer_management");
+                }
+              },
               {
                 "imgUrl": helpSupport,
                 "label": "Help & Support",

@@ -101,6 +101,10 @@ dependencies:
   phone_numbers_parser: ^9.0.16
   sqflite: ^2.4.2
   path: ^1.9.1
+  jwt_decoder: ^2.0.1
+  firebase_core: ^4.5.0
+  firebase_messaging: ^16.1.2
+  flutter_local_notifications: ^20.1.0
  
 
   # country_codes: ^2.0.0

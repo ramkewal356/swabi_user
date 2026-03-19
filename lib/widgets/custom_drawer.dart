@@ -54,11 +54,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
               children: [
                 Text(
                   widget.emailAddress,
-                  style: subtitleTextStyle,
+                  style: subtitleTextStyle.copyWith(
+                      color: background.withOpacity(0.75), fontSize: 12),
                 ),
                 Text(
                   widget.lastLogin,
-                  style: landingTextStyle,
+                  style: landingTextStyle.copyWith(
+                      color: background.withOpacity(0.75), fontSize: 12),
                 )
               ],
             ),
@@ -161,7 +163,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
         setState(() => selectedIndex = index);
       },
-      leading: Image.asset(
+      leading: item['imgUrl'] is IconData
+          ? Icon(
+              item["imgUrl"],
+              color: isSelected ? btnColor : Colors.grey.shade700,
+            )
+          : Image.asset(
                         item['imgUrl'],
                         height: 20,
         color: isSelected ? btnColor : Colors.grey.shade700,

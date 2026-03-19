@@ -6,7 +6,6 @@ import 'package:flutter_cab/data/models/offer_detail_by_id_model.dart';
 import 'package:flutter_cab/data/models/offer_list_model.dart';
 import 'package:flutter_cab/data/repositories/offer_repository.dart';
 
-
 import '../data/response/api_response.dart';
 
 class OfferViewModel with ChangeNotifier {
@@ -63,16 +62,19 @@ class OfferViewModel with ChangeNotifier {
     }
   }
 
-  Future<void> getOfferDetailsApi({required String offerId}) async {
+  Future<OfferDetailByIdModel?> getOfferDetailsApi(
+      {required String offerId}) async {
     Map<String, dynamic> query = {"offerId": offerId};
     try {
       setOfferDetails(ApiResponse.loading());
       var resp = await _myRepo.offerDetailsApi(query: query);
       setOfferDetails(ApiResponse.completed(resp));
+      return resp;
     } catch (e) {
       debugPrint('error..$e');
       setOfferDetails(ApiResponse.error(e.toString()));
     }
+    return null;
   }
 
   Future<OfferDetailByIdModel?> validateOffer(

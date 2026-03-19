@@ -283,7 +283,6 @@ class _PackageManagementScreenState extends State<PackageManagementScreen> {
                                     if (packageList?.packageStatus == 'TRUE')
                                       PopupMenuItem(
                                           value: "Edit", child: Text("Edit")),
-                                       
                                     PopupMenuItem(
                                         value:
                                             packageList?.packageStatus == 'TRUE'
@@ -294,14 +293,12 @@ class _PackageManagementScreenState extends State<PackageManagementScreen> {
                                                 ? "Deactivate"
                                                 : "Activate")),
                                   ],
-                              ),
+                                ),
                               ],
                             ),
                           ],
                         ),
                       ),
-                       
-                    
                     );
                   },
                 );

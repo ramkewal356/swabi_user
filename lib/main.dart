@@ -1,18 +1,24 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cab/app/routes.dart';
+import 'package:flutter_cab/core/services/notification_service.dart';
 import 'package:flutter_cab/view_model/activity_management_view_model.dart';
 import 'package:flutter_cab/view_model/auth_view_model.dart';
 import 'package:flutter_cab/view_model/bid_view_model.dart';
+import 'package:flutter_cab/view_model/customer_management_view_model.dart';
 import 'package:flutter_cab/view_model/driver_view_model.dart';
 import 'package:flutter_cab/view_model/enquiry_view_model.dart';
 import 'package:flutter_cab/view_model/home_page_view_model.dart';
 import 'package:flutter_cab/view_model/itinerary_view_model.dart';
 import 'package:flutter_cab/view_model/notification_view_model.dart';
+import 'package:flutter_cab/view_model/offer_management_view_model.dart';
 import 'package:flutter_cab/view_model/offer_view_model.dart';
 import 'package:flutter_cab/view_model/package_management_view_model.dart';
 import 'package:flutter_cab/view_model/package_view_model.dart';
 import 'package:flutter_cab/view_model/payment_gateway_view_model.dart';
+import 'package:flutter_cab/view_model/payment_management_view_model.dart';
 import 'package:flutter_cab/view_model/raise_issue_view_model.dart';
 import 'package:flutter_cab/view_model/rental_management_view_model.dart';
 import 'package:flutter_cab/view_model/rental_view_model.dart';
@@ -29,10 +35,19 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:provider/provider.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  debugPrint("Background Message: ${message.messageId}");
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
-  
+  await Firebase.initializeApp();
+  await NotificationService.initialize(navigatorKey);
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -116,7 +131,11 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (create) => VehicleOwnerViewModel()),
         ChangeNotifierProvider(create: (create) => WalletViewModel()),
         ChangeNotifierProvider(create: (create) => SubscriptionViewModel()),
-
+        ChangeNotifierProvider(
+            create: (create) => PaymentManagementViewModel()),
+        ChangeNotifierProvider(create: (create) => OfferManagementViewModel()),
+        ChangeNotifierProvider(
+            create: (create) => CustomerManagementViewModel()),
       ],
       child: const MyApp(),
     ));
@@ -137,8 +156,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       routerConfig: myRouter,
-      // home: VendorProfileScreen(),
-      // const SplashSreen(),
+    
     );
   }
 }

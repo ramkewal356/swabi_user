@@ -55,7 +55,8 @@ class BidViewModel with ChangeNotifier {
       required bool isSearch,
       required bool isPagination,
       required String searchText,
-      required String filterText}) async {
+      required String filterText,
+      required String userId}) async {
     if (isLoadingMore) return; // Prevent multiple calls
     bool newSearch = (isFilter || isSearch);
     if (!isPagination && newSearch) {
@@ -67,8 +68,10 @@ class BidViewModel with ChangeNotifier {
     String? vendorId = await UserViewModel().getUserId();
     Map<String, dynamic> query = {
       "page": page,
+      "size": pageSize,
       "query": searchText,
-      "bidStatus": filterText
+      "bidStatus": filterText,
+      if (userId.isNotEmpty) "userId": userId
     };
 
     if (isLastPage) return;

@@ -113,7 +113,7 @@ class _BidNowScreenState extends State<BidNowScreen> {
                           _miniInfo(
                               Icons.group_rounded,
                               'Guests',
-                              formatParticipantType(
+                              formatParticipantTypeForBid(
                                 enquiry.participantType,
                               )),
                           _miniInfo(

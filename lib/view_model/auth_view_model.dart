@@ -62,11 +62,15 @@ class AuthViewModel with ChangeNotifier {
     required String password,
     required bool rememberMe,
     required String userType,
+    required String fcmToken,
+    required String plateformType,
   }) async {
     Map<String, String> body = {
       'email': email,
       'password': password,
-      'userType': userType
+      'userType': userType,
+      "notificationToken": fcmToken,
+      "TokenType": plateformType
     };
     try {
       setOnLoginUser(ApiResponse.loading());

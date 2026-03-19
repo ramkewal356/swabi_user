@@ -4,6 +4,13 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_cab/view/customer/enquiry/enquiry_form_screen.dart';
 import 'package:flutter_cab/view/customer/my_package/booking_payment_screen.dart';
+import 'package:flutter_cab/view/vendor/customer_management/customer_management.dart';
+import 'package:flutter_cab/view/vendor/customer_management/view_customer_screen.dart';
+import 'package:flutter_cab/view/vendor/offer_management/add_edit_offer_screen.dart';
+import 'package:flutter_cab/view/vendor/offer_management/offer_management_screen.dart';
+import 'package:flutter_cab/view/vendor/offer_management/view_offer_screen.dart';
+import 'package:flutter_cab/view/vendor/payment_management/payment_details_screen.dart';
+import 'package:flutter_cab/view/vendor/payment_management/payment_management_screen.dart';
 import 'package:flutter_cab/view/vendor/subscription_management/subscription_screen.dart';
 import 'package:flutter_cab/widgets/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/view/auth_screens/change_password.dart';
@@ -274,7 +281,7 @@ final GoRouter myRouter = GoRouter(
         );
       },
     ),
-   
+
     GoRoute(
       path: '/setting',
       parentNavigatorKey: _rootNavigatorKey,
@@ -484,13 +491,22 @@ final GoRouter myRouter = GoRouter(
         builder: (context, state) => const VendorDashboardScreen(),
         routes: [
           GoRoute(
-            path: 'bidManagement',
-            builder: (context, state) => const BidManagementScreen(),
-          ),
+              path: 'bidManagement',
+              builder: (context, state) {
+                final data = state.extra as Map<String, dynamic>?;
+                final userId = data != null && data.containsKey("userId")
+                    ? data["userId"]
+                    : null;
+                return BidManagementScreen(userId: userId);
+              }),
           GoRoute(
-            path: 'enquiryManagement',
-            builder: (context, state) => const EnquiryManagementScreen(),
-          ),
+              path: 'enquiryManagement',
+              builder: (context, state) {
+                var data = state.extra as EnquiryManagementScreen;
+                return EnquiryManagementScreen(
+                  userId: data.userId,
+                );
+              }),
           GoRoute(
             path: 'subscription',
             builder: (context, state) => SubscriptionScreen(),
@@ -518,6 +534,24 @@ final GoRouter myRouter = GoRouter(
             },
           ),
           GoRoute(
+              path: '/payment_management',
+              parentNavigatorKey: _rootNavigatorKey,
+              builder: (BuildContext context, GoRouterState state) {
+                return PaymentManagementScreen();
+              },
+              routes: [
+                GoRoute(
+                  path: 'payment_details',
+                  builder: (context, state) {
+                    var data = state.extra as Map<String, dynamic>;
+                    return PaymentDetailsScreen(
+                      paymentId: data["paymentId"],
+                      forRefunded: data["isRefunded"],
+                    );
+                  },
+                )
+              ]),
+          GoRoute(
             path: 'bidNow',
             builder: (context, state) {
               final extra = state.extra as BidNowScreen?;
@@ -542,6 +576,30 @@ final GoRouter myRouter = GoRouter(
               // }
             },
           ),
+          GoRoute(
+              path: '/offer_management',
+              builder: (context, state) {
+                return OfferManagementScreen();
+              },
+              routes: [
+                GoRoute(
+                  path: 'view_offer',
+                  builder: (context, state) {
+                    var data = state.extra as ViewOfferScreen;
+                    return ViewOfferScreen(offerId: data.offerId);
+                  },
+                ),
+                GoRoute(
+                  path: 'add_or_edit_offer',
+                  builder: (context, state) {
+                    var data = state.extra as AddAndEditOfferScreen;
+                    return AddAndEditOfferScreen(
+                      offerId: data.offerId,
+                      isEdit: data.isEdit,
+                    );
+                  },
+                )
+              ]),
           GoRoute(
               path: 'activity_management',
               builder: (context, state) {
@@ -587,11 +645,26 @@ final GoRouter myRouter = GoRouter(
           GoRoute(
               path: 'rentalManagement',
               builder: (context, state) {
-                return const RentalBookingManagementScreen();
+                String? userId;
+                if (state.extra != null &&
+                    state.extra is Map<String, dynamic> &&
+                    (state.extra as Map<String, dynamic>)
+                        .containsKey('userId')) {
+                  userId = (state.extra as Map<String, dynamic>)['userId'];
+                }
+                return RentalBookingManagementScreen(userId: userId);
               }),
           GoRoute(
             path: 'package_booking_management',
-            builder: (context, state) => PackageBookingManagement(),
+            builder: (context, state) {
+              String? userId;
+              if (state.extra != null &&
+                  state.extra is Map<String, dynamic> &&
+                  (state.extra as Map<String, dynamic>).containsKey('userId')) {
+                userId = (state.extra as Map<String, dynamic>)['userId'];
+              }
+              return PackageBookingManagement(userId: userId);
+            },
           ),
           GoRoute(
               path: 'vehicle_management',
@@ -656,7 +729,19 @@ final GoRouter myRouter = GoRouter(
                     );
                   })
             ],
-          )
+          ),
+          GoRoute(
+              path: 'customer_management',
+              builder: (context, state) => CustomerManagementScreen(),
+              routes: [
+                GoRoute(
+                  path: 'view_customer',
+                  builder: (context, state) {
+                    var data = state.extra as ViewCustomerScreen;
+                    return ViewCustomerScreen(customerData: data.customerData);
+                  },
+                )
+              ])
         ])
   ],
 );

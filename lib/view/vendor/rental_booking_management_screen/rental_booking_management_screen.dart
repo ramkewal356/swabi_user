@@ -14,7 +14,8 @@ import 'package:provider/provider.dart';
 import '../../../data/response/status.dart';
 
 class RentalBookingManagementScreen extends StatefulWidget {
-  const RentalBookingManagementScreen({super.key});
+  final String? userId;
+  const RentalBookingManagementScreen({super.key, this.userId});
 
   @override
   State<RentalBookingManagementScreen> createState() =>
@@ -55,7 +56,8 @@ class _RentalBookingManagementScreenState
         searchText: searchText,
         sortDirection: sortDirection,
         bookingStatus: bookingStatus,
-        isSort: isSort);
+        isSort: isSort,
+        userId: widget.userId ?? '');
   }
 
   @override

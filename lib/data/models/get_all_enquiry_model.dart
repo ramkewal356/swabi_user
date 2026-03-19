@@ -68,13 +68,13 @@ class Data {
         pageable: json["pageable"] == null
             ? null
             : Pageable.fromJson(json["pageable"]),
-        totalElements: json["totalElements"],
-        totalPages: json["totalPages"],
+        totalElements: _parseInt(json["totalElements"]),
+        totalPages: _parseInt(json["totalPages"]),
         last: json["last"],
-        size: json["size"],
-        number: json["number"],
+        size: _parseInt(json["size"]),
+        number: _parseInt(json["number"]),
         sort: json["sort"] == null ? null : Sort.fromJson(json["sort"]),
-        numberOfElements: json["numberOfElements"],
+        numberOfElements: _parseInt(json["numberOfElements"]),
         first: json["first"],
         empty: json["empty"],
       );
@@ -148,7 +148,7 @@ class Bid {
   });
 
   factory Bid.fromJson(Map<String, dynamic> json) => Bid(
-        id: json["id"],
+        id: _parseInt(json["id"]),
         price: json["price"],
         accommodation: json["accommodation"],
         meals: json["meals"],
@@ -161,8 +161,8 @@ class Bid {
             : EnquiryContent.fromJson(json["travelInquiry"]),
         vendor: json["vendor"] == null ? null : User.fromJson(json["vendor"]),
         user: json["user"] == null ? null : User.fromJson(json["user"]),
-        createdAt: json["createdAt"],
-        updatedAt: json["updatedAt"],
+        createdAt: _parseInt(json["createdAt"]),
+        updatedAt: _parseInt(json["updatedAt"]),
         currency: json["currency"],
         status: json["status"],
         reason: json["reason"],
@@ -278,7 +278,7 @@ class EnquiryContent {
   });
 
   factory EnquiryContent.fromJson(Map<String, dynamic> json) => EnquiryContent(
-        id: json["id"],
+        id: _parseInt(json["id"]),
         name: json["name"],
         email: json["email"],
         region: json["region"],
@@ -299,7 +299,7 @@ class EnquiryContent {
                 .map((x) => SpecialRequest.fromJson(x))),
         travelDates: json["travelDates"],
         tentativeDays: json["tentativeDays"],
-        createdAt: json["createdAt"],
+        createdAt: _parseInt(json["createdAt"]),
         user: json["user"] == null ? null : User.fromJson(json["user"]),
         bids: json["bids"] == null
             ? []
@@ -307,23 +307,29 @@ class EnquiryContent {
         tentativeDates: json["tentativeDates"],
         currency: json["currency"],
         viewCurrency: json["viewCurrency"],
-        viewAmount: json["viewAmount"],
+        viewAmount: _parseInt(json["viewAmount"]),
         paymentType: json["paymentType"],
         participantType: json["participantType"] == null
             ? null
             : ParticipantType.fromJson(json["participantType"]),
         countryType: json["countryType"],
-        shareCount: json["shareCount"],
+        shareCount: json["shareCount"]?.toString(),
         mealType: json["mealType"],
         mealsPerDay: json["mealsPerDay"],
         closeInquiryStatus: json["closeInquiryStatus"],
         bidPlacedByVendor: json["bidPlacedByVendor"],
         show: json["show"],
-        updatedAt: json["updatedAt"],
+        updatedAt: _parseInt(json["updatedAt"]),
         mealPreferenceNotes: json["mealPreferenceNotes"],
         status: json["status"],
         reason: json["reason"],
-        usdAmount: json["usdAmount"]?.toDouble(),
+        usdAmount: json["usdAmount"] != null
+            ? (json["usdAmount"] is int
+                ? (json["usdAmount"] as int).toDouble()
+                : (json["usdAmount"] is String
+                    ? double.tryParse(json["usdAmount"])
+                    : json["usdAmount"]?.toDouble()))
+            : null,
       );
 
   Map<String, dynamic> toJson() => {
@@ -437,7 +443,7 @@ class User {
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
-        userId: json["userId"],
+        userId: _parseInt(json["userId"]),
         firstName: json["firstName"],
         lastName: json["lastName"],
         mobile: json["mobile"],
@@ -446,10 +452,12 @@ class User {
         gender: json["gender"],
         createdDate: json["createdDate"] == null
             ? null
-            : DateTime.parse(json["createdDate"]),
+            : DateTime.tryParse(
+                json["createdDate"].toString().replaceAll('/', '-')),
         modifiedDate: json["modifiedDate"] == null
             ? null
-            : DateTime.parse(json["modifiedDate"]),
+            : DateTime.tryParse(
+                json["modifiedDate"].toString().replaceAll('/', '-')),
         status: json["status"],
         otp: json["otp"],
         isOtpVerified: json["isOtpVerified"],
@@ -463,21 +471,25 @@ class User {
         rideOtp: json["rideOtp"],
         rideOtpExpiry: json["rideOtpExpiry"] == null
             ? null
-            : DateTime.parse(json["rideOtpExpiry"]),
+            : DateTime.tryParse(
+                json["rideOtpExpiry"].toString().replaceAll('/', '-')),
         isRideOtpVerified: json["isRideOtpVerified"],
         accountVerified: json["accountVerified"],
-        vendorId: json["vendorId"],
+        vendorId: _parseInt(json["vendorId"]),
         vendorProfileImageUrl: json["vendorProfileImageUrl"],
         subscriptionStartDate: json["subscriptionStartDate"] == null
             ? null
-            : DateTime.parse(json["subscriptionStartDate"]),
+            : DateTime.tryParse(
+                json["subscriptionStartDate"].toString().replaceAll('/', '-')),
         subscriptionEndDate: json["subscriptionEndDate"] == null
             ? null
-            : DateTime.parse(json["subscriptionEndDate"]),
+            : DateTime.tryParse(
+                json["subscriptionEndDate"].toString().replaceAll('/', '-')),
         verificationToken: json["verificationToken"],
         tokenExpiry: json["tokenExpiry"] == null
             ? null
-            : DateTime.parse(json["tokenExpiry"]),
+            : DateTime.tryParse(
+                json["tokenExpiry"].toString().replaceAll('/', '-')),
       );
 
   Map<String, dynamic> toJson() => {
@@ -530,11 +542,11 @@ class ParticipantType {
 
   factory ParticipantType.fromJson(Map<String, dynamic> json) =>
       ParticipantType(
-        senior: json["SENIOR"],
-        infant: json["INFANT"],
-        adult: json["ADULT"],
-        child: json["CHILD"],
-        guests: json["GUESTS"],
+        senior: _parseInt(json["SENIOR"]),
+        infant: _parseInt(json["INFANT"]),
+        adult: _parseInt(json["ADULT"]),
+        child: _parseInt(json["CHILD"]),
+        guests: _parseInt(json["GUESTS"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -555,7 +567,7 @@ class SpecialRequest {
       {this.id, this.request, this.status, this.specialRejectionReason});
 
   factory SpecialRequest.fromJson(Map<String, dynamic> json) => SpecialRequest(
-      id: json["id"],
+      id: _parseInt(json["id"]),
       request: json["request"],
       status: json["status"],
       specialRejectionReason: json["specialRejectionReason"]);
@@ -587,9 +599,9 @@ class Pageable {
 
   factory Pageable.fromJson(Map<String, dynamic> json) => Pageable(
         sort: json["sort"] == null ? null : Sort.fromJson(json["sort"]),
-        offset: json["offset"],
-        pageNumber: json["pageNumber"],
-        pageSize: json["pageSize"],
+        offset: _parseInt(json["offset"]),
+        pageNumber: _parseInt(json["pageNumber"]),
+        pageSize: _parseInt(json["pageSize"]),
         paged: json["paged"],
         unpaged: json["unpaged"],
       );
@@ -662,4 +674,13 @@ class EnumValues<T> {
     reverseMap = map.map((k, v) => MapEntry(v, k));
     return reverseMap;
   }
+}
+
+// Helper: Casts to int if possible, or null otherwise
+int? _parseInt(dynamic value) {
+  if (value == null) return null;
+  if (value is int) return value;
+  if (value is double) return value.toInt();
+  if (value is String) return int.tryParse(value);
+  return null;
 }

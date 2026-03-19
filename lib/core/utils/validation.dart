@@ -4,7 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/data/models/currency_model.dart';
 import 'package:flutter_cab/data/models/get_all_enquiry_model.dart';
+
+import 'package:flutter_cab/data/models/get_enquiry_by_id_model.dart';
+
 import 'package:intl/intl.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 // import 'package:intl_phone_field/phone_number.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -162,6 +166,9 @@ class Validation {
     }
 
     return null;
+  }
+bool isTokenExpired(String token) {
+    return JwtDecoder.isExpired(token);
   }
 
 }
@@ -612,7 +619,23 @@ Future<String?> globalPhoneValidator(String fullNumber) async {
     return "Invalid phone number";
   }
 }
-String formatParticipantType(ParticipantType? participantType) {
+String formatParticipantType(EnquiryParticipantType? participantType) {
+  if (participantType == null) return "--";
+  var types = [
+    if (participantType.adult != null && (participantType.adult ?? 0) > 0)
+      "${participantType.adult} Adult",
+    if (participantType.child != null && (participantType.child ?? 0) > 0)
+      "${participantType.child} Child",
+    if (participantType.infant != null && (participantType.infant ?? 0) > 0)
+      "${participantType.infant} Infant",
+    if (participantType.senior != null && (participantType.senior ?? 0) > 0)
+      "${participantType.senior} Senior",
+  ];
+  if (types.isEmpty) return "--";
+  return types.join(', ');
+}
+
+String formatParticipantTypeForBid(ParticipantType? participantType) {
   if (participantType == null) return "--";
   var types = [
     if (participantType.adult != null && (participantType.adult ?? 0) > 0)
