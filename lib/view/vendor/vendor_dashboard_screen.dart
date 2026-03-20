@@ -130,7 +130,7 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                 }
               },
               {
-                "imgUrl": dollorIcon,
+                "imgUrl": Icons.monetization_on,
                 "label": "Subscription",
                 "onTap": () {
                   context.push("/vendor_dashboard/subscription");

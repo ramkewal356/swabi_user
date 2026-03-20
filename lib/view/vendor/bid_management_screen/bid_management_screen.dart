@@ -33,6 +33,8 @@ class _BidManagementScreenState extends State<BidManagementScreen> {
     "All": '',
     "Accepted": 'accepted',
     "Rejected": 'rejected',
+    "Cancelled": "cancelled",
+    "Expired": "expired",
     "Pending": "pending"
   };
   String title = "All";
@@ -183,6 +185,8 @@ class _BidManagementScreenState extends State<BidManagementScreen> {
   }) {
     final bool isAccepted = bid?.accepted == true;
     final bool isRejected = bid?.rejected == true;
+    final bool isCancelled = bid?.cancelled == true;
+    final bool isExpired = bid?.expired == true;
     final bool isPaid = bid?.paid == true;
     final List<String> countries = bid?.countries ?? [];
     final bool isMultiCountry = countries.length > 1;
@@ -192,17 +196,21 @@ class _BidManagementScreenState extends State<BidManagementScreen> {
         : isMultiCountry
             ? "${countries.first} +${countries.length - 1} more"
             : countries.first;
-    Color bidStatusColor = isAccepted
-        ? Colors.green
-        : isRejected
-            ? Colors.red
-            : Colors.orange;
+    // Color bidStatusColor = isAccepted
+    //     ? Colors.green
+    //     : isRejected
+    //         ? Colors.red
+    //         : Colors.orange;
 
-    String bidStatusText = isAccepted
-        ? "Accepted"
-        : isRejected
-            ? "Rejected"
-            : "Pending";
+    // String bidStatusText = isAccepted
+    //     ? "Accepted"
+    //     : isRejected
+    //         ? "Rejected"
+    //         : isCancelled
+    //             ? "Cancelled"
+    //             : isExpired
+    //                 ? "Expired"
+    //         : "Pending";
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
@@ -354,19 +362,55 @@ class _BidManagementScreenState extends State<BidManagementScreen> {
 
           const SizedBox(height: 14),
 
-          /// 🔹 STATUS ROW
-          Row(
-            children: [
-              _statusChip(
-                text: isPaid ? "Paid" : "Not Paid",
-                color: isPaid ? Colors.green : Colors.orange,
-              ),
-              const SizedBox(width: 10),
-              _statusChip(
-                text: bidStatusText,
-                color: bidStatusColor,
-              ),
-            ],
+          /// 🔹 STATUS ROW -- Clear user-friendly Payment, Bid, and Clarified statuses
+          SingleChildScrollView(
+            child: Row(
+              children: [
+                // Payment Status
+                _statusChip(
+                  text: isPaid ? "Payment Received" : "Awaiting Payment",
+                  color: isPaid ? Colors.green : Colors.redAccent,
+                ),
+                const SizedBox(width: 10),
+                // Bid Status (user friendly)
+                _statusChip(
+                  text: () {
+                    if (isAccepted) return "Bid Accepted";
+                    if (isRejected) return "Bid Rejected";
+                    if (isCancelled) return "Bid Cancelled";
+                    if (isExpired) return "Bid Expired";
+                    return "Bid Pending";
+                  }(),
+                  color: () {
+                    if (isAccepted) return Colors.green;
+                    if (isRejected) return Colors.red;
+                    if (isCancelled) return Colors.grey;
+                    if (isExpired) return Colors.deepOrange;
+                    return Colors.orange;
+                  }(),
+                ),
+                // const SizedBox(width: 10),
+                // // Clarity Chip (extra for clear understanding)
+                // _statusChip(
+                //   text: () {
+                //     if (isPaid && isAccepted) return "Confirmed & Paid";
+                //     if (isAccepted && !isPaid) return "Awaiting Payment";
+                //     if (isRejected) return "No further action";
+                //     if (isCancelled) return "Closed by Vendor";
+                //     if (isExpired) return "No Response (Expired)";
+                //     return "Open for Review";
+                //   }(),
+                //   color: () {
+                //     if (isPaid && isAccepted) return Colors.green.shade700;
+                //     if (isAccepted && !isPaid) return Colors.amber.shade700;
+                //     if (isRejected) return Colors.red.shade700;
+                //     if (isCancelled) return Colors.grey.shade700;
+                //     if (isExpired) return Colors.deepOrange.shade700;
+                //     return Colors.blueGrey;
+                //   }(),
+                // ),
+              ],
+            ),
           ),
         ],
       ),

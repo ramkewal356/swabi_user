@@ -240,7 +240,7 @@ class _ViewOfferScreenState extends State<ViewOfferScreen> {
                                   ],
                                 ),
                               );
-                            }).toList(),
+                            }),
                           ],
                         ),
                       ],

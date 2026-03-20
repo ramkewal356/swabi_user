@@ -128,18 +128,7 @@ class _CustomMultiselectDropdownState extends State<CustomMultiselectDropdown> {
                       ] else ...[
                         const Icon(Icons.arrow_drop_down, color: greyColor1),
                       ],
-                      // Text(
-                      //   widget.hintText,
-                      //   style: TextStyle(color: greyColor1),
-                      // )
-                      // Expanded(
-                      //   child: Text(
-                      //     widget.selectedItems.isEmpty
-                      //         ? widget.hintText
-                      //         : widget.selectedItems.join(", "),
-                      //     style: const TextStyle(color: Colors.black),
-                      //   ),
-                      // ),
+                     
                     ],
                   ),
                 ),

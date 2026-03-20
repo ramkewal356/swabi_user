@@ -38,7 +38,7 @@ class _BidNowScreenState extends State<BidNowScreen> {
   @override
   Widget build(BuildContext context) {
     final enquiry = _enquiry;
-    final isClosed = enquiry?.status == false;
+    // final isClosed = enquiry?.status == false;
     return Scaffold(
       backgroundColor: bgGreyColor,
       appBar: AppBar(
@@ -99,7 +99,7 @@ class _BidNowScreenState extends State<BidNowScreen> {
                               ],
                             ),
                           ),
-                          _statusPill(isClosed: isClosed),
+                          // _statusPill(isClosed: isClosed),
                         ],
                       ),
                       const SizedBox(height: 14),
@@ -327,25 +327,25 @@ class _BidNowScreenState extends State<BidNowScreen> {
     );
   }
 
-  Widget _statusPill({required bool isClosed}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: isClosed
-            ? btnColor.withOpacity(0.08)
-            : greenColor.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: Text(
-        isClosed ? 'Closed' : "Active",
-        style: GoogleFonts.inter(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: isClosed ? btnColor : greenColor,
-        ),
-      ),
-    );
-  }
+  // Widget _statusPill({required bool isClosed}) {
+  //   return Container(
+  //     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+  //     decoration: BoxDecoration(
+  //       color: isClosed
+  //           ? btnColor.withOpacity(0.08)
+  //           : greenColor.withOpacity(0.08),
+  //       borderRadius: BorderRadius.circular(30),
+  //     ),
+  //     child: Text(
+  //       isClosed ? 'Closed' : "Active",
+  //       style: GoogleFonts.inter(
+  //         fontSize: 12,
+  //         fontWeight: FontWeight.w600,
+  //         color: isClosed ? btnColor : greenColor,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _subTitle(String title) {
     return Text(
