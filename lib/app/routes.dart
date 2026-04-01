@@ -221,7 +221,8 @@ final GoRouter myRouter = GoRouter(
       path: '/help&support',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (BuildContext context, GoRouterState state) {
-        return const HelpAndSupport();
+        var data = state.extra as HelpAndSupport;
+        return HelpAndSupport(userType: data.userType);
       },
     ),
     GoRoute(

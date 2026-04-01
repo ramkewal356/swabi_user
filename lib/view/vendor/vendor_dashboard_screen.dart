@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/status.dart';
+import 'package:flutter_cab/view/help_and_support/help_and_support_screen.dart';
 import 'package:flutter_cab/view/vendor/enquiry_management/enquiry_management_screen.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/widgets/custom_drawer.dart';
@@ -217,7 +218,8 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                 "imgUrl": helpSupport,
                 "label": "Help & Support",
                 "onTap": () {
-                  context.push("/help&support");
+                  context.push("/help&support",
+                      extra: HelpAndSupport(userType: UserType.vendor));
                 }
               },
               {
