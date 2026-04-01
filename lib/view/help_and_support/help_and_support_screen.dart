@@ -1,9 +1,12 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/widgets/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/widgets/custom_appbar_widget.dart';
 import 'package:flutter_cab/core/constants/assets.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_cab/widgets/custom_list_tile.dart';
 
 enum UserType { user, vendor }
 
@@ -19,7 +22,7 @@ class _HelpAndSupportState extends State<HelpAndSupport>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _currentPage = 1;
-  int _perPage = 10;
+  final int _perPage = 10;
   String _searchText = '';
   String _filter = 'All';
 
@@ -73,8 +76,101 @@ class _HelpAndSupportState extends State<HelpAndSupport>
 
     // Pagination
     int start = (_currentPage - 1) * _perPage;
-    int end = start + _perPage;
+    // int end = start + _perPage;
     return filtered.skip(start).take(_perPage).toList();
+  }
+
+  // User Help & Support UI (as per requirement)
+  Widget _buildUserHelpSupport(BuildContext context) {
+    return PageLayoutPage(
+      child: Column(
+        children: [
+          CustomListTile(
+            img: raiseIssue,
+            iconColor: btnColor,
+            heading: "Raised Issue",
+            onTap: () => context.push("/raiseIssueDetail"),
+          ),
+          CustomListTile(
+            disableColor: true,
+            img: contact,
+            iconColor: btnColor,
+            heading: "Contact Us",
+            onTap: () {
+              // context.push("/contact");
+            },
+          ),
+          CustomListTile(
+            disableColor: true,
+            img: privacyPolicy,
+            iconColor: btnColor,
+            heading: "Privacy & Policy",
+            onTap: () {},
+          ),
+          CustomListTile(
+            img: tnc,
+            iconColor: btnColor,
+            heading: "Terms & Condition",
+            onTap: () {
+              context.push("/termCondition");
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Vendor Help & Support UI (Tabs for Rental & Package)
+  Widget _buildVendorHelpSupport() {
+    final filteredData = getFilteredData();
+    final currentType = _tabController.index == 0 ? 'Rental' : 'Package';
+    final totalCount = helpListData.where((item) {
+      if (item['type'] != currentType) return false;
+      if (_filter != 'All' && item['status'] != _filter) return false;
+      if (_searchText.isNotEmpty &&
+          !item['title']!.toLowerCase().contains(_searchText.toLowerCase())) {
+        return false;
+      }
+      return true;
+    }).length;
+
+    return PageLayoutPage(
+      child: Column(
+        children: [
+          TabBar(
+            controller: _tabController,
+            indicatorColor: btnColor,
+            labelColor: btnColor,
+            unselectedLabelColor: Colors.grey,
+            tabs: const [
+              Tab(text: 'Rental'),
+              Tab(text: 'Package'),
+            ],
+            onTap: (_) {
+              setState(() {
+                _currentPage = 1;
+              });
+            },
+          ),
+          const SizedBox(height: 12),
+          _buildTopFilterBar(),
+          const SizedBox(height: 12),
+          Expanded(
+            child: ListView(
+              children: [
+                ...filteredData.map((data) => buildHelpCard(data)),
+                if (filteredData.isEmpty)
+                  const Center(
+                      child: Padding(
+                          padding: EdgeInsets.all(40),
+                          child: Text("No help issues found."))),
+              ],
+            ),
+          ),
+          _buildPagination(totalCount),
+        ],
+      ),
+    );
   }
 
   Widget buildHelpCard(Map<String, String> data) {
@@ -188,96 +284,6 @@ class _HelpAndSupportState extends State<HelpAndSupport>
     );
   }
 
-  // User Help & Support UI (Simple)
-  Widget _buildUserHelpSupport() {
-    final filteredData = getFilteredData();
-    final totalCount = helpListData.where((item) {
-      if (_filter != 'All' && item['status'] != _filter) return false;
-      if (_searchText.isNotEmpty &&
-          !item['title']!.toLowerCase().contains(_searchText.toLowerCase())) {
-        return false;
-      }
-      return true;
-    }).length;
-
-    return PageLayoutPage(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildTopFilterBar(),
-          const SizedBox(height: 14),
-          Expanded(
-            child: ListView(
-              children: [
-                ...filteredData.map((data) => buildHelpCard(data)),
-                if (filteredData.isEmpty)
-                  const Center(
-                      child: Padding(
-                          padding: EdgeInsets.all(40),
-                          child: Text("No help issues found."))),
-              ],
-            ),
-          ),
-          _buildPagination(totalCount),
-        ],
-      ),
-    );
-  }
-
-  // Vendor Help & Support UI (Tabs for Rental & Package)
-  Widget _buildVendorHelpSupport() {
-    final filteredData = getFilteredData();
-    final currentType = _tabController.index == 0 ? 'Rental' : 'Package';
-    final totalCount = helpListData.where((item) {
-      if (item['type'] != currentType) return false;
-      if (_filter != 'All' && item['status'] != _filter) return false;
-      if (_searchText.isNotEmpty &&
-          !item['title']!.toLowerCase().contains(_searchText.toLowerCase())) {
-        return false;
-      }
-      return true;
-    }).length;
-
-    return PageLayoutPage(
-      child: Column(
-        children: [
-          TabBar(
-            controller: _tabController,
-            indicatorColor: btnColor,
-            labelColor: btnColor,
-            unselectedLabelColor: Colors.grey,
-            tabs: const [
-              Tab(text: 'Rental'),
-              Tab(text: 'Package'),
-            ],
-            onTap: (_) {
-              setState(() {
-                _currentPage = 1;
-                // search/filter not cleared on tab switch.
-              });
-            },
-          ),
-          const SizedBox(height: 12),
-          _buildTopFilterBar(),
-          const SizedBox(height: 12),
-          Expanded(
-            child: ListView(
-              children: [
-                ...filteredData.map((data) => buildHelpCard(data)),
-                if (filteredData.isEmpty)
-                  const Center(
-                      child: Padding(
-                          padding: EdgeInsets.all(40),
-                          child: Text("No help issues found."))),
-              ],
-            ),
-          ),
-          _buildPagination(totalCount),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -287,7 +293,7 @@ class _HelpAndSupportState extends State<HelpAndSupport>
         // Add further actions here as needed
       ),
       body: widget.userType == UserType.user
-          ? _buildUserHelpSupport()
+          ? _buildUserHelpSupport(context)
           : DefaultTabController(
               length: 2,
               child: _buildVendorHelpSupport(),
