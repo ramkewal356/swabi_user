@@ -236,7 +236,11 @@ final GoRouter myRouter = GoRouter(
       path: '/issueDetailsbyId',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (BuildContext context, GoRouterState state) {
-        return const IssueViewDetails();
+        var data = state.extra as IssueViewDetails;
+        return IssueViewDetails(
+          issueId: data.issueId,
+          userType: data.userType,
+        );
       },
     ),
     GoRoute(

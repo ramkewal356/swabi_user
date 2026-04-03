@@ -177,6 +177,9 @@ class AppUrl {
   static var updateOfferUrl = '/offer/update_offer';
   static var activateOfferUrl = '/offer/activate_offer';
   static var deactivateOfferUrl = '/offer/delete_offer';
+  // help and support URL
+  static var getHelpAndSupportUrl = '/booking_issue/get_issue_list';
+  static var changeIssueStatusUrl = '/booking_issue/change_issue_status';
   // currency URL
   static var currencyUrl = '/swabi/get_all_currencies';
   static const String currencyApiUrl =

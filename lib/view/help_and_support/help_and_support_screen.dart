@@ -1,12 +1,21 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:flutter_cab/data/models/getissue_model.dart' hide Status;
+import 'package:flutter_cab/view/customer/raiseIssue_pages/issue_view_details_screen.dart';
 import 'package:flutter_cab/widgets/Custom%20Page%20Layout/common_page_layout.dart';
+import 'package:flutter_cab/widgets/Custom%20Widgets/no_data_found_widget.dart';
 import 'package:flutter_cab/widgets/custom_appbar_widget.dart';
 import 'package:flutter_cab/core/constants/assets.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
+import 'package:flutter_cab/widgets/custom_filter_popup_widget.dart';
+import 'package:flutter_cab/widgets/custom_search_field.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_cab/widgets/custom_list_tile.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_cab/view_model/raise_issue_view_model.dart';
+
+import '../../data/response/status.dart';
 
 enum UserType { user, vendor }
 
@@ -20,64 +29,89 @@ class HelpAndSupport extends StatefulWidget {
 
 class _HelpAndSupportState extends State<HelpAndSupport>
     with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  int _currentPage = 1;
-  final int _perPage = 10;
+  TabController? _tabController;
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocus = FocusNode();
+  // final int _perPage = 10;
   String _searchText = '';
-  String _filter = 'All';
-
-  // Dummy data, replace with actual fetched data from backend
-  List<Map<String, String>> helpListData = List.generate(
-    30,
-    (index) => {
-      'id': '${index + 1}',
-      'type': index % 2 == 0 ? 'Rental' : 'Package',
-      'title': 'Help Issue #${index + 1}',
-      'description': 'Description for help issue #${index + 1}.',
-      'status': index % 3 == 0 ? 'Resolved' : 'Pending'
-    },
-  );
+  String _filter = 'ALL';
+  String title = 'ALL';
+  final ScrollController _scrollController = ScrollController();
+  Map<String, String> packageFilter = {
+    "All": 'ALL',
+    "Open": 'OPEN',
+    "In Progress": 'IN_PROGRESS',
+    "Resolved": "RESOLVED"
+  };
 
   @override
   void initState() {
     super.initState();
     if (widget.userType == UserType.vendor) {
       _tabController = TabController(length: 2, vsync: this);
+      _tabController!.addListener(() {
+        if (_tabController!.indexIsChanging) return;
+        getHelpAndSupportIssues(
+            isSearch: false, isFilter: true, isPagination: false);
+      });
+      _scrollController.addListener(_onScroll);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        getHelpAndSupportIssues(
+            isSearch: false, isFilter: true, isPagination: false);
+      });
+    }
+  
+  }
+
+  void getHelpAndSupportIssues(
+      {bool isSearch = false,
+      bool isFilter = false,
+      bool isPagination = false}) async {
+    // If userType is vendor, expect _tabController to exist
+    final bookingType = widget.userType == UserType.vendor
+        ? (_tabController?.index == 0 ? 'RENTAL_BOOKING' : 'PACKAGE_BOOKING')
+        : null;
+    context.read<RaiseissueViewModel>().getHelpAndSupportIssues(
+          isSearch: isSearch,
+          isFilter: isFilter,
+          isPagination: isPagination,
+          issueStatus: _filter,
+          search: _searchText,
+          bookingType: bookingType ?? '',
+        );
+  }
+
+  void _onSearchChanged(String text) {
+    setState(() {
+      _searchText = text;
+    });
+    getHelpAndSupportIssues(
+        isSearch: true, isFilter: false, isPagination: false);
+  }
+
+  void _onFilterChanged(String? value) {
+    setState(() {
+      _filter = value ?? 'All';
+      title = packageFilter.keys
+          .firstWhere((k) => packageFilter[k] == _filter, orElse: () => 'All');
+    });
+    getHelpAndSupportIssues(
+        isSearch: false, isFilter: true, isPagination: false);
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      getHelpAndSupportIssues(isPagination: true);
     }
   }
 
   @override
   void dispose() {
     if (widget.userType == UserType.vendor) {
-      _tabController.dispose();
+      _tabController?.dispose();
     }
     super.dispose();
-  }
-
-  List<Map<String, String>> getFilteredData() {
-    var filtered = helpListData.where((item) {
-      if (_filter != 'All' && item['status'] != _filter) return false;
-      if (_searchText.isNotEmpty &&
-          !item['title']!.toLowerCase().contains(_searchText.toLowerCase())) {
-        return false;
-      }
-      if (widget.userType == UserType.vendor &&
-          _tabController.index == 0 &&
-          item['type'] != 'Rental') {
-        return false;
-      }
-      if (widget.userType == UserType.vendor &&
-          _tabController.index == 1 &&
-          item['type'] != 'Package') {
-        return false;
-      }
-      return true;
-    }).toList();
-
-    // Pagination
-    int start = (_currentPage - 1) * _perPage;
-    // int end = start + _perPage;
-    return filtered.skip(start).take(_perPage).toList();
   }
 
   // User Help & Support UI (as per requirement)
@@ -122,89 +156,239 @@ class _HelpAndSupportState extends State<HelpAndSupport>
 
   // Vendor Help & Support UI (Tabs for Rental & Package)
   Widget _buildVendorHelpSupport() {
-    final filteredData = getFilteredData();
-    final currentType = _tabController.index == 0 ? 'Rental' : 'Package';
-    final totalCount = helpListData.where((item) {
-      if (item['type'] != currentType) return false;
-      if (_filter != 'All' && item['status'] != _filter) return false;
-      if (_searchText.isNotEmpty &&
-          !item['title']!.toLowerCase().contains(_searchText.toLowerCase())) {
-        return false;
-      }
-      return true;
-    }).length;
-
     return PageLayoutPage(
       child: Column(
         children: [
-          TabBar(
-            controller: _tabController,
-            indicatorColor: btnColor,
-            labelColor: btnColor,
-            unselectedLabelColor: Colors.grey,
-            tabs: const [
-              Tab(text: 'Rental'),
-              Tab(text: 'Package'),
-            ],
-            onTap: (_) {
-              setState(() {
-                _currentPage = 1;
-              });
-            },
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.07),
+                  blurRadius: 14,
+                  spreadRadius: 2,
+                )
+              ],
+            ),
+            child: TabBar(
+              controller: _tabController,
+              indicator: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: btnColor.withOpacity(0.12),
+              ),
+              labelColor: btnColor,
+              unselectedLabelColor: Colors.black54,
+              labelStyle: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 15,
+              ),
+              unselectedLabelStyle: const TextStyle(
+                fontWeight: FontWeight.normal,
+                fontSize: 15,
+              ),
+              tabs: const [
+                Tab(text: 'Rental'),
+                Tab(text: 'Package'),
+              ],
+              dividerHeight: 0,
+              indicatorSize: TabBarIndicatorSize.tab,
+              splashFactory: InkRipple.splashFactory,
+              overlayColor: MaterialStateProperty.resolveWith<Color?>(
+                (states) => states.contains(MaterialState.pressed)
+                    ? btnColor.withOpacity(0.07)
+                    : null,
+              ),
+              // Remove the default underline by setting indicator to BoxDecoration above.
+              // No need to do anything else as indicator is not a line.
+            ),
           ),
           const SizedBox(height: 12),
           _buildTopFilterBar(),
           const SizedBox(height: 12),
           Expanded(
-            child: ListView(
-              children: [
-                ...filteredData.map((data) => buildHelpCard(data)),
-                if (filteredData.isEmpty)
-                  const Center(
-                      child: Padding(
-                          padding: EdgeInsets.all(40),
-                          child: Text("No help issues found."))),
-              ],
+            child: Consumer<RaiseissueViewModel>(
+              builder: (context, value, child) {
+                final List<Content> allData =
+                    value.helpAndSupportResponse.data ?? [];
+                // Filter items according to the selected status
+                final List<Content> filteredData = (_filter == 'ALL')
+                    ? allData
+                    : allData
+                        .where((item) =>
+                            (item.issueStatus ?? '').toUpperCase() ==
+                            _filter.toUpperCase())
+                        .toList();
+                if (value.helpAndSupportResponse.status == Status.loading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (filteredData.isEmpty) {
+                  return NoDataFoundWidget(text: 'No Data Found');
+                }
+                return ListView.builder(
+                  controller: _scrollController,
+                  itemCount: filteredData.length + (value.isLastPage ? 0 : 1),
+                  itemBuilder: (context, index) {
+                    if (index == filteredData.length) {
+                      return value.isLoadingMore
+                          ? const Center(child: CircularProgressIndicator())
+                          : const SizedBox.shrink();
+                    }
+                    return buildHelpCard(filteredData[index]);
+                  },
+                );
+              },
             ),
           ),
-          _buildPagination(totalCount),
         ],
       ),
     );
   }
 
-  Widget buildHelpCard(Map<String, String> data) {
+  Widget buildHelpCard(Content data) {
+    // Format date if available (assuming ISO 8601 string), else empty string
+    String formattedDate = '';
+    if (data.createdDate != null) {
+      try {
+        final date = data.createdDate;
+        formattedDate = "${date?.day}/${date?.month}/${date?.year}";
+      } catch (_) {
+        formattedDate = data.createdDate as String;
+      }
+    }
+
+    // Determine status text and color according to issueStatus and selected filter
+    String statusText = 'Pending';
+    Color? statusColor = Colors.orange;
+    Color? statusBg = Colors.orange[100];
+    // Match both with filter and actual data status
+    String? dataStatus = (data.issueStatus ?? '').toUpperCase();
+    if (dataStatus == 'RESOLVED') {
+      statusText = 'Resolved';
+      statusColor = Colors.green;
+      statusBg = Colors.green[100];
+    } else if (dataStatus == 'OPEN') {
+      statusText = 'Open';
+      statusColor = Colors.orange;
+      statusBg = Colors.orange[100];
+    } else if (dataStatus == 'IN_PROGRESS') {
+      statusText = 'In Progress';
+      statusColor = Colors.blue;
+      statusBg = Colors.blue[100];
+    }
+    // If filter is applied and not "ALL", show textual status according to filter
+    if (_filter != 'ALL') {
+      if (_filter == 'RESOLVED') {
+        statusText = 'Resolved';
+        statusColor = Colors.green;
+        statusBg = Colors.green[100];
+      } else if (_filter == 'OPEN') {
+        statusText = 'Open';
+        statusColor = Colors.orange;
+        statusBg = Colors.orange[100];
+      } else if (_filter == 'IN_PROGRESS') {
+        statusText = 'In Progress';
+        statusColor = Colors.blue;
+        statusBg = Colors.blue[100];
+      }
+    }
+
     return Card(
+      color: background,
       elevation: 2,
       margin: const EdgeInsets.symmetric(vertical: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
+        // Icon
         leading: CircleAvatar(
           backgroundColor: btnColor.withOpacity(.15),
           child: Icon(Icons.help_outline, color: btnColor),
         ),
-        title: Text(data['title'] ?? '',
-            style: const TextStyle(fontWeight: FontWeight.w600)),
-        subtitle: Text(data['description'] ?? ''),
+        // Issue type as title, ID and booking id below it
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Text(
+            //   data.issueType ?? '',
+            //   style: const TextStyle(fontWeight: FontWeight.w600),
+            // ),
+            // Issue/Booking IDs
+            if (data.issueId != null && data.issueId!.toString().isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Text(
+                  "Issue ID: ${data.issueId}",
+                  style: const TextStyle(fontSize: 12, color: Colors.black54),
+                ),
+              ),
+            if (data.bookingId != null && data.bookingId!.toString().isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Text(
+                  "Booking ID: ${data.bookingId}",
+                  style: const TextStyle(fontSize: 12, color: Colors.black54),
+                ),
+              ),
+          ],
+        ),
+        // Description + more details (raised by/date)
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if ((data.raisedByRole ?? '').isNotEmpty ||
+                formattedDate.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 4.0),
+                child: Row(
+                  children: [
+                    if ((data.raisedByRole ?? '').isNotEmpty)
+                      Text(
+                        "By: ${data.raisedByRole!}",
+                        style: const TextStyle(
+                            fontSize: 12, color: Colors.black54),
+                      ),
+                    if ((data.raisedByRole ?? '').isNotEmpty &&
+                        formattedDate.isNotEmpty)
+                      const SizedBox(width: 10),
+                    if (formattedDate.isNotEmpty)
+                      Text(
+                        "Date: $formattedDate",
+                        style: const TextStyle(
+                            fontSize: 12, color: Colors.black54),
+                      ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+        // Status
         trailing: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           decoration: BoxDecoration(
-            color: (data['status'] == 'Resolved'
-                ? Colors.green[100]
-                : Colors.orange[100]),
+            color: statusBg,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
-            data['status'] ?? '',
+            statusText,
             style: TextStyle(
-                color:
-                    data['status'] == 'Resolved' ? Colors.green : Colors.orange,
-                fontWeight: FontWeight.bold,
-                fontSize: 12),
+              color: statusColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+            ),
           ),
         ),
         onTap: () {
           // Navigation or actions
+          context
+              .push('/issueDetailsbyId',
+                  extra: IssueViewDetails(
+                    issueId: data.issueId.toString(),
+                    userType: 'VENDOR',
+                  ))
+              .then((onValue) {
+            getHelpAndSupportIssues(
+                isSearch: false, isFilter: true, isPagination: false);
+          });
         },
       ),
     );
@@ -214,72 +398,27 @@ class _HelpAndSupportState extends State<HelpAndSupport>
     return Row(
       children: [
         Expanded(
-          child: TextField(
-            decoration: InputDecoration(
-              hintText: "Search help issues...",
-              prefixIcon: const Icon(Icons.search),
-              isDense: true,
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(color: Colors.grey),
+          child: CustomSearchField(
+            prefixIcon: Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Icon(
+                Icons.search,
+                color: greyColor1,
               ),
             ),
-            onChanged: (text) {
-              setState(() {
-                _searchText = text;
-                _currentPage = 1;
-              });
-            },
+            fillColor: background,
+            filled: true,
+            controller: _searchController,
+            focusNode: _searchFocus,
+            serchHintText: 'search.. ',
+            onChanged: _onSearchChanged,
           ),
         ),
         const SizedBox(width: 8),
-        DropdownButton<String>(
-          borderRadius: BorderRadius.circular(8),
-          value: _filter,
-          items: ['All', 'Pending', 'Resolved']
-              .map<DropdownMenuItem<String>>(
-                  (v) => DropdownMenuItem(value: v, child: Text(v)))
-              .toList(),
-          onChanged: (value) {
-            setState(() {
-              _filter = value!;
-              _currentPage = 1;
-            });
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPagination(int totalCount) {
-    final pageCount = (totalCount / _perPage).ceil();
-    if (pageCount < 2) return const SizedBox.shrink();
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        IconButton(
-          icon: const Icon(Icons.keyboard_arrow_left),
-          onPressed: _currentPage > 1
-              ? () {
-                  setState(() {
-                    _currentPage--;
-                  });
-                }
-              : null,
-        ),
-        Text('Page $_currentPage of $pageCount'),
-        IconButton(
-          icon: const Icon(Icons.keyboard_arrow_right),
-          onPressed: _currentPage < pageCount
-              ? () {
-                  setState(() {
-                    _currentPage++;
-                  });
-                }
-              : null,
-        ),
+        CustomFilterPopupWidget(
+            title: title,
+            filterOptions: packageFilter,
+            onFilterChanged: _onFilterChanged),
       ],
     );
   }
@@ -290,7 +429,6 @@ class _HelpAndSupportState extends State<HelpAndSupport>
       backgroundColor: bgGreyColor,
       appBar: CustomAppBar(
         heading: "Help & Support",
-        // Add further actions here as needed
       ),
       body: widget.userType == UserType.user
           ? _buildUserHelpSupport(context)

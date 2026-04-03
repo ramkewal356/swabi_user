@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:flutter_cab/view/help_and_support/help_and_support_screen.dart';
 import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';
 import 'package:flutter_cab/core/constants/assets.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
@@ -49,7 +50,7 @@ class _AccountScreenState extends State<AccountScreen> {
             child: ListView(
               children: [
                 buildAccountOption(
-                  icon: user,
+                  leading: Icons.person_outline,
                   title: 'My Profile',
                   onTap: () {
                     context.push("/profilePage", extra: {
@@ -61,14 +62,14 @@ class _AccountScreenState extends State<AccountScreen> {
                   },
                 ),
                 buildAccountOption(
-                  icon: transaction,
+                  leading: Icons.assignment_outlined,
                   title: 'My Enquiries',
                   onTap: () {
                     context.push('/my_enquiry');
                   },
                 ),
                 buildAccountOption(
-                  icon: rentalbooking,
+                  leading: rentalbooking,
                   title: 'My Rental',
                   onTap: () {
                     context.push("/rentalForm/rentalHistory",
@@ -76,7 +77,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   },
                 ),
                 buildAccountOption(
-                  icon: rentalbooking,
+                  leading: Icons.card_travel_outlined,
                   title: 'My Package',
                   onTap: () {
                     context.push("/package/packageHistoryManagement",
@@ -84,14 +85,14 @@ class _AccountScreenState extends State<AccountScreen> {
                   },
                 ),
                 buildAccountOption(
-                  icon: rentalbooking,
+                  leading: Icons.local_offer_outlined,
                   title: 'Offers',
                   onTap: () {
                     context.push("/allOffer", extra: {'initialIndex': 0});
                   },
                 ),
                 buildAccountOption(
-                  icon: rentalbooking,
+                  leading: Icons.payment_outlined,
                   title: 'My Transaction',
                   onTap: () {
                     context.push("/myTransaction",
@@ -99,7 +100,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   },
                 ),
                 buildAccountOption(
-                  icon: myWallet,
+                  leading: Icons.account_balance_wallet_outlined,
                   title: 'My Wallet',
                   onTap: () {
                     context
@@ -107,14 +108,17 @@ class _AccountScreenState extends State<AccountScreen> {
                   },
                 ),
                 buildAccountOption(
-                  icon: helpSupport,
+                  leading: helpSupport,
                   title: 'Help & Support',
                   onTap: () {
-                    context.push("/help&support");
+                    context.push("/help&support",
+                        extra: HelpAndSupport(
+                          userType: UserType.user,
+                        ));
                   },
                 ),
                 buildAccountOption(
-                    icon: logout,
+                    leading: logout,
                     title: 'Logout',
                     onTap: () {
                       Future.delayed(const Duration(milliseconds: 200), () {
@@ -182,23 +186,43 @@ class _AccountScreenState extends State<AccountScreen> {
     );
   }
 
-  Widget buildAccountOption(
-      {required String icon, required String title, VoidCallback? onTap}) {
+  Widget buildAccountOption({
+    required dynamic leading,
+    required String title,
+    VoidCallback? onTap,
+  }) {
+    Widget leadingWidget;
+
+    if (leading is String) {
+      leadingWidget = Image.asset(
+        leading,
+        color: const Color(0xff7B1E34),
+        height: 24,
+      );
+    } else if (leading is IconData) {
+      leadingWidget = Icon(
+        leading,
+        color: const Color(0xff7B1E34),
+        size: 24,
+      );
+    } else if (leading is Widget) {
+      leadingWidget = leading;
+    } else {
+      leadingWidget = const SizedBox(width: 24, height: 24);
+    }
+
     return Card(
       color: background,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: ListTile(
-        leading: Image.asset(
-          icon,
-          color: const Color(0xff7B1E34),
-          height: 24,
-        ),
+        leading: leadingWidget,
         title: Text(title),
         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
         onTap: onTap,
       ),
     );
   }
+
 
   void _confirmLogout(BuildContext context) {
     showDialog(

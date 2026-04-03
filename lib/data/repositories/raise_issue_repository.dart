@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cab/data/models/common_model.dart';
 import 'package:flutter_cab/data/response/app_excaptions.dart';
 import 'package:flutter_cab/core/constants/app_url.dart';
 import 'package:flutter_cab/data/models/getissue_model.dart';
@@ -64,9 +65,8 @@ class RaiseissueRepository {
     return null;
   }
 
-  Future<IssueDetailsModel?> getRaiseIssueDetailsApi(
-      {required BuildContext context,
-      required Map<String, dynamic> query}) async {
+  Future<IssueDetailsModel> getRaiseIssueDetailsApi(
+      {required Map<String, dynamic> query}) async {
     var http = HttpService(
         baseURL: AppUrl.baseUrl,
         endURL: AppUrl.getIssueDetailsUrl,
@@ -88,8 +88,31 @@ class RaiseissueRepository {
     } catch (dioError) {
       // ignore: use_build_context_synchronously
       http.handleErrorResponse(error: dioError);
+      rethrow;
     }
-    return null;
+  }
+
+  Future<CommonModel> changeIssueStatusApi({
+    required Map<String, dynamic> query,
+  }) async {
+    var http = HttpService(
+      baseURL: AppUrl.baseUrl,
+      endURL: AppUrl.changeIssueStatusUrl,
+      methodType: HttpMethodType.PATCH,
+      bodyType: HttpBodyType.JSON,
+      queryParameters: query,
+      isAuthorizeRequest: false,
+    );
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint('response of change issue status: ${response?.data}');
+
+      var resp = CommonModel.fromJson(response?.data);
+      return resp;
+    } catch (dioError) {
+      http.handleErrorResponse(error: dioError);
+      rethrow;
+    }
   }
 
   Future<GetIssueByBookingIdModel?> getRaiseIssueByBookingIdApi(
@@ -117,5 +140,34 @@ class RaiseissueRepository {
       http.handleErrorResponse(error: dioError);
     }
     return null;
+  }
+
+  // Repository for Help and Support API (Get Issue List)
+  Future<GetIssueModel> getHelpAndSupportApi({
+    required Map<String, dynamic> query,
+  }) async {
+    var http = HttpService(
+      baseURL: AppUrl.baseUrl,
+      endURL: AppUrl.getHelpAndSupportUrl,
+      methodType: HttpMethodType.GET,
+      bodyType: HttpBodyType.JSON,
+      queryParameters: query,
+      isAuthorizeRequest: false,
+    );
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint('response of help and support issue list: ${response?.data}');
+      if (response?.statusCode != null &&
+          response!.statusCode! >= 200 &&
+          response.statusCode! < 300) {
+        var resp = GetIssueModel.fromJson(response.data);
+        return resp;
+      } else {
+        throw ApiException('Server returned an error: ${response?.statusCode}');
+      }
+    } catch (dioError) {
+      http.handleErrorResponse(error: dioError);
+      rethrow;
+    }
   }
 }

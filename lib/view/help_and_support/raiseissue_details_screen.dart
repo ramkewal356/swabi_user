@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/models/getissue_model.dart';
+import 'package:flutter_cab/view/customer/raiseIssue_pages/issue_view_details_screen.dart';
 import 'package:flutter_cab/widgets/Custom%20Widgets/custom_tabbar.dart';
 import 'package:flutter_cab/common/styles/app_color.dart';
 import 'package:flutter_cab/common/styles/text_styles.dart';
 import 'package:flutter_cab/view/customer/raiseIssue_pages/issue_container.dart';
 import 'package:flutter_cab/view_model/raise_issue_view_model.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -158,10 +160,14 @@ class _RaiseissuedetailsState extends State<Raiseissuedetails>
                                     setState(() {
                                       selectIndex = index;
                                     });
-
-                                    value.getRaiseIssueDetails(
-                                        context: context,
-                                        issueId: data.issueId.toString());
+                                    context.push('/issueDetailsbyId',
+                                        extra: IssueViewDetails(
+                                          issueId: data.issueId.toString(),
+                                          userType: 'USER',
+                                        ));
+                                    // value.getRaiseIssueDetails(
+                                    //     context: context,
+                                    //     issueId: data.issueId.toString());
                                   }),
                             );
                           })

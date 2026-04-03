@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:flutter_cab/data/models/common_model.dart';
 import 'package:flutter_cab/data/response/api_response.dart';
 import 'package:flutter_cab/data/response/error_handler.dart';
 import 'package:flutter_cab/data/models/getissue_model.dart';
@@ -10,9 +11,13 @@ import 'package:flutter_cab/data/models/get_issue_by_booking_id_model.dart';
 import 'package:flutter_cab/data/repositories/raise_issue_repository.dart';
 import 'package:flutter_cab/core/utils/utils.dart';
 import 'package:flutter_cab/view_model/user_view_model.dart';
-import 'package:go_router/go_router.dart';
+
 
 class RaiseissueViewModel with ChangeNotifier {
+  int pageNumber = 0;
+  int pageSize = 10;
+  bool isLastPage = false;
+  bool isLoadingMore = false;
   final _myRepo = RaiseissueRepository();
   RaiseIssueModel? _raiseIssueModel;
   RaiseIssueModel? get raiseIssueModel => _raiseIssueModel;
@@ -59,7 +64,6 @@ class RaiseissueViewModel with ChangeNotifier {
       "vendor": {"vendorId": vendorId}
     };
     try {
-     
       setRaisedRequest(ApiResponse.loading());
       Future.delayed(Duration(minutes: 1));
       await _myRepo.requestRaiseIssueApi(body: body).then((onValue) {
@@ -68,17 +72,15 @@ class RaiseissueViewModel with ChangeNotifier {
               bookingId: bookingId,
               // userId: raisedById,
               bookingType: bookingType);
-      
+
           setRaisedRequest(ApiResponse.completed(onValue));
           Utils.toastSuccessMessage(
             'Raise Request Successfully',
           );
-          
         }
       });
     } catch (e) {
       setRaisedRequest(ApiResponse.error(e.toString()));
-   
     }
   }
 
@@ -116,33 +118,42 @@ class RaiseissueViewModel with ChangeNotifier {
   }
 
   Future<void> getRaiseIssueDetails({
-    required BuildContext context,
+ 
     required String issueId,
   }) async {
     try {
-      isloading1 = true;
-      notifyListeners();
       setDataList(ApiResponse.loading());
       Map<String, dynamic> query = {
         "issueId": issueId,
       };
-      debugPrint('loder1223333$isloading1');
-      await _myRepo
-          .getRaiseIssueDetailsApi(context: context, query: query)
-          .then((onValue) {
-        if (onValue?.status?.httpCode == '200') {
-          setDataList(ApiResponse.completed(onValue));
-          context.push('/issueDetailsbyId');
-          isloading1 = false;
-          notifyListeners();
-        }
-      });
+
+      var resp = await _myRepo.getRaiseIssueDetailsApi(query: query);
+      setDataList(ApiResponse.completed(resp));
     } catch (e) {
       setDataList(ApiResponse.error(e.toString()));
-      ErrorHandler.handleError(e);
-    } finally {
-      isloading1 = false;
+   
+    }
+  }
+
+  Future<CommonModel> changeIssueStatus({
+    required String issueId,
+    required String newStatus,
+    required String resolutionDescription,
+  }) async {
+    try {
+      Map<String, dynamic> query = {
+        "issueId": issueId,
+        "issueStatus": newStatus,
+        if (resolutionDescription.isNotEmpty)
+          "resolutionDescription": resolutionDescription
+      };
+
+      final resp = await _myRepo.changeIssueStatusApi(query: query);
       notifyListeners();
+      return resp;
+    } catch (e) {
+      ErrorHandler.handleError(e);
+      rethrow;
     }
   }
 
@@ -151,7 +162,7 @@ class RaiseissueViewModel with ChangeNotifier {
       // required String userId,
       required String bookingType}) async {
     String? userId = await UserViewModel().getUserId() ?? '';
-    
+
     Map<String, dynamic> query = {
       "bookingId": bookingId,
       "userId": userId,
@@ -168,6 +179,61 @@ class RaiseissueViewModel with ChangeNotifier {
       });
     } catch (e) {
       setDataList1(ApiResponse.error(e.toString()));
+    }
+  }
+
+  ApiResponse<List<Content>> helpAndSupportResponse = ApiResponse.initial();
+
+  void setHelpAndSupportResponse(ApiResponse<List<Content>> response) {
+    helpAndSupportResponse = response;
+    notifyListeners();
+  }
+
+  List<Content> _helpAndSupportList = [];
+  Future<void> getHelpAndSupportIssues(
+      {required bool isSearch,
+      required bool isFilter,
+      required bool isPagination,
+      required String issueStatus,
+      required String search,
+      required String bookingType}) async {
+    if (isLoadingMore) return;
+    bool newSearch = (isSearch || isFilter);
+    if (newSearch && !isPagination) {
+      pageNumber = 0;
+      _helpAndSupportList.clear();
+      isLastPage = false;
+      notifyListeners();
+      setHelpAndSupportResponse(ApiResponse.loading());
+    }
+    String? vendorId = await UserViewModel().getUserId();
+    Map<String, dynamic> query = {
+      "pageNumber": pageNumber,
+      "pageSize": pageSize,
+      "issueStatus": issueStatus,
+      "bookingType": bookingType,
+      "vendorId": vendorId,
+      "search": search,
+    };
+    if (isLastPage) return;
+    isLoadingMore = true;
+    notifyListeners();
+    try {
+      final response = await _myRepo.getHelpAndSupportApi(query: query);
+      final List<Content> newData = response.data?.content ?? [];
+      final List<Content> allData =
+          (pageNumber == 0) ? newData : [..._helpAndSupportList, ...newData];
+      _helpAndSupportList = allData;
+      isLastPage = response.data?.last ?? false;
+      setHelpAndSupportResponse(
+          ApiResponse.completed(List<Content>.from(_helpAndSupportList)));
+      pageNumber++;
+    } catch (e) {
+      setHelpAndSupportResponse(ApiResponse.error(e.toString()));
+      // ErrorHandler.handleError(e);
+    } finally {
+      isLoadingMore = false;
+      notifyListeners();
     }
   }
 }
