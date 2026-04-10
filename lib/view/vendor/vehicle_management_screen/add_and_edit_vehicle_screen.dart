@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'dart:convert';
 import 'dart:io';
@@ -112,10 +112,7 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
   }
 
   void getStateListApi(String country1) async {
-   
-      context
-          .read<ThirdPartyViewModel>().getStateList(country: country1);
-  
+    context.read<ThirdPartyViewModel>().getStateList(country: country1);
   }
 
   void getColors() {
@@ -202,12 +199,13 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
       backgroundColor: bgGreyColor,
       appBar: AppBar(
         backgroundColor: background,
-        title: Text(widget.isEdit
-            ? 'Update Vehicle'
-            : widget.actionByOwner == 'edit owner'
-                ? 'Edit Owner'
-                : widget.actionByOwner == 'add vehicle'
-                    ? 'Add Vehicle'
+        title: Text(
+          widget.isEdit
+              ? 'Update Vehicle'
+              : widget.actionByOwner == 'edit owner'
+                  ? 'Edit Owner'
+                  : widget.actionByOwner == 'add vehicle'
+                      ? 'Add Vehicle'
                       : "Add New Owner And Vehicle",
           style: appBarTitleStyle,
         ),
@@ -437,7 +435,6 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
                                                         _countryController,
                                                     hintText: 'Select Country',
                                                     onChanged: (value) {
-                                                    
                                                       _countryController.text =
                                                           value ?? '';
                                                       setState(() {
@@ -507,7 +504,7 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
                                                   Customphonefield(
                                                     initalCountryCode:
                                                         countryCode,
-                                                      controller:
+                                                    controller:
                                                         _phoneController,
                                                     hintText:
                                                         'Enter phone number',
@@ -785,7 +782,7 @@ class _AddAndEditVehicleScreenState extends State<AddAndEditVehicleScreen> {
                                       validator: (p0) {
                                         if (p0 == null || p0.isEmpty) {
                                           return 'Please enter vehicle no';
-                                        } 
+                                        }
                                         // else if (!Validation()
                                         //     .isValidUaeVehicleNumber(p0)) {
                                         //   return 'Invalid UAE vehicle number (e.g. A 12345)';

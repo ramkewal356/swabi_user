@@ -11,6 +11,8 @@ import 'package:flutter_cab/view/vendor/offer_management/offer_management_screen
 import 'package:flutter_cab/view/vendor/offer_management/view_offer_screen.dart';
 import 'package:flutter_cab/view/vendor/payment_management/payment_details_screen.dart';
 import 'package:flutter_cab/view/vendor/payment_management/payment_management_screen.dart';
+import 'package:flutter_cab/view/vendor/rental_price_management/add_and_edit_rental_price_screen.dart';
+import 'package:flutter_cab/view/vendor/rental_price_management/rental_price_management.dart';
 import 'package:flutter_cab/view/vendor/subscription_management/subscription_screen.dart';
 import 'package:flutter_cab/widgets/Custom%20Page%20Layout/common_page_layout.dart';
 import 'package:flutter_cab/view/auth_screens/change_password.dart';
@@ -746,6 +748,21 @@ final GoRouter myRouter = GoRouter(
                     return ViewCustomerScreen(customerData: data.customerData);
                   },
                 )
+              ]),
+          GoRoute(
+              path: 'rental_price_management',
+              builder: (context, state) => RentalPriceManagement(),
+              routes: [
+                GoRoute(
+                  path: 'add_edit_rental_price',
+                  builder: (context, state) {
+                    final data = state.extra as Map<String, dynamic>?;
+                    return AddAndEditRentalPriceScreen(
+                      isEdit: data?['isEdit'] ?? false,
+                      rentalPriceItem: data?['rentalPriceItem'],
+                    );
+                  },
+                ),
               ])
         ])
   ],

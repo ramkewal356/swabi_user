@@ -199,7 +199,6 @@ class VehicleViewModel extends ChangeNotifier {
 
   Future<void> activeDeactiveVehicleApi(
       {required String vehicleId, bool isActive = false}) async {
-   
     Map<String, dynamic> query = {
       "vehicleId": vehicleId,
     };
@@ -254,4 +253,14 @@ class VehicleViewModel extends ChangeNotifier {
     }
   }
 
+  // Method to call Vehicle Type API and update the state
+  Future<void> fetchVehicleTypes() async {
+    try {
+      setVehicleType(ApiResponse.loading());
+      var resp = await _myRepo.fetchVehicleTypes();
+      setVehicleType(ApiResponse.completed(resp));
+    } catch (e) {
+      setVehicleType(ApiResponse.error(e.toString()));
+    }
+  }
 }

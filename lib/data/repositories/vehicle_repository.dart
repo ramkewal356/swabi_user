@@ -177,4 +177,24 @@ class VehicleRepository {
       rethrow;
     }
   }
+
+  // Function to fetch all vehicle types (integrating vehicle type API)
+  Future<VehicleTypeModel> fetchVehicleTypes() async {
+    var http = HttpService(
+      baseURL: AppUrl.baseUrl,
+      endURL: AppUrl.getVehicleTypeUrl,
+      methodType: HttpMethodType.GET,
+      bodyType: HttpBodyType.JSON,
+      isAuthorizeRequest: false,
+    );
+    try {
+      Response<dynamic>? response = await http.request<dynamic>();
+      debugPrint("Fetch Vehicle Types Repo Success ${response?.data}");
+      return VehicleTypeModel.fromJson(response?.data);
+    } catch (e) {
+      debugPrint("Fetch Vehicle Types Repo Failed $e");
+      http.handleErrorResponse(error: e);
+      rethrow;
+    }
+  }
 }

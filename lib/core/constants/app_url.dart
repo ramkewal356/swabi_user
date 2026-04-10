@@ -1,5 +1,6 @@
 class AppUrl {
-  static var baseUrl = "https://live.swabi.xyz/api";
+  // static var baseUrl = "https://live.swabi.xyz/api";
+  static var baseUrl = 'https://swabitours.com/api';
   static var baseUrlForImage = "https://live.swabi.xyz/api";
   // static var baseUrl = 'https://dev-api.swabitours.com';
   // static var baseUrlForImage = "https://dev-api.swabitours.com";
@@ -118,6 +119,12 @@ class AppUrl {
   static var getOfferByVendorIdUrl = '/offer/get_available_offer_by_vendor';
   // rental management
   static var getAllRentalListUrl = '/rental/get_all_rental_booking';
+  static var getRentalPriceListUrl = '/rental/get_rental_price_list';
+  static var getVehicleTypeUrl = '/vehicle/get_vehicle_type';
+  static var addRentalPriceUrl = '/rental/add_rental_price';
+  static var editRentalPriceUrl = '/rental/update_rental';
+  static var activateRentalPriceUrl = '/rental/activate_rental_price';
+  static var deactiveRentalPriceUrl = '/rental/delete_rental_price';
   //package booking management
   static var getAllpackageBookingListUrl =
       '/package_booking/get_package_booking_list';

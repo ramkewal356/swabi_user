@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/response/status.dart';
 import 'package:flutter_cab/data/models/get_all_activity_list_model.dart'
