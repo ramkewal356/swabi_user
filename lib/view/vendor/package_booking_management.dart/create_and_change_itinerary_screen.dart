@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cab/data/models/package_models.dart' hide Status;
 import 'package:flutter_cab/widgets/Custom%20%20Button/custom_btn.dart';

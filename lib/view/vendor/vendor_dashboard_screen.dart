@@ -145,6 +145,13 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                 }
               },
               {
+                "imgUrl": Icons.price_change,
+                "label": "Rental Price Management",
+                "onTap": () {
+                  context.push("/vendor_dashboard/rental_price_management");
+                }
+              },
+              {
                 "imgUrl": rentalbooking,
                 "label": "Package booking Management",
                 "onTap": () {
